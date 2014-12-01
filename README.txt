@@ -35,7 +35,7 @@ wget https://download.01.org/crosswalk/releases/crosswalk/android/stable/8.37.18
 unzip crosswalk-cordova-8.37.189.14-arm.zip
 cp -a crosswalk-cordova-8.37.189.14-arm/framework/xwalk_core_library/libs/armeabi-v7a platforms/android/CordovaLib/xwalk_core_library/libs/
 
-### Edit platform/android/AndroidManifest.xml
+### Edit platforms/android/AndroidManifest.xml
 ### Add these two lines just before the existing <application> element
 ### <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 ### <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
