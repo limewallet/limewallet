@@ -1,0 +1,71 @@
+  <ion-view class="dark" title="Send payment">
+    
+    <ion-nav-buttons side="left">
+      <button ng-click="goBack()" class="button button-icon icon ion-ios7-arrow-back"></button>
+    </ion-nav-buttons>
+    <ion-nav-buttons side="right">
+      <button class="button button-icon icon" ng-click="scanQR()"><i class="fa fa-qrcode"></i></button>
+    </ion-nav-buttons>
+    
+    <ion-content class="has-header">
+      <form novalidate name="sendForm" >
+        <div class="list">
+        
+          <label class="item item-input">
+            <input required name="transactionAddress" ng-model="transaction.address" type="text" placeholder="To" class="big big_placeholder">
+          </label>
+    
+          <label class="item item-input">
+            <i class="icon fa20 fa fa-dollar placeholder-icon"></i>
+            <input required name="transactionAmount" ng-model="transaction.amount" type="number" placeholder="Amount" class="input_amount big big_placeholder">
+            <number-only-input input-value="transaction.amount" input-name="transactionAmount" input-class="" />
+          </label>
+            
+          
+          <!-- div class="page-wrap">
+            <div class="keypad">
+              
+              <button class="1 energized_bordercolor energized" ng-click="addNumber(1)">1</button>
+              <button class="2 energized_bordercolor energized" ng-click="addNumber(2)">2</button>
+              <button class="3 energized_bordercolor energized" ng-click="addNumber(3)">3</button>
+              <br>
+              <button class="4 energized_bordercolor energized" ng-click="addNumber(4)">4</button>
+              <button class="5 energized_bordercolor energized" ng-click="addNumber(5)">5</button>
+              <button class="6 energized_bordercolor energized" ng-click="addNumber(6)">6</button>
+              <br>
+              <button class="7 energized_bordercolor energized" ng-click="addNumber(7)">7</button>
+              <button class="8 energized_bordercolor energized" ng-click="addNumber(8)">8</button>
+              <button class="9 energized_bordercolor energized" ng-click="addNumber(9)">9</button>
+              <br>
+              <button class="dot energized_bordercolor energized" ng-click="addDot()">.</button>
+              <button class="0 energized_bordercolor energized" ng-click="addNumber(0)">0</button>
+              <button class="del energized_bordercolor energized" ng-click="delInput()">&lt;</button>
+            </div>
+          </div-->
+        </div>
+        <div class="action_container hide-on-keyboard-open padding">
+          <button class="button button-assertive  button-block" ng-click="validateSend(transaction)">
+            Send
+          </button>
+        </div>
+      </form>
+    </ion-content>
+  </ion-view>
+
+  <script id="sending-modal.html" type="text/ng-template">
+    <ion-modal-view>
+      <ion-header-bar align-title="middle" class="bar-energized nav-title-slide-ios7">
+        <div class="title">Sending Payment</div>
+      </ion-header-bar>
+      
+      <ion-content class="has-header">
+        <div class="row">
+          <div class="transaction_steps">
+            <h2 style="text-align:center;" class="step_doing positive">
+              {{transaction.message}}<i class="ion-loading-a" data-pack="default" data-tags="spinner, waiting, refresh, animation" data-animation="true"></i>
+            </h2>
+          </div>
+        </div>
+      </ion-content>
+    </ion-modal-view>
+  </script>

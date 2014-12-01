@@ -1,0 +1,62 @@
+  <ion-view class="dark" title="Set Backup Password">
+    <ion-nav-buttons side="left">
+      <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
+    </ion-nav-buttons>
+    <ion-nav-buttons side="right">
+      
+    </ion-nav-buttons>
+
+    
+    <ion-content class="has-header" has-bouncing="false">
+      <form novalidate name="backupForm" style="height: 100%;display: block;">
+        <div class="list" style="height:100%;">
+          <label class="item item-input item-stacked-label">
+            <span class="input-label">Password</span>
+            <input required name="backupPassword" ng-model="backup.password" type="password" placeholder="Input password" class="big">
+          </label>
+          <label class="item item-input item-stacked-label">
+            <span class="input-label">Retype Password</span>
+            <input required name="backupRetypePassword" ng-model="backup.retype_password" type="password" placeholder="Retype password" class="big">
+          </label>
+        
+          <div class="action_container hide-on-keyboard-open padding">
+            <button class="button button-stableNOT button-energized button-block" ng-click="validatePasswords(backup)">
+              Backup Wallet
+            </button>
+          </div>
+          
+        </div>
+        
+      </form>
+    </ion-content>
+  </ion-view>
+  
+<script id="settings.backup.show.html" type="text/ng-template">
+  <ion-modal-view>
+      <ion-header-bar align-title="middle" class="bar-energized nav-title-slide-ios7">
+        <div class="title">Backup Wallet</div>
+        <button ng-click="modal.hide()" class="button button-icon icon ion-ios7-close-empty"></button>
+      </ion-header-bar>
+      
+      <ion-content class="has-header">
+        <div style="position:absolute;top:0px;bottom:65px;width:100%;overflow:hidden;">
+          <div class="list card" style="height: 90%;display: block;position:relative;">
+              <span class="item item-divider">Encrypted wallet</span>
+              <label class="item item-input" style="height:100%;">
+              <textarea style="width:100%;height:100%; box-sizing: border-box;-moz-box-sizing: border-box;-webkit-box-sizing: border-box;" rows="8" name="backuped_wallet" ng-model="backup.wallet"> </textarea>
+            </label>
+          </div>
+        </div>
+        <div class="action_container hide-on-keyboard-open padding">
+          <div class="one_of_two_buttons">
+            <button class="button button-energized" style="margin-right:5px;width:100%;" ng-click="doShareWallet()" ><i class=" fa fa-share-square-o"></i></button>
+          </div>
+          <div class="one_of_two_buttons">
+            <button class="button button-energized" style="margin-left:5px;width:100%;" ng-click="doCopyWallet()" ><i class=" fa fa-copy"></i></button>
+          </div>
+        </div>
+      </ion-content>
+
+    </ion-modal-view>
+      
+</script>

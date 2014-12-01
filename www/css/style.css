@@ -1,0 +1,290 @@
+html, body {
+    height: 100%;
+}
+
+ion-nav-view {
+  background-color: #fff!important;
+}
+ion-nav-bar.bar-energized{
+  background-image: none!important;
+}
+
+.bar .fa {font-size: 25px;
+line-height: 38px;}
+.fa.fa18 {font-size: 18px!important;line-height: 20px;}
+.fa.fa20 {font-size: 20px!important;}
+.fa.fa300{font-weight: 300;}
+
+
+.tab-item .fa{
+  font-size: 30px!important;
+  line-height: 40px!important;}
+.receive_payment .tab-item{opacity: 1!important; }
+
+.balance_container{
+  color:#ffffff;
+  height:80px/*125px !important*/;
+  width:100%!important;
+  display:table;
+}
+.balance{text-align:center;padding-top: 15px;}
+
+.display_table{display:table;}
+.display_table_cell{display:table-cell;}
+.display_table_cell.vmiddle{vertical-align:middle;}
+
+.punta2 {
+  /*position:absolute;
+  bottom:-25px;*/
+  height:25px;
+  width:100%;
+  background: url(../img/triangle.png);
+  background-position:bottom;
+  background-repeat:no-repeat;
+  background-size: 100% 25px;
+
+}
+
+.index_buttons{
+  overflow:hidden;padding:5px 0 10px 0;height:87px;
+}
+.index_buttons .button_send{padding-left:4%;padding-right:2%;width:50%;float:left;text-align:center;}
+.index_buttons .button_receive{padding-left:2%;padding-right:4%;width:50%;float:left;text-align:center;}
+.index_transactions{
+  display:block;
+  overflow: hidden;
+  width:100%;
+  /*top:257px;*/
+  top:192px;
+  position:absolute!important; bottom:0;
+  }
+.row75{
+  height: 75% !important;
+}
+.scroll{
+  height:100% !important;
+}
+
+.transactions div.list {height:100%;}
+.transactions .sent{/*color:#e65f3f!important;*/}
+/* .transactions .received h2, .transactions .received .iconNOT {color:#5abb5c!important;} EN UTILS.scss */
+/*.transactions .received .icon.ion-ios7-plus-outline, .transactions .received .icon.ion-ios7-upload-outline{display:none;}*/
+/*.transactions .sent .icon.ion-ios7-minus-outline, .transactions .sent .icon.ion-ios7-download-outline{display:none;}*/
+/*.transactions .received .sent_text{display:none;}*/
+/*.transactions .sent .received_text{display:none;}*/
+.transactions h2 {font-size:14px!important;}
+.transactions .received .icon.ion-ios7-upload-outline{display:none;}
+.transactions .received .icon.ion-ios7-refresh-outline{display:none;}
+/*.transactions .received .icon.ion-loading-c{display:none;}*/
+
+.transactions .sent .icon.ion-ios7-download-outline{display:none;}
+.transactions .sent .icon.ion-ios7-refresh-outline{display:none;}
+/*.transactions .sent .icon.ion-loading-c{display:none;}*/
+
+.transactions .self .icon.ion-ios7-upload-outline{display:none;}
+.transactions .self .icon.ion-ios7-download-outline{display:none;}
+/*.transactions .self .icon.ion-loading-c{display:none;}*/
+
+.transactions .pending .icon.ion-ios7-upload-outline{display:none;}
+.transactions .pending .icon.ion-ios7-download-outline{display:none;}
+.transactions .pending .icon.ion-ios7-refresh-outline{display:none;}
+
+.transactions .received .sent_text{display:none;}
+.transactions .received .self_text{display:none;}
+
+.transactions .sent .received_text{display:none;}
+.transactions .sent .self_text{display:none;}
+
+.transactions .self .received_text{display:none;}
+.transactions .self .sent_text{display:none;}
+
+.pending_text {
+  float:right;font-size:0.7em;
+  position: absolute;
+  right: 15px;
+  padding:3px;
+  color: #ededed!important;
+  background-color: #4fbaed!important;
+}
+
+.transactions .pending h2, .transactions .pending .icon , .transactions .pending span, .transactions .pending p
+{color:#4fbaed;} /*c1c1c1 4fbaed*/
+
+.transactions p , .transactions span.tx_address {font-size:12px!important;}
+.transactions span.tx_amount{font-weight:700;font-size:16px!important;}
+.transactions span.tx_label {font-size:14px;}
+
+.ta_right{text-align:right;}
+.float_right{float:right;}
+.float_left{float:left;}
+.no_transactions{width:100%;color:#c1c1c1;text-align:center;font-size:1.2em; height:100%;}
+
+.action_container{display:block;width:100%;height:67px;position:absolute;bottom:0;}
+.action_container2{display:block;width:100%;height:87px;}
+.action_container .one_of_two_buttons , .action_container2 .one_of_two_buttons {width:50%;float:left;}
+.action_container .one_of_three_buttons{width:33%;float:left;}
+
+input.numeric {text-align:right!important;}
+
+textarea.wallet_input{width:100%;height:100%; box-sizing: border-box;-moz-box-sizing: border-box;-webkit-box-sizing: border-box;}
+.big_placeholder::-webkit-input-placeholder{font-size: 16px!important;}
+.big_placeholder:-moz-placeholder{font-size: 16px!important;}
+.big_placeholder::-moz-placeholder {font-size: 16px!important;}
+.big_placeholder:-ms-input-placeholder {font-size: 16px!important;}
+input.big::-webkit-input-placeholder{font-size: 16px!important;}
+input.big:-moz-placeholder{font-size: 16px!important;}
+input.big::-moz-placeholder {font-size: 16px!important;}
+input.big:-ms-input-placeholder {font-size: 16px!important;}
+
+.input_amount{text-align:right;}
+.input_amount::-webkit-input-placeholder{text-align: left;}
+.input_amount:-moz-placeholder{text-align: left;}
+.input_amount::-moz-placeholder {text-align: left;}
+.input_amount:-ms-input-placeholder {text-align: left;}
+
+input.big {
+  height: 40px!important;
+  /*font-size: 26px!important;
+  line-height: 32px!important;*/
+  font-size: 14px!important;
+  line-height: 26px!important;
+  }
+
+.bar.bar-dark.menu_header {border-color:transparent!important;}   
+.menu .menu_header{
+  background-image:none!important; 
+  /*background-color:#363636!important;
+  border-bottom: solid 1px #000000;*/
+  border-color: #000000;
+  }  
+.menu  {background-color: #363636!important;}
+.menu .item, 
+.menu .item-complex .item-content{
+  border-color: #4c4c4c!important;
+  background-color: #363636!important;
+  color: #d4d4d4!important;
+}
+.menu .list .item_first{ border-top:none;}
+
+.transaction_steps{width:100%;padding-top:50px;}
+.step_doing{color:}
+.step_done{}
+
+/* inline keypad */
+.page-wrap {
+  display:table;
+  margin:15px auto;
+  background:white;
+  padding:5px;
+  cursor: pointer;
+}
+    
+.keypad {
+    float:left;
+    text-align:center;
+    font-family:'Helvetica Neue',sans-serif;
+    font-weight:100;
+}
+
+
+.keypad > button {
+    display:inline-block;
+    width:75px;
+    height:75px;
+    margin:10px;
+    line-height:75px;
+    border-radius:50%;
+    border:1px solid;
+    /*border:1px #5A58FF solid;
+    color:#5A58FF;*/
+    background-color:white;
+    
+    font-size:26px;
+    /*color:#343434;*/
+    transition:.5s;
+    -webkit-transition:.5s
+}
+
+.keypad > spanNOT {
+  background: #fff;
+	color: #506CE8;
+	border: 2px solid #506CE8;
+	border-radius: 50%;
+	font-size: 1.5em;
+	text-align: center;
+	width: 75px;
+	height: 75px;
+	margin: 5px 11px;
+}
+
+ .keypad > button:active {
+    color:white;
+    /* background:#5A58FF; */
+    transition:0s;
+    -webkit-transition:0s;
+}
+
+.keypad .clear {
+    background-color:#66FF66;
+    font-size:26px;
+    font-weight:200;
+    color:white;
+    line-height:50px;
+    border-radius:5px;
+    transition:0.2s;
+    -webkit-transition:0.2s;
+}
+
+.keypad .clear:active {
+    box-shadow:0 0 80px 1px black inset;
+    transition:0s;
+    -webkit-transition:0s;
+}
+/* Overwrites-fixes ionic header for ios6 */
+.platform-ios.platform-cordova.platform-ios6:not(.fullscreen) .bar-header:not(.bar-subheader){
+    height: 44px;
+}
+.platform-ios.platform-cordova.platform-ios6:not(.fullscreen) .bar-header:not(.bar-subheader) > * {
+    margin-top: 0px;
+}
+.platform-ios.platform-cordova.platform-ios6:not(.fullscreen) .has-header,
+.platform-ios.platform-cordova.platform-ios6:not(.fullscreen) .bar-subheader {
+    top: 44px;
+}
+
+/* Restore view */
+.restoreForm{
+  position:absolute;
+  top:0px;bottom:65px;
+  width:100%;
+  overflow:hidden;
+}
+
+.restoreForm_inputs{
+  /*height: 95%;
+  display: block;position:relative;
+  */
+  
+  display: block;
+  position:relative;
+  overflow:hidden;
+  margin:0px 0px 20px 0px !important;
+  /*
+  position: absolute!important;
+  width: 100%;
+  bottom: 10px;
+  top: 10px;
+  margin:0px 20px 0px 0px !important;
+  overflow:hidden !important; */
+}
+
+.restoreForm_inputs.list:last-child.card {
+margin-bottom: 20px!important;
+}
+
+.keyboard-open .restoreForm{/*bottom:0px;*/}  
+.keyboard-open .restoreForm_inputs{
+  /*height: 100%;  */
+}
+.tx_details .row{ margin-top:0px!important;padding:0!important;}
+.tx_details .row .col{font-size:11px!important;}

@@ -1,0 +1,35 @@
+  <ion-view class="dark" title="Request payment QRCode">
+    
+    <ion-nav-buttons side="left">
+      <button ng-click="goHome()" class="button button-icon icon ion-ios7-arrow-back"></button>
+    </ion-nav-buttons>
+    <ion-nav-buttons side="right">
+    </ion-nav-buttons>
+    
+    <ion-content class="has-header">
+      <div class="list card">
+
+          <div class="item">
+            <h2>Amount: ${{amount}}</h2>
+            <h4>{{address}}</h4>
+          </div>
+
+          <div class="item item-image">
+            <img ng-src="{{imgurl}}" id="qr_image" imageonload />
+          </div>
+        </div>
+        <div class="action_container2 padding">
+          <div class="one_of_two_buttons">
+            <button class="button button-balanced" style="margin-right:7px;width:100%;" ng-click="doShareRecvPayment()">
+              <i class="fa20 fa fa-share-square-o"></i>
+            </button>
+          </div>
+          <div class="one_of_two_buttons">
+            <button class="button button-balanced" style="margin-left:3px;margin-right:3px;width:100%;" ng-click="doCopyRecvPayment()">
+              <i class="fa20 fa fa-copy"></i>
+            </button>
+          </div>
+        </div>
+          
+    </ion-content>
+  </ion-view>
