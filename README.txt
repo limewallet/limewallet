@@ -22,6 +22,7 @@ cordova plugin add https://github.com/VersoSolutions/CordovaClipboard
 cordova plugin add https://github.com/EddyVerbruggen/SocialSharing-PhoneGap-Plugin.git
 cordova plugin add org.apache.cordova.splashscreen
 cordova plugin add https://github.com/EddyVerbruggen/Toast-PhoneGap-Plugin.git
+cordova plugin add org.apache.cordova.globalization
 
 ### Installing xwalk x86
 wget https://download.01.org/crosswalk/releases/crosswalk/android/stable/8.37.189.14/x86/crosswalk-cordova-8.37.189.14-x86.zip

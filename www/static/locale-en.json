@@ -1,0 +1,115 @@
+{
+  "g" : {
+    "save"                : "Save",
+    "cancel"              : "Cancel",
+    "send"                : "Send",
+    "sent"                : "Sent",
+    "receive"             : "Receive",
+    "received"            : "Received",
+    "from"                : "From",
+    "to"                  : "To",
+    "amount"              : "Amount",
+    "address"             : "Address",
+    "public_key"          : "Public Key",
+    "label"               : "Label",
+    "password"            : "Password",
+    "id"                  : "Id",
+    "block"               : "Block",
+    "timestamp"           : "Timestamp",
+    "fee"                 : "Fee",
+    "confirm_password"    : "Confirm Password",
+    "input_password"      : "Input Password",
+    "in_progress"         : "In progress...",
+    "copied_to_clipboard" : "copied to clipboard"
+  },
+
+  "err" : {
+    "invalid_amount"      : "Invalid amount",
+    "enter_valid_amount"  : "Please enter a valid amount",
+    "invalid_address"     : "Invalid address",
+    "enter_valid_address" : "Please enter a valid address",
+    "invalid_password"    : "Invalid password",
+    "enter_valid_password": "Please enter a valid password",
+    "invalid_backup"      : "Invalid backup",
+    "enter_valid_backup"  : "Please enter a valid backup",
+    "empty_password"      : "Empty password",
+    "password_mismatch"   : "The passwords do not match",
+    "retype_passwords"    : "Confirmation password does not match the first password entered, please verify",
+    "unable_to_share_req" : "Unable to share payment request",
+    "unable_to_copy_req"  : "Unable to copy payment request",
+    "unable_to_share_ew"  : "Unable to share encrypted wallet",
+    "unable_to_copy_ew"   : "Unable to copy encrypted wallet",
+    "unable_to_create_tx" : "Unable to create transaction",
+    "unable_to_send_tx"   : "Unable to send transaction",
+    "unable_to_paste_ew"  : "Unable to paste encrypted wallet",
+    "server_error"        : "Server error",
+    "backup_error"        : "There were errors trying to backup the wallet"
+  },
+
+  "home" : {
+    "balance"         : "{{asset}} BALANCE",
+    "no_txs"          : "No transactions yet",
+    "pull_to_refresh" : "Pull to refresh...",
+    "pending"         : "PENDING",
+    "on"              : "On",
+    "just_now"        : "Just now",
+    "Me"              : "Me",
+    "qr_cancel"       : "QR code scan cancelled",
+    "add_to_book"     : "Add to address book",
+    "view_details"    : "View details",
+    "address_name"     : "address name",
+    "save_successfull" : "Address saved successfully"
+  },
+
+  "menu" : {
+    "settings"       : "Settings",
+    "home"           : "Home",
+    "my_addresses"   : "My Addresses",
+    "backup_wallet"  : "Backup Wallet",
+    "restore_wallet" : "Restore Wallet"
+  },
+
+  "receive" : {
+    "payment_request"     : "Request Payment",
+    "copied_to_clipboard" : "Payment request copied to clipboard"
+  },
+
+  "send" : { 
+    "payment_confirm"        : "Payment confirmation",
+    "are_you_sure"           : "Are you sure you want to send {{symbol}} {{amount}} to {{address}}?",
+    "send_payment"           : "Send Payment",
+    "sending_payment"        : "Sending Payment",
+    "generating_transaction" : "Generating Transaction",
+    "signing_transaction"    : "Signing Transaction",
+    "sending_transaction"    : "Sending Transaction",
+    "transaction_sent"       : "Transaction Sent"
+  },
+
+  "backup" : {
+    "backing_up_wallet"   : "Backing up wallet",
+    "copied_to_clipboard" : "Encrypted wallet copied to clipboard",
+    "encrypted_wallet"    : "Encrypted Wallet"
+  },
+
+  "restore" : {
+    "paste_here"       : "Paste here",
+    "successful"       : "The wallet was restored successfuly",
+    "restoring_wallet" : "Restoring wallet"
+  },
+
+  "detail" : {
+    "transaction_details" : "Transaction details",
+    "info"                : "Info",
+    "withdraws"           : "Withdraws",
+    "deposits"            : "Deposits"
+  },
+
+  "addys" : {
+    "new_address"     : "New Address",
+    "are_you_sure"    : "Are you sure you want to add a new address?",
+    "set_as_default"  : "Set as default",
+    "set_label"       : "Set Label",
+    "copy_address"    : "Copy Addres",
+    "copy_public_key" : "Copy Public Key"
+  }
+}

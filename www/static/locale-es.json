@@ -1,0 +1,115 @@
+{
+  "g" : {
+    "save"                : "Guardar",
+    "cancel"              : "Cancelar",
+    "send"                : "Enviar",
+    "sent"                : "Enviado",
+    "receive"             : "Recibir",
+    "received"            : "Recibido",
+    "from"                : "De",
+    "to"                  : "A",
+    "amount"              : "Monto",
+    "address"             : "Dirección",
+    "public_key"          : "Clave Pública",
+    "label"               : "Etiqueta",
+    "password"            : "Contraseña",
+    "id"                  : "Id",
+    "block"               : "Bloque",
+    "timestamp"           : "Fecha",
+    "fee"                 : "Comisión",
+    "confirm_password"    : "Confirmar Contraseña",
+    "input_password"      : "Ingrese Contraseña",
+    "in_progress"         : "En progreso...",
+    "copied_to_clipboard" : "copiado al portapapeles"
+  },
+
+  "err" : {
+    "invalid_amount"      : "Monto inválido",
+    "enter_valid_amount"  : "Por favor, ingrese un monto válido",
+    "invalid_address"     : "Dirección inválida",
+    "enter_valid_address" : "Por favor, ingrese una dirección válida",
+    "invalid_password"    : "Contraseña inválida",
+    "enter_valid_password": "Por favor, ingrese una contraseña válida",
+    "invalid_backup"      : "Copia de resguardo inválida",
+    "enter_valid_backup"  : "Por favor, ingrese una copia de resguardo válida",
+    "empty_password"      : "Contraseña vacia",
+    "password_mismatch"   : "Las contraseñas no coinciden",
+    "retype_passwords"    : "La contraseña de confirmación no coincide con la contraseña ingresada previamente, por favor verifique",
+    "unable_to_share_req" : "No fue posible compartir el requerimiento de pago",
+    "unable_to_copy_req"  : "No fue posible copiar el requerimiento de pago",
+    "unable_to_share_ew"  : "No fue posible compartir la billetera encriptada",
+    "unable_to_copy_ew"   : "No fue posible copiar la billetera encriptada",
+    "unable_to_create_tx" : "No fue posible crear la transacción",
+    "unable_to_send_tx"   : "No fue posible enviar la transacción",
+    "unable_to_paste_ew"  : "No fue posible pegar la billetera encriptada",
+    "server_error"        : "Error en servidor",
+    "backup_error"        : "Se han producido errores al intentar resguardar la billetera"
+  },
+
+  "home" : {
+    "balance"          : "BALANCE {{asset}}",
+    "no_txs"           : "No hay transacciones todavía",
+    "pull_to_refresh"  : "Tire para actualizar...",
+    "pending"          : "PENDIENTE",
+    "on"               : "El",
+    "just_now"         : "Recién",
+    "Me"               : "Mi",
+    "qr_cancel"        : "La lectura del codigo QR fue cancelada",
+    "add_to_book"      : "Agendar dirección",
+    "view_details"     : "Ver detalles",
+    "address_name"     : "nombre",
+    "save_successfull" : "La dirección fue agendada correctamente"
+  },
+
+  "menu" : {
+    "settings"       : "Configuración",
+    "home"           : "Principal",
+    "my_addresses"   : "Mis direcciones",
+    "backup_wallet"  : "Resguardar Billetera",
+    "restore_wallet" : "Restaurar Billetera"
+  },
+
+  "receive" : {
+    "payment_request"     : "Requerimiento de Pago",
+    "copied_to_clipboard" : "El requerimiento de pago fue copiado al portapapeles"
+  },
+
+  "send" : { 
+    "payment_confirm"        : "Confirmación de pago",
+    "are_you_sure"           : "Esta seguro que desea enviar {{symbol}} {{amount}} a {{address}}?",
+    "send_payment"           : "Enviar Pago",
+    "sending_payment"        : "Enviando Pago",
+    "generating_transaction" : "Generando Transacción",
+    "signing_transaction"    : "Firmando Transacción",
+    "sending_transaction"    : "Enviando Transacción",
+    "transaction_sent"       : "Transacción Enviada"
+  },
+
+  "backup" : {
+    "backing_up_wallet"   : "Resguardando Billetera",
+    "copied_to_clipboard" : "La billetera encriptada fue copiada al portapapeles",
+    "encrypted_wallet"    : "Billetera Encriptada"
+  },
+
+  "restore" : {
+    "paste_here"       : "Pegar aquí",
+    "successful"       : "La billetera fue restaurada satisfactoriamente",
+    "restoring_wallet" : "Restaurando billetera"
+  },
+
+  "detail" : {
+    "transaction_details" : "Detalles de transacción",
+    "info"                : "Información",
+    "withdraws"           : "Retiros",
+    "deposits"            : "Depósitos"
+  },
+
+  "addys" : {
+    "new_address"     : "Nueva dirección",
+    "are_you_sure"    : "Esta seguro que desea crear una nueva dirección?",
+    "set_as_default"  : "Establecer como predeterminada",
+    "set_label"       : "Etiquetar",
+    "copy_address"    : "Copiar Dirección",
+    "copy_public_key" : "Copiar Clave Pública"
+  }
+}

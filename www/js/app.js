@@ -24,7 +24,7 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
     };
 })
 
-.run(function(DB, ReconnectingWebSocket, $q, MasterKey, AddressBook, Address, $http, $rootScope, $ionicPlatform, $cordovaLocalNotification, $cordovaBarcodeScanner, $ionicModal, $ionicPopup, $cordovaSplashscreen) {
+.run(function(DB, $cordovaGlobalization, $translate, ReconnectingWebSocket, $q, MasterKey, AddressBook, Address, $http, $rootScope, $ionicPlatform, $cordovaLocalNotification, $cordovaBarcodeScanner, $ionicModal, $ionicPopup, $cordovaSplashscreen) {
 
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
@@ -37,6 +37,17 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
       // org.apache.cordova.statusbar required
       StatusBar.styleDefault();
     }
+
+    $cordovaGlobalization.getPreferredLanguage().then(
+      function(lang) {
+        console.log('lang ->' + lang.value);
+        $translate.use(lang.value.slice(0,2));
+      },
+      function(error) {
+        console.log('Unable to get preferred language');
+        $translate.use('en');
+    });
+
 
     $rootScope.balance      = 0;
     $rootScope.transactions = [];
@@ -281,29 +292,7 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
 
 .config(function($stateProvider, $urlRouterProvider, $translateProvider) {
 
-
   $translateProvider.useStaticFilesLoader({ prefix: '/static/locale-', suffix: '.json'});
-
-  var lang = "en";
-  switch(window.navigator.language) {
-    case "zh-CN":
-      lang = "zh-CN";
-      break;
-
-    case "de": case "de-DE": case "de-de":
-      lang ="de";
-      break;
-    
-    case "ru": case "ru-RU": case "ru-ru":
-      lang = "ru";
-      break;
-
-    case "it": case "it-IT": case "it-it":
-      lang = "it";
-      break;
-  }
-
-  $translateProvider.preferredLanguage(lang);
 
   $stateProvider
     .state('app', {
