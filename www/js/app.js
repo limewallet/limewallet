@@ -1,6 +1,6 @@
 // BitWallet
 
-angular.module('bit_wallet', ['ionic', 'ngCordova', 'reconnectingWebSocket', 'bit_wallet.controllers','bit_wallet.services'])
+angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'reconnectingWebSocket', 'bit_wallet.controllers','bit_wallet.services'])
 
 .directive('numberOnlyInput', function () {
     return {
@@ -24,7 +24,7 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'reconnectingWebSocket', 'bi
     };
 })
 
-.run(function(DB, Scanner, ReconnectingWebSocket, $q, MasterKey, AddressBook, Address, $http, $rootScope, $ionicPlatform, $cordovaLocalNotification, $cordovaBarcodeScanner, $ionicModal, $ionicPopup, $cordovaSplashscreen) {
+.run(function(DB, ReconnectingWebSocket, $q, MasterKey, AddressBook, Address, $http, $rootScope, $ionicPlatform, $cordovaLocalNotification, $cordovaBarcodeScanner, $ionicModal, $ionicPopup, $cordovaSplashscreen) {
 
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
@@ -279,18 +279,33 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'reconnectingWebSocket', 'bi
   });
 })
 
-//.config(function($sceDelegateProvider) {
-  //$sceDelegateProvider.resourceUrlWhitelist([
-    //// Allow same origin resource loads.
-    //'self',
-    //// Allow loading from our assets domain.  Notice the difference between * and **.
-    //'https://*.latincoin.com/**'
-  //]);
-//})
+.config(function($stateProvider, $urlRouterProvider, $translateProvider) {
 
-.config(function($stateProvider, $urlRouterProvider) {
+
+  $translateProvider.useStaticFilesLoader({ prefix: '/static/locale-', suffix: '.json'});
+
+  var lang = "en";
+  switch(window.navigator.language) {
+    case "zh-CN":
+      lang = "zh-CN";
+      break;
+
+    case "de": case "de-DE": case "de-de":
+      lang ="de";
+      break;
+    
+    case "ru": case "ru-RU": case "ru-ru":
+      lang = "ru";
+      break;
+
+    case "it": case "it-IT": case "it-it":
+      lang = "it";
+      break;
+  }
+
+  $translateProvider.preferredLanguage(lang);
+
   $stateProvider
-
     .state('app', {
       url: "/app",
       abstract: true,
@@ -381,5 +396,4 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'reconnectingWebSocket', 'bi
 
   // if none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise('/app/home');
-  //$rootScope.ws = ReconnectingWebSocketProvider.ReconnectingWebSocket('wss://bswws.latincoin.com/events');
 });

@@ -7,24 +7,24 @@
 
   <ion-side-menu side="left">
     <header class="bar bar-header bar-dark menu_header ">
-      <h1 class="title" style="text-align:left;"><i class="icon fa18 fa fa-gears"></i>&nbsp;&nbsp;Settings</h1>
+      <h1 class="title" style="text-align:left;"><i class="icon fa18 fa fa-gears"></i>&nbsp;&nbsp;{{'menu.settings'|translate}}</h1>
     </header>
     <ion-content class="has-header dark" has-bouncing="false">
       <ion-list class="menu">
         <ion-item nav-clear menu-close href="#/app/home" class="item-icon-right item_first">
-          Home
+          {{'menu.home'|translate}} 
           <i class="icon fa20 fa fa-home"></i>
         </ion-item>
         <ion-item nav-clear menu-close href="#/app/settings/addresses" class="item-icon-right">
-          My Addresses
+          {{'menu.my_addresses'|translate}}
           <i class="icon fa20 fa fa-list-ul"></i>
         </ion-item>
         <ion-item nav-clear menu-close href="#/app/settings/backup" class="item-icon-right">
-          Backup Wallet
+          {{'menu.backup_wallet'|translate}} 
           <i class="icon fa20 fa fa-cloud-upload"></i>
         </ion-item>
         <ion-item nav-clear menu-close href="#/app/settings/restore" class="item-icon-right">
-          Restore Wallet
+          {{'menu.restore_wallet'|translate}} 
           <i class="icon fa20 fa fa-cloud-download"></i>
         </ion-item>
       </ion-list>

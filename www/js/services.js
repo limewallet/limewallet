@@ -111,8 +111,10 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
         return DB.query('UPDATE address set label=? where id=?', [label, id]);
     };
 
-    self.create = function(deriv, address, pubkey, privkey, is_default, label) {
-        var created_at = (new Date()).getTime();
+    self.create = function(deriv, address, pubkey, privkey, is_default, label, created_at) {
+        if( created_at === 'undefined' )
+          created_at = (new Date()).getTime();
+
         return DB.query('INSERT INTO address (deriv, address, pubkey, privkey, created_at, is_default, label) values (?,?,?,?,?,?,?)', [deriv, address, pubkey, privkey, created_at, is_default ? 1 : 0, label]);
     };
 
@@ -140,7 +142,7 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
     return self;
 })
 //QR Code service
-.factory('Scanner', function($q, $cordovaBarcodeScanner) {
+.factory('Scanner', function($q, $cordovaBarcodeScanner, T, $ionicModal, $ionicPopup) {
 
     var self = this;
     
@@ -153,6 +155,16 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
         .then(function(result) {
           
           if ( result.cancelled ) {
+
+            //HACK for android
+            if( device.platform == "Android" ) {
+              $ionicModal.fromTemplate('').show().then(function() {
+                $ionicPopup.alert({ title: T.i('qr_scan_cancelled') });
+              });
+            } else {
+              $ionicPopup.alert({ title: T.i('qr_scan_cancelled') });
+            }
+
             deferred.resolve(result);
             return;
           }
@@ -199,5 +211,14 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
     };
 
     return self;
-});
+})
+//i18n Helper
+.factory('T', function($translate) {
+    var self = this;
     
+    self.i = function(txt, obj) {
+      return $translate.instant(txt, obj);
+    };
+
+    return self;
+});

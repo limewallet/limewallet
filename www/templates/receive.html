@@ -1,4 +1,4 @@
-  <ion-view class="dark" title="Receive payment">
+<ion-view class="dark" title="{{'receive.payment_request'|translate}}">
     <ion-nav-buttons side="left">
       <button ng-click="goBack()" class="button button-icon icon ion-ios7-arrow-back"></button>
     </ion-nav-buttons>
@@ -10,30 +10,9 @@
         <div class="list">
           <label class="item item-input">
             <i class="icon fa20 fa fa-dollar placeholder-icon"></i>
-            <input required name="transactionAmount" ng-model="transaction.amount" type="number" placeholder="Amount" class="input_amount big big_placeholder">
+            <input required name="transactionAmount" ng-model="transaction.amount" type="number" placeholder="{{'g.amount'|translate}}" class="input_amount big big_placeholder">
             <number-only-input input-value="transaction.amount" input-name="transactionAmount" input-class="" />
           </label>
-          
-          <!-- div class="page-wrap">
-            <div class="keypad">
-              
-              <button class="1 energized_bordercolor energized" ng-click="addNumber(1)">1</button>
-              <button class="2 energized_bordercolor energized" ng-click="addNumber(2)">2</button>
-              <button class="3 energized_bordercolor energized" ng-click="addNumber(3)">3</button>
-              <br>
-              <button class="4 energized_bordercolor energized" ng-click="addNumber(4)">4</button>
-              <button class="5 energized_bordercolor energized" ng-click="addNumber(5)">5</button>
-              <button class="6 energized_bordercolor energized" ng-click="addNumber(6)">6</button>
-              <br>
-              <button class="7 energized_bordercolor energized" ng-click="addNumber(7)">7</button>
-              <button class="8 energized_bordercolor energized" ng-click="addNumber(8)">8</button>
-              <button class="9 energized_bordercolor energized" ng-click="addNumber(9)">9</button>
-              <br>
-              <button class="dot energized_bordercolor energized" ng-click="addDot()">.</button>
-              <button class="0 energized_bordercolor energized" ng-click="addNumber(0)">0</button>
-              <button class="del energized_bordercolor energized" ng-click="delInput()">&lt;</button>
-            </div>
-          </div -->
         </div>
       </form>
       
@@ -42,22 +21,6 @@
           <i class=" fa20 fa fa-qrcode"></i>
         </button>
       </div>
-      <!--div class="action_container hide-on-keyboard-open padding">
-        <div class="one_of_three_buttons">
-          <button class="button button-balanced" style="margin-right:7px;width:100%;" ng-click="doShareRecvPayment()">
-            <i class="icon fa fa-share-square-o"></i>
-          </button>
-        </div>
-        <div class="one_of_three_buttons">
-          <button class="button button-balanced" style="margin-left:3px;margin-right:3px;width:100%;" ng-click="doCopyRecvPayment()">
-            <i class="icon fa fa-copy"></i>
-          </button>
-        </div>
-        <div class="one_of_three_buttons">
-          <button class="button button-balanced" style="margin-left:7px;width:100%;" ng-click="doGenerateQRCodeRecvPayment()">
-            <i class="icon fa fa-qrcode"></i>
-          </button>
-        </div>
-      </div-->
+
     </ion-content>
   </ion-view>

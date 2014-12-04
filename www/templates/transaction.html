@@ -1,4 +1,4 @@
-  <ion-view class="dark" title="Transaction details">
+<ion-view class="dark" title="{{'detail.transaction_details'|translate}}">
     <ion-nav-buttons side="left">
       <button ng-click="goBack()" class="button button-icon icon ion-ios7-arrow-back"></button>
     </ion-nav-buttons>
@@ -8,50 +8,49 @@
     <ion-content class="has-header" has-bouncing="false">
       <ion-list class="tx_details">
         <ion-item class="item-divider">
-          Info
+          {{'detail.info'|translate}}
         </ion-item>
         <ion-item>
           <div class="row">
-            <div class="col col-25">Id</div>
+            <div class="col col-25">{{'g.id'|translate}}</div>
             <div class="col col-75 ta_right">{{ ops[0].txid}}</div>
           </div>
           <div class="row">
-            <div class="col col-25">Block</div>
+            <div class="col col-25">{{'g.block'|translate}}</div>
             <div class="col col-75 ta_right">{{ ops[0].block }}</div>
           </div>
           <div class="row">
-            <div class="col col-25">Timestamp</div>
+            <div class="col col-25">{{'g.timestamp'|translate}}</div>
             <div class="col col-75 ta_right">{{ops[0].timestamp|date:'medium'}}</div>
           </div>
           <div class="row">
-            <div class="col col-25">Fee</div>
+            <div class="col col-25">{{'g.fee'|translate}}</div>
             <div class="col col-75 ta_right">USD {{getFee() | number : 5}}</div>
           </div>
         </ion-item>
         <ion-item class="item-divider">
-          Withdraws
+         {{'detail.withdraws'|translate}}
         </ion-item>
         <ion-item ng-repeat="op in getWithdraws()">
           <div class="row">
-            <div class="col col-25">Address</div>
+            <div class="col col-25">{{'g.address'|translate}}</div>
             <div class="col col-75 ta_right">{{op.address}}</div>
           </div>
           <div class="row">
-            <div class="col col-25">Amount</div>
+            <div class="col col-25">{{'g.amount'|translate}}</div>
             <div class="col col-75 ta_right">USD {{op.amount/1e4 | number : 4}}</div>
           </div>
-          
         </ion-item>
         <ion-item class="item-divider">
-          Deposits
+        {{'detail.deposits'|translate}}
         </ion-item>
         <ion-item ng-repeat="op in getDeposits()">
           <div class="row">
-            <div class="col col-25">Address</div>
+            <div class="col col-25">{{'g.address'|translate}}</div>
             <div class="col col-75 ta_right">{{op.address}}</div>
           </div>
           <div class="row">
-            <div class="col col-25">Amount</div>
+            <div class="col col-25">{{'g.amount'|translate}}</div>
             <div class="col col-75 ta_right">USD {{op.amount/1e4 | number : 4}}</div>
           </div>
         </ion-item>

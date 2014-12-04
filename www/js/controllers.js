@@ -4,18 +4,19 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
 
 })
 
-.controller('BackupCtrl', function(DB_CONFIG, MasterKey, Address, AddressBook, $scope, $http, $timeout, $location, $state, $ionicPopup, $ionicModal, $cordovaSocialSharing, $cordovaClipboard) {
+.controller('BackupCtrl', function(DB_CONFIG, T, $translate, MasterKey, Address, AddressBook, $scope, $http, $timeout, $location, $state, $ionicPopup, $ionicModal, $cordovaSocialSharing, $cordovaClipboard) {
   
   $scope.backup = {};
   
-  $scope.doCopyWallet= function() {
+  $scope.doCopyWallet = function() {
     $cordovaClipboard
       .copy($scope.backup.wallet)
       .then(function () {
-        // success
-        window.plugins.toast.show( 'Encrypted wallet copied to clipboard', 'long', 'bottom')
+        //success
+        window.plugins.toast.show(T.i('backup.copied_to_clipboard'), 'short', 'bottom');
       }, function () {
-        
+        //error
+        window.plugins.toast.show(T.i('err.unable_to_copy_ew'), 'short', 'bottom');
       });
   }
   
@@ -25,7 +26,7 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
       .then(function(result) {
 
       }, function(err) {
-        window.plugins.toast.show( 'Unable to share encrypted wallet', 'long', 'bottom')
+        window.plugins.toast.show( T.i('err.unable_to_share_ew'), 'short', 'bottom')
       });
   }
   
@@ -33,31 +34,25 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
 
     if(backupForm.backupPassword.value.length == 0) {
       $ionicPopup.alert({
-        title: 'Invalid password',
-        template: 'Please enter a password'
-      }).then(function(res) {
-
+        title    : T.i('err.invalid_password'),
+        template : T.i('err.enter_valid_password')
       });
       return;
     }
 
     if(backupForm.backupPassword.value != backupForm.backupRetypePassword.value)
     {
-      var alertPopup = $ionicPopup.alert({
-        title: 'Password does not match the confirm password',
-        template: 'Type both passwords again'
-      });
-      alertPopup.then(function(res) {
-        //console.log('Thank you for not eating my delicious ice cream cone');
+      $ionicPopup.alert({
+        title    : T.i('err.password_mismatch'),
+        template : T.i('err.retype_passwords')
       });
       return;
     }
-    
+
     var alertPopup = $ionicPopup.alert({
-        title: 'Backup Wallet',
-        template: 'In progress...  <i class="ion-loading-a" data-pack="default" data-tags="spinner, waiting, refresh, animation" data-animation="true"></i>',
-        buttons: [],
-      });
+      title    : T.i('backup.backing_up_wallet'),
+      template : T.i('g.in_progress') + ' <i class="ion-loading-a" data-pack="default" data-tags="spinner, waiting, refresh, animation" data-animation="true"></i>',
+    });
 
     $timeout(function() {
 
@@ -86,23 +81,20 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
           alertPopup.close();
           $scope.modal.show();
         } else {
-
-          alertPopup.close();
           $ionicPopup.alert({
-            title: 'Backup errpr',
-            template: 'There was an error trying to backup the wallet'
-          }).then(function(res) {
-
+            title    : T.i('menu.backup_wallet'),
+            template : T.i('err.backup_error')
+          }).then(function(){
+            alertPopup.close();
           });
           return;
         }
       }); 
 
-    }, 500);  
+    }, 500);
   }
   
   $scope.$on('modal.hidden', function(restore) {
-    //$state.go('app.home');
     $location.path('/home');
   });
   
@@ -115,7 +107,7 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
   
 })
 
-.controller('RestoreCtrl', function($q, $scope, MasterKey, Address, AddressBook, $http, $timeout, $location, $state, $ionicPopup, $ionicModal, $cordovaClipboard) {
+.controller('RestoreCtrl', function($q, T, $rootScope, $translate, $scope, MasterKey, Address, AddressBook, $http, $timeout, $location, $state, $ionicPopup, $ionicModal, $cordovaClipboard) {
   $scope.restore = {};
 
   window.addEventListener('native.keyboardhide', keyboardHideHandler);
@@ -144,39 +136,48 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
     var mytextarea_container = angular.element( document.querySelector( '.textarea_container' ) );
     var new_h = myform.prop('offsetHeight') - angular.element( document.querySelector( '.item-divider' ) ).prop('offsetHeight') - 20;
     mytextarea_container.css('height', new_h + "px");
-    // console.log('mytextarea_container:'+mytextarea_container.css('height'));
-    // console.log('new_h:' + new_h);
-    // console.log('myform.offsetHeight:'+ myform.prop('offsetHeight'));
-    // console.log('divider:'+angular.element( document.querySelector('.item-divider') ).prop('offsetHeight'));
-    
   }
   
-  $scope.pasteWallet = function(element){
-    
-    /*restoreForm.restore_wallet.focus();*/
+  $scope.pasteWallet = function(element) {
     $cordovaClipboard
       .paste()
       .then(function (result) {
+        //success
         $scope.restore.wallet = result;
-        window.plugins.toast.show( 'Backup pasted', 'short', 'bottom');
       }, function () {
-        window.plugins.toast.show( 'An error ocurred while pasting wallet backup', 'long', 'bottom');
+        //error
+        window.plugins.toast.show( T.i('err.unable_to_paste_ew'), 'short', 'bottom');
       });
   }
   
   $scope.restoreWallet = function(restore){
-    if(restoreForm.restore_wallet.value.length == 0) {
+
+    var ewallet = null;
+    try {
+      ewallet = JSON.parse(restoreForm.restore_wallet.value);
+      var b1 = 'master_key' in ewallet;
+      var b2 = 'address' in ewallet;
+      var b3 = 'address_book' in ewallet;
+      if(!b1 || !b2 || !b3)
+        ewallet=null;
+    } catch(err) {
+      ewallet = null;
+    }
+
+    // Si el input no es valido?
+    if(ewallet==null)
+    {
       $ionicPopup.alert({
-        title: 'Empty backup',
-        template: 'Please enter a previously generated backup'
+        title    : T.i('err.invalid_backup'),
+        template : T.i('err.enter_valid_backup')
       });
       return;
     }
 
     $ionicPopup.prompt({
-      title            : 'Input password',
+      title            : T.i('g.input_password'),
+      inputPlaceholder : T.i('g.password'),
       inputType        : 'password',
-      inputPlaceholder : 'password',
     }).then(function(password) {
 
       if(password === undefined)
@@ -184,50 +185,35 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
 
       if(password.trim().length == 0) {
         $ionicPopup.alert({
-          title: 'Unable to restore',
-          template: 'You must enter a valid password'
+          title    : T.i('err.empty_password'),
+          template : T.i('err.enter_valid_password')
         });
         return;
       }
 
       var alertPopup = $ionicPopup.alert({
-        title: 'Restoring backup',
-        template: 'In progress...  <i class="ion-loading-a" data-pack="default" data-tags="spinner, waiting, refresh, animation" data-animation="true"></i>',
+        title      : T.i('restore.restoring_wallet'),
+        template   : T.i('g.in_progress') + ' <i class="ion-loading-a" data-pack="default" data-tags="spinner, waiting, refresh, animation" data-animation="true"></i>',
         buttons: [],
       });
 
       $timeout(function() {
-        var ewallet = null;
-        try {
-          ewallet = JSON.parse(restoreForm.restore_wallet.value);
-          var b1 = 'master_key' in ewallet;
-          var b2 = 'address' in ewallet;
-          var b3 = 'address_book' in ewallet;
-          if(!b1 || !b2 || !b3)
-            ewallet=null;
-        } catch(err) {
-          ewallet = null;
-        }
-        
-        // Si el input no es valido?
-        if(ewallet==null)
-        {
-          alertPopup.close();
-          $ionicPopup.alert({
-            title: 'Restore backup error',
-            template: 'The backup is invalid'
-          });
-          return;
-        }
-
         //Input valid, try to restore
         var master_key = ewallet['master_key'];
         master_key.key = CryptoJS.AES.decrypt(master_key.key, password).toString(CryptoJS.enc.Latin1);
-        if(master_key.key.length == 0) {
+        var valid = false;
+        try {
+          bitcoin.HDNode.fromBase58(master_key.key);
+          valid = true;
+        } catch (err) {
+
+        }
+
+        if(!valid) {
           alertPopup.close();
           $ionicPopup.alert({
-            title: 'Restore backup error',
-            template: 'Invalid password'
+            title    : T.i('err.invalid_password'),
+            template : T.i('err.enter_valid_password')
           });
           return;
         }
@@ -241,35 +227,31 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
           var prom    = []
           for(var i=0; i<address.length; i++){
             address[i].privkey = CryptoJS.AES.decrypt(address[i].privkey, password).toString(CryptoJS.enc.Latin1);
-            var p = Address.create(address[i].deriv, address[i].address, address[i].pubkey, address[i].privkey, address[i].is_default ? true : false, address[i].label);
+            var p = Address.create(address[i].deriv, address[i].address, address[i].pubkey, address[i].privkey, address[i].is_default ? true : false, address[i].label, address[i].created_at);
             prom.push(p);
           }
 
           return $q.all(prom);
         })
         .then(function() {
-
-          alertPopup.close();
+          $rootScope.$emit('wallet-changed');
           $ionicPopup.alert({
-            title: 'Wallet restored succesfully',
-            template: 'The wallet was restored successfuly!'
+            title: T.i('menu.restore_wallet'),
+            template: T.i('restore.successful')
           })
           .then(function(res) {
+            alertPopup.close();
             $location.path('/home');
           });
-
         });
-
-    
       }, 500);  
 
-      console.log('Puso password');
     });
   }
   
 })
 
-.controller('AddressesCtrl', function(Address, MasterKey, $scope, $rootScope, $http, $timeout, $ionicActionSheet, $ionicPopup, $cordovaClipboard) {
+.controller('AddressesCtrl', function($translate, T, Address, MasterKey, $scope, $rootScope, $http, $timeout, $ionicActionSheet, $ionicPopup, $cordovaClipboard) {
 
   $scope.data = {addys:[]}
 
@@ -280,16 +262,14 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
   };
 
   $scope.loadAddys();
-  
-  //setTimeout( $scope.loadAddys, 1000);
     
   $scope.newAddr = function(){
-    // A confirm dialog
+     // A confirm dialog
      var confirmPopup = $ionicPopup.confirm({
-       title: 'New address',
-       template: 'Are you sure you want to add a new address?'
-     });
-     confirmPopup.then(function(res) {
+       title    : T.i('addys.new_address'),
+       template : T.i('addys.are_you_sure'),
+     }).then(function(res) {
+
       if(!res)
         return;
 
@@ -318,12 +298,12 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
   $scope.showActionSheet = function(addr){
    var hideSheet = $ionicActionSheet.show({
      buttons: [
-       { text: '<b>Set as default</b>' },
-       { text: 'Set label' },
-       { text: 'Copy Address' },
-       { text: 'Copy Public Key' }
+       { text: '<b>'+T.i('addys.set_as_default')+'</b>' },
+       { text: T.i('addys.set_label') },
+       { text: T.i('addys.copy_address') },
+       { text: T.i('addys.copy_public_key') }
        ],
-     cancelText: 'Cancel',
+     cancelText: T.i('g.cancel'),
      cancel: function() {
           // add cancel code..
         },
@@ -340,15 +320,13 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
       {
         // load current label
         $ionicPopup.prompt({
-          title: 'Set address label',
-          inputType: 'text',
-          inputPlaceholder: 'put label here',
-          cancelText: 'Cancel',
-          okText: 'Set label' // String (default: 'OK'). The text of the OK button.
+          title            : T.i('addys.set_label'),
+          inputPlaceholder : T.i('g.label'),
+          inputType        : 'text',
+          cancelText       : T.i('g.cancel')
        }).then(function(label) {
           if(label === undefined)
             return;
-
           Address.setLabel(addr.id, label).then(function() {
             $scope.loadAddys();
           });
@@ -361,10 +339,10 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
           .copy(index==2 ? addr.address : addr.pubkey)
           .then(function () {
             // success
-            window.plugins.toast.show( (index == 2 ? 'Address' : 'Public key') + ' copied to clipboard', 'long', 'bottom')
+            window.plugins.toast.show( (index == 2 ? T.i('g.address') : T.i('g.public_key')) + ' ' + T.i('g.copied_to_clipboard'), 'short', 'bottom')
           }, function () {
             // error
-            //show(message, duration, position)
+
           });
       }
       return true;
@@ -381,50 +359,45 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
           element.on('load', function() {
             scope.hideLoading();
           });
-          // scope.$watch('ngSrc', function() {
-              // //element.addClass('spinner-hide');
-              // console.log('watch');
-              // $ionicLoading.hide();
-          // });
         }
     };
 })
 
-.controller('ReceiveQrcodeCtrl', function($scope, $cordovaClipboard, $cordovaSocialSharing, Address, $stateParams, $http, $ionicNavBarDelegate, $location, $ionicLoading, $timeout, $ionicModal, $ionicPopup) {
+.controller('ReceiveQrcodeCtrl', function($scope, T, $cordovaClipboard, $cordovaSocialSharing, Address, $stateParams, $http, $ionicNavBarDelegate, $location, $ionicLoading, $timeout, $ionicModal, $ionicPopup) {
   
   $scope.address = $stateParams.address;
-  $scope.amount = $stateParams.amount;
+  $scope.amount  = $stateParams.amount;
   $scope.request = 'bts:'+$scope.address+'/transfer/amount/'+$scope.amount+'/asset/USD';
-  $scope.imgurl = 'http://chart.apis.google.com/chart?cht=qr&chs=300x300&chl='+encodeURIComponent($scope.request)+'&chld=H|0'
+  $scope.imgurl  = 'http://chart.apis.google.com/chart?cht=qr&chs=300x300&chl='+encodeURIComponent($scope.request)+'&chld=H|0'
 
   console.log('request -> ' + $scope.request);
   console.log('imgurl -> ' + $scope.imgurl);
 
   $scope.showLoading = function(){
     $ionicLoading.show({
-        content: '<i class="icon ion-looping"></i> Loading', //'Generating QRCode!',
-        animation: 'fade-in',
-        showBackdrop: true,
-        maxWidth: 200,
-        showDelay: 10
+      content      : '<i class="icon ion-looping"></i> Loading',
+      animation    : 'fade-in',
+      showBackdrop : true,
+      maxWidth     : 200,
+      showDelay    : 10
     }); 
   }
+
   $scope.hideLoading = function(){
     $ionicLoading.hide();
   }
   
   $scope.showLoading();
-  /*$timeout(function(){
-      $ionicLoading.hide();
-    },5000);   */
   
   $scope.doShareRecvPayment = function(){
     $cordovaSocialSharing
     .share(null, null, null, $scope.request)
     .then(function(result) {
+      // success
 
     }, function(err) {
-      window.plugins.toast.show( 'Unable to share payment request', 'long', 'bottom')
+      // error
+      window.plugins.toast.show( T.i('err.unable_to_share_req'), 'long', 'bottom')
     });
   }
   
@@ -433,10 +406,10 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
       .copy($scope.request)
       .then(function () {
         // success
-        window.plugins.toast.show( 'Payment request copied to clipboard', 'long', 'bottom')
+        window.plugins.toast.show( T.i('receive.copied_to_clipboard'), 'long', 'bottom')
       }, function () {
         // error
-        //show(message, duration, position)
+        window.plugins.toast.show( T.i('err.unable_to_copy_req'), 'long', 'bottom')
       });
   }
 
@@ -446,44 +419,25 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
   
 })
 
-.controller('ReceiveCtrl', function($scope, Address, $http, $ionicNavBarDelegate, $ionicModal, $ionicPopup, $location, $state) {
-  
-  $scope.transaction = {amount:''};
-  $scope.addNumber = function(number){
-    $scope.transaction.amount = $scope.transaction.amount.concat(number);
-  }
-  
-  $scope.addDot = function(){
-    if ($scope.transaction.amount.indexOf('.')!=-1)
-      return;
-    $scope.transaction.amount  = $scope.transaction.amount.concat('.');
-  }
-  
-  $scope.delInput = function(){
-    $scope.transaction.amount = $scope.transaction.amount.substring(0, $scope.transaction.amount.length-1);
-    return;
-  }
+.controller('ReceiveCtrl', function($scope, T, Address, $http, $ionicNavBarDelegate, $ionicModal, $ionicPopup, $location, $state) {
   
   $scope.doGenerateQRCodeRecvPayment = function(){
-    if(receiveForm.transactionAmount.value=='')
-    {
-      var alertPopup = $ionicPopup.alert({
-         title: 'Invalid amount <i class="fa fa-warning float_right"></i>',
-         template: 'The amount entered is invalid',
-         okType: 'button-assertive', 
-       });
-       alertPopup.then(function(res) {
-         
-       });
-       return;
+
+    var amount = parseInt(parseFloat(receiveForm.transactionAmount.value)*1e4);
+    if( isNaN(amount) || amount <= 0 ) {
+      $ionicPopup.alert({
+        title    : T.i('err.invalid_amount')+' <i class="fa fa-warning float_right"></i>',
+        template : T.i('err.enter_valid_amount'),
+        okType   : 'button-assertive',
+      });
+      return;
     }
-    
+
     Address.getDefault().then(function(address) {
       var amount = receiveForm.transactionAmount.value;
-      console.log('daaaale:'+amount);
-      //$location.path('/receive/qrcode/'+address.address+'/'+amount);
       $state.go('app.receive_qrcode', {address:address.address, amount:amount});
     });
+
   }
     
   $scope.goBack = function() {
@@ -492,9 +446,9 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
   };
 })
 
-.controller('SendCtrl', function($scope, $q, Scanner, Address, $http, $ionicLoading, $ionicNavBarDelegate, $ionicModal, $ionicPopup, $location, $timeout, $rootScope, $stateParams) {
+.controller('SendCtrl', function($scope, $q, T, Scanner, Address, $http, $ionicLoading, $ionicNavBarDelegate, $ionicModal, $ionicPopup, $location, $timeout, $rootScope, $stateParams) {
   
-  $scope.transaction = {message:'Generating Transaction', amount:$stateParams.amount, address:$stateParams.address};
+  $scope.transaction = {message:'send.generating_transaction', amount:$stateParams.amount, address:$stateParams.address};
   sendForm.transactionAmount.value = $stateParams.amount;
 
   console.log('STATE PARAMS ' + $stateParams.amount + ',' + $stateParams.address);
@@ -502,26 +456,14 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
   $scope.scanQR = function() {
     Scanner.scan()
     .then(function(result) {
-
-      //Back button
-      if( result.cancelled ) {
-        //HACK for android
-        if( device.platform == "Android" ) {
-          $ionicModal.fromTemplate('').show().then(function() {
-            $ionicPopup.alert({ title: 'QR Scan Cancelled', });
-          });
-        } else {
-          $ionicPopup.alert({ title: 'QR Scan Cancelled', });
+      if( !result.cancelled ) {
+        $scope.transaction.address = result.address;
+        if(result.amount !== undefined)
+        {
+          //HACK: 
+          $scope.transaction.amount = result.amount;
+          sendForm.transactionAmount.value = result.amount;
         }
-        return;
-      }
-
-      $scope.transaction.address = result.address;
-      if(result.amount !== undefined)
-      {
-        //HACK: 
-        $scope.transaction.amount = result.amount;
-        sendForm.transactionAmount.value = result.amount;
       }
 
     }, function(error) {
@@ -535,39 +477,30 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
   };
   
   $scope.validateSend = function(transaction) {
-    //console.log(sendForm.transactionAmount.value);
-    // A confirm dialog
+
     var amount = parseInt(parseFloat($scope.transaction.amount)*1e4);
     console.log($scope.transaction.amount + ' => ' + amount);
-    if (amount <= 0 )
-    {
-       var alertPopup = $ionicPopup.alert({
-         title: 'Invalid amount <i class="fa fa-warning float_right"></i>',
-         template: 'Please input a valid amount',
-         okType: 'button-assertive', 
-       });
-       alertPopup.then(function(res) {
-         
+    if ( isNaN(amount) || amount <= 0 ) {
+       $ionicPopup.alert({
+         title    : T.i('err.invalid_amount') + ' <i class="fa fa-warning float_right"></i>',
+         template : T.i('err.enter_valid_amount'),
+         okType   : 'button-assertive', 
        });
        return;
     }
     
-    if(!bitcoin.bts.is_valid_address(sendForm.transactionAddress.value))
-    {
-      var alertPopup = $ionicPopup.alert({
-         title: 'Invalid address <i class="fa fa-warning float_right"></i>',
-         template: 'Please input a valid address',
-         okType: 'button-assertive', 
-       });
-       alertPopup.then(function(res) {
-         
-       });
-       return;
+    if(!bitcoin.bts.is_valid_address(sendForm.transactionAddress.value)) {
+      $ionicPopup.alert({
+        title    : T.i('err.invalid_address') + ' <i class="fa fa-warning float_right"></i>',
+        template : T.i('err.enter_valid_address'),
+        okType   : 'button-assertive',
+      });
+      return;
     }
     
     var confirmPopup = $ionicPopup.confirm({
-      title: 'Payment confirmation',
-      template: 'Are you sure you want to send $' + $scope.transaction.amount + ' to ' + sendForm.transactionAddress.value + '?'
+      title    : T.i('send.payment_confirm'),
+      template : T.i('send.are_you_sure',{symbol:'$',amount:$scope.transaction.amount,address:sendForm.transactionAddress.value})
     });
 
     confirmPopup.then(function(res) {
@@ -596,7 +529,7 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
           if(r.error !== undefined) {
             console.log('There where errors ' + r.error);
             var alertPopup = $ionicPopup.alert({
-               title: 'Unable to send <i class="fa fa-warning float_right"></i>',
+               title: T.i('err.unable_to_create_tx') + ' <i class="fa fa-warning float_right"></i>',
                template: r.error,
                okType: 'button-assertive', 
             })
@@ -606,7 +539,7 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
             return;
           }
 
-          $scope.transaction.message = 'Signing Transaction';
+          $scope.transaction.message = 'send.signing_transaction';
           
           console.log(r.tx);
           console.log(r.to_sign);
@@ -634,22 +567,22 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
 
           $q.all(prom).then(function() {
             console.log('firmado .. mandando'); 
-            $scope.transaction.message = 'Sending Transaction';
+            $scope.transaction.message = 'send.sending_transaction';
 
             url = 'https://bsw.latincoin.com/api/v1/txs/send';
             $http.post(url, r.tx)
             .success(function(r) {
               $scope.sending_modal.hide();
               $location.path('/home');
-              window.plugins.toast.show( 'Transaction Sent', 'long', 'bottom')
-              $rootScope.transactions.unshift({sign:-1, address:sendForm.transactionAddress.value, addr_name:sendForm.transactionAddress.value, amount:amount/1e4, state:'P'});
+              window.plugins.toast.show( T.i('send.transaction_sent'), 'long', 'bottom')
+              $rootScope.transactions.unshift({sign:-1, address:sendForm.transactionAddress.value, addr_name:sendForm.transactionAddress.value, amount:amount/1e4, state:'P', date: new Date().getTime()});
               
             })
             .error(function(data, status, headers, config) {
                console.log('error...: '+status);
                 var alertPopup = $ionicPopup.alert({
-                   title: 'Unable to send <i class="fa fa-warning float_right"></i>',
-                   template: 'Server error',
+                   title: T.i('err.unable_to_send_tx') + ' <i class="fa fa-warning float_right"></i>',
+                   template: T.i('err.server_error'),
                    okType: 'button-assertive', 
                 })
                 .then(function() {
@@ -666,22 +599,19 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
         })
         .error(function(data, status, headers, config) {
            console.log('error...: '+status);
-                var alertPopup = $ionicPopup.alert({
-                   title: 'Unable to send <i class="fa fa-warning float_right"></i>',
-                   template: 'Server error',
-                   okType: 'button-assertive', 
-                })
-                .then(function() {
-                  $scope.sending_modal.hide();
-                });
+             var alertPopup = $ionicPopup.alert({
+                title: T.i('err.unable_to_send_tx') + ' <i class="fa fa-warning float_right"></i>',
+                template: T.i('err.server_error'),
+                okType: 'button-assertive', 
+             })
+            .then(function() {
+              $scope.sending_modal.hide();
+            });
         })
         .finally(function() {
            console.log('finally...');
         });
 
-
-        //$scope.tx_step_index = 1;
-        //$scope.doTxSteps();
        } 
         else {
          console.log('You are not sure');
@@ -689,40 +619,6 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
     });
     
   };
-  
-  $scope.showPopup = function() {
-      var myPopup = $ionicPopup.show({
-        hardwareBackButtonClose: false,
-        backdropClickToClose: false,
-        template: '',
-        title: 'Payment sent',
-        subTitle: 'The payment was sent successfully!',
-        scope: $scope,
-        buttons: [
-          {
-            text: 'Ok',
-            type: 'button-positive',
-          },
-        ]
-      });
-      myPopup.then(function(res) {
-        $location.path('/home');
-      });
-    };
-  
-  $scope.tx_step_index = 0;
-  $scope.doTxSteps = function() {
-    //$timeout(function() {
-      //if($scope.tx_step_index==4)
-      //{
-        //$scope.sending_modal.hide();
-        //$scope.showPopup();
-        //return;
-      //}
-      //$scope.tx_step_index = $scope.tx_step_index + 1;
-      //$scope.doTxSteps();
-    //}, 2000);
-  }
   
   // Load the modal from the given template URL
   $ionicModal.fromTemplateUrl('sending-modal.html', function($ionicModal) {
@@ -771,27 +667,14 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
   };
 })
 
-.controller('HomeCtrl', function(Scanner, AddressBook, $ionicActionSheet, $scope, $state, $http, $ionicModal, $rootScope, $ionicPopup, $timeout, $location, $cordovaBarcodeScanner) {
-  
+.controller('HomeCtrl', function(T, Scanner, AddressBook, $ionicActionSheet, $scope, $state, $http, $ionicModal, $rootScope, $ionicPopup, $timeout, $location, $cordovaBarcodeScanner) {
+
   $scope.scanQR = function() {
     Scanner.scan()
     .then(function(result) {
-
-      //Back button
-      if( result.cancelled ) {
-        //HACK for android
-        if( device.platform == "Android" ) {
-          $ionicModal.fromTemplate('').show().then(function() {
-            $ionicPopup.alert({ title: 'QR Scan Cancelled', });
-          });
-        } else {
-          $ionicPopup.alert({ title: 'QR Scan Cancelled', });
-        }
-        return;
+      if( !result.cancelled ) {
+        $state.go('app.send', {address:result.address, amount:result.amount});
       }
-
-      $state.go('app.send', {address:result.address, amount:result.amount});
-
     }, function(error) {
       window.plugins.toast.show(error, 'long', 'bottom')
     });
@@ -803,7 +686,6 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
   });
 
   $rootScope.$on('address-book-changed', function(event, data) {
-    console.log('ppppp add changed');
     var txs = [];
     angular.copy($rootScope.transactions, txs);
     for(var i=0; i<txs.length; i++) {
@@ -821,43 +703,40 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
     $rootScope.transactions = txs;
   });
 
-  $scope.showActionSheet = function(tx){
-
-   var hideSheet = $ionicActionSheet.show({
+  $scope.showActionSheet = function(tx) {
+    var hideSheet = $ionicActionSheet.show({
      buttons: [
-       { text: '<b>Add to address book</b>' },
-       { text: 'View details' },
-       ],
-     cancelText: 'Cancel',
+       { text: '<b>'+T.i('home.add_to_book')+'</b>' },
+       { text: T.i('home.view_details') },
+     ],
+     cancelText: T.i('g.cancel'),
      cancel: function() {
           // add cancel code..
-        },
+     },
      buttonClicked: function(index) {
-      // Set as default
-      if(index==0)
-      {
-        // load current label
-        $ionicPopup.prompt({
-          title: 'Save to address book',
-          inputType: 'text',
-          inputPlaceholder: 'address name',
-          cancelText: 'Cancel',
-          okText: 'Save'
-       }).then(function(name) {
-          
-          if(name === undefined)
-            return;
+       // Add to addressbook
+       if(index==0) {
+         // load current label
+         $ionicPopup.prompt({
+           title: T.i('home.add_to_book'),
+           inputType: 'text',
+           inputPlaceholder: T.i('home.address_name'),
+           cancelText: T.i('g.cancel'),
+           okText: T.i('g.save')
+         }).then(function(name) {
 
-          AddressBook.add(tx.address, name).then(function() {
-            $rootScope.loadAddressBook();
-            window.plugins.toast.show(  'Address saved successfully', 'short', 'bottom');
-          });
-       });
+           if(name === undefined)
+              return;
 
+           AddressBook.add(tx.address, name).then(function() {
+             $rootScope.loadAddressBook();
+             window.plugins.toast.show( T.i('home.save_successfull'), 'short', 'bottom');
+           });
+
+         });
       }
-      // Transaction details
-      else if(index==1)
-      {
+      // View transaction details
+      else if(index==1) {
         $state.go('app.transaction_details', {tx_id:tx['tx_id']});
       }
       return true;
