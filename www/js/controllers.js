@@ -446,13 +446,41 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
   };
 })
 
-.controller('SendCtrl', function($scope, $q, T, Scanner, Address, $http, $ionicLoading, $ionicNavBarDelegate, $ionicModal, $ionicPopup, $location, $timeout, $rootScope, $stateParams) {
+.controller('SendCtrl', function($scope, $q, T, AddressBook, Scanner, Address, $http, $ionicLoading, $ionicNavBarDelegate, $ionicModal, $ionicPopup, $location, $timeout, $rootScope, $stateParams) {
   
-  $scope.transaction = {message:'send.generating_transaction', amount:$stateParams.amount, address:$stateParams.address};
-  sendForm.transactionAmount.value = $stateParams.amount;
+  $scope.data = {address_book:[]};
+  var amount = 0;
+  if (!angular.isUndefined($stateParams.amount))
+    amount = $stateParams.amount;
+    
+  var address = '';
+  if (!angular.isUndefined($stateParams.address))
+    address = $stateParams.address;
+    
+  $scope.transaction = {message:'send.generating_transaction', amount:amount, address:address};
+  sendForm.transactionAmount.value = amount;
+  sendForm.transactionAddress.value = address;
 
-  console.log('STATE PARAMS ' + $stateParams.amount + ',' + $stateParams.address);
+  //console.log('STATE PARAMS ' + $stateParams.amount + ',' + $stateParams.address);
 
+  $scope.showAddressBook = function(){
+    $scope.address_book_modal.show();
+  }
+  
+  $scope.loadAddressBook = function() {
+    AddressBook.all().then(function(addr_book) {
+        $scope.data.address_book = addr_book;
+    });
+  };
+
+  $scope.loadAddressBook();
+  
+  $scope.selectContact = function(contact){
+    $scope.address_book_modal.hide();
+    sendForm.transactionAddress.value = contact.address;
+    $scope.transaction.address = contact.address;
+  }
+  
   $scope.scanQR = function() {
     Scanner.scan()
     .then(function(result) {
@@ -620,7 +648,19 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
     
   };
   
-  // Load the modal from the given template URL
+  // Load Address book modal
+  $ionicModal.fromTemplateUrl('address-book-modal.html', function($ionicModal) {
+      $scope.address_book_modal = $ionicModal;
+  }, {
+      // Use our scope for the scope of the modal to keep it simple
+      scope: $scope,
+      // The animation we want to use for the modal entrance
+      animation: 'slide-in-up',
+      backdropClickToClose: false,
+      hardwareBackButtonClose: false
+  });
+  
+  // Load sending process modal view.
   $ionicModal.fromTemplateUrl('sending-modal.html', function($ionicModal) {
       $scope.sending_modal = $ionicModal;
   }, {

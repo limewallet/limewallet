@@ -82,7 +82,8 @@
     "generating_transaction" : "Generando Transacción",
     "signing_transaction"    : "Firmando Transacción",
     "sending_transaction"    : "Enviando Transacción",
-    "transaction_sent"       : "Transacción Enviada"
+    "transaction_sent"       : "Transacción Enviada",
+    "address_book"           : "Contactos"
   },
 
   "backup" : {

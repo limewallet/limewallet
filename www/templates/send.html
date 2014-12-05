@@ -8,12 +8,22 @@
     </ion-nav-buttons>
     
     <ion-content class="has-header">
-      <form novalidate name="sendForm" >
+      <form novalidate name="sendForm" class="send_form" >
         <div class="list">
-        
-          <label class="item item-input">
+          
+          <div class="item item-input-inset">
+            <label class="item-input-wrapper wrapper_clean">
+              <input required name="transactionAddress" ng-model="transaction.address" type="text" placeholder="{{'g.to'|translate}}" class="big big_placeholder">
+            </label>
+            <!-- button class="button button-small button-icon icon ion-ios-book-outline" -->  
+            <!--button ng-click="showAddressBook()" class="button button-small icon ion-ios-book-outline" -->              
+            <button ng-click="showAddressBook()" class="button button-energized button-small icon" >
+              <i style="color:#ffffff!important;" class="fa fa-book"></i>
+            </button>
+          </div>
+          <!-- label class="item item-input">
             <input required name="transactionAddress" ng-model="transaction.address" type="text" placeholder="{{'g.to'|translate}}" class="big big_placeholder">
-          </label>
+          </label -->
     
           <label class="item item-input">
             <i class="icon fa20 fa fa-dollar placeholder-icon"></i>
@@ -45,6 +55,26 @@
             </h2>
           </div>
         </div>
+      </ion-content>
+    </ion-modal-view>
+  </script>
+  
+  <script id="address-book-modal.html" type="text/ng-template">
+    <ion-modal-view>
+      <ion-header-bar align-title="middle" class="bar-energized nav-title-slide-ios7">
+        <div class="title">{{'send.address_book'|translate}}</div>
+        <button ng-click="address_book_modal.hide()" class="button button-icon icon ion-ios7-close-empty"></button>
+      </ion-header-bar>
+      
+      <ion-content class="has-header">
+        <ion-list>
+          <ion-item ng-repeat="addr in data.address_book">
+            <a ng-click="selectContact(addr)">
+              <h3 class="calm">{{addr.name}}</h3>
+              <h4>{{addr.address}} </h4>
+            </a>
+          </ion-item>
+        </ion-list>  
       </ion-content>
     </ion-modal-view>
   </script>
