@@ -707,9 +707,11 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
   };
 })
 
-.controller('HomeCtrl', function(T, Scanner, AddressBook, $ionicActionSheet, $scope, $state, $http, $ionicModal, $rootScope, $ionicPopup, $timeout, $location, $cordovaBarcodeScanner) {
-
+.controller('HomeCtrl', function(T, Scanner, AddressBook, $ionicSlideBoxDelegate, $ionicActionSheet, $scope, $state, $http, $ionicModal, $rootScope, $ionicPopup, $timeout, $location, $cordovaBarcodeScanner) {
+  
   $scope.scanQR = function() {
+    $ionicSlideBoxDelegate.$getByHandle('balanceSlideHandle').next();
+    return;
     Scanner.scan()
     .then(function(result) {
       if( !result.cancelled ) {
@@ -720,7 +722,9 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
     });
   }
 
-
+  $scope.bitAssetHasChanged = function(index){
+    // cambiar asset en lista
+  }
   $rootScope.$on('refresh-done', function(event, data) {
     $scope.$broadcast('scroll.refreshComplete');
   });

@@ -20,7 +20,9 @@
     "confirm_password"    : "Confirmar Contraseña",
     "input_password"      : "Ingrese Contraseña",
     "in_progress"         : "En progreso...",
-    "copied_to_clipboard" : "copiado al portapapeles"
+    "copied_to_clipboard" : "copiado al portapapeles",
+    "updated"             : "Actualizado",
+    "unable_to_refresh"   : "Imposible actualizar info"
   },
 
   "err" : {

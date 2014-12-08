@@ -10,12 +10,36 @@
   
   <ion-content class="has-header" has-bouncing="false">
     <div class="balance_container energized_bg">
-      <div class="balance display_table_cellNOT vmiddleNOT">
-        <span style="font-size:50px;line-height:50px;"><i style="font-size:25px;vertical-align:middle!important;" class="fa fa-dollar"></i>{{$root.balance| number : 2}}</span>
-        <br/>
-        <span>{{ 'home.balance' | translate:{asset:'USD'} }}</span>
+      <div class="balance">
+        <ion-slide-box on-slide-changed="slideChanged(index)" on-slide-changed="bitAssetHasChanged($index)" show-pager="true" does-continue="true" delegate-handle="balanceSlideHandle">
+          <ion-slide>
+              <span class="balance_text"><i class="fa fa-dollar"></i>{{$root.balance| number : 2}}</span>
+              <br/>
+              <span>{{ 'home.balance' | translate:{asset:'USD'} }}</span>
+          </ion-slide>
+          <ion-slide>
+              <span class="balance_text"><i class="fa fa-cny"></i>{{$root.balance| number : 2}}</span>
+              <br/>
+              <span>{{ 'home.balance' | translate:{asset:'CNY'} }}</span>
+          </ion-slide>
+          <ion-slide>
+              <span class="balance_text"><i class="fa fa-eur"></i>{{$root.balance| number : 2}}</span>
+              <br/>
+              <span>{{ 'home.balance' | translate:{asset:'EUR'} }}</span>
+          </ion-slide>
+          <ion-slide>
+              <span class="balance_text"><i>GC</i>{{$root.balance| number : 2}}</span>
+              <br/>
+              <span>{{ 'home.balance' | translate:{asset:'GOLD'} }}</span>
+          </ion-slide>
+      </ion-slide-box>
       </div>
     </div>
+    <!--div class="balance">
+        <span class="balance_text"><i class="fa fa-dollar"></i>{{$root.balance| number : 2}}</span>
+        <br/>
+        <span>{{ 'home.balance' | translate:{asset:'USD'} }}</span>
+      </div -->
     <div class="punta2"></div>
     <div class="index_buttons">
       <div class="button_send">

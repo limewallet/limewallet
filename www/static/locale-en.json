@@ -20,7 +20,9 @@
     "confirm_password"    : "Confirm Password",
     "input_password"      : "Input Password",
     "in_progress"         : "In progress...",
-    "copied_to_clipboard" : "copied to clipboard"
+    "copied_to_clipboard" : "copied to clipboard",
+    "updated"             : "Updated",
+    "unable_to_refresh"   : "Unable to refresh"
   },
 
   "err" : {

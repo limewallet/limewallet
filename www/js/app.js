@@ -24,7 +24,7 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
     };
 })
 
-.run(function(DB, $cordovaGlobalization, $translate, ReconnectingWebSocket, $q, MasterKey, AddressBook, Address, $http, $rootScope, $ionicPlatform, $cordovaLocalNotification, $cordovaBarcodeScanner, $ionicModal, $ionicPopup, $cordovaSplashscreen) {
+.run(function(DB, $cordovaGlobalization, $translate, ReconnectingWebSocket, $q, MasterKey, AddressBook, Address, $http, $rootScope, $ionicPlatform, $cordovaLocalNotification, $cordovaBarcodeScanner, $ionicModal, $ionicPopup, $cordovaSplashscreen, T) {
 
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
@@ -48,7 +48,6 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
         $translate.use('en');
     });
 
-
     $rootScope.balance      = 0;
     $rootScope.transactions = [];
     $rootScope.raw_txs      = {};
@@ -61,7 +60,7 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
       if(res === undefined) {
 
         console.log('creating master key...');
-
+        
         var hdnode  = bitcoin.HDNode.fromBase58( bitcoin.HDNode.fromSeedBuffer( bitcoin.ECKey.makeRandom().d.toBuffer() ).toString() );
         var privkey = hdnode.privKey;
         var pubkey  = hdnode.pubKey.toBuffer();
@@ -226,10 +225,10 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
            
            $rootScope.transactions=txs;
            if(show_toast == true)
-            window.plugins.toast.show( 'Updated', 'short', 'bottom');
+            window.plugins.toast.show( T.i('g.updated'), 'short', 'bottom');
         })
         .error(function(data, status, headers, config) {
-           window.plugins.toast.show( 'Unable to refresh', 'long', 'bottom');
+           window.plugins.toast.show( T.i('g.unable_to_refresh'), 'long', 'bottom');
         })
         .finally(function() {
            console.log('RefreshBalance: finally...');
