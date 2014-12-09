@@ -198,7 +198,19 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
             return;
 
           } else {
-            deferred.reject('Invalid address');
+            //deferred.reject('Invalid address');
+            var priv;
+            try {
+              priv = bitcoin.ECKey.fromWIF(res);
+            } catch(err) {
+
+            }
+            if( priv === undefined) {
+              deferred.reject('Invalid address');
+              return;
+            }
+            console.log('Escaneaste una privada => ' + res);
+            deferred.resolve({cancelled:false, privkey:res}); 
             return;
           }
 

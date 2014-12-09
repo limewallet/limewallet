@@ -46,8 +46,8 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
       function(error) {
         console.log('Unable to get preferred language');
         $translate.use('en');
-    });
-
+      });
+    
     $rootScope.balance      = 0;
     $rootScope.transactions = [];
     $rootScope.raw_txs      = {};
@@ -60,7 +60,7 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
       if(res === undefined) {
 
         console.log('creating master key...');
-        
+
         var hdnode  = bitcoin.HDNode.fromBase58( bitcoin.HDNode.fromSeedBuffer( bitcoin.ECKey.makeRandom().d.toBuffer() ).toString() );
         var privkey = hdnode.privKey;
         var pubkey  = hdnode.pubKey.toBuffer();
@@ -368,6 +368,16 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
         'menuContent' :{
           templateUrl: "templates/transaction.html",
           controller: 'TxCtrl'
+        }
+      }
+    })
+    
+    .state('app.import_priv', {
+      url: "/import_priv/:private_key",
+      views: {
+        'menuContent' :{
+          templateUrl: "templates/import_priv.html",
+          controller: 'ImportPrivCtrl'
         }
       }
     })
