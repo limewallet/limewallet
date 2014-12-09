@@ -22,7 +22,8 @@
     "in_progress"         : "En progreso...",
     "copied_to_clipboard" : "copiado al portapapeles",
     "updated"             : "Actualizado",
-    "unable_to_refresh"   : "Imposible actualizar info"
+    "unable_to_refresh"   : "Imposible actualizar info",
+    "loading"             : "Actualizando"    
   },
 
   "err" : {
@@ -45,7 +46,8 @@
     "unable_to_send_tx"   : "No fue posible enviar la transacción",
     "unable_to_paste_ew"  : "No fue posible pegar la billetera encriptada",
     "server_error"        : "Error en servidor",
-    "backup_error"        : "Se han producido errores al intentar resguardar la billetera"
+    "backup_error"        : "Se han producido errores al intentar resguardar la billetera",
+    "unable_pw_balance"  : "Imposible obtener balance de billetera"
   },
 
   "home" : {
@@ -114,5 +116,15 @@
     "set_label"       : "Etiquetar",
     "copy_address"    : "Copiar Dirección",
     "copy_public_key" : "Copiar Clave Pública"
+  },
+  
+  "import_priv" : {
+    "paper_wallet"            : "Importar billetera",
+    "sweep_balance"           : "Barrer balance",
+    "invalid"                 : "Imposible importar llave privada: inválida o vacía.",
+    "pk_scanned_ok"           : "Billetera escaneada",
+    "explain_text"            : "Ahora puede barrer este balance a su billetera.<br/>Se agregará el balance de esta billetara en papel a su billetera a través de una transacción hacia su dirección por defecto.",
+    "transaction_sent"        : "¡Balance barrido satisfactoriamente!",
+    "loading_balance"         : "Obteniendo balance de billetera en papel"
   }
 }

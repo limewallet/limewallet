@@ -22,7 +22,7 @@
     "in_progress"         : "In progress...",
     "copied_to_clipboard" : "copied to clipboard",
     "updated"             : "Updated",
-    "unable_to_refresh"   : "Unable to refresh"
+    "unable_to_refresh"   : "Unable to refresh",
     "loading"             : "Loading"    
   },
 
@@ -119,10 +119,10 @@
   },
   
   "import_priv" : {
-    "paper_wallet"            : "Import Using Paper Wallet",
+    "paper_wallet"            : "Import Paper Wallet",
     "sweep_balance"           : "Sweep balance",
     "invalid"                 : "Can't import invalid/empty private key",
-    "pk_scanned_ok"           : "Paper wallet scanned succesfully!",
+    "pk_scanned_ok"           : "Paper wallet",
     "explain_text"            : "You can now sweep this balance into your wallet.<br/>Paper wallet balance will be added to your wallet through a transaction to your default address.",
     "transaction_sent"        : "Balance sweeped successfully!",
     "loading_balance"         : "Loading paper wallet balance"
