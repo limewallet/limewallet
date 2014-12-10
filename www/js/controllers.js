@@ -78,6 +78,7 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
         //TODO: check for complete ewallet
         if('master_key' in ewallet && 'address' in ewallet && 'address_book' in ewallet) {
           $scope.backup.wallet = JSON.stringify(ewallet,  null, '\t');
+          console.log($scope.backup.wallet);
           alertPopup.close();
           $scope.modal.show();
         } else {
@@ -220,14 +221,18 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
 
         MasterKey.store(master_key.key, master_key.deriv)
         .then(function(){
-          return Address.deleteAll()
-        })
-        .then(function() {
+          var prom    = [Address.deleteAll()];
           var address = ewallet['address'];
-          var prom    = []
+
           for(var i=0; i<address.length; i++){
             address[i].privkey = CryptoJS.AES.decrypt(address[i].privkey, password).toString(CryptoJS.enc.Latin1);
             var p = Address.create(address[i].deriv, address[i].address, address[i].pubkey, address[i].privkey, address[i].is_default ? true : false, address[i].label, address[i].created_at);
+            prom.push(p);
+          }
+        
+          var address_book = ewallet['address_book'];
+          for(var i=0; i<address_book.length; i++){
+            var p = AddressBook.add(address_book[i].name, address_book[i].address, address_book[i].is_favorite);
             prom.push(p);
           }
 
@@ -251,7 +256,7 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
   
 })
 
-.controller('AddressesCtrl', function($translate, T, Address, MasterKey, $scope, $rootScope, $http, $timeout, $ionicActionSheet, $ionicPopup, $cordovaClipboard) {
+.controller('AccountCtrl', function($translate, T, Address, MasterKey, $scope, $rootScope, $http, $timeout, $ionicActionSheet, $ionicPopup, $cordovaClipboard) {
 
   $scope.data = {addys:[]}
 
@@ -446,24 +451,25 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
   };
 })
 
-.controller('ImportPrivCtrl', function($scope, T, Address, $http, $ionicLoading, $ionicNavBarDelegate, $ionicModal, $ionicPopup, $location, $timeout, $rootScope, $stateParams) {
+.controller('ImportPrivCtrl', function($scope, T, $q, Address, $http, $ionicLoading, $ionicNavBarDelegate, $ionicModal, $ionicPopup, $location, $timeout, $rootScope, $stateParams) {
   
   $scope.showLoading = function(){
     $ionicLoading.show({
       template      : '<i class="icon ion-looping"></i> ' + T.i('import_priv.loading_balance'),
       animation    : 'fade-in',
       showBackdrop : true,
-      maxWidth     : 200,
-      showDelay    : 10
+      maxWidth     : 200
+      //showDelay    : 0
     }); 
   }
+
+  $scope.showLoading();
   
   $scope.hideLoading = function(){
     $ionicLoading.hide();
   }
   
   $scope.getImportedKeyBalance = function(addr){
-    $scope.showLoading();
     var url = 'https://bsw.latincoin.com/api/v1/addrs/' + addr + '/balance';
     $http.get(url)
     .success(function(r) {
@@ -480,8 +486,8 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
       {
         $timeout(function () {
           /* Commented for testing purposes. */
-          //$location.path('/home');
-          //window.plugins.toast.show( T.i('err.unable_pw_balance'), 'long', 'bottom');
+          $location.path('/home');
+          window.plugins.toast.show( T.i('err.unable_pw_balance'), 'long', 'bottom');
         }, 500);
       }
       $scope.imported_pk.amount = total/1e4;
@@ -510,8 +516,8 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
     console.log($scope.imported_pk.amount + ' => ' + amount);
     if ( isNaN(amount) || amount <= 0 ) {
        $ionicPopup.alert({
-         title    : T.i('err.invalid_amount') + ' <i class="fa fa-warning float_right"></i>',
-         template : T.i('err.enter_valid_amount'),
+         title    : T.i('err.empty_paper_wallet') + ' <i class="fa fa-warning float_right"></i>',
+         template : T.i('err.paper_no_balance'),
          okType   : 'button-assertive', 
        });
        return;
@@ -531,6 +537,8 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
             "amount"  : amount
         }]
       }
+
+      console.log('voy a llamar a new en sweeping');
 
       var url = 'https://bsw.latincoin.com/api/v1/txs/new';
       $http.post(url, tx_req)
@@ -560,49 +568,37 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
         Buffer = bitcoin.ECKey.curve.n.toBuffer().constructor;
         var to_sign = new Buffer(r.to_sign, 'hex')
          
-        var prom = [];
-        angular.forEach(r.required_signatures, function(req_addy) {
-          var p = Address.by_address(req_addy).then(function(addy) {
-            console.log(addy.address);
-            var priv = $scope.imported_pk.priv_key; // Si ya viene en format Wif
-            var signature = bitcoin.ecdsa.sign(bitcoin.ECKey.curve, to_sign, priv.d);
-            var i = bitcoin.ecdsa.calcPubKeyRecoveryParam(bitcoin.ECKey.curve, priv.d.constructor.fromBuffer(to_sign), signature, priv.pub.Q);
-            var compact = signature.toCompact(i, priv.pub.compressed).toString('hex');
-            console.log(compact);
-            r.tx.signatures.push(compact);
-          });
-          prom.push(p);
-        });
+        var priv = bitcoin.ECKey.fromWIF($scope.imported_pk.priv_key); // Si ya viene en format Wif
+        var signature = bitcoin.ecdsa.sign(bitcoin.ECKey.curve, to_sign, priv.d);
+        var i = bitcoin.ecdsa.calcPubKeyRecoveryParam(bitcoin.ECKey.curve, priv.d.constructor.fromBuffer(to_sign), signature, priv.pub.Q);
+        var compact = signature.toCompact(i, priv.pub.compressed).toString('hex');
+        console.log(compact);
+        r.tx.signatures.push(compact);
 
-        $q.all(prom).then(function() {
-          console.log('firmado .. mandando'); 
-          $scope.sweeping.message = 'send.sending_transaction';
+        console.log('firmado .. mandando'); 
+        $scope.sweeping.message = 'send.sending_transaction';
 
-          url = 'https://bsw.latincoin.com/api/v1/txs/send';
-          $http.post(url, r.tx)
-          .success(function(r) {
-            $scope.sweeping_modal.hide();
-            $location.path('/home');
-            window.plugins.toast.show( T.i('import_priv.transaction_sent'), 'long', 'bottom')
-            $rootScope.transactions.unshift({sign:-1, address:imported_address, addr_name:'Paper Wallet', amount:amount/1e4, state:'P', date: new Date().getTime()});
-            
-          })
-          .error(function(data, status, headers, config) {
-             console.log('error...: '+status);
-              var alertPopup = $ionicPopup.alert({
-                 title: T.i('err.unable_to_send_tx') + ' <i class="fa fa-warning float_right"></i>',
-                 template: T.i('err.server_error'),
-                 okType: 'button-assertive', 
-              })
-              .then(function() {
-                $scope.sweeping_modal.hide();
-              });
-          })
-          .finally(function() {
-             console.log('finally...');
-          });
-
-           
+        url = 'https://bsw.latincoin.com/api/v1/txs/send';
+        $http.post(url, r.tx)
+        .success(function(r) {
+          $scope.sweeping_modal.hide();
+          $location.path('/home');
+          window.plugins.toast.show( T.i('import_priv.transaction_sent'), 'long', 'bottom')
+          //$rootScope.transactions.unshift({sign:-1, address:imported_address, addr_name:'Paper Wallet', amount:amount/1e4, state:'P', date: new Date().getTime()});
+        })
+        .error(function(data, status, headers, config) {
+           console.log('error...: '+status);
+            var alertPopup = $ionicPopup.alert({
+               title: T.i('err.unable_to_send_tx') + ' <i class="fa fa-warning float_right"></i>',
+               template: T.i('err.server_error'),
+               okType: 'button-assertive', 
+            })
+            .then(function() {
+              $scope.sweeping_modal.hide();
+            });
+        })
+        .finally(function() {
+           console.log('finally...');
         });
 
       })
@@ -624,7 +620,7 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
     });
   }
   
-  // Load Address book modal
+  // Load sweeping modal
   $ionicModal.fromTemplateUrl('sweeping-modal.html', function($ionicModal) {
       $scope.sweeping_modal = $ionicModal;
   }, {
@@ -639,22 +635,16 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
   /* Initialization */
   // ToDo: Resolver $scope.imported_pk.address
   
-  $scope.imported_pk = {amount:0, priv_key:'NOT_AVAILABLE', address:'NOT_AVAILABLE'};
-  $scope.sweeping = {message:'send.generating_transaction'
-                      //, amount:amount
-                      //, address:address
-                      };
+  $scope.imported_pk = {amount:{}, priv_key:'NOT_AVAILABLE', address:'NOT_AVAILABLE'};
+  $scope.sweeping = {message:'send.generating_transaction'};
   
-  if (!angular.isUndefined($stateParams.private_key))
-    $scope.imported_pk.priv_key = $stateParams.private_key;
-  else
-  {
-    $location.path('/home');
-    window.plugins.toast.show( T.i('import_priv.invalid'), 'long', 'bottom');
-  }
-  
+  $scope.imported_pk.priv_key = $stateParams.private_key;
+  $scope.imported_pk.address = bitcoin.bts.wif_to_address($scope.imported_pk.priv_key);
+
   console.log('llamandi a getImportedKeyBalance');
-  $scope.getImportedKeyBalance($scope.imported_pk.address);
+  $timeout( function() { 
+    $scope.getImportedKeyBalance($scope.imported_pk.address);
+  }, 1000);
 })
 
 .controller('SendCtrl', function($scope, $q, T, AddressBook, Scanner, Address, $http, $ionicLoading, $ionicNavBarDelegate, $ionicModal, $ionicPopup, $location, $timeout, $rootScope, $stateParams) {
@@ -696,6 +686,21 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
     Scanner.scan()
     .then(function(result) {
       if( !result.cancelled ) {
+
+        //Pubkey scanned
+        if(result.pubkey !== undefined) {
+          $scope.transaction.address = bitcoin.bts.pub_to_address(bitcoin.bts.decode_pubkey(result.pubkey));
+          console.log($scope.transaction.address);
+          return;
+        }
+        
+        //Wif scanned ... think
+        //if(result.privkey !== undefined) {
+          //$scope.transaction.address = bitcoin.bts.wif_to_address(result.privkey);
+          //console.log($scope.transaction.address);
+          //return;
+        //}
+
         $scope.transaction.address = result.address;
         if(result.amount !== undefined)
         {
@@ -884,6 +889,64 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
   });  
 })
 
+.controller('AddressBookCtrl', function($scope, T, $ionicPopup, $ionicActionSheet, AddressBook, $rootScope, $ionicNavBarDelegate, $stateParams){
+
+  $scope.data = {addys:[]}
+
+  $scope.loadAddys = function() {
+    AddressBook.all().then(function(addys) {
+        $scope.data.addys = addys;
+    });
+  };
+
+  $scope.loadAddys();
+
+  $scope.showActionSheet = function(addr){
+    var fav_text = 'book.add_to_fav';
+    if(addr.is_favorite)
+      fav_text = 'book.remove_from_fav';
+
+   var hideSheet = $ionicActionSheet.show({
+     buttons: [
+       { text: '<b>'+T.i(fav_text)+'</b>' },
+       { text: T.i('g.remove') },
+       ],
+     cancelText: T.i('g.cancel'),
+     cancel: function() {
+          // add cancel code..
+        },
+     buttonClicked: function(index) {
+      // Set as favorite
+      if(index==0)
+      {
+        var fav = addr.is_favorite ? 0 : 1;
+        console.log('mandamos: ' + addr.id + '->' + fav);
+        AddressBook.setFavorite(addr.id, fav).then(function() {
+          $scope.loadAddys();
+        });
+      }
+      // Remove from address book
+      else if(index==1)
+      {
+          // load current label
+         var confirmPopup = $ionicPopup.confirm({
+           title    : T.i('book.remove_from_ab'),
+           template : T.i('book.remove_sure', {'name':addr.name}),
+         }).then(function(res) {
+          if(!res)
+            return;
+            AddressBook.remove(addr.id).then(function() {
+              $scope.loadAddys();
+            });
+         });
+      }
+      return true;
+     }
+   });
+  }
+
+})
+
 .controller('TxCtrl', function($scope, $rootScope, $ionicNavBarDelegate, $stateParams){
 
   $scope.ops = $rootScope.raw_txs[$stateParams.tx_id];
@@ -921,17 +984,22 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
 .controller('HomeCtrl', function(T, Scanner, AddressBook, $ionicSlideBoxDelegate, $ionicActionSheet, $scope, $state, $http, $ionicModal, $rootScope, $ionicPopup, $timeout, $location, $cordovaBarcodeScanner) {
   
   $scope.scanQR = function() {
-    //HACK for testing
-    $state.go('app.import_priv', {private_key:'private_key123456789'});
-    return;  
+
     Scanner.scan()
     .then(function(result) {
       if( !result.cancelled ) {
+
         if(result.privkey !== undefined)
         {
           $state.go('app.import_priv', {private_key:result.privkey});
           return;
         }
+
+        //Pubkey scanned
+        if(result.pubkey !== undefined) {
+          result.address = bitcoin.bts.pub_to_address(bitcoin.bts.decode_pubkey(result.pubkey));
+        }
+
         $state.go('app.send', {address:result.address, amount:result.amount});
       }
     }, function(error) {

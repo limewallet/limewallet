@@ -129,15 +129,25 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
     var self = this;
     
     self.all = function() {
-        return DB.query('SELECT * FROM address_book')
+        return DB.query('SELECT * FROM address_book order by is_favorite desc')
         .then(function(result){
             return DB.fetchAll(result);
         });
     };
 
-    self.add = function(address, name) {
-        return DB.query('INSERT or REPLACE into address_book (name, address, is_favorite) values (?,?,?)', [name, address, 0]);
+    self.add = function(address, name, is_favorite) {
+        if( is_favorite === 'undefined' ) 
+          is_favorite = 0;
+        return DB.query('INSERT or REPLACE into address_book (name, address, is_favorite) values (?,?,?)', [name, address, is_favorite]);
     }
+
+    self.setFavorite = function(id, fav) {
+        return DB.query('UPDATE address_book set is_favorite=? where id=?', [fav,id]);
+    };
+
+    self.remove = function(id) {
+        return DB.query('DELETE from address_book where id=?',[id]);
+    };
 
     return self;
 })
@@ -197,8 +207,13 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
             deferred.resolve({cancelled:false, address:res}); 
             return;
 
+          } else if( bitcoin.bts.is_valid_pubkey(res) ) {
+
+            console.log('Escaneaste una pubkey => ' + res);
+            deferred.resolve({cancelled:false, pubkey:res}); 
+            return;
+
           } else {
-            //deferred.reject('Invalid address');
             var priv;
             try {
               priv = bitcoin.ECKey.fromWIF(res);
@@ -206,7 +221,7 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
 
             }
             if( priv === undefined) {
-              deferred.reject('Invalid address');
+              deferred.reject('Invalid Qr');
               return;
             }
             console.log('Escaneaste una privada => ' + res);

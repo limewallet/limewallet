@@ -8,6 +8,7 @@
     "received"            : "Recibido",
     "from"                : "De",
     "to"                  : "A",
+    "remove"              : "Remove",
     "amount"              : "Monto",
     "address"             : "Dirección",
     "public_key"          : "Clave Pública",
@@ -47,7 +48,9 @@
     "unable_to_paste_ew"  : "No fue posible pegar la billetera encriptada",
     "server_error"        : "Error en servidor",
     "backup_error"        : "Se han producido errores al intentar resguardar la billetera",
-    "unable_pw_balance"  : "Imposible obtener balance de billetera"
+    "unable_pw_balance"   : "Imposible obtener balance de billetera"
+    "empty_paper_wallet"  : "Billetera vacia",
+    "paper_no_balance"    : "La billetera de papel no tiene balances disponibles"
   },
 
   "home" : {
@@ -68,9 +71,10 @@
   "menu" : {
     "settings"       : "Configuración",
     "home"           : "Principal",
-    "my_addresses"   : "Mis direcciones",
+    "address_book"   : "Agenda",
     "backup_wallet"  : "Resguardar Billetera",
-    "restore_wallet" : "Restaurar Billetera"
+    "restore_wallet" : "Restaurar Billetera",
+    "account"        : "Mi Cuenta"
   },
 
   "receive" : {
@@ -111,11 +115,18 @@
 
   "addys" : {
     "new_address"     : "Nueva dirección",
-    "are_you_sure"    : "Esta seguro que desea crear una nueva dirección?",
+    "are_you_sure"    : "Esta seguro que desea crear una nueva dirección en su cuenta?",
     "set_as_default"  : "Establecer como predeterminada",
     "set_label"       : "Etiquetar",
     "copy_address"    : "Copiar Dirección",
     "copy_public_key" : "Copiar Clave Pública"
+  },
+
+  "book" : {
+    "add_to_fav"        : "Agregar a favoritos",
+    "remove_from_fav"   : "Quitar de favoritos",
+    "remove_from_ab"    : "Quitar de la agenda",
+    "remove_sure"       : "Esta seguro que desea eliminar <b>{{name}}</b> de la agenda?"
   },
   
   "import_priv" : {

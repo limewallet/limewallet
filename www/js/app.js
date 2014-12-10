@@ -73,7 +73,7 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
             privkey.toWIF(), 
             true, 
             'main').then( function() {
-              $rootScope.$emit('new-address-created');
+              $rootScope.$emit('wallet-changed');
             });
         });
       }
@@ -291,7 +291,7 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
 
 .config(function($stateProvider, $urlRouterProvider, $translateProvider) {
 
-  $translateProvider.useStaticFilesLoader({ prefix: '/static/locale-', suffix: '.json'});
+  $translateProvider.useStaticFilesLoader({ prefix: 'static/locale-', suffix: '.json'});
 
   $stateProvider
     .state('app', {
@@ -321,12 +321,12 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
       }
     })
     
-    .state('app.addresses', {
-      url: "/settings/addresses",
+    .state('app.account', {
+      url: "/settings/account",
       views: {
         'menuContent' :{
-          templateUrl: "templates/settings.addresses.html",
-          controller: 'AddressesCtrl'
+          templateUrl: "templates/settings.account.html",
+          controller: 'AccountCtrl'
         }
       }
     })
@@ -342,7 +342,6 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
     })
     
     .state('app.receive_qrcode', {
-      //url: "/receive/qrcode/:request",
       url: "/receive/qrcode/:address/:amount",
       views: {
         'menuContent' :{
@@ -368,6 +367,16 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
         'menuContent' :{
           templateUrl: "templates/transaction.html",
           controller: 'TxCtrl'
+        }
+      }
+    })
+
+    .state('app.address_book', {
+      url: "/address_book",
+      views: {
+        'menuContent' :{
+          templateUrl: "templates/settings.addressbook.html",
+          controller: 'AddressBookCtrl'
         }
       }
     })

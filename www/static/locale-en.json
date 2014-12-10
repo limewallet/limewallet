@@ -8,6 +8,7 @@
     "received"            : "Received",
     "from"                : "From",
     "to"                  : "To",
+    "remove"              : "Remove",
     "amount"              : "Amount",
     "address"             : "Address",
     "public_key"          : "Public Key",
@@ -47,7 +48,9 @@
     "unable_to_paste_ew"  : "Unable to paste encrypted wallet",
     "server_error"        : "Server error",
     "backup_error"        : "There were errors trying to backup the wallet",
-    "unable_pw_balance"  : "Unable to get paper wallet balance"
+    "unable_pw_balance"   : "Unable to get paper wallet balance",
+    "empty_paper_wallet"  : "Empty paper wallet",
+    "paper_no_balance"    : "The paper wallet has no available balance"
   },
 
   "home" : {
@@ -68,9 +71,10 @@
   "menu" : {
     "settings"       : "Settings",
     "home"           : "Home",
-    "my_addresses"   : "My Addresses",
+    "address_book"   : "Address Book",
     "backup_wallet"  : "Backup Wallet",
-    "restore_wallet" : "Restore Wallet"
+    "restore_wallet" : "Restore Wallet",
+    "account"        : "My Account"
   },
 
   "receive" : {
@@ -111,11 +115,18 @@
 
   "addys" : {
     "new_address"     : "New Address",
-    "are_you_sure"    : "Are you sure you want to add a new address?",
+    "are_you_sure"    : "Are you sure you want to add a new address to your account?",
     "set_as_default"  : "Set as default",
     "set_label"       : "Set Label",
     "copy_address"    : "Copy Addres",
     "copy_public_key" : "Copy Public Key"
+  },
+
+  "book" : {
+    "add_to_fav"        : "Add to favorites",
+    "remove_from_fav"   : "Remove from favorites",
+    "remove_from_ab"    : "Remove from address book",
+    "remove_sure"       : "Are you sure you want to remove <b>{{name}}</b> from the address book?"
   },
   
   "import_priv" : {
