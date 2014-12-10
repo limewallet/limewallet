@@ -151,6 +151,59 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
 
     return self;
 })
+//Asset service 
+.factory('Asset', function(DB, DB_CONFIG) {
+    var self = this;
+    
+    self.all = function() {
+        return DB.query('SELECT * FROM asset order by is_default desc, is_enabled desc, id asc')
+        .then(function(result){
+            return DB.fetchAll(result);
+        });
+    };
+    
+    self.allEnabled = function() {
+        return DB.query('SELECT * FROM asset where is_enabled = 1 order by is_default desc, is_enabled desc, id asc')
+        .then(function(result){
+            return DB.fetchAll(result);
+        });
+    };
+
+    self.add = function(asset_id, symbol, fullname, is_default, precision, symbol_ui_class, symbol_ui_text) {
+        return DB.query('INSERT or REPLACE into asset (asset_id, symbol, fullname, is_default, is_enabled, precision, symbol_ui_class, symbol_ui_text) values (?,?,?,?,?,?,?,?)', [asset_id, symbol, fullname, is_default, 1, precision, symbol_ui_class, symbol_ui_text]);
+    }
+    
+    self.init = function() {
+      angular.forEach(DB_CONFIG.assets, function(asset) {
+            self.add(asset.asset_id, asset.symbol, asset.fullname, (asset.symbol=='USD'?1:0), asset.precision, asset.symbol_ui_class, asset.symbol_ui_text);
+            console.log('Asset ' + asset.symbol + ' initialized');
+        });
+    }
+    
+    self.getDefault = function() {
+        return DB.query('SELECT * FROM asset order by is_default desc limit 1',[])
+        .then(function(result){
+            return DB.fetch(result);
+        });
+    };
+
+    self.setDefault = function(id) {
+        return DB.query('UPDATE asset set is_default=0', [])
+        .then(function(result){
+          return DB.query('UPDATE asset set is_default=1 where id = ?', [id]);
+        });
+    };
+    
+    self.hide = function(id) {
+        return DB.query('UPDATE asset set is_enabled=0 where id = ? and is_default=0', [id]);
+    };
+    
+    self.show = function(id) {
+        return DB.query('UPDATE asset set is_enabled=1 where id = ?', [id]);
+    };
+    
+    return self;
+})
 //QR Code service
 .factory('Scanner', function($q, $cordovaBarcodeScanner, T, $ionicModal, $ionicPopup) {
 

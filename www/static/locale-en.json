@@ -74,7 +74,8 @@
     "address_book"   : "Address Book",
     "backup_wallet"  : "Backup Wallet",
     "restore_wallet" : "Restore Wallet",
-    "account"        : "My Account"
+    "account"        : "My Account",
+    "my_assets"      : "Currencies"
   },
 
   "receive" : {
@@ -137,5 +138,12 @@
     "explain_text"            : "You can now sweep this balance into your wallet.<br/>Paper wallet balance will be added to your wallet through a transaction to your default address.",
     "transaction_sent"        : "Balance sweeped successfully!",
     "loading_balance"         : "Loading paper wallet balance"
+  },
+  
+  "assets" : {
+    "hide_asset"              : "Hide asset",
+    "show_asset"              : "Show asset",
+    "my_assets"               : "Currencies"
+  
   }
 }

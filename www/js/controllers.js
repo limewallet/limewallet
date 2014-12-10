@@ -357,6 +357,68 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
   
 })
 
+.controller('AssetsCtrl', function($translate, T, Asset, $scope, $rootScope, $http, $timeout, $ionicActionSheet, $ionicPopup) {
+
+  $scope.data = {assets:[]}
+
+  $scope.loadAssets = function() {
+    Asset.all().then(function(assets) {
+      $scope.data.assets = assets;
+    });
+  };
+
+  $scope.loadAssets();
+  
+  $rootScope.$on('assets-loaded', function(event, data) {
+    //console.log('...loading assets in home.html');
+    $scope.loadAssets();
+  });
+  
+  $scope.showActionSheet = function(asset){
+   var hideSheet = $ionicActionSheet.show({
+     buttons: [
+       { text: '<b>'+T.i('addys.set_as_default')+'</b>' },
+       //{ text: asset.is_enabled!=0?T.i('assets.hide_asset'):T.i('assets.show_asset') }
+       ],
+     cancelText: T.i('g.cancel'),
+     cancel: function() {
+          // add cancel code..
+        },
+     buttonClicked: function(index) {
+      // Set as default
+      if(index==0)
+      {
+        Asset.setDefault(asset.id).then(function() {
+          //$scope.loadAssets();
+          $rootScope.loadAssets();
+        });
+      }
+      // Hide asset
+      else if(index==1)
+      {
+        if(asset.is_enabled!=0)
+        {
+          Asset.hide(asset.id).then(function() {
+            $rootScope.loadAssets();
+            //$scope.loadAssets();
+          });
+        }
+        else{
+          Asset.show(asset.id).then(function() {
+            //$scope.loadAssets();
+            $rootScope.loadAssets();
+          });
+        }
+        
+      }
+      
+      return true;
+     }
+   });
+  }
+  
+})
+
 .directive('imageonload', function() {
     return {
         restrict: 'A',
@@ -485,7 +547,6 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
       else
       {
         $timeout(function () {
-          /* Commented for testing purposes. */
           $location.path('/home');
           window.plugins.toast.show( T.i('err.unable_pw_balance'), 'long', 'bottom');
         }, 500);
@@ -981,8 +1042,67 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
   };
 })
 
-.controller('HomeCtrl', function(T, Scanner, AddressBook, $ionicSlideBoxDelegate, $ionicActionSheet, $scope, $state, $http, $ionicModal, $rootScope, $ionicPopup, $timeout, $location, $cordovaBarcodeScanner) {
+.controller('HomeCtrl', function(T, Scanner, AddressBook, Asset, $ionicSlideBoxDelegate, $ionicActionSheet, $scope, $state, $http, $ionicModal, $rootScope, $ionicPopup, $timeout, $location, $cordovaBarcodeScanner) {
   
+  //$scope.asset = $rootScope.assets[$rootScope.asset_id];
+  $scope.asset = [];
+  $scope.loadDefaultAsset = function(){
+    try {
+      Asset.getDefault().then(function(res){
+        $scope.asset = res;
+      });
+    } 
+    catch(err) {};
+  }
+  
+  $scope.loadDefaultAsset();
+  
+  $rootScope.$on('assets-loaded', function(event, data) {
+    $scope.loadDefaultAsset();
+  });
+  
+  
+  /*
+  $scope.activeSlideAsset = 1;
+  $scope.slideAssets    = [];
+  
+  $scope.configureSlides = function(){
+    var default_index = 0;
+    var _index = 0;
+    var tmp = [];
+    
+    Asset.allEnabled().then(function(assets) {
+      assets.forEach(function(asset) {
+        tmp.push(asset);
+        if(asset.is_default!=0)
+        {
+          default_index = _index;
+        }
+        _index=_index+1;
+      });
+        
+    })
+    .finally(function(){
+      $scope.slideAssets = tmp;
+      $timeout( 
+      function(){
+        $scope.activeSlideAsset = default_index;
+        $ionicSlideBoxDelegate.update();
+        console.log('...updating ui slide assets');
+      }
+      ,250);
+    });
+    
+  }
+  
+  $rootScope.$on('assets-loaded', function(event, data) {
+    console.log('...loading assets in home.html');
+    $scope.configureSlides();
+    $scope.first_update = 1;
+  });
+  
+  $scope.configureSlides();
+  */
   $scope.scanQR = function() {
 
     Scanner.scan()

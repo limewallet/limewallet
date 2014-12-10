@@ -8,10 +8,10 @@
     
     <ion-content class="has-header" has-bouncing="false">
       <ion-list>
-        <ion-item ng-repeat="addr in data.addys">
+        <ion-item ng-repeat="addr in data.addys" ng-class="{'default_addr':addr.is_default!=0}">
           <a ng-click="showActionSheet(addr)">
             <h3 class="calm" ng-if="addr.label!=''">{{addr.label}}</h3>
-            <h4><span ng-if="addr.is_default" class="float_left"> <i style="color:#5abb5c;" class="fa fa-check"></i> </span>&nbsp;{{addr.address}} </h4>
+            <h4>{{addr.address}} </h4>
             <p>{{addr.created_at | date:'medium'}}</p>          
           </a>
         </ion-item>
