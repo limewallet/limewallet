@@ -70,7 +70,8 @@
     "home"           : "Principal",
     "my_addresses"   : "Mis direcciones",
     "backup_wallet"  : "Resguardar Billetera",
-    "restore_wallet" : "Restaurar Billetera"
+    "restore_wallet" : "Restaurar Billetera",
+    "my_assets"      : "Monedas"
   },
 
   "receive" : {
@@ -126,5 +127,12 @@
     "explain_text"            : "Ahora puede barrer este balance a su billetera.<br/>Se agregará el balance de esta billetara en papel a su billetera a través de una transacción hacia su dirección por defecto.",
     "transaction_sent"        : "¡Balance barrido satisfactoriamente!",
     "loading_balance"         : "Obteniendo balance de billetera en papel"
+  },
+  
+  "assets" : {
+    "hide_asset"              : "Ocultar moneda",
+    "show_asset"              : "Mostrar moneda",
+    "my_assets"               : "Monedas"
+  
   }
 }

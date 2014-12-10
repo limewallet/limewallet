@@ -1,0 +1,23 @@
+<ion-view class="dark" title="{{'assets.my_assets'|translate}}">
+    <ion-nav-buttons side="left">
+      <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
+    </ion-nav-buttons>
+    <ion-nav-buttons side="right">
+      <!--button class="button button-icon icon ion-ios7-plus-outline" ng-click="newAsset()"></button-->
+    </ion-nav-buttons>
+    
+    <ion-content class="has-header" has-bouncing="false">
+      <ion-list>
+        <ion-item ng-repeat="asset in data.assets" ng-class="{'default_asset':asset.is_default!=0, 'hidden_asset':asset.is_enabled==0}">
+          <a ng-click="showActionSheet(asset)" style="display:block;overflow:hidden;">
+            <img src="img/bit{{asset.symbol|lowercase}}_395x395.png" class="asset_img float_left">
+            <div style="margin-right: 50px;height:100%;" class="float_left">
+              <h2 class="calm">{{asset.symbol}}</h2>
+              <p class="">{{asset.fullname}} </p>
+            </div>
+          </a>
+        </ion-item>
+      </ion-list>
+    </ion-content>
+  </ion-view>
+  

@@ -308,6 +308,9 @@ margin-bottom: 20px!important;
   /*overflow-y:auto!important;*/
   height:90px!important;
 }
+
+/*.slider-slides{width: 100%!important;}*/
+
 .slider-pager {
 	/*top: 0;*/
 	bottom: 7px!important;
@@ -319,3 +322,18 @@ margin-bottom: 20px!important;
   color:#fff!important; 
 }
 .slider-pager .slider-pager-page i.icon{font-size:10px;}
+
+.btc{/*color:#ef7a40;*/}
+.usd{/*color:#93c356;*/}
+.gold{/*color:#d3b957;*/}
+.cny{/*color:#df565c;*/}
+.asset_img{height:40px;width:40px;}
+.list.asset_img {
+    float: left;
+    max-height: 40px;
+    max-width: 40px;
+    margin-right: 1em;
+    border-radius: 4px;
+}
+.default_addr, .default_asset {background-color:#c7feab!important;} /*acfa84*/
+.hidden_asset {background-color:#eeeeee!important;} /*acfa84*/

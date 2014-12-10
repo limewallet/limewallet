@@ -24,7 +24,7 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
     };
 })
 
-.run(function(DB, $cordovaGlobalization, $translate, ReconnectingWebSocket, $q, MasterKey, AddressBook, Address, $http, $rootScope, $ionicPlatform, $cordovaLocalNotification, $cordovaBarcodeScanner, $ionicModal, $ionicPopup, $cordovaSplashscreen, T) {
+.run(function(DB, $cordovaGlobalization, $translate, ReconnectingWebSocket, $q, MasterKey, AddressBook, Address, Asset, $http, $rootScope, $ionicPlatform, $cordovaLocalNotification, $cordovaBarcodeScanner, $ionicModal, $ionicPopup, $cordovaSplashscreen, T) {
 
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
@@ -48,11 +48,14 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
         $translate.use('en');
       });
     
-    $rootScope.balance      = 0;
-    $rootScope.transactions = [];
-    $rootScope.raw_txs      = {};
-    $rootScope.my_addresses = {};
-    $rootScope.my_book      = {};
+    //$rootScope.current_balance  = 0;
+    $rootScope.asset_id         = 22;
+    $rootScope.balance          = {};
+    $rootScope.transactions     = [];
+    $rootScope.raw_txs          = {};
+    $rootScope.my_addresses     = {};
+    $rootScope.my_book          = {};
+    $rootScope.assets           = {};
 
     DB.init();
     //Create master key if not exists
@@ -80,6 +83,37 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
     }, function(err) {
       console.error(err);
     });
+    
+    //Create assets if not exist, load assets and set default asset.
+    Asset.all().then(function(res) {
+      if(res === undefined || res.length === 0) {
+        console.log('creating assets...');
+        Asset.init();
+      }
+      else{
+        console.log('Assets already created.');
+      }
+    }, function(err) {
+      console.error(err);
+    })
+    .finally(function(data){
+      Asset.getDefault().then(function(res){
+        $rootScope.asset_id = res.asset_id;
+      });
+      $rootScope.loadAssets();
+    });
+    
+    $rootScope.loadAssets = function() {
+      Asset.all().then(function(assets) {
+        assets.forEach(function(asset) {
+          $rootScope.assets[asset.asset_id] = asset;  
+          $rootScope.balance[asset.asset_id] = 0;  
+          console.log('loaded asset: '+ asset.asset_id);
+        });
+        $rootScope.refreshBalance();
+        $rootScope.$emit('assets-loaded');
+      });
+    };
 
     $rootScope.loadAddressBook = function() {
       console.log('loadAddressBook IN');
@@ -106,7 +140,7 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
     };
 
     $rootScope.loadMyAddresses();
-
+    
     $rootScope.refreshBalance = function(show_toast) {
       console.log('resfreshBalance -> IN');
 
@@ -123,97 +157,104 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
 
         $http.get(url)
         .success(function(r) {
-           var total = 0;
-           r.balances.forEach(function(b){
-            //TODO: just USD for now
-            if(b.asset_id == 22)
-              total += b.amount;
-           });
-           //TODO: get from config
-           $rootScope.balance = total/1e4; 
+          r.balances.forEach(function(b){
+            $rootScope.balance[b.asset_id] = b.amount/$rootScope.assets[b.asset_id].precision ;//1e4; 
+            //if(b.asset_id==$rootScope.asset_is)
+              //$rootScope.current_balance = $rootScope.balance[b.asset_id];
+          });
            
            var tx  = {};
            var txs = [];
 
            var close_tx = function() {
-             p = {}; 
-             p['fee']  = (tx['w_amount'] - tx['d_amount'])/1e4;
-             p['sign'] = 0;
-             p['date'] = tx['timestamp']*1000;
-             if(tx['i_w']) { 
-               p['sign']--;
-               p['address'] = tx['to'][0];
-               p['amount'] = tx['my_w_amount']/1e4 - p['fee'];
-             }
-             if(tx['i_d']) { 
-               p['sign']++;
-               p['address'] = tx['from'][0];
-               p['amount'] = tx['my_d_amount']/1e4;
-             }
-             if(p['sign'] == 0)
-             {
-               p['addr_name'] = 'Me';
-             }
+              
+            var assets = Object.keys(tx['assets']);
+            for(var i=0; i<assets.length; i++) {
+               p = {}; 
+               p['fee']  = (tx['assets'][assets[i]]['w_amount'] - tx['assets'][assets[i]]['d_amount'])/1e4;
+               p['sign'] = 0;
+               p['date'] = tx['assets'][assets[i]]['timestamp']*1000;
+               if(tx['assets'][assets[i]]['i_w']) { 
+                 p['sign']--;
+                 p['address'] = tx['assets'][assets[i]]['to'][0];
+                 p['amount'] = tx['assets'][assets[i]]['my_w_amount']/1e4 - p['fee'];
+               }
+               if(tx['assets'][assets[i]]['i_d']) { 
+                 p['sign']++;
+                 p['address'] = tx['assets'][assets[i]]['from'][0];
+                 p['amount'] = tx['assets'][assets[i]]['my_d_amount']/1e4;
+               }
+               if(p['sign'] == 0)
+               {
+                 p['addr_name'] = 'Me';
+               }
 
-             if(p['addr_name'] != 'Me')
-             {
-               if( p['address'] in $rootScope.my_book )
-                p['addr_name'] = $rootScope.my_book[p['address']].name;
-               else
-                p['addr_name'] = p['address'];
+               if(p['addr_name'] != 'Me')
+               {
+                 if( p['address'] in $rootScope.my_book )
+                  p['addr_name'] = $rootScope.my_book[p['address']].name;
+                 else
+                  p['addr_name'] = p['address'];
+               }
+               p['tx_id'] = tx['txid'];
+               txs.push(p);
              }
-             p['tx_id'] = tx['txid'];
-             txs.push(p);
              tx = {};
            }
 
            r.operations.forEach(function(o){
 
              //TODO: only USD
-             if(o.asset_id != 22) 
-               return;
+             //if(o.asset_id != 22) 
+             //  return;
 
+             //Esto es para mostrar en el detalle de "renglon"
              if(!(o.txid in $rootScope.raw_txs) )
                $rootScope.raw_txs[o.txid] = [];
              
              $rootScope.raw_txs[o.txid].push(o);
 
+             
              if( tx['txid'] !== undefined && tx['txid'] != o.txid ) {
                 close_tx();
              }
 
-             if( tx['txid'] === undefined ) {
-                tx['id']          = o.id;
+             if( tx['txid'] === undefined || !o.asset_id in tx['assets'] ) {
+                
                 tx['txid']        = o.txid;
-                tx['from']        = [];
-                tx['to']          = [];
-                tx['w_amount']    = 0;
-                tx['my_w_amount'] = 0;
-                tx['d_amount']    = 0;
-                tx['my_d_amount'] = 0;
-                tx['timestamp']   = o.timestamp;
-                tx['i_w']         = false;
-                tx['i_d']         = false;
+                tx['assets']      = {};
+                tx['assets'][o.asset_id] = {
+                  'id'          : o.id,
+                  'from'        : [],
+                  'to'          : [],
+                  'w_amount'    : 0,
+                  'my_w_amount' : 0,
+                  'd_amount'    : 0,
+                  'my_d_amount' : 0,
+                  'timestamp'   : o.timestamp,
+                  'i_w'         : false,
+                  'i_d'         : false,
+                }
              } 
 
              if(o.op_type == 'w') { 
-                tx['w_amount'] += o.amount
+                tx['assets'][o.asset_id]['w_amount'] += o.amount
                 if(o.address in $rootScope.my_addresses) {
-                  tx['my_w_amount'] += o.amount;
-                  tx['i_w']          = true;
+                  tx['assets'][o.asset_id]['my_w_amount'] += o.amount;
+                  tx['assets'][o.asset_id]['i_w']          = true;
                 } else {
                   //TODO: lookup in the address book
-                  tx['from'].push(o.address);
+                  tx['assets'][o.asset_id]['from'].push(o.address);
                 }
                 
              } else {
-                tx['d_amount'] += o.amount
+                tx['assets'][o.asset_id]['d_amount'] += o.amount
                 if(o.address in $rootScope.my_addresses) {
-                  tx['my_d_amount'] += o.amount
-                  tx['i_d']          = true;
+                  tx['assets'][o.asset_id]['my_d_amount'] += o.amount
+                  tx['assets'][o.asset_id]['i_d']          = true;
                 } else {
                   //TODO: lookup in the address book
-                  tx['to'].push(o.address)
+                  tx['assets'][o.asset_id]['to'].push(o.address)
                 }
              }
              
@@ -239,7 +280,7 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
 
     };
 
-    $rootScope.refreshBalance();
+    //$rootScope.refreshBalance();
 
     $rootScope.subscribe = function() {
       MasterKey.get().then(function(master_key) {
@@ -280,9 +321,9 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
     setTimeout(function() {
       $cordovaSplashscreen.hide()
     }, 1000);
+    
     // FullScreen Config
     var showFullScreen = false, showStatusBar = true;
-    
     ionic.Platform.fullScreen(showFullScreen, showStatusBar);
 
 
@@ -327,6 +368,16 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
         'menuContent' :{
           templateUrl: "templates/settings.addresses.html",
           controller: 'AddressesCtrl'
+        }
+      }
+    })
+    
+    .state('app.assets', {
+      url: "/settings/assets",
+      views: {
+        'menuContent' :{
+          templateUrl: "templates/settings.assets.html",
+          controller: 'AssetsCtrl'
         }
       }
     })
