@@ -357,7 +357,7 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
   
 })
 
-.controller('AssetsCtrl', function($translate, T, Asset, $scope, $rootScope, $http, $timeout, $ionicActionSheet, $ionicPopup) {
+.controller('AssetsCtrl', function($translate, T, $location, $window, Asset, $scope, $rootScope, $http, $timeout, $ionicActionSheet, $ionicPopup) {
 
   $scope.data = {assets:[]}
 
@@ -389,8 +389,16 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
       if(index==0)
       {
         Asset.setDefault(asset.id).then(function() {
-          //$scope.loadAssets();
-          $rootScope.loadAssets();
+          //console.log('paso por aca');
+          //$rootScope.balance          = {};
+          //$rootScope.transactions     = [];
+          //$rootScope.raw_txs          = {};
+          //$rootScope.loadAssets();
+          //ALTO HACK
+          //$scope.$apply(function() {
+            $location.path('/home');
+            $window.location.reload();
+          //});
         });
       }
       // Hide asset
@@ -714,6 +722,8 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
   var amount = 0;
   if (!angular.isUndefined($stateParams.amount))
     amount = $stateParams.amount;
+
+  $scope.asset = $rootScope.assets[$rootScope.asset_id];
     
   var address = '';
   if (!angular.isUndefined($stateParams.address))
@@ -802,10 +812,11 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
       });
       return;
     }
-    
+    var asset = $rootScope.assets[$rootScope.asset_id];
+    var symbol =  '<i class="'+asset.symbol_ui_class+'">'+asset.symbol_ui_text;
     var confirmPopup = $ionicPopup.confirm({
       title    : T.i('send.payment_confirm'),
-      template : T.i('send.are_you_sure',{symbol:'$',amount:$scope.transaction.amount,address:sendForm.transactionAddress.value})
+      template : T.i('send.are_you_sure',{symbol:symbol,amount:$scope.transaction.amount,address:sendForm.transactionAddress.value})
     });
 
     confirmPopup.then(function(res) {
@@ -819,7 +830,7 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
         }
       
         var tx_req = {
-          "asset" : 22,
+          "asset" : $rootScope.asset_id,
           "fee"   : 250,
           "from"  : from,
           "to"    : [{

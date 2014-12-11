@@ -26,7 +26,7 @@
           </label -->
     
           <label class="item item-input">
-            <i class="icon fa20 fa fa-dollar placeholder-icon"></i>
+            <i class="icon fa20 {{asset.symbol_ui_class}} placeholder-icon">{{asset.symbol_ui_text}}</i>
             <input required name="transactionAmount" ng-model="transaction.amount" type="number" placeholder="{{'g.amount'|translate}}" class="input_amount big big_placeholder">
             <number-only-input input-value="transaction.amount" input-name="transactionAmount" input-class="" />
           </label>

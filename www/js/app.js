@@ -151,14 +151,16 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
         }
 
         var addr = bitcoin.HDNode.fromBase58(master_key.key).neutered().toString() + ':' + master_key.deriv;
-        var url = 'https://bsw.latincoin.com/api/v1/addrs/' + addr + '/balance';
+        var url = 'https://bsw.latincoin.com/api/v1/addrs/' + addr + '/balance/' + $rootScope.asset_id;
         
         console.log('voy con url: '+url);
+
+        var precision = $rootScope.assets[$rootScope.asset_id].precision;
 
         $http.get(url)
         .success(function(r) {
           r.balances.forEach(function(b){
-            $rootScope.balance[b.asset_id] = b.amount/$rootScope.assets[b.asset_id].precision ;//1e4; 
+            $rootScope.balance[b.asset_id] = b.amount/precision;//1e4; 
             //if(b.asset_id==$rootScope.asset_is)
               //$rootScope.current_balance = $rootScope.balance[b.asset_id];
           });
@@ -171,18 +173,18 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
             var assets = Object.keys(tx['assets']);
             for(var i=0; i<assets.length; i++) {
                p = {}; 
-               p['fee']  = (tx['assets'][assets[i]]['w_amount'] - tx['assets'][assets[i]]['d_amount'])/1e4;
+               p['fee']  = (tx['assets'][assets[i]]['w_amount'] - tx['assets'][assets[i]]['d_amount'])/precision;
                p['sign'] = 0;
                p['date'] = tx['assets'][assets[i]]['timestamp']*1000;
                if(tx['assets'][assets[i]]['i_w']) { 
                  p['sign']--;
                  p['address'] = tx['assets'][assets[i]]['to'][0];
-                 p['amount'] = tx['assets'][assets[i]]['my_w_amount']/1e4 - p['fee'];
+                 p['amount'] = tx['assets'][assets[i]]['my_w_amount']/precision - p['fee'];
                }
                if(tx['assets'][assets[i]]['i_d']) { 
                  p['sign']++;
                  p['address'] = tx['assets'][assets[i]]['from'][0];
-                 p['amount'] = tx['assets'][assets[i]]['my_d_amount']/1e4;
+                 p['amount'] = tx['assets'][assets[i]]['my_d_amount']/precision;
                }
                if(p['sign'] == 0)
                {
@@ -208,6 +210,8 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
              //if(o.asset_id != 22) 
              //  return;
 
+             //console.log('vamos con op -> ' + o.id);
+
              //Esto es para mostrar en el detalle de "renglon"
              if(!(o.txid in $rootScope.raw_txs) )
                $rootScope.raw_txs[o.txid] = [];
@@ -216,10 +220,13 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
 
              
              if( tx['txid'] !== undefined && tx['txid'] != o.txid ) {
+                //console.log('mando a cerrar');
                 close_tx();
              }
 
-             if( tx['txid'] === undefined || !o.asset_id in tx['assets'] ) {
+             if( tx['txid'] === undefined || ( tx['assets'] !== undefined && !(o.asset_id in tx['assets']) )  ) {
+
+                //console.log('abro');
                 
                 tx['txid']        = o.txid;
                 tx['assets']      = {};
@@ -260,9 +267,14 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
              
            });
 
-           if( tx['id'] !== undefined) {
+           //console.log('salgo del loop con ' + tx['txid']);
+
+           if( tx['txid'] !== undefined) {
+             //console.log('mando a cerrar');
              close_tx();
            }
+
+           //console.log('voy a poner txs ' + txs);
            
            $rootScope.transactions=txs;
            if(show_toast == true)
