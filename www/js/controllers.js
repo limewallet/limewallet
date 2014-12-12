@@ -397,7 +397,8 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
           //ALTO HACK
           //$scope.$apply(function() {
             $location.path('/home');
-            $window.location.reload();
+            $rootScope.assetChanged(asset.asset_id);
+            //$window.location.reload();
           //});
         });
       }
@@ -440,10 +441,12 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
 
 .controller('ReceiveQrcodeCtrl', function($scope, T, $cordovaClipboard, $cordovaSocialSharing, Address, $stateParams, $http, $ionicNavBarDelegate, $location, $ionicLoading, $timeout, $ionicModal, $ionicPopup) {
   
-  $scope.address = $stateParams.address;
-  $scope.amount  = $stateParams.amount;
-  $scope.request = 'bts:'+$scope.address+'/transfer/amount/'+$scope.amount+'/asset/USD';
-  $scope.imgurl  = 'http://chart.apis.google.com/chart?cht=qr&chs=300x300&chl='+encodeURIComponent($scope.request)+'&chld=H|0'
+  $scope.address    = $stateParams.address;
+  $scope.amount     = $stateParams.amount;
+  $scope.asset_id   = $rootScope.asset_id;
+  $scope.asset      = $rootScope.assets[$rootScope.asset_id];
+  $scope.request    = 'bts:'+$scope.address+'/transfer/amount/'+$scope.amount+'/asset/'+$scope.asset.symbol; //symbol or asset_id required -> ?USD?
+  $scope.imgurl     = 'http://chart.apis.google.com/chart?cht=qr&chs=300x300&chl='+encodeURIComponent($scope.request)+'&chld=H|0'
 
   console.log('request -> ' + $scope.request);
   console.log('imgurl -> ' + $scope.imgurl);
@@ -494,10 +497,10 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
   
 })
 
-.controller('ReceiveCtrl', function($scope, T, Address, $http, $ionicNavBarDelegate, $ionicModal, $ionicPopup, $location, $state) {
+.controller('ReceiveCtrl', function($scope, $rootScope, T, Address, $http, $ionicNavBarDelegate, $ionicModal, $ionicPopup, $location, $state) {
+  $scope.asset = $rootScope.assets[$rootScope.asset_id];
   
   $scope.doGenerateQRCodeRecvPayment = function(){
-
     var amount = parseInt(parseFloat(receiveForm.transactionAmount.value)*1e4);
     if( isNaN(amount) || amount <= 0 ) {
       $ionicPopup.alert({
@@ -710,7 +713,7 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
   $scope.imported_pk.priv_key = $stateParams.private_key;
   $scope.imported_pk.address = bitcoin.bts.wif_to_address($scope.imported_pk.priv_key);
 
-  console.log('llamandi a getImportedKeyBalance');
+  //console.log('llamandi a getImportedKeyBalance');
   $timeout( function() { 
     $scope.getImportedKeyBalance($scope.imported_pk.address);
   }, 1000);
@@ -718,21 +721,50 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
 
 .controller('SendCtrl', function($scope, $q, T, AddressBook, Scanner, Address, $http, $ionicLoading, $ionicNavBarDelegate, $ionicModal, $ionicPopup, $location, $timeout, $rootScope, $stateParams) {
   
+  $scope.asset = [];
   $scope.data = {address_book:[]};
+  
+  $scope.asset_id = 0;
+  
+  if (!angular.isUndefined($stateParams.asset_id))
+  {
+    $scope.asset_id = $stateParams.asset_id;
+    $scope.asset = $rootScope.assets[$stateParams.asset_id];
+  }
+  
   var amount = 0;
   if (!angular.isUndefined($stateParams.amount))
     amount = $stateParams.amount;
 
-  $scope.asset = $rootScope.assets[$rootScope.asset_id];
     
   var address = '';
   if (!angular.isUndefined($stateParams.address))
     address = $stateParams.address;
     
-  $scope.transaction = {message:'send.generating_transaction', amount:amount, address:address};
+  $scope.transaction = {message:'send.generating_transaction', amount:amount, address:address, asset_id:$scope.asset_id};
   sendForm.transactionAmount.value = amount;
   sendForm.transactionAddress.value = address;
-
+  sendForm.transactionAssetId.value = $scope.asset_id;
+  
+  
+  $scope.loadDefaultAsset = function(){
+    if($scope.asset_id!==undefined & $scope.asset_id!=0)
+      return;
+    
+    $scope.asset_id                   = $rootScope.asset_id;
+    $scope.transaction.asset_id       = $scope.asset_id;
+    sendForm.transactionAssetId.value = $scope.asset_id;
+    
+    try {
+      $scope.asset = $rootScope.assets[$scope.asset_id];
+    } 
+    catch(err) {
+    }
+  }
+  $scope.loadDefaultAsset();
+  $rootScope.$on('assets-loaded', function(event, data) {
+    $scope.loadDefaultAsset();
+  });
   //console.log('STATE PARAMS ' + $stateParams.amount + ',' + $stateParams.address);
 
   $scope.showAddressBook = function(){
@@ -779,6 +811,26 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
           $scope.transaction.amount = result.amount;
           sendForm.transactionAmount.value = result.amount;
         }
+        
+        if(result.asset_id !== undefined)
+        {
+          
+          var the_asset = $rootScope.getValidAssetId(result.asset_id);
+          if(!the_asset)
+          {  
+            $scope.transaction.asset_id = -1;
+            sendForm.transactionAssetId.value = -1;
+            $scope.asset = [];
+            $timeout(
+              window.plugins.toast.show(T.i('err.invalid_asset'), 'long', 'bottom')
+              , 500
+            );
+            return;
+          }
+          $scope.transaction.asset_id = the_asset;
+          sendForm.transactionAssetId.value = $scope.transaction.asset_id;
+          $scope.asset = $rootScope.assets[$scope.transaction.asset_id];
+        }
       }
 
     }, function(error) {
@@ -792,7 +844,18 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
   };
   
   $scope.validateSend = function(transaction) {
-
+    
+    var my_asset_id = $scope.transaction.asset_id;
+    if(!$rootScope.isValidAsset(my_asset_id))
+    {
+      $ionicPopup.alert({
+         title    : T.i('err.invalid_asset') + ' <i class="fa fa-warning float_right"></i>',
+         template : T.i('err.invalid_asset_desc'),
+         okType   : 'button-assertive', 
+       });
+       return;
+    }
+    
     var amount = parseInt(parseFloat($scope.transaction.amount)*1e4);
     console.log($scope.transaction.amount + ' => ' + amount);
     if ( isNaN(amount) || amount <= 0 ) {
@@ -812,8 +875,12 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
       });
       return;
     }
-    var asset = $rootScope.assets[$rootScope.asset_id];
-    var symbol =  '<i class="'+asset.symbol_ui_class+'">'+asset.symbol_ui_text;
+    // var my_asset = [];
+    // angular.copy($scope.asset, my_asset);
+    // if(my_asset === undefined || my_asset.length==0)
+    //    my_asset = $rootScope.assets[$scope.transaction.asset_id] ;
+    
+    var symbol =  '<i class="'+$scope.asset.symbol_ui_class+'">'+$scope.asset.symbol_ui_text;
     var confirmPopup = $ionicPopup.confirm({
       title    : T.i('send.payment_confirm'),
       template : T.i('send.are_you_sure',{symbol:symbol,amount:$scope.transaction.amount,address:sendForm.transactionAddress.value})
@@ -830,7 +897,7 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
         }
       
         var tx_req = {
-          "asset" : $rootScope.asset_id,
+          "asset" : $scope.transaction.asset_id, // ? sendForm.transactionAssetId.value ?
           "fee"   : 250,
           "from"  : from,
           "to"    : [{
@@ -1019,9 +1086,21 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
 
 })
 
-.controller('TxCtrl', function($scope, $rootScope, $ionicNavBarDelegate, $stateParams){
+.controller('TxCtrl', function($scope, $rootScope, $ionicNavBarDelegate, $stateParams, Asset){
+  
+  $scope.data = {assets:[]}
 
-  $scope.ops = $rootScope.raw_txs[$stateParams.tx_id];
+  $scope.loadAssets = function() {
+    Asset.all().then(function(assets) {
+      assets.forEach(function(asset) {
+        $scope.data.assets[asset.asset_id] = asset;
+      });
+      $scope.ops = $rootScope.raw_txs[$stateParams.tx_id];
+    });
+  };
+
+  $scope.loadAssets();
+  
   $scope.getWithdraws = function(){
     var ops = [];
     angular.forEach($scope.ops, function(op){
@@ -1040,20 +1119,23 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
   }
   $scope.getFee = function(){
     var fee = 0;
+    var precision = -1;
     angular.forEach($scope.ops, function(op){
       if(op.op_type=='d')
         fee=fee-op.amount;
       else
         fee=fee+op.amount;
+      if(precision==-1)
+        precision = $scope.data.assets[op.asset_id].precision;
     })
-    return fee/1e4;
+    return fee/precision;
   }
   $scope.goBack = function() {
     $ionicNavBarDelegate.back();
   };
 })
 
-.controller('HomeCtrl', function(T, Scanner, AddressBook, Asset, $ionicSlideBoxDelegate, $ionicActionSheet, $scope, $state, $http, $ionicModal, $rootScope, $ionicPopup, $timeout, $location, $cordovaBarcodeScanner) {
+.controller('HomeCtrl', function(T, Scanner, AddressBook, Asset, $ionicActionSheet, $scope, $state, $http, $ionicModal, $rootScope, $ionicPopup, $timeout, $location, $cordovaBarcodeScanner) {
   
   //$scope.asset = $rootScope.assets[$rootScope.asset_id];
   $scope.asset = [];
@@ -1072,48 +1154,6 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
     $scope.loadDefaultAsset();
   });
   
-  
-  /*
-  $scope.activeSlideAsset = 1;
-  $scope.slideAssets    = [];
-  
-  $scope.configureSlides = function(){
-    var default_index = 0;
-    var _index = 0;
-    var tmp = [];
-    
-    Asset.allEnabled().then(function(assets) {
-      assets.forEach(function(asset) {
-        tmp.push(asset);
-        if(asset.is_default!=0)
-        {
-          default_index = _index;
-        }
-        _index=_index+1;
-      });
-        
-    })
-    .finally(function(){
-      $scope.slideAssets = tmp;
-      $timeout( 
-      function(){
-        $scope.activeSlideAsset = default_index;
-        $ionicSlideBoxDelegate.update();
-        console.log('...updating ui slide assets');
-      }
-      ,250);
-    });
-    
-  }
-  
-  $rootScope.$on('assets-loaded', function(event, data) {
-    console.log('...loading assets in home.html');
-    $scope.configureSlides();
-    $scope.first_update = 1;
-  });
-  
-  $scope.configureSlides();
-  */
   $scope.scanQR = function() {
 
     Scanner.scan()
@@ -1131,7 +1171,7 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
           result.address = bitcoin.bts.pub_to_address(bitcoin.bts.decode_pubkey(result.pubkey));
         }
 
-        $state.go('app.send', {address:result.address, amount:result.amount});
+        $state.go('app.send', {address:result.address, amount:result.amount, asset_id:result.asset_id});
       }
     }, function(error) {
       

@@ -245,7 +245,7 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
               //(asset_inx != -1 && parts[asset_inx+1] == 'USD') && 
               if( (obj - parseFloat( obj ) + 1) >= 0 ) {
                 console.log('Metiste bts: => ' + parts[0] + '=>' + obj);
-                deferred.resolve({cancelled:false, address:parts[0], amount:obj}); 
+                deferred.resolve({cancelled:false, address:parts[0], amount:obj, asset_id:asset_inx}); 
                 return;
               }
             }

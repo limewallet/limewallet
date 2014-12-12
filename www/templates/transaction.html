@@ -24,8 +24,12 @@
             <div class="col col-75 ta_right">{{ops[0].timestamp|date:'medium'}}</div>
           </div>
           <div class="row">
+            <div class="col col-25">{{'g.asset'|translate}}</div>
+            <div class="col col-75 ta_right">{{data.assets[ops[0].asset_id].symbol}} ({{ops[0].asset_id}})</div>
+          </div>
+          <div class="row">
             <div class="col col-25">{{'g.fee'|translate}}</div>
-            <div class="col col-75 ta_right">USD {{getFee() | number : 5}}</div>
+            <div class="col col-75 ta_right">{{data.assets[ops[0].asset_id].symbol}} {{getFee() | number : 5}}</div>
           </div>
         </ion-item>
         <ion-item class="item-divider">
@@ -38,7 +42,7 @@
           </div>
           <div class="row">
             <div class="col col-25">{{'g.amount'|translate}}</div>
-            <div class="col col-75 ta_right">USD {{op.amount/1e4 | number : 4}}</div>
+            <div class="col col-75 ta_right">{{data.assets[op.asset_id].symbol}} {{op.amount/data.assets[op.asset_id].precision | number : 4}}</div>
           </div>
         </ion-item>
         <ion-item class="item-divider">
@@ -51,7 +55,7 @@
           </div>
           <div class="row">
             <div class="col col-25">{{'g.amount'|translate}}</div>
-            <div class="col col-75 ta_right">USD {{op.amount/1e4 | number : 4}}</div>
+            <div class="col col-75 ta_right">{{data.assets[op.asset_id].symbol}} {{op.amount/data.assets[op.asset_id].precision | number : 4}}</div>
           </div>
         </ion-item>
       </ion-list>

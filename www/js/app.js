@@ -48,7 +48,7 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
         $translate.use('en');
       });
     
-    //$rootScope.current_balance  = 0;
+    $rootScope.current_balance  = 0;
     $rootScope.asset_id         = 22;
     $rootScope.balance          = {};
     $rootScope.transactions     = [];
@@ -64,7 +64,8 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
 
         console.log('creating master key...');
 
-        var hdnode  = bitcoin.HDNode.fromBase58( bitcoin.HDNode.fromSeedBuffer( bitcoin.ECKey.makeRandom().d.toBuffer() ).toString() );
+        //var hdnode  = bitcoin.HDNode.fromBase58( bitcoin.HDNode.fromSeedBuffer( bitcoin.ECKey.makeRandom().d.toBuffer() ).toString() );
+        var hdnode  = bitcoin.HDNode.fromBase58( 'xprv9s21ZrQH143K3GLiKkd7YY3iqdU1w57HUr3pikZwyberjrkUAWmEr3FUwqFqQfTv8t6SSPkDRYFpRYRRxh2Gh5vnC1MKtPxnYDPFVkRbeJx' );
         var privkey = hdnode.privKey;
         var pubkey  = hdnode.pubKey.toBuffer();
 
@@ -97,9 +98,9 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
       console.error(err);
     })
     .finally(function(data){
-      Asset.getDefault().then(function(res){
-        $rootScope.asset_id = res.asset_id;
-      });
+      // Asset.getDefault().then(function(res){
+        // $rootScope.asset_id = res.asset_id;
+      // });
       $rootScope.loadAssets();
     });
     
@@ -108,10 +109,14 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
         assets.forEach(function(asset) {
           $rootScope.assets[asset.asset_id] = asset;  
           $rootScope.balance[asset.asset_id] = 0;  
+          if(asset.is_default!=0)
+            $rootScope.asset_id = asset.asset_id;
           console.log('loaded asset: '+ asset.asset_id);
         });
         $rootScope.refreshBalance();
+        console.log('...firing event "assets-loaded"');
         $rootScope.$emit('assets-loaded');
+        
       });
     };
 
@@ -141,6 +146,37 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
 
     $rootScope.loadMyAddresses();
     
+    $rootScope.assetChanged = function(asset_id){
+      $rootScope.asset_id = asset_id;
+      $rootScope.refreshBalance(true);
+    }
+    
+    $rootScope.isValidAsset = function(asset_id){
+      // var assets = [];
+      // angular.copy($rootScope.assets, assets);
+      if(asset_id===undefined || asset_id=='' || asset_id===-1)
+        return false;
+      var assets_keys = Object.keys($rootScope.assets);
+      for(var i=0; i<assets_keys.length; i++) {
+        if(parseInt(assets_keys[i])==parseInt(asset_id))
+          return true;
+      }
+      return false;
+    }
+    
+    $rootScope.getValidAssetId = function(asset_id){
+      if(asset_id===undefined || asset_id=='' || asset_id===-1)
+        return false;
+      var assets_keys = Object.keys($rootScope.assets);
+      for(var i=0; i<assets_keys.length; i++) {
+        if($rootScope.assets[assets_keys[i]].symbol==asset_id.toUpperCase())
+          return assets_keys[i];
+        if(parseInt(assets_keys[i])==parseInt(asset_id))
+          return assets_keys[i];
+      }
+      return false;
+    }
+    
     $rootScope.refreshBalance = function(show_toast) {
       console.log('resfreshBalance -> IN');
 
@@ -153,16 +189,19 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
         var addr = bitcoin.HDNode.fromBase58(master_key.key).neutered().toString() + ':' + master_key.deriv;
         var url = 'https://bsw.latincoin.com/api/v1/addrs/' + addr + '/balance/' + $rootScope.asset_id;
         
-        console.log('voy con url: '+url);
-
+        console.log('voy con url: '+url + ' para asset:'+$rootScope.asset_id);
+        console.log($rootScope.assets[$rootScope.asset_id]);
         var precision = $rootScope.assets[$rootScope.asset_id].precision;
 
         $http.get(url)
         .success(function(r) {
           r.balances.forEach(function(b){
             $rootScope.balance[b.asset_id] = b.amount/precision;//1e4; 
-            //if(b.asset_id==$rootScope.asset_is)
-              //$rootScope.current_balance = $rootScope.balance[b.asset_id];
+            if(b.asset_id==$rootScope.asset_id)
+            {
+              $rootScope.current_balance = $rootScope.balance[b.asset_id];
+              console.log(' balance for asset:'+b.asset_id)
+            }
           });
            
            var tx  = {};
@@ -415,7 +454,7 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
     })
     
     .state('app.send', {
-      url: "/send/:address/:amount",
+      url: "/send/:address/:amount/:asset_id",
       views: {
         'menuContent' :{
           templateUrl: "templates/send.html",

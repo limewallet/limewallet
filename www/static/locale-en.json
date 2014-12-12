@@ -24,7 +24,9 @@
     "copied_to_clipboard" : "copied to clipboard",
     "updated"             : "Updated",
     "unable_to_refresh"   : "Unable to refresh",
-    "loading"             : "Loading"    
+    "loading"             : "Loading",
+    "default"             : "Default",
+    "asset"               : "Asset"
   },
 
   "err" : {
@@ -50,7 +52,10 @@
     "backup_error"        : "There were errors trying to backup the wallet",
     "unable_pw_balance"   : "Unable to get paper wallet balance",
     "empty_paper_wallet"  : "Empty paper wallet",
-    "paper_no_balance"    : "The paper wallet has no available balance"
+    "paper_no_balance"    : "The paper wallet has no available balance",
+    "invalid_asset"       : "Invalid asset",
+    "invalid_asset_desc"  : "The selected asset is not currently supported",
+    "scan_valid_asset"    : "Please require and scan a valid asset"
   },
 
   "home" : {
@@ -74,7 +79,7 @@
     "address_book"   : "Address Book",
     "backup_wallet"  : "Backup Wallet",
     "restore_wallet" : "Restore Wallet",
-    "account"        : "My Account",
+    "account"        : "My Wallet",
     "my_assets"      : "Currencies"
   },
 
@@ -120,7 +125,8 @@
     "set_as_default"  : "Set as default",
     "set_label"       : "Set Label",
     "copy_address"    : "Copy Addres",
-    "copy_public_key" : "Copy Public Key"
+    "copy_public_key" : "Copy Public Key",
+    "no_addys"        : "No address added yet"
   },
 
   "book" : {

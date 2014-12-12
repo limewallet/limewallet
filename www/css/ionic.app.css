@@ -8806,6 +8806,9 @@ $ios-transition-box-shadow-end: -200px 0px 200px rgba(0,0,0,0.15), -5px 0px 5px 
       width: 100%; }
  }
 
+.calm_bg {
+  background-color: #43cee6 !important; }
+
 .energized_bg {
   background-color: #01bbf4 !important; }
 

@@ -7,10 +7,11 @@
     </ion-nav-buttons>
     
     <ion-content class="has-header" has-bouncing="false">
-      <ion-list>
+      <ion-list class="addr_list">
         <ion-item ng-repeat="addr in data.addys" ng-class="{'default_addr':addr.is_default!=0}">
           <a ng-click="showActionSheet(addr)">
-            <h3 class="calm" ng-if="addr.label!=''">{{addr.label}}</h3>
+            <span ng-if="addr.is_default!=0" class="badge-default">{{'g.default' | translate}}</span>
+            <h3 ng-if="addr.label!=''">{{addr.label}}</h3>
             <h4>{{addr.address}} </h4>
             <p>{{addr.created_at | date:'medium'}}</p>          
           </a>

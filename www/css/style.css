@@ -53,7 +53,7 @@ line-height: 38px;}
 }
 .index_buttons .button_send{padding-left:4%;padding-right:2%;width:50%;float:left;text-align:center;}
 .index_buttons .button_receive{padding-left:2%;padding-right:4%;width:50%;float:left;text-align:center;}
-.index_transactions{
+.index_transactions, .addys_empty{
   display:block;
   overflow: hidden;
   width:100%;
@@ -61,6 +61,7 @@ line-height: 38px;}
   top:192px;
   position:absolute!important; bottom:0;
   }
+.addys_empty{top:43px!important;}
 .row75{
   height: 75% !important;
 }
@@ -162,11 +163,12 @@ input.big {
   }  
 .menu  {background-color: #363636!important;}
 .menu .item, 
-.menu .item-complex .item-content{
+  .menu .item-complex .item-content{
   border-color: #4c4c4c!important;
   background-color: #363636!important;
   color: #d4d4d4!important;
 }
+.menu .item.wallet a{background-color: #222222!important}
 .menu .list .item_first{ border-top:none;}
 
 .transaction_steps{width:100%;padding-top:50px;}
@@ -328,6 +330,7 @@ margin-bottom: 20px!important;
 .gold{/*color:#d3b957;*/}
 .cny{/*color:#df565c;*/}
 .asset_img{height:40px;width:40px;}
+.asset_list .asset_img {margin-right: 16px;}
 .list.asset_img {
     float: left;
     max-height: 40px;
@@ -335,5 +338,27 @@ margin-bottom: 20px!important;
     margin-right: 1em;
     border-radius: 4px;
 }
-.default_addr, .default_asset {background-color:#c7feab!important;} /*acfa84*/
+
+/*.default_addr h3, .default_addr h4, .default_addr p, .default_asset h2, .default_asset p{color:#ffffff!important;}*/
+/*.default_asset,  .default_addr{background-color:#007DC4!important;} */
+.asset_list h2, .addr_list h3 {color:#003762;}
 .hidden_asset {background-color:#eeeeee!important;} /*acfa84*/
+.badge-default{
+  display: flex;
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background-color: #007DC4!important;
+  color: #ffffff;
+  z-index: 1;
+  padding: 3px 8px 2px 8px;
+  min-width: 10px;
+  border-radius: 10px;
+  vertical-align: baseline;
+  text-align: center;
+  white-space: nowrap;
+  font-weight: bold;
+  font-size: 10px;
+  line-height: 10px;
+  text-transform:uppercase;
+}

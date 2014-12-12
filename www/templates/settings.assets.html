@@ -7,12 +7,13 @@
     </ion-nav-buttons>
     
     <ion-content class="has-header" has-bouncing="false">
-      <ion-list>
-        <ion-item ng-repeat="asset in data.assets" ng-class="{'default_asset':asset.is_default!=0, 'hidden_asset':asset.is_enabled==0}">
+      <ion-list class="asset_list">
+        <ion-item ng-repeat="asset in data.assets">
           <a ng-click="showActionSheet(asset)" style="display:block;overflow:hidden;">
             <img src="img/bit{{asset.symbol|lowercase}}_395x395.png" class="asset_img float_left">
+            <span ng-if="asset.is_default!=0!=0" class="badge-default">{{'g.default' | translate}}</span>
             <div style="margin-right: 50px;height:100%;" class="float_left">
-              <h2 class="calm">{{asset.symbol}}</h2>
+              <h2>{{asset.symbol}}</h2>
               <p class="">{{asset.fullname}} </p>
             </div>
           </a>

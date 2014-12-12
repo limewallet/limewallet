@@ -30,7 +30,7 @@
             <input required name="transactionAmount" ng-model="transaction.amount" type="number" placeholder="{{'g.amount'|translate}}" class="input_amount big big_placeholder">
             <number-only-input input-value="transaction.amount" input-name="transactionAmount" input-class="" />
           </label>
-          
+          <input type="hidden" name="transactionAssetId" ng-model="transaction.asset_id" />
         </div>
         <div class="action_container hide-on-keyboard-open padding">
           <button class="button button-assertive  button-block" ng-click="validateSend(transaction)">
