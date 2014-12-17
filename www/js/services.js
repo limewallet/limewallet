@@ -419,11 +419,9 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
         );
 
       } else {
-        
         deferred.resolve(bitcoin.HDNode.fromBase58(key).neutered().toString());
-
       }
-    
+      return deferred.promise;
     };
 
     self.encryptString = function(data, password) {
@@ -444,11 +442,11 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
 
       } else {
         deferred.resolve(
-          CryptoJS.AES.encrypt(data, password).toString();
+          CryptoJS.AES.encrypt(data, password).toString()
         );
 
       }
-    
+      return deferred.promise;
     };
 
     self.decryptString = function(data, password) {
@@ -472,7 +470,7 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
         deferred.resolve(CryptoJS.AES.decrypt(data, password).toString(CryptoJS.enc.Latin1));
 
       }
-    
+      return deferred.promise;
     };
 
     self.isValidKey = function(key) {
@@ -502,7 +500,7 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
         deferred.resolve(true);
         
       }
-    
+      return deferred.promise;
     };
 
     self.isValidWif = function(wif) {
@@ -532,7 +530,7 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
         deferred.resolve(true);
         
       }
-    
+      return deferred.promise;
     };
 
     self.derivePrivate = function(key, deriv) {
@@ -544,6 +542,7 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
         window.plugins.BitsharesPlugin.derivePrivate(
           function(data){
             deferred.resolve(data.extendedPrivateKey);
+          },
           function(error){
             deferred.reject(error);
           }
@@ -559,7 +558,7 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
         deferred.resolve(nkey.toString());
         
       }
-    
+      return deferred.promise;
     };
 
     self.compactSignatureForHash = function(hash, key) {
@@ -571,6 +570,7 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
         window.plugins.BitsharesPlugin.compactSignatureForHash(
           function(data){
             deferred.resolve(data.compactSignatureForHash);
+          },
           function(error){
             deferred.reject(error);
           }
@@ -589,9 +589,8 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
         var i = bitcoin.ecdsa.calcPubKeyRecoveryParam(bitcoin.ECKey.curve, priv.d.constructor.fromBuffer(to_sign), signature, priv.pub.Q);
         var compact = signature.toCompact(i, priv.pub.compressed).toString('hex');
         deferred.resolve(compact);
-        
       }
-    
+      return deferred.promise;
     };
 
     self.btsWifToAddress = function(wif) {
@@ -603,6 +602,7 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
         window.plugins.BitsharesPlugin.btsWifToAddress(
           function(data){
             deferred.resolve(data.addy);
+          },
           function(error){
             deferred.reject(error);
           }
@@ -615,7 +615,7 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
         deferred.resolve(bitcoin.bts.wif_to_address(wif));
         
       }
-    
+      return deferred.promise;
     };
 
     self.btsPubToAddress = function(pubkey) {
@@ -627,6 +627,7 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
         window.plugins.BitsharesPlugin.btsPubToAddress(
           function(data){
             deferred.resolve(data.addy);
+          },
           function(error){
             deferred.reject(error);
           }
@@ -639,7 +640,7 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
         deferred.resolve(bitcoin.bts.pub_to_address(bitcoin.bts.decode_pubkey(pubkey)));
         
       }
-    
+      return deferred.promise;
     };
 
     self.btsIsValidAddress = function(addy) {
@@ -668,7 +669,7 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
         deferred.resolve(true);
         
       }
-    
+      return deferred.promise;
     };
     
     return self;

@@ -65,9 +65,9 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
         console.log('creating master key...');
 
         BitShares.createMasterKey().then(function(mpriv){
-          //console.log(' mpriv:'+mpriv);
+          console.log(' mpriv:'+mpriv);
           BitShares.extractDataFromKey(mpriv).then(function(keyData){
-            //console.log(' keyData:'+keyData);
+            console.log(' keyData.address:'+keyData.address);
           
             MasterKey.store(mpriv, -1).then(function() {
               Address.create(
@@ -345,12 +345,12 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
 
     $rootScope.subscribe = function() {
       MasterKey.get().then(function(master_key) {
-        BitShares.extendedPublicFromPrivate(master_key.key).then(function(extendedPublicKey){
+        BitShares.extendedPublicFromPrivate(master_key.key)
+        .then(function(extendedPublicKey){
           var sub = extendedPublicKey + ':' + master_key.deriv;
           $rootScope.ws.send('sub ' + sub);
-        }
-        
-      });
+        });
+      })
     }
 
     $rootScope.ws = new ReconnectingWebSocket('wss://bswws.latincoin.com/events');
