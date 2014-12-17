@@ -301,4 +301,96 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
     };
 
     return self;
+})
+
+//Bitshares Helper
+.factory('BitShares', function($translate, $q) {
+    var self = this;
+
+    self.createMasterKey = function() {
+      
+      var deferred = $q.defer();
+
+      if( device.platform == "iOS" ) {
+
+        window.plugins.BitsharesPlugin.createMasterKey(
+          function(data){
+            deferred.resolve(data.masterPrivateKey);
+            //xprv9s21ZrQH143K2962YcovQRskBf9H2D6p48HCoKrFBCeUab1sDugjCPX3Lpj2WNNYt1JVMePnA5mhUraUnXVz8EuDPXt5VPqkM4VjrFK2obj
+          },
+          function(error){
+            deferred.reject(error);
+          }
+        );
+
+      } else {        
+        var hdnode  = bitcoin.HDNode.fromBase58( bitcoin.HDNode.fromSeedBuffer( bitcoin.ECKey.makeRandom().d.toBuffer() ).toString() );        
+        deferred.resolve(hdnode.toString());
+      }
+    
+      return deferred.promise;
+
+    };
+
+
+    self.extractDataFromKey = function(key) {
+      
+      var deferred = $q.defer();
+
+      if( device.platform == "iOS" ) {
+
+        window.plugins.BitsharesPlugin.extractDataFromKey(
+          function(data){
+            deferred.resolve(data);
+          },
+          function(error){
+            deferred.reject(error);
+          },
+          key
+        );
+
+      } else {
+        
+        var hdnode  = bitcoin.HDNode.fromBase58(key);
+        var privkey = hdnode.privKey;
+        var pubkey  = hdnode.pubKey.toBuffer();
+        
+        deferred.resolve({ 
+          address : bitcoin.bts.pub_to_address(pubkey),
+          pubkey  : bitcoin.bts.encode_pubkey(pubkey), 
+          privkey : privkey.toWIF() 
+        });
+
+      }
+
+      return deferred.promise;
+    
+    };
+
+    self.extendedPublicFromPrivate = function(key) {
+      
+      if( device.platform == "iOS" ) {
+
+        window.plugins.BitsharesPlugin.extendedPublicFromPrivate(
+          function(data){
+            return data.extendedPublicKey;
+          },
+          function(error){
+            //TODO:
+          },
+          key
+        );
+
+      } else {
+        
+        return bitcoin.HDNode.fromBase58(key).neutered().toString();
+
+      }
+    
+    };
+
+
+
+
+    return self;
 });

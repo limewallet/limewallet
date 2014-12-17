@@ -24,7 +24,7 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
     };
 })
 
-.run(function(DB, $cordovaGlobalization, $translate, ReconnectingWebSocket, $q, MasterKey, AddressBook, Address, Asset, $http, $rootScope, $ionicPlatform, $cordovaLocalNotification, $cordovaBarcodeScanner, $ionicModal, $ionicPopup, $cordovaSplashscreen, T) {
+.run(function(DB, BitShares, $cordovaGlobalization, $translate, ReconnectingWebSocket, $q, MasterKey, AddressBook, Address, Asset, $http, $rootScope, $ionicPlatform, $cordovaLocalNotification, $cordovaBarcodeScanner, $ionicModal, $ionicPopup, $cordovaSplashscreen, T) {
 
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
@@ -64,22 +64,28 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
 
         console.log('creating master key...');
 
-        //var hdnode  = bitcoin.HDNode.fromBase58( bitcoin.HDNode.fromSeedBuffer( bitcoin.ECKey.makeRandom().d.toBuffer() ).toString() );
-        var hdnode  = bitcoin.HDNode.fromBase58( 'xprv9s21ZrQH143K3GLiKkd7YY3iqdU1w57HUr3pikZwyberjrkUAWmEr3FUwqFqQfTv8t6SSPkDRYFpRYRRxh2Gh5vnC1MKtPxnYDPFVkRbeJx' );
-        var privkey = hdnode.privKey;
-        var pubkey  = hdnode.pubKey.toBuffer();
-
-        MasterKey.store(hdnode.toString(), -1).then(function() {
-          Address.create(
-            -1, 
-            bitcoin.bts.pub_to_address(pubkey), 
-            bitcoin.bts.encode_pubkey(pubkey), 
-            privkey.toWIF(), 
-            true, 
-            'main').then( function() {
-              $rootScope.$emit('wallet-changed');
+        BitShares.createMasterKey().then(function(mpriv){
+          console.log(' mpriv:'+mpriv);
+          BitShares.extractDataFromKey(mpriv).then(function(keyData){
+            console.log(' keyData:'+keyData);
+          
+            MasterKey.store(mpriv, -1).then(function() {
+              Address.create(
+                -1, 
+                keyData.address, 
+                keyData.pubkey, 
+                keyData.privkey, 
+                true, 
+                'main').then( function() {
+                  $rootScope.$emit('wallet-changed');
+                });
             });
+
+
+          });
+
         });
+        
       }
     }, function(err) {
       console.error(err);
@@ -186,7 +192,7 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
           return;
         }
 
-        var addr = bitcoin.HDNode.fromBase58(master_key.key).neutered().toString() + ':' + master_key.deriv;
+        var addr = BitShares.extendedPublicFromPrivate(master_key.key) + ':' + master_key.deriv;
         var url = 'https://bsw.latincoin.com/api/v1/addrs/' + addr + '/balance/' + $rootScope.asset_id;
         
         console.log('voy con url: '+url + ' para asset:'+$rootScope.asset_id);
