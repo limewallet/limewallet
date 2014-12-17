@@ -26,28 +26,20 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
 
 .run(function(DB, $cordovaGlobalization, $translate, ReconnectingWebSocket, $q, MasterKey, AddressBook, Address, Asset, $http, $rootScope, $ionicPlatform, $cordovaLocalNotification, $cordovaBarcodeScanner, $ionicModal, $ionicPopup, $cordovaSplashscreen, T) {
 
-  $ionicPlatform.ready(function() {
-    // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
-    // for form inputs)
-    if(window.cordova && window.cordova.plugins.Keyboard) {
-      cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
-    }
+    $ionicPlatform.ready(function() {
+      // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
+      // for form inputs)
+      if(window.cordova && window.cordova.plugins.Keyboard) {
+        cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
+      }
 
-    if(window.StatusBar) {
-      // org.apache.cordova.statusbar required
-      StatusBar.styleDefault();
-    }
-
-    $cordovaGlobalization.getPreferredLanguage().then(
-      function(lang) {
-        console.log('lang ->' + lang.value);
-        $translate.use(lang.value.slice(0,2));
-      },
-      function(error) {
-        console.log('Unable to get preferred language');
-        $translate.use('en');
-      });
+      if(window.StatusBar) {
+        // org.apache.cordova.statusbar required
+        StatusBar.styleDefault();
+      }
     
+    });
+
     $rootScope.current_balance  = 0;
     $rootScope.asset_id         = 22;
     $rootScope.balance          = {};
@@ -56,124 +48,62 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
     $rootScope.my_addresses     = {};
     $rootScope.my_book          = {};
     $rootScope.assets           = {};
+    $rootScope.asset            = {};
 
-    DB.init();
-    //Create master key if not exists
-    MasterKey.get().then(function(res) {
-      if(res === undefined) {
+    //return;
 
-        console.log('creating master key...');
-
-        //var hdnode  = bitcoin.HDNode.fromBase58( bitcoin.HDNode.fromSeedBuffer( bitcoin.ECKey.makeRandom().d.toBuffer() ).toString() );
-        var hdnode  = bitcoin.HDNode.fromBase58( 'xprv9s21ZrQH143K3GLiKkd7YY3iqdU1w57HUr3pikZwyberjrkUAWmEr3FUwqFqQfTv8t6SSPkDRYFpRYRRxh2Gh5vnC1MKtPxnYDPFVkRbeJx' );
-        var privkey = hdnode.privKey;
-        var pubkey  = hdnode.pubKey.toBuffer();
-
-        MasterKey.store(hdnode.toString(), -1).then(function() {
-          Address.create(
-            -1, 
-            bitcoin.bts.pub_to_address(pubkey), 
-            bitcoin.bts.encode_pubkey(pubkey), 
-            privkey.toWIF(), 
-            true, 
-            'main').then( function() {
-              $rootScope.$emit('wallet-changed');
-            });
-        });
-      }
-    }, function(err) {
-      console.error(err);
-    });
-    
-    //Create assets if not exist, load assets and set default asset.
-    Asset.all().then(function(res) {
-      if(res === undefined || res.length === 0) {
-        console.log('creating assets...');
-        Asset.init();
-      }
-      else{
-        console.log('Assets already created.');
-      }
-    }, function(err) {
-      console.error(err);
-    })
-    .finally(function(data){
-      // Asset.getDefault().then(function(res){
-        // $rootScope.asset_id = res.asset_id;
-      // });
-      $rootScope.loadAssets();
-    });
-    
     $rootScope.loadAssets = function() {
-      Asset.all().then(function(assets) {
+      return Asset.all().then(function(assets) {
         assets.forEach(function(asset) {
-          $rootScope.assets[asset.asset_id] = asset;  
-          $rootScope.balance[asset.asset_id] = 0;  
-          if(asset.is_default!=0)
-            $rootScope.asset_id = asset.asset_id;
-          console.log('loaded asset: '+ asset.asset_id);
+          $rootScope.assets[asset.id]  = asset;
+          $rootScope.balance[asset.id] = 0;
+
+          if(asset.is_default != 0)
+            $rootScope.asset_id = asset.id;
+
+          console.log('loaded asset: '+ asset.id);
         });
-        $rootScope.refreshBalance();
-        console.log('...firing event "assets-loaded"');
-        $rootScope.$emit('assets-loaded');
-        
+        $rootScope.asset = $rootScope.assets[$rootScope.asset_id];
+        console.log('Assets loaded');
       });
     };
 
     $rootScope.loadAddressBook = function() {
-      console.log('loadAddressBook IN');
-      AddressBook.all().then(function(addys) {
+      return AddressBook.all().then(function(addys) {
         
         addys.forEach(function(addr) {
           console.log('loadAddressBook ' + addr.address + '->' + addr.name);
           $rootScope.my_book[addr.address] = addr;
         });
 
+        console.log('AddressBook loaded');
         $rootScope.$emit('address-book-changed');
       });
     }
 
-    $rootScope.loadAddressBook();
-
     $rootScope.loadMyAddresses = function() {
       return Address.all().then(function(addys) {
-        
         addys.forEach(function(addr) {
           $rootScope.my_addresses[addr.address] = addr;  
         });
+        console.log('MyAddresses loaded');
       });
     };
 
-    $rootScope.loadMyAddresses();
-    
     $rootScope.assetChanged = function(asset_id){
+      $rootScope.transactions=[];
+      $rootScope.current_balance  = 0;
+      $rootScope.balance          = {};
       $rootScope.asset_id = asset_id;
+      $rootScope.asset = $rootScope.assets[$rootScope.asset_id];
       $rootScope.refreshBalance(true);
     }
     
     $rootScope.isValidAsset = function(asset_id){
-      // var assets = [];
-      // angular.copy($rootScope.assets, assets);
-      if(asset_id===undefined || asset_id=='' || asset_id===-1)
-        return false;
-      var assets_keys = Object.keys($rootScope.assets);
-      for(var i=0; i<assets_keys.length; i++) {
-        if(parseInt(assets_keys[i])==parseInt(asset_id))
-          return true;
-      }
-      return false;
+      return asset_id in $rootScope.assets;
     }
     
     $rootScope.getValidAssetId = function(asset_id){
-      if(asset_id===undefined || asset_id=='' || asset_id===-1)
-        return false;
-      var assets_keys = Object.keys($rootScope.assets);
-      for(var i=0; i<assets_keys.length; i++) {
-        if($rootScope.assets[assets_keys[i]].symbol==asset_id.toUpperCase())
-          return assets_keys[i];
-        if(parseInt(assets_keys[i])==parseInt(asset_id))
-          return assets_keys[i];
-      }
       return false;
     }
     
@@ -196,7 +126,7 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
         $http.get(url)
         .success(function(r) {
           r.balances.forEach(function(b){
-            $rootScope.balance[b.asset_id] = b.amount/precision;//1e4; 
+            $rootScope.balance[b.asset_id] = b.amount/precision;
             if(b.asset_id==$rootScope.asset_id)
             {
               $rootScope.current_balance = $rootScope.balance[b.asset_id];
@@ -331,7 +261,25 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
 
     };
 
-    //$rootScope.refreshBalance();
+    $rootScope.connectToEvents = function() {
+      $rootScope.ws = new ReconnectingWebSocket('wss://bswws.latincoin.com/events');
+
+      $rootScope.ws.onopen = function () {
+        console.log('ONOPEN -> mando subscribe');
+        $rootScope.subscribe();
+      };
+
+      $rootScope.ws.onmessage = function (event) {
+        clearTimeout($rootScope.tid);
+        $rootScope.tid = setTimeout( function() { $rootScope.ws.send('ping'); }, 10000);
+
+        if(event.data.indexOf('nb') == 2) {
+          //Refresh balance in 100ms, if we get two notifications (Withdraw from two addresses) just refresh once.
+          clearTimeout($rootScope.rid);
+          $rootScope.rid = setTimeout( function() { $rootScope.$emit('new-balance', event.data); }, 100);
+        } 
+      };
+    }
 
     $rootScope.subscribe = function() {
       MasterKey.get().then(function(master_key) {
@@ -339,8 +287,6 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
         $rootScope.ws.send('sub ' + sub);
       });
     }
-
-    $rootScope.ws = new ReconnectingWebSocket('wss://bswws.latincoin.com/events');
 
     $rootScope.$on('wallet-changed', function() {
       $rootScope.loadMyAddresses();
@@ -352,33 +298,16 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
       $rootScope.refreshBalance();
     });
 
-    $rootScope.ws.onopen = function () {
-      console.log('ONOPEN -> mando subscribe');
-      $rootScope.subscribe();
-    };
-
-    $rootScope.ws.onmessage = function (event) {
-      clearTimeout($rootScope.tid);
-      $rootScope.tid = setTimeout( function() { $rootScope.ws.send('ping'); }, 10000);
-
-      if(event.data.indexOf('nb') == 2) {
-        //Refresh balance in 500ms, if we get two notifications (Withdraw from two addresses) just refresh once.
-        clearTimeout($rootScope.rid);
-        $rootScope.rid = setTimeout( function() { $rootScope.$emit('new-balance', event.data); }, 500);
-      } 
-    };
     
     // Creo que es al pedo, pero por las dudas cerramos el splash.
-    setTimeout(function() {
-      $cordovaSplashscreen.hide()
-    }, 1000);
+    //setTimeout(function() {
+      //$cordovaSplashscreen.hide()
+    //}, 1000);
     
-    // FullScreen Config
-    var showFullScreen = false, showStatusBar = true;
-    ionic.Platform.fullScreen(showFullScreen, showStatusBar);
+    //// FullScreen Config
+    //var showFullScreen = false, showStatusBar = true;
+    //ionic.Platform.fullScreen(showFullScreen, showStatusBar);
 
-
-  });
 })
 
 .config(function($stateProvider, $urlRouterProvider, $translateProvider) {
@@ -390,7 +319,110 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
       url: "/app",
       abstract: true,
       templateUrl: "templates/menu.html",
-      controller: 'AppCtrl'
+      controller: 'AppCtrl',
+      resolve : {
+        'InitDone' : function($ionicPlatform, $cordovaGlobalization, $translate, DB, MasterKey, Address, $rootScope) {
+
+          $ionicPlatform.ready(function(){
+            console.log('Soy ready de resolve');
+
+            //*****************
+            //GET LANGUAGE
+            //*****************
+            $cordovaGlobalization.getPreferredLanguage()
+            .then(function(lang) {
+                console.log('Preferred language => ' + lang.value);
+                $translate.use(lang.value.slice(0,2));
+              },
+              function(error) {
+                console.log('Unable to get preferred language');
+                $translate.use('en');
+            })
+
+            //*****************
+            //INIT DB
+            //*****************
+            .then(function() {
+               return DB.init();
+            })
+            .then(function(lang) {
+                console.log('DB initialized OK');
+              },
+              function(error) {
+                console.log('Unable to get initialize DB');
+            })
+            
+            //*****************
+            //Load Master key
+            //*****************
+            .then(function() {
+              return MasterKey.get();
+            })
+            .then(function(master_key) {
+              if(master_key !== undefined) {
+                console.log('master key present');
+                return;
+              }
+              console.log('creating master key...');
+
+              var hdnode  = bitcoin.HDNode.fromBase58( bitcoin.HDNode.fromSeedBuffer( bitcoin.ECKey.makeRandom().d.toBuffer() ).toString() );
+              var privkey = hdnode.privKey;
+              var pubkey  = hdnode.pubKey.toBuffer();
+
+              return MasterKey.store(hdnode.toString(), -1).then(function() {
+                return Address.create(
+                  -1, 
+                  bitcoin.bts.pub_to_address(pubkey), 
+                  bitcoin.bts.encode_pubkey(pubkey), 
+                  privkey.toWIF(), 
+                  true, 
+                  'main');
+              });
+            },
+            function(error) {
+              console.log('Unable to initialize master-key' + error);
+            })
+            
+            //*****************
+            //Load Assets
+            //*****************
+            .then(function() {
+              return $rootScope.loadAssets();
+            })
+            
+            //****************
+            //Load AddressBook
+            //****************
+            .then(function() {
+              return $rootScope.loadAddressBook();
+            })
+            
+            //****************
+            //Load MyAddress
+            //****************
+            .then(function() {
+              return $rootScope.loadMyAddresses();
+            })
+            
+            //****************
+            //Connect to events
+            //****************
+            .then(function() {
+              $rootScope.connectToEvents();
+            })
+            
+            //****************
+            //Refresh Balance
+            //****************
+            .then(function() {
+              $rootScope.refreshBalance();
+            });
+
+
+
+          }); //platformReady
+        } //InitDone
+      } //resolve
     })
 
     .state('app.backup', {

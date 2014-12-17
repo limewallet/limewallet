@@ -14,6 +14,7 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
         }
         self.db = window.sqlitePlugin.openDatabase({name: DB_CONFIG.name});
  
+        proms = []
         angular.forEach(DB_CONFIG.tables, function(table) {
             var columns = [];
  
@@ -22,9 +23,48 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
             });
  
             var query = 'CREATE TABLE IF NOT EXISTS ' + table.name + ' (' + columns.join(',') + ')';
-            self.query(query);
-            console.log('Table ' + table.name + ' initialized');
+
+            var p = self.query(query)
+            .then(function() {
+              console.log('Table ' + table.name + ' initialized');
+              if(table.rows !== undefined && table.rows.length > 0 ) {
+
+                var mproms = [];
+
+                angular.forEach(table.rows, function(row) {
+
+                    var col_names = Object.keys(row);
+                    var emarks    = [];
+                    var bindings  = [];
+
+                    for(var i=0; i<col_names.length; i++) {
+                      emarks.push('?');
+                      bindings.push( row[col_names[i]] );
+                    }
+
+                    bindings.push(row['id']);
+
+                    var query = '';
+                    query = query + 'INSERT INTO ' + table.name + '\n';
+                    query = query + ' (' + col_names.join(',') + ')\n';
+                    query = query + 'SELECT ' + emarks.join(',') + '\n';
+                    query = query + 'WHERE NOT EXISTS ( SELECT 1 FROM ' + table.name + '\n';
+                    query = query + 'WHERE id = ?)';
+
+                    //console.log(query);
+
+                    var mp = self.query(query, bindings);
+                    mproms.push(mp);
+                });
+
+                return $q.all(mproms);
+              }
+            });
+
+            proms.push(p);
         });
+
+        return $q.all(proms);
     };
  
     self.query = function(query, bindings) {
@@ -169,16 +209,12 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
         });
     };
 
-    self.add = function(asset_id, symbol, fullname, is_default, precision, symbol_ui_class, symbol_ui_text) {
-        return DB.query('INSERT or REPLACE into asset (asset_id, symbol, fullname, is_default, is_enabled, precision, symbol_ui_class, symbol_ui_text) values (?,?,?,?,?,?,?,?)', [asset_id, symbol, fullname, is_default, 1, precision, symbol_ui_class, symbol_ui_text]);
-    }
-    
-    self.init = function() {
-      angular.forEach(DB_CONFIG.assets, function(asset) {
-            self.add(asset.asset_id, asset.symbol, asset.fullname, (asset.symbol=='USD'?1:0), asset.precision, asset.symbol_ui_class, asset.symbol_ui_text);
-            console.log('Asset ' + asset.symbol + ' initialized');
+    self.bySymbol = function(name) {
+        return DB.query('SELECT * FROM asset where symbol = ?',[name])
+        .then(function(result){
+            return DB.fetch(result);
         });
-    }
+    };
     
     self.getDefault = function() {
         return DB.query('SELECT * FROM asset order by is_default desc limit 1',[])
@@ -222,10 +258,10 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
             //HACK for android
             if( device.platform == "Android" ) {
               $ionicModal.fromTemplate('').show().then(function() {
-                $ionicPopup.alert({ title: T.i('qr_scan_cancelled') });
+                $ionicPopup.alert({ title: T.i('home.qr_cancel') });
               });
             } else {
-              $ionicPopup.alert({ title: T.i('qr_scan_cancelled') });
+              $ionicPopup.alert({ title: T.i('home.qr_cancel') });
             }
 
             deferred.resolve(result);
@@ -237,21 +273,29 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
 
             var parts = res.substr(4).split('/');
             if( parts.length >= 2 && bitcoin.bts.is_valid_address(parts[0]) && parts.indexOf('transfer') != -1 ) {
-              //TODO: check optionals
-              var amount_inx = parts.indexOf('amount');
-              var asset_inx  = parts.indexOf('asset');
 
-              var obj = parts[amount_inx+1];
-              //(asset_inx != -1 && parts[asset_inx+1] == 'USD') && 
-              if( (obj - parseFloat( obj ) + 1) >= 0 ) {
-                console.log('Metiste bts: => ' + parts[0] + '=>' + obj);
-                deferred.resolve({cancelled:false, address:parts[0], amount:obj, asset_id:asset_inx}); 
-                return;
+              var amount = undefined;
+              var amount_inx = parts.indexOf('amount');
+              if( amount_inx != -1 ) {
+                obj = parts[amount_inx+1];
+                if( (obj - parseFloat( obj ) + 1) >= 0 ) {
+                  amount = obj;
+                }
               }
+
+              var asset = undefined;
+              var asset_inx  = parts.indexOf('asset');
+              if( asset_inx != -1 ) {
+                asset = parts[asset_inx+1];
+              }
+
+              console.log('Metiste bts: => ' + parts[0] + '=>' + amount + '=>' + asset);
+              deferred.resolve({cancelled:false, address:parts[0], amount:amount, asset_id:asset}); 
+              return;
             }
 
             //window.plugins.toast.show( 'Invalid url', 'long', 'bottom');
-            resolve.reject('Invalid url');
+            deferred.reject('Invalid url');
             return;
 
           } else if( bitcoin.bts.is_valid_address(res) ) {
