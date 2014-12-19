@@ -8,7 +8,7 @@ npm install -g cordova@3.5 ionic
 
 git clone https://github.com/latincoin-com/bitwallet
 cd bitwallet
-git checkout alpha-1
+git checkout alpha-2
 
 cordova platform add android@3.5 --usenpm
 ./copy_res.sh
