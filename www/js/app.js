@@ -39,17 +39,6 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
       }
     
     });
-
-    $rootScope.current_balance  = 0;
-    $rootScope.asset_id         = 22;
-    $rootScope.balance          = {};
-    $rootScope.transactions     = [];
-    $rootScope.raw_txs          = {};
-    $rootScope.my_addresses     = {};
-    $rootScope.my_book          = {};
-    $rootScope.assets           = {};
-    $rootScope.asset            = {};
-
     //return;
 
     $rootScope.loadAssets = function() {
@@ -289,8 +278,9 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
     }
 
     $rootScope.$on('wallet-changed', function() {
+
       $rootScope.loadMyAddresses();
-      $rootScope.refreshBalance();
+      $rootScope.assetChanged();
       $rootScope.subscribe();
     });
 
@@ -323,8 +313,17 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
       resolve : {
         'InitDone' : function($ionicPlatform, $cordovaGlobalization, $translate, DB, MasterKey, Address, $rootScope) {
 
-          $ionicPlatform.ready(function(){
-            console.log('Soy ready de resolve');
+          $rootScope.global_init = function() {
+
+            $rootScope.current_balance  = 0;
+            $rootScope.asset_id         = 22;
+            $rootScope.balance          = {};
+            $rootScope.transactions     = [];
+            $rootScope.raw_txs          = {};
+            $rootScope.my_addresses     = {};
+            $rootScope.my_book          = {};
+            $rootScope.assets           = {};
+            $rootScope.asset            = {};
 
             //*****************
             //GET LANGUAGE
@@ -417,9 +416,10 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
             .then(function() {
               $rootScope.refreshBalance();
             });
+          }
 
-
-
+          $ionicPlatform.ready(function(){
+            $rootScope.global_init();
           }); //platformReady
         } //InitDone
       } //resolve

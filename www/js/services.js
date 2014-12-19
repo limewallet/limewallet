@@ -189,6 +189,10 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
         return DB.query('DELETE from address_book where id=?',[id]);
     };
 
+    self.deleteAll = function() {
+        return DB.query('DELETE from address_book');
+    };
+
     return self;
 })
 //Asset service 

@@ -24,7 +24,7 @@
     "copied_to_clipboard" : "copiado al portapapeles",
     "updated"             : "Actualizado",
     "unable_to_refresh"   : "Imposible actualizar info",
-    "loading"             : "Actualizando"    
+    "loading"             : "Actualizando"
   },
 
   "err" : {
@@ -32,6 +32,7 @@
     "enter_valid_amount"  : "Por favor, ingrese un monto válido",
     "invalid_address"     : "Dirección inválida",
     "enter_valid_address" : "Por favor, ingrese una dirección válida",
+    "invalid_address_account" : "Dirección o nombre cuenta inválida", 
     "invalid_password"    : "Contraseña inválida",
     "enter_valid_password": "Por favor, ingrese una contraseña válida",
     "invalid_backup"      : "Copia de resguardo inválida",
@@ -74,7 +75,7 @@
     "address_book"   : "Agenda",
     "backup_wallet"  : "Resguardar Billetera",
     "restore_wallet" : "Restaurar Billetera",
-    "account"        : "Mi Cuenta",
+    "account"        : "Cuenta",
     "my_assets"      : "Monedas"
   },
 
@@ -85,14 +86,15 @@
 
   "send" : { 
     "payment_confirm"        : "Confirmación de pago",
-    "are_you_sure"           : "Esta seguro que desea enviar {{symbol}} {{amount}} a {{address}}?",
+    "are_you_sure"           : "Esta seguro que desea enviar {{symbol}} {{amount}} a {{address}}?{{extra_data}}",
     "send_payment"           : "Enviar Pago",
     "sending_payment"        : "Enviando Pago",
     "generating_transaction" : "Generando Transacción",
     "signing_transaction"    : "Firmando Transacción",
     "sending_transaction"    : "Enviando Transacción",
     "transaction_sent"       : "Transacción Enviada",
-    "address_book"           : "Contactos"
+    "address_book"           : "Contactos",
+    "searching_account"      : "Buscando cuenta..."
   },
 
   "backup" : {
@@ -137,7 +139,8 @@
     "pk_scanned_ok"           : "Billetera escaneada",
     "explain_text"            : "Ahora puede barrer este balance a su billetera.<br/>Se agregará el balance de esta billetara en papel a su billetera a través de una transacción hacia su dirección por defecto.",
     "transaction_sent"        : "¡Balance barrido satisfactoriamente!",
-    "loading_balance"         : "Obteniendo balance de billetera en papel"
+    "loading_balance"         : "Obteniendo balance de billetera en papel",
+    "switch_currency"         : "La billetera leida contiene balances en {{symbols}}.<br/> Debe cambiar la moneda por defecto de su billetera para poder incorporarlo."
   },
   
   "assets" : {
