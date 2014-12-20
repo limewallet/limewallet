@@ -110,7 +110,7 @@
 
   "restore" : {
     "paste_here"       : "Paste here",
-    "successful"       : "The wallet was restored successfuly",
+    "successful"       : "The wallet was restored successfully",
     "restoring_wallet" : "Restoring wallet"
   },
 
