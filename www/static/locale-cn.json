@@ -1,0 +1,158 @@
+{
+  "g" : {
+    "save"                : "Save",
+    "cancel"              : "Cancel",
+    "send"                : "Send",
+    "sent"                : "Sent",
+    "receive"             : "Receive",
+    "received"            : "Received",
+    "from"                : "From",
+    "to"                  : "To",
+    "remove"              : "Remove",
+    "amount"              : "Amount",
+    "address"             : "Address",
+    "public_key"          : "Public Key",
+    "label"               : "Label",
+    "password"            : "Password",
+    "id"                  : "Id",
+    "block"               : "Block",
+    "timestamp"           : "Timestamp",
+    "fee"                 : "Fee",
+    "confirm_password"    : "Confirm Password",
+    "input_password"      : "Input Password",
+    "in_progress"         : "In progress...",
+    "copied_to_clipboard" : "copied to clipboard",
+    "updated"             : "Updated",
+    "unable_to_refresh"   : "Unable to refresh",
+    "loading"             : "Loading",
+    "default"             : "Default",
+    "asset"               : "Asset"
+  },
+
+  "err" : {
+    "invalid_amount"      : "Invalid amount",
+    "enter_valid_amount"  : "Please enter a valid amount",
+    "invalid_address"     : "Invalid address",
+    "enter_valid_address" : "Please enter a valid address",
+    "invalid_address_account" : "Invalid address or account name", 
+    "invalid_password"    : "Invalid password",
+    "enter_valid_password": "Please enter a valid password",
+    "invalid_backup"      : "Invalid backup",
+    "enter_valid_backup"  : "Please enter a valid backup",
+    "empty_password"      : "Empty password",
+    "password_mismatch"   : "The passwords do not match",
+    "retype_passwords"    : "Confirmation password does not match the first password entered, please verify",
+    "unable_to_share_req" : "Unable to share payment request",
+    "unable_to_copy_req"  : "Unable to copy payment request",
+    "unable_to_share_ew"  : "Unable to share encrypted wallet",
+    "unable_to_copy_ew"   : "Unable to copy encrypted wallet",
+    "unable_to_create_tx" : "Unable to create transaction",
+    "unable_to_send_tx"   : "Unable to send transaction",
+    "unable_to_paste_ew"  : "Unable to paste encrypted wallet",
+    "server_error"        : "Server error",
+    "backup_error"        : "There were errors trying to backup the wallet",
+    "unable_pw_balance"   : "Unable to get paper wallet balance",
+    "empty_paper_wallet"  : "Empty paper wallet",
+    "paper_no_balance"    : "The paper wallet has no available balance",
+    "invalid_asset"       : "Invalid asset",
+    "invalid_asset_desc"  : "The selected asset is not currently supported",
+    "scan_valid_asset"    : "Please require and scan a valid asset"
+  },
+
+  "home" : {
+    "balance"         : "{{asset}} BALANCE",
+    "no_txs"          : "No transactions yet",
+    "pull_to_refresh" : "Pull to refresh...",
+    "pending"         : "PENDING",
+    "on"              : "On",
+    "just_now"        : "Just now",
+    "Me"              : "Me",
+    "qr_cancel"       : "QR code scan cancelled",
+    "add_to_book"     : "Add to address book",
+    "view_details"    : "View details",
+    "address_name"     : "address name",
+    "save_successfull" : "Address saved successfully"
+  },
+
+  "menu" : {
+    "settings"       : "Settings",
+    "home"           : "Home",
+    "address_book"   : "Address Book",
+    "backup_wallet"  : "Backup Wallet",
+    "restore_wallet" : "Restore Wallet",
+    "account"        : "Account",
+    "my_assets"      : "Currencies"
+  },
+
+  "receive" : {
+    "payment_request"     : "Request Payment",
+    "copied_to_clipboard" : "Payment request copied to clipboard"
+  },
+
+  "send" : { 
+    "payment_confirm"        : "Payment confirmation",
+    "are_you_sure"           : "Are you sure you want to send {{symbol}} {{amount}} to {{address}}?{{extra_data}}",
+    "send_payment"           : "Send Payment",
+    "sending_payment"        : "Sending Payment",
+    "generating_transaction" : "Generating Transaction",
+    "signing_transaction"    : "Signing Transaction",
+    "sending_transaction"    : "Sending Transaction",
+    "transaction_sent"       : "Transaction Sent",
+    "address_book"           : "Address Book",
+    "searching_account"      : "Searching account..."
+  },
+
+  "backup" : {
+    "backing_up_wallet"   : "Backing up wallet",
+    "copied_to_clipboard" : "Encrypted wallet copied to clipboard",
+    "encrypted_wallet"    : "Encrypted Wallet"
+  },
+
+  "restore" : {
+    "paste_here"       : "Paste here",
+    "successful"       : "The wallet was restored successfully",
+    "restoring_wallet" : "Restoring wallet"
+  },
+
+  "detail" : {
+    "transaction_details" : "Transaction details",
+    "info"                : "Info",
+    "withdraws"           : "Withdraws",
+    "deposits"            : "Deposits"
+  },
+
+  "addys" : {
+    "new_address"     : "New Address",
+    "are_you_sure"    : "Are you sure you want to add a new address to your account?",
+    "set_as_default"  : "Set as default",
+    "set_label"       : "Set Label",
+    "copy_address"    : "Copy Addres",
+    "copy_public_key" : "Copy Public Key",
+    "no_addys"        : "No address added yet"
+  },
+
+  "book" : {
+    "add_to_fav"        : "Add to favorites",
+    "remove_from_fav"   : "Remove from favorites",
+    "remove_from_ab"    : "Remove from address book",
+    "remove_sure"       : "Are you sure you want to remove <b>{{name}}</b> from the address book?"
+  },
+  
+  "import_priv" : {
+    "paper_wallet"            : "Import Paper Wallet",
+    "sweep_balance"           : "Sweep balance",
+    "invalid"                 : "Can't import invalid/empty private key",
+    "pk_scanned_ok"           : "Paper wallet",
+    "explain_text"            : "You can now sweep this balance into your wallet.<br/>Paper wallet balance will be added to your wallet through a transaction to your default address.",
+    "transaction_sent"        : "Balance sweeped successfully!",
+    "loading_balance"         : "Loading paper wallet balance",
+    "switch_currency"         : "The scaned paper wallet contains balances in {{symbols}}.<br/> You need to switch your wallet's default currency to import them."
+  },
+  
+  "assets" : {
+    "hide_asset"              : "Hide asset",
+    "show_asset"              : "Show asset",
+    "my_assets"               : "Currencies"
+  
+  }
+}
