@@ -205,7 +205,7 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
     return self;
 })
 //QR Code service
-.factory('Scanner', function($q, $cordovaBarcodeScanner, T, $ionicModal, $ionicPopup) {
+.factory('Scanner', function($q, $cordovaBarcodeScanner, T, $ionicModal, $ionicPopup, $cordovaDevice) {
 
     var self = this;
     
@@ -220,7 +220,7 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
           if ( result.cancelled ) {
 
             //HACK for android
-            if( device.platform == "Android" ) {
+            if( $rootScope.platform == "Android" ) {
               $ionicModal.fromTemplate('').show().then(function() {
                 $ionicPopup.alert({ title: T.i('qr_scan_cancelled') });
               });
@@ -340,17 +340,18 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
 })
 
 //Bitshares Helper
-.factory('BitShares', function($translate, $q) {
+.factory('BitShares', function($translate, $q, $rootScope) {
     var self = this;
 
     self.createMasterKey = function() {
-      
       var deferred = $q.defer();
 
-      if( device.platform == "iOS" ) {
+      if( $rootScope.platform== "iOS" ) {
 
         window.plugins.BitsharesPlugin.createMasterKey(
           function(data){
+            console.log(data);
+            console.log('data.masterPrivateKey: '+data.masterPrivateKey);
             deferred.resolve(data.masterPrivateKey);
           },
           function(error){
@@ -372,7 +373,7 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
       
       var deferred = $q.defer();
 
-      if( device.platform == "iOS" ) {
+      if( $rootScope.platform == "iOS" ) {
 
         window.plugins.BitsharesPlugin.extractDataFromKey(
           function(data){
@@ -406,7 +407,7 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
       
       var deferred = $q.defer();
 
-      if( device.platform == "iOS" ) {
+      if( $rootScope.platform == "iOS" ) {
 
         window.plugins.BitsharesPlugin.extendedPublicFromPrivate(
           function(data){
@@ -428,7 +429,7 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
       
       var deferred = $q.defer();
 
-      if( device.platform == "iOS" ) {
+      if( $rootScope.platform == "iOS" ) {
 
         window.plugins.BitsharesPlugin.encryptString(
           function(data){
@@ -437,7 +438,8 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
           function(error){
             deferred.reject(error);
           },
-          key
+          data, 
+          password
         );
 
       } else {
@@ -453,7 +455,7 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
       
       var deferred = $q.defer();
 
-      if( device.platform == "iOS" ) {
+      if( $rootScope.platform == "iOS" ) {
 
         window.plugins.BitsharesPlugin.decryptString(
           function(data){
@@ -462,7 +464,8 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
           function(error){
             deferred.reject(error);
           },
-          key
+          data, 
+          password
         );
 
       } else {
@@ -477,7 +480,7 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
       
       var deferred = $q.defer();
 
-      if( device.platform == "iOS" ) {
+      if( $rootScope.platform == "iOS" ) {
 
         window.plugins.BitsharesPlugin.isValidKey(
           function(data){
@@ -507,7 +510,7 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
       
       var deferred = $q.defer();
 
-      if( device.platform == "iOS" ) {
+      if( $rootScope.platform == "iOS" ) {
 
         window.plugins.BitsharesPlugin.isValidWif(
           function(data){
@@ -536,8 +539,8 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
     self.derivePrivate = function(key, deriv) {
       
       var deferred = $q.defer();
-
-      if( device.platform == "iOS" ) {
+      
+      if( $rootScope.platform == "iOS" ) {
 
         window.plugins.BitsharesPlugin.derivePrivate(
           function(data){
@@ -565,7 +568,7 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
       
       var deferred = $q.defer();
 
-      if( device.platform == "iOS" ) {
+      if( $rootScope.platform == "iOS" ) {
 
         window.plugins.BitsharesPlugin.compactSignatureForHash(
           function(data){
@@ -597,7 +600,7 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
       
       var deferred = $q.defer();
 
-      if( device.platform == "iOS" ) {
+      if( $rootScope.platform == "iOS" ) {
 
         window.plugins.BitsharesPlugin.btsWifToAddress(
           function(data){
@@ -622,7 +625,7 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
       
       var deferred = $q.defer();
 
-      if( device.platform == "iOS" ) {
+      if( $rootScope.platform == "iOS" ) {
 
         window.plugins.BitsharesPlugin.btsPubToAddress(
           function(data){
@@ -647,7 +650,7 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
       
       var deferred = $q.defer();
 
-      if( device.platform == "iOS" ) {
+      if( $rootScope.platform == "iOS" ) {
 
         window.plugins.BitsharesPlugin.btsIsValidAddress(
           function(data){
@@ -656,7 +659,7 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
           function(error){
             deferred.reject(error);
           },
-          key
+          addy
         );
 
       } else {

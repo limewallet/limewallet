@@ -13,7 +13,7 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
       .copy($scope.backup.wallet_master)
       .then(function () {
         //success
-        console.log(' wallet backup: '+$scope.backup.wallet_master);
+        //console.log(' wallet backup: '+$scope.backup.wallet_master);
         window.plugins.toast.show(T.i('backup.copied_to_clipboard'), 'short', 'bottom');
       }, function () {
         //error
@@ -82,8 +82,7 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
         angular.forEach(addys, function(addy) {
           var p2 = BitShares.encryptString(addy.privkey, backupForm.backupPassword.value).then(
             function(encryptedData){
-              addy.privkey = encryptedData;
-              console.log('--backup address inside promise:'+addy.label + ' - ' + addy.address + ' - ' + encryptedData);
+              addy['privkey'] = encryptedData;
               ewallet_address.push(addy);
             }); 
           proms2.push(p2);

@@ -24,7 +24,7 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
     };
 })
 
-.run(function(DB, BitShares, $cordovaGlobalization, $translate, ReconnectingWebSocket, $q, MasterKey, AddressBook, Address, Asset, $http, $rootScope, $ionicPlatform, $cordovaLocalNotification, $cordovaBarcodeScanner, $ionicModal, $ionicPopup, $cordovaSplashscreen, T) {
+.run(function(DB, BitShares, $cordovaGlobalization, $translate, ReconnectingWebSocket, $q, MasterKey, AddressBook, Address, Asset, $http, $rootScope, $ionicPlatform, $cordovaLocalNotification, $cordovaBarcodeScanner, $ionicModal, $ionicPopup, $cordovaSplashscreen, T, $cordovaDevice) {
 
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
@@ -48,6 +48,10 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
         $translate.use('en');
       });
     
+    $rootScope.platform         = 'iOS';
+    if(device !== undefined && device.platform !== undefined)
+      $rootScope.platform       = device.platform;
+    console.log('Device Platform @ rootScope '+ $rootScope.platform);
     $rootScope.current_balance  = 0;
     $rootScope.asset_id         = 22;
     $rootScope.balance          = {};
