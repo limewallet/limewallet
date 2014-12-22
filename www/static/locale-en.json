@@ -126,7 +126,7 @@
     "are_you_sure"    : "Are you sure you want to add a new address to your account?",
     "set_as_default"  : "Set as default",
     "set_label"       : "Set Label",
-    "copy_address"    : "Copy Addres",
+    "copy_address"    : "Copy Address",
     "copy_public_key" : "Copy Public Key",
     "no_addys"        : "No address added yet"
   },
