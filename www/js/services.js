@@ -262,7 +262,7 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
                 return;
               }
             );
-            
+            return;
 
           } 
           BitShares.btsIsValidAddress(res).then(
