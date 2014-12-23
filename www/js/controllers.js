@@ -593,7 +593,7 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
   };
 })
 
-.controller('ImportPrivCtrl', function($scope, T, $q, Address, $http, $ionicLoading, $ionicNavBarDelegate, $ionicModal, $ionicPopup, $location, $timeout, $rootScope, $stateParams) {
+.controller('ImportPrivCtrl', function($scope, T, $q, Address, $http, $ionicLoading, $ionicNavBarDelegate, $ionicModal, $ionicPopup, $location, $timeout, $rootScope, $stateParams, BitShares) {
   
   $scope.showLoading = function(){
     $ionicLoading.show({
@@ -794,7 +794,7 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
   $scope.initImport();
 })
 
-.controller('SendCtrl', function($scope, $q, T, AddressBook, Scanner, Address, $http, $ionicLoading, $ionicNavBarDelegate, $ionicModal, $ionicPopup, $location, $timeout, $rootScope, $stateParams) {
+.controller('SendCtrl', function($scope, $q, T, BitShares, AddressBook, Scanner, Address, $http, $ionicLoading, $ionicNavBarDelegate, $ionicModal, $ionicPopup, $location, $timeout, $rootScope, $stateParams) {
   
   $scope.asset = [];
   $scope.data = {address_book:[]};
@@ -1238,7 +1238,7 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
   };
 })
 
-.controller('HomeCtrl', function(T, Scanner, AddressBook, Asset, $ionicActionSheet, $scope, $state, $http, $ionicModal, $rootScope, $ionicPopup, $timeout, $location, $cordovaBarcodeScanner) {
+.controller('HomeCtrl', function(T, Scanner, AddressBook, Asset, $ionicActionSheet, $scope, $state, $http, $ionicModal, $rootScope, $ionicPopup, $timeout, $location, $cordovaBarcodeScanner, BitShares) {
   
   //$scope.asset = $rootScope.assets[$rootScope.asset_id];
   $scope.asset = [];
