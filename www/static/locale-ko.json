@@ -16,7 +16,7 @@
     "password"            : "비밀번호",
     "id"                  : "아이디",
     "block"               : "블록",
-    "timestamp"           : "타임스탬프",
+    "timestamp"           : "일시",
     "fee"                 : "수수료",
     "confirm_password"    : "비밀번호 확인",
     "input_password"      : "비밀번호 입력",
@@ -42,8 +42,8 @@
     "empty_password"      : "비밀번호가 비어있음",
     "password_mismatch"   : "비밀번호가 일치하지 않음",
     "retype_passwords"    : "비밀번호 일치하지 않습니다. 다시 확인하세요",
-    "unable_to_share_req" : "지불 요청을 공유할 수 없음",
-    "unable_to_copy_req"  : "지불 요청을 복사할 수 없음",
+    "unable_to_share_req" : "입금 요청을 공유할 수 없음",
+    "unable_to_copy_req"  : "입금 요청을 복사할 수 없음",
     "unable_to_share_ew"  : "암호화된 지갑을 공유할 수 없음",
     "unable_to_copy_ew"   : "암호화된 지갑을 복사할 수 없음",
     "unable_to_create_tx" : "거래를 생성할 수 없음",
@@ -64,7 +64,7 @@
     "no_txs"          : "거래내역이 없음",
     "pull_to_refresh" : "아래로 잡아당겨 새로고침...",
     "pending"         : "처리중",
-    "on"              : "켜짐",
+    "on"              : "일시",
     "just_now"        : "조금 전",
     "Me"              : "나",
     "qr_cancel"       : "QR 코드 스캔이 취소됨",
@@ -85,19 +85,19 @@
   },
 
   "receive" : {
-    "payment_request"     : "지불 요청",
-    "copied_to_clipboard" : "지불 요청이 클립보드로 복사됨"
+    "payment_request"     : "입금 요청",
+    "copied_to_clipboard" : "입금 요청이 클립보드로 복사됨"
   },
 
   "send" : { 
-    "payment_confirm"        : "지불 확인",
+    "payment_confirm"        : "송금 확인",
     "are_you_sure"           : "{{amount}} {{symbol}}를 {{address}}로 전송하시겠습니까?{{extra_data}}",
-    "send_payment"           : "지불 전송",
-    "sending_payment"        : "지불 전송중",
+    "send_payment"           : "송금",
+    "sending_payment"        : "송금중",
     "generating_transaction" : "거래 생성중",
-    "signing_transaction"    : "거래 사인중",
-    "sending_transaction"    : "거래 전송중",
-    "transaction_sent"       : "거래가 전송됨",
+    "signing_transaction"    : "거래 서명중",
+    "sending_transaction"    : "전송중",
+    "transaction_sent"       : "전송됨",
     "address_book"           : "주소록",
     "searching_account"      : "계정 찾는중..."
   },
