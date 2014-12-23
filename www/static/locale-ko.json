@@ -91,7 +91,7 @@
 
   "send" : { 
     "payment_confirm"        : "송금 확인",
-    "are_you_sure"           : "{{amount}} {{symbol}}를 {{address}}로 전송하시겠습니까?{{extra_data}}",
+    "are_you_sure"           : "{{symbol}} {{amount}}를<br/>{{address}}로 전송하시겠습니까?{{extra_data}}",
     "send_payment"           : "송금",
     "sending_payment"        : "송금중",
     "generating_transaction" : "거래 생성중",
