@@ -55,7 +55,7 @@
     "empty_paper_wallet"  : "Paper wallet vuoto",
     "paper_no_balance"    : "Il paper wallet non ha saldo disponibile",
     "invalid_asset"       : "Asset invalido",
-    "invalid_asset_desc"  : "L'asset selezionato è attualmente supportato",
+    "invalid_asset_desc"  : "L'asset selezionato non è attualmente supportato",
     "scan_valid_asset"    : "Si prega scansionare un asset valido"
   },
 
