@@ -9,7 +9,7 @@
     "from"                : "발신자",
     "to"                  : "수신자",
     "remove"              : "제거",
-    "amount"              : "액수",
+    "amount"              : "금액",
     "address"             : "주소",
     "public_key"          : "공개키",
     "label"               : "라벨",
@@ -30,8 +30,8 @@
   },
 
   "err" : {
-    "invalid_amount"      : "잘못된 액수",
-    "enter_valid_amount"  : "유효한 액수를 입력하세요",
+    "invalid_amount"      : "잘못된 금액",
+    "enter_valid_amount"  : "유효한 금액를 입력하세요",
     "invalid_address"     : "잘못된 주소",
     "enter_valid_address" : "유효한 주소를 입력하세요",
     "invalid_address_account" : "잘못된 주소 또는 계정명", 
@@ -96,8 +96,8 @@
     "sending_payment"        : "송금중",
     "generating_transaction" : "거래 생성중",
     "signing_transaction"    : "거래 서명중",
-    "sending_transaction"    : "전송중",
-    "transaction_sent"       : "전송됨",
+    "sending_transaction"    : "거래 전송중",
+    "transaction_sent"       : "거래 완료",
     "address_book"           : "주소록",
     "searching_account"      : "계정 찾는중..."
   },
