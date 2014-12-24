@@ -1238,7 +1238,7 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
   };
 })
 
-.controller('HomeCtrl', function(T, Scanner, AddressBook, Asset, $ionicActionSheet, $scope, $state, $http, $ionicModal, $rootScope, $ionicPopup, $timeout, $location, $cordovaBarcodeScanner, BitShares) {
+.controller('HomeCtrl', function(T, Scanner, AddressBook, Asset, $ionicActionSheet, $scope, $state, $http, $ionicModal, $rootScope, $ionicPopup, $timeout, $location, BitShares, $q) {
   
   //$scope.asset = $rootScope.assets[$rootScope.asset_id];
   $scope.asset = [];
@@ -1260,7 +1260,6 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
   
   
   $scope.scanQR = function() {
-  
            
     Scanner.scan()
     .then(function(result) {

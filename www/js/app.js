@@ -24,7 +24,7 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
     };
 })
 
-.run(function(DB, BitShares, $cordovaGlobalization, $translate, ReconnectingWebSocket, $q, MasterKey, AddressBook, Address, Asset, $http, $rootScope, $ionicPlatform, $cordovaLocalNotification, $cordovaBarcodeScanner, $ionicModal, $ionicPopup, $cordovaSplashscreen, T, $cordovaDevice) {
+.run(function(DB, BitShares, $cordovaGlobalization, $translate, ReconnectingWebSocket, $q, MasterKey, AddressBook, Address, Asset, $http, $rootScope, $ionicPlatform, $cordovaLocalNotification, $ionicModal, $ionicPopup, $cordovaSplashscreen, T, $cordovaDevice) {
 
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard

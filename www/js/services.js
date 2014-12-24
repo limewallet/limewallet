@@ -204,130 +204,7 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
     
     return self;
 })
-//QR Code service
-.factory('Scanner', function($q, $cordovaBarcodeScanner, T, $ionicModal, $ionicPopup, $cordovaDevice) {
 
-    var self = this;
-    
-    self.scan = function() {
-
-      var deferred = $q.defer();
-
-      $cordovaBarcodeScanner
-        .scan()
-        .then(function(result) {
-          
-          if ( result.cancelled ) {
-
-            //HACK for android
-            if( $rootScope.platform == "Android" ) {
-              $ionicModal.fromTemplate('').show().then(function() {
-                $ionicPopup.alert({ title: T.i('qr_scan_cancelled') });
-              });
-            } else {
-              $ionicPopup.alert({ title: T.i('qr_scan_cancelled') });
-            }
-
-            deferred.resolve(result);
-            return;
-          }
-
-          var res = result.text;
-          if( res.indexOf('bts:') == 0 ) {
-
-            var parts = res.substr(4).split('/');
-
-            
-            BitShares.btsIsValidAddress(parts[0]).then(
-              function(is_valid){
-                if( parts.length >= 2 && parts.indexOf('transfer') != -1 ) {
-                  //TODO: check optionals
-                  var amount_inx = parts.indexOf('amount');
-                  var asset_inx  = parts.indexOf('asset');
-
-                  var obj = parts[amount_inx+1];
-                  //(asset_inx != -1 && parts[asset_inx+1] == 'USD') && 
-                  if( (obj - parseFloat( obj ) + 1) >= 0 ) {
-                    console.log('Metiste bts: => ' + parts[0] + '=>' + obj);
-                    deferred.resolve({cancelled:false, address:parts[0], amount:obj, asset_id:asset_inx}); 
-                    return;
-                  }
-                }
-                //window.plugins.toast.show( 'Invalid url', 'long', 'bottom');
-                resolve.reject('Invalid url');
-                return;
-              },
-              function(error){
-                resolve.reject('Invalid address');
-                return;
-              }
-            );
-            return;
-
-          } 
-          BitShares.btsIsValidAddress(res).then(
-            function(is_valid){
-              deferred.resolve({cancelled:false, address:res}); 
-              return;
-            },
-            function(error){
-              BitShares.btsIsValidPubkey(res).then(
-                function(is_valid){
-                  deferred.resolve({cancelled:false, pubkey:res}); 
-                  return;
-                },
-                function(error){
-                  BitShares.isValidWif(res).then(
-                    function(is_valid){
-                      deferred.resolve({cancelled:false, privkey:res}); 
-                      return;
-                    },
-                    function(error){
-                      deferred.reject(error);
-                    });        
-                });
-
-            });
-          
-          
-          /*else if( bitcoin.bts.is_valid_address(res) ) {
-
-            console.log('Escaneaste una address => ' + res);
-            deferred.resolve({cancelled:false, address:res}); 
-            return;
-
-          } else if( bitcoin.bts.is_valid_pubkey(res) ) {
-
-            console.log('Escaneaste una pubkey => ' + res);
-            deferred.resolve({cancelled:false, pubkey:res}); 
-            return;
-
-          } else {
-            var priv;
-            try {
-              priv = bitcoin.ECKey.fromWIF(res);
-            } catch(err) {
-
-            }
-            if( priv === undefined) {
-              deferred.reject('Invalid Qr');
-              return;
-            }
-            console.log('Escaneaste una privada => ' + res);
-            deferred.resolve({cancelled:false, privkey:res}); 
-            return;
-          }*/
-
-        }, function(error) {
-          deferred.reject(error);
-          return;
-        });
-
-        return deferred.promise;
-    };
-
-    return self;
-})
 //i18n Helper
 .factory('T', function($translate) {
     var self = this;
@@ -674,6 +551,141 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
       }
       return deferred.promise;
     };
+
+    self.btsIsValidPubkey = function(pubkey) {
+      
+      var deferred = $q.defer();
+
+      if( $rootScope.platform == "iOS" ) {
+
+        window.plugins.BitsharesPlugin.btsIsValidPubkey(
+          function(data){
+            deferred.resolve(true);
+          },
+          function(error){
+            deferred.reject(error);
+          },
+          pubkey
+        );
+
+      } else {
+        if(!bitcoin.bts.is_valid_pubkey(res))
+        {
+          err = {'message':'Invalid pubkey'}
+          deferred.reject(err);
+          return;
+        }
+        deferred.resolve(true);
+        
+      }
+      return deferred.promise;
+    };
     
     return self;
-});
+})
+
+
+//QR Code service
+.factory('Scanner', function($q, T, $ionicModal, $ionicPopup, $cordovaDevice, BitShares) {
+
+    var self = this;
+    
+    self.scan = function() {
+
+      var deferred = $q.defer();
+
+      // $cordovaBarcodeScanner
+      //   .scan()
+        // .then(function(result) {
+      window.plugins.BarcodeScanner.scan(
+          function(result) {
+          console.log( 'Services.Scanner retorno algo');
+          if ( result.cancelled ) {
+
+            //HACK for android
+            if( $rootScope.platform == "Android" ) {
+              $ionicModal.fromTemplate('').show().then(function() {
+                $ionicPopup.alert({ title: T.i('qr_scan_cancelled') });
+              });
+            } else {
+              $ionicPopup.alert({ title: T.i('qr_scan_cancelled') });
+            }
+
+            deferred.resolve(result);
+            return;
+          }
+
+          var res = result.text;
+          if( res.indexOf('bts:') == 0 ) {
+
+            var parts = res.substr(4).split('/');
+
+            
+            BitShares.btsIsValidAddress(parts[0]).then(
+              function(is_valid){
+                if( parts.length >= 2 && parts.indexOf('transfer') != -1 ) {
+                  //TODO: check optionals
+                  var amount_inx = parts.indexOf('amount');
+                  var asset_inx  = parts.indexOf('asset');
+
+                  var obj = parts[amount_inx+1];
+                  //(asset_inx != -1 && parts[asset_inx+1] == 'USD') && 
+                  if( (obj - parseFloat( obj ) + 1) >= 0 ) {
+                    console.log('Metiste bts: => ' + parts[0] + '=>' + obj);
+                    deferred.resolve({cancelled:false, address:parts[0], amount:obj, asset_id:asset_inx}); 
+                    return;
+                  }
+                }
+                //window.plugins.toast.show( 'Invalid url', 'long', 'bottom');
+                resolve.reject('Invalid url');
+                return;
+              },
+              function(error){
+                resolve.reject('Invalid address');
+                return;
+              }
+            );
+            return;
+
+          } 
+          BitShares.btsIsValidAddress(res).then(
+            function(is_valid){
+              console.log(' barcodescanner dijo es valid address : ' + res);
+              deferred.resolve({cancelled:false, address:res}); 
+              return;
+            },
+            function(error){
+              console.log(' barcodescanner dijo NO es valid address ');
+              return BitShares.btsIsValidPubkey(res).then(
+                function(is_valid){
+                  console.log(' barcodescanner dijo es valid pubkey : ' + res);
+                  deferred.resolve({cancelled:false, pubkey:res}); 
+                  return;
+                },
+                function(error){
+                  console.log(' barcodescanner dijo NO es valid pubkey ');
+                  return BitShares.isValidWif(res).then(
+                    function(is_valid){
+                      console.log(' barcodescanner dijo es valid WIF : ' + res);
+                      deferred.resolve({cancelled:false, privkey:res}); 
+                      return;
+                    },
+                    function(error){
+                      console.log(' barcodescanner dijo NO es valid WIF' );
+                      deferred.reject(error);
+                    });        
+                });
+
+            });
+        }, function(error) {
+          console.log( 'Services.Scanner retorno ERROR');
+          
+          deferred.reject(error);
+          return;
+        });
+
+        return deferred.promise;
+    };
+
+    return self;
+})
