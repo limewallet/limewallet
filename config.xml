@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<widget id="com.latincoin.bitwallet" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="com.latincoin.bitwallet" version="0.0.2" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
   <name>Bitwallet</name>
   <description>&#xD;&#xD;&#xD;&#xD;
         Bitshares mobile wallet.&#xD;&#xD;&#xD;&#xD;
@@ -17,6 +17,7 @@
   <preference name="SplashScreen" value="screen"/>
   <preference name="StatusBarOverlaysWebView" value="false"/>
   <preference name="Fullscreen" value="false"/>
+  <preference name="Orientation" value="portrait" />
   <feature name="Keyboard">
     <param name="ios-package" value="IonicKeyboard" onload="true"/>
   </feature>
