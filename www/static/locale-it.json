@@ -1,0 +1,158 @@
+{
+  "g" : {
+    "save"                : "Salva",
+    "cancel"              : "Cancella",
+    "send"                : "Invia",
+    "sent"                : "Inviato",
+    "receive"             : "Ricevi",
+    "received"            : "Ricevuto",
+    "from"                : "Da",
+    "to"                  : "A",
+    "remove"              : "Rimuovi",
+    "amount"              : "Quantità",
+    "address"             : "Indirizzo",
+    "public_key"          : "Chiave Pubblica",
+    "label"               : "Etichetta",
+    "password"            : "Password",
+    "id"                  : "Id",
+    "block"               : "Blocco",
+    "timestamp"           : "Timestamp",
+    "fee"                 : "Commissione",
+    "confirm_password"    : "Conferma Password",
+    "input_password"      : "Inserisci Password",
+    "in_progress"         : "In avanzamento...",
+    "copied_to_clipboard" : "Copiato negli appunti",
+    "updated"             : "Aggiornato",
+    "unable_to_refresh"   : "Impossibile ricaricare",
+    "loading"             : "Caricamento",
+    "default"             : "Default",
+    "asset"               : "Asset"
+  },
+
+  "err" : {
+    "invalid_amount"      : "Quantità non corretta",
+    "enter_valid_amount"  : "Si prega in inserire una quantità corretta",
+    "invalid_address"     : "Indirizzo non corretto",
+    "enter_valid_address" : "Si prega in inserire un indirizzo corretto",
+    "invalid_address_account" : "Indirizzo o nome dell'account invalido", 
+    "invalid_password"    : "Password non corretta",
+    "enter_valid_password": "Si prega in inserire la password corretta",
+    "invalid_backup"      : "Backup non corretto",
+    "enter_valid_backup"  : "Si prega in inserire un backup corretto",
+    "empty_password"      : "Password vuota",
+    "password_mismatch"   : "La password non è corretta",
+    "retype_passwords"    : "La password di conferma non è uguale alla password inserita, si prega di ricontrollare",
+    "unable_to_share_req" : "Impossibile condividere la richiesta di pagamento",
+    "unable_to_copy_req"  : "Impossibile copiare la richiesta di pagamento",
+    "unable_to_share_ew"  : "Impossibile condividere il wallet criptato",
+    "unable_to_copy_ew"   : "Impossibile copiare il wallet criptato",
+    "unable_to_create_tx" : "Impossibile creare la transazione",
+    "unable_to_send_tx"   : "Impossibile inviare la transazione",
+    "unable_to_paste_ew"  : "Impossibile incollare il wallet criptato",
+    "server_error"        : "Errore del server",
+    "backup_error"        : "Errore in fase di backup del wallet",
+    "unable_pw_balance"   : "Impossibile caricare il saldo dal paper wallet",
+    "empty_paper_wallet"  : "Paper wallet vuoto",
+    "paper_no_balance"    : "Il paper wallet non ha saldo disponibile",
+    "invalid_asset"       : "Asset invalido",
+    "invalid_asset_desc"  : "L'asset selezionato non è attualmente supportato",
+    "scan_valid_asset"    : "Si prega di scansionare un asset valido"
+  },
+
+  "home" : {
+    "balance"         : "{{asset}} SALDO",
+    "no_txs"          : "Ancora nessuna transazione",
+    "pull_to_refresh" : "Scorri e aggiorna...",
+    "pending"         : "In esecuzione",
+    "on"              : "Attivo",
+    "just_now"        : "Proprio ora",
+    "Me"              : "Io",
+    "qr_cancel"       : "Scansione QR code cancellata",
+    "add_to_book"     : "Aggiungi a rubrica",
+    "view_details"    : "Vedi dettagli",
+    "address_name"     : "Nome dell'indirizzo",
+    "save_successfull" : "Indirizzo salvato con successo"
+  },
+
+  "menu" : {
+    "settings"       : "Impostazioni",
+    "home"           : "Home",
+    "address_book"   : "Rubrica",
+    "backup_wallet"  : "Backup Wallet",
+    "restore_wallet" : "Ripristina Wallet",
+    "account"        : "Conto",
+    "my_assets"      : "I miei asset"
+  },
+
+  "receive" : {
+    "payment_request"     : "Richiesta di pagamento",
+    "copied_to_clipboard" : "Richiesta di pagamento copiata negli appunti"
+  },
+
+  "send" : { 
+    "payment_confirm"        : "Conferma di pagamento",
+    "are_you_sure"           : "Sicuro di volere inviare {{symbol}} {{amount}} a {{address}}?{{extra_data}}",
+    "send_payment"           : "Invia pagamento",
+    "sending_payment"        : "Invio pagamento in corso",
+    "generating_transaction" : "Generazione della transazione",
+    "signing_transaction"    : "Firma della transazione",
+    "sending_transaction"    : "Invio transazione in corso",
+    "transaction_sent"       : "Transazione inviata",
+    "address_book"           : "Rubrica",
+    "searching_account"      : "Ricerca account in corso..."
+  },
+
+  "backup" : {
+    "backing_up_wallet"   : "Backup del wallet in corso",
+    "copied_to_clipboard" : "Wallet criptato copiato negli appunti",
+    "encrypted_wallet"    : "Wallat criptato"
+  },
+
+  "restore" : {
+    "paste_here"       : "Incolla qui",
+    "successful"       : "Il wallet è stato ripristinato con successo",
+    "restoring_wallet" : "Ripristino wallet in corso"
+  },
+
+  "detail" : {
+    "transaction_details" : "Dettaglio transazioni",
+    "info"                : "Info",
+    "withdraws"           : "Prelievi",
+    "deposits"            : "Depositi"
+  },
+
+  "addys" : {
+    "new_address"     : "Nuovo indirizzo",
+    "are_you_sure"    : "Sei sicuro di voler aggiungere un nuovo indirizzo al tuo account?",
+    "set_as_default"  : "Imposta come default",
+    "set_label"       : "Imposta Etichetta",
+    "copy_address"    : "Copia indirizzo",
+    "copy_public_key" : "Copia chiave pubblica",
+    "no_addys"        : "Ancora nessun indirizzo aggiunto"
+  },
+
+  "book" : {
+    "add_to_fav"        : "Aggiungi a favoriti",
+    "remove_from_fav"   : "Rimuovi dai favoriti",
+    "remove_from_ab"    : "Rimuovi dalla rubrica",
+    "remove_sure"       : "Sei sicuro di voler rimuovere <b>{{name}}</b> dalla rubrica?"
+  },
+  
+  "import_priv" : {
+    "paper_wallet"            : "Importa Paper Wallet",
+    "sweep_balance"           : "Trasferisci saldo",
+    "invalid"                 : "Impossibile importare la chiave privata perchè invalida o vuota",
+    "pk_scanned_ok"           : "Paper wallet caricato",
+    "explain_text"            : "Puoi traferire questo saldo nel tuo wallet.<br/>Il saldo del paper wallet sarà aggiunto al tuo wallet attraverso una transazione verso il tuo indirizzo di default",
+    "transaction_sent"        : "Saldo transferito con successo!",
+    "loading_balance"         : "Caricamento saldo paper wallet",
+    "switch_currency"         : "Il paper wallet contiene il saldo in {{symbols}}.<br/> Si prega di modificare la valuta nel tuo wallet di default per effetture il deposito."
+  },
+  
+  "assets" : {
+    "hide_asset"              : "Nascondi asset",
+    "show_asset"              : "Mostra asset",
+    "my_assets"               : "I miei asset"
+  
+  }
+}

@@ -13,8 +13,8 @@
         <div class="list card">
 
           <div class="item item-avatar">
-            <img src="img/bitusd_395x395.png">
-            <h1 style="margin-top:3px!important;">{{imported_pk.amount| number : 2}} USD</h1>
+            <img src="img/bit{{asset.symbol|lowercase}}_395x395.png">
+            <h1 style="margin-top:3px!important;">{{imported_pk.amount| number : 2}} {{asset.symbol}}</h1>
             
           </div>
 
@@ -37,7 +37,7 @@
   <script id="sweeping-modal.html" type="text/ng-template">
     <ion-modal-view>
       <ion-header-bar align-title="middle" class="bar-energized nav-title-slide-ios7">
-        <div class="title">{{'import_priv.importing'|translate}}</div>
+        <div class="title">{{'import_priv.paper_wallet'|translate}}</div>
       </ion-header-bar>
       
       <ion-content class="has-header">

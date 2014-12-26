@@ -1,0 +1,158 @@
+{
+  "g" : {
+    "save"                : "保存",
+    "cancel"              : "取消",
+    "send"                : "发送",
+    "sent"                : "已发送",
+    "receive"             : "接收",
+    "received"            : "已接收",
+    "from"                : "从",
+    "to"                  : "到",
+    "remove"              : "移除",
+    "amount"              : "数量",
+    "address"             : "地址",
+    "public_key"          : "公钥",
+    "label"               : "标签",
+    "password"            : "密码",
+    "id"                  : "Id",
+    "block"               : "区块",
+    "timestamp"           : "时间戳",
+    "fee"                 : "费用",
+    "confirm_password"    : "确认密码",
+    "input_password"      : "输入密码",
+    "in_progress"         : "进行中...",
+    "copied_to_clipboard" : "已经复制到剪切板",
+    "updated"             : "已经更新",
+    "unable_to_refresh"   : "无法刷新",
+    "loading"             : "正在载入",
+    "default"             : "默认",
+    "asset"               : "资产"
+  },
+
+  "err" : {
+    "invalid_amount"      : "无效的数量",
+    "enter_valid_amount"  : "请输入一个有效的数量",
+    "invalid_address"     : "无效的地址",
+    "enter_valid_address" : "请输入一个有效的地址",
+    "invalid_address_account" : "无效的地址或账号名", 
+    "invalid_password"    : "无效的密码",
+    "enter_valid_password": "请输入一个有效的密码",
+    "invalid_backup"      : "无效的备份",
+    "enter_valid_backup"  : "请输入一个有效的备份",
+    "empty_password"      : "密码为空",
+    "password_mismatch"   : "输入的密码不匹配",
+    "retype_passwords"    : "确认输入的密码与之前输入的密码不符，请重新校对",
+    "unable_to_share_req" : "不能分享支付请求",
+    "unable_to_copy_req"  : "不能复制支付请求",
+    "unable_to_share_ew"  : "不能分享已经加密的钱包",
+    "unable_to_copy_ew"   : "不能复制已经加密的钱包",
+    "unable_to_create_tx" : "不能创建交易",
+    "unable_to_send_tx"   : "不能发送交易",
+    "unable_to_paste_ew"  : "不能粘贴已经加密的钱包",
+    "server_error"        : "服务器错误",
+    "backup_error"        : "试图备份钱包的时候发生错误",
+    "unable_pw_balance"   : "不能得到纸钱包的余额",
+    "empty_paper_wallet"  : "空的纸钱包",
+    "paper_no_balance"    : "纸钱包没有有效的余额",
+    "invalid_asset"       : "无效的资产",
+    "invalid_asset_desc"  : "选中的资产当前并不支持",
+    "scan_valid_asset"    : "请选择和扫描一个有效的资产"
+  },
+
+  "home" : {
+    "balance"         : "{{asset}} 余额",
+    "no_txs"          : "暂时没有交易",
+    "pull_to_refresh" : "需要刷新的话向下拉一下...",
+    "pending"         : "未生效的",
+    "on"              : "在",
+    "just_now"        : "刚才",
+    "Me"              : "我",
+    "qr_cancel"       : "二维码扫描被取消",
+    "add_to_book"     : "增加到地址本",
+    "view_details"    : "查看细节",
+    "address_name"     : "地址名",
+    "save_successfull" : "地址已经成功保存"
+  },
+
+  "menu" : {
+    "settings"       : "设置",
+    "home"           : "主页",
+    "address_book"   : "地址本",
+    "backup_wallet"  : "备份钱包",
+    "restore_wallet" : "恢复钱包",
+    "account"        : "账户",
+    "my_assets"      : "货币"
+  },
+
+  "receive" : {
+    "payment_request"     : "支付请求",
+    "copied_to_clipboard" : "支付请求已经复制到剪切板"
+  },
+
+  "send" : { 
+    "payment_confirm"        : "支付确认",
+    "are_you_sure"           : "你确认你想发送 {{symbol}} {{amount}} 到 {{address}}?{{extra_data}} 吗？",
+    "send_payment"           : "发送支付",
+    "sending_payment"        : "发送支付中",
+    "generating_transaction" : "正在生成交易",
+    "signing_transaction"    : "正在为交易签名",
+    "sending_transaction"    : "正在发送交易",
+    "transaction_sent"       : "交易被发送",
+    "address_book"           : "地址本",
+    "searching_account"      : "正在查找账户..."
+  },
+
+  "backup" : {
+    "backing_up_wallet"   : "正在备份钱包",
+    "copied_to_clipboard" : "加密的钱包已经复制到剪切板中",
+    "encrypted_wallet"    : "已经加密的钱包"
+  },
+
+  "restore" : {
+    "paste_here"       : "粘贴到这里",
+    "successful"       : "钱包已经成功恢复",
+    "restoring_wallet" : "正在恢复钱包"
+  },
+
+  "detail" : {
+    "transaction_details" : "交易细节",
+    "info"                : "信息",
+    "withdraws"           : "取出",
+    "deposits"            : "存入"
+  },
+
+  "addys" : {
+    "new_address"     : "新地址",
+    "are_you_sure"    : "你确定你想增加一个新地址到你的账户吗？",
+    "set_as_default"  : "设置为默认",
+    "set_label"       : "设置标签",
+    "copy_address"    : "复制地址",
+    "copy_public_key" : "复制公钥",
+    "no_addys"        : "暂时还没有增加地址"
+  },
+
+  "book" : {
+    "add_to_fav"        : "增加到收藏夹",
+    "remove_from_fav"   : "从收藏夹移除",
+    "remove_from_ab"    : "从地址本移除",
+    "remove_sure"       : "你确定你想从地址本里面移除 <b>{{name}}</b> 吗？"
+  },
+  
+  "import_priv" : {
+    "paper_wallet"            : "导入纸钱包",
+    "sweep_balance"           : "转移余额",
+    "invalid"                 : "不能导入一个无效或者空的私钥",
+    "pk_scanned_ok"           : "纸钱包",
+    "explain_text"            : "你不能转移这个余额到你的钱包。<br/> 纸钱包余额会通过一个到你默认地址的交易增加到你的钱包里面。",
+    "transaction_sent"        : "余额成功转移！",
+    "loading_balance"         : "正在载入你的纸钱包余额",
+    "switch_currency"         : "被扫描的纸钱包里包含一些 {{symbols}} 的余额。<br/> 你需要切换你的钱包的默认货币才能导入它。"
+  },
+  
+  "assets" : {
+    "hide_asset"              : "隐藏资产",
+    "show_asset"              : "显示资产",
+    "my_assets"               : "货币"
+  
+  }
+}

@@ -17,7 +17,7 @@
         <span class="{{asset.symbol|lowercase}}">{{ 'home.balance' | translate:{asset:asset.symbol} }}</span>
         <!--ion-slide-box on-slide-changed="bitAssetHasChanged($index)" show-pager="true" does-continue="true" active-slide="activeSlideAsset" ng-cloak >
           <ion-slide ng-repeat="asset in slideAssets" ng-if="asset.is_enabled!=0">
-              <span class="balance_text"><i class="{{asset.symbol_ui_class}}">{{asset.symbol_ui_text}}</i>{{$root.balance[asset.asset_id]| number : 2}}</span>
+              <span class="balance_text"><i class="{{asset.symbol_ui_class}}">{{asset.symbol_ui_text}}</i>{{$root.balance[asset.id]| number : 2}}</span>
               <br/>
               <span class="{{asset.symbol|lowercase}}">{{ 'home.balance' | translate:{asset:asset.symbol} }}</span>
           </ion-slide>

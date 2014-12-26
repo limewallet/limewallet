@@ -34,6 +34,7 @@
     "enter_valid_amount"  : "Please enter a valid amount",
     "invalid_address"     : "Invalid address",
     "enter_valid_address" : "Please enter a valid address",
+    "invalid_address_account" : "Invalid address or account name", 
     "invalid_password"    : "Invalid password",
     "enter_valid_password": "Please enter a valid password",
     "invalid_backup"      : "Invalid backup",
@@ -79,7 +80,7 @@
     "address_book"   : "Address Book",
     "backup_wallet"  : "Backup Wallet",
     "restore_wallet" : "Restore Wallet",
-    "account"        : "My Wallet",
+    "account"        : "Account",
     "my_assets"      : "Currencies"
   },
 
@@ -90,14 +91,15 @@
 
   "send" : { 
     "payment_confirm"        : "Payment confirmation",
-    "are_you_sure"           : "Are you sure you want to send {{symbol}} {{amount}} to {{address}}?",
+    "are_you_sure"           : "Are you sure you want to send {{symbol}} {{amount}} to {{address}}?{{extra_data}}",
     "send_payment"           : "Send Payment",
     "sending_payment"        : "Sending Payment",
     "generating_transaction" : "Generating Transaction",
     "signing_transaction"    : "Signing Transaction",
     "sending_transaction"    : "Sending Transaction",
     "transaction_sent"       : "Transaction Sent",
-    "address_book"           : "Address Book"
+    "address_book"           : "Address Book",
+    "searching_account"      : "Searching account..."
   },
 
   "backup" : {
@@ -108,7 +110,7 @@
 
   "restore" : {
     "paste_here"       : "Paste here",
-    "successful"       : "The wallet was restored successfuly",
+    "successful"       : "The wallet was restored successfully",
     "restoring_wallet" : "Restoring wallet"
   },
 
@@ -124,7 +126,7 @@
     "are_you_sure"    : "Are you sure you want to add a new address to your account?",
     "set_as_default"  : "Set as default",
     "set_label"       : "Set Label",
-    "copy_address"    : "Copy Addres",
+    "copy_address"    : "Copy Address",
     "copy_public_key" : "Copy Public Key",
     "no_addys"        : "No address added yet"
   },
@@ -143,7 +145,8 @@
     "pk_scanned_ok"           : "Paper wallet",
     "explain_text"            : "You can now sweep this balance into your wallet.<br/>Paper wallet balance will be added to your wallet through a transaction to your default address.",
     "transaction_sent"        : "Balance sweeped successfully!",
-    "loading_balance"         : "Loading paper wallet balance"
+    "loading_balance"         : "Loading paper wallet balance",
+    "switch_currency"         : "The scaned paper wallet contains balances in {{symbols}}.<br/> You need to switch your wallet's default currency to import them."
   },
   
   "assets" : {
