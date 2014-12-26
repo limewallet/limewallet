@@ -174,6 +174,7 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
       return false;
     }
     
+    // Get asset_id (Ex: 22 for bitUSD) from symbol or id.
     $rootScope.getValidAssetId = function(asset_id){
       if(asset_id===undefined || asset_id=='' || asset_id===-1)
         return false;
