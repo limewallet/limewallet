@@ -24,22 +24,28 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
     };
 })
 
-.run(function(DB, $cordovaGlobalization, $translate, ReconnectingWebSocket, $q, MasterKey, AddressBook, Address, Asset, $http, $rootScope, $ionicPlatform, $cordovaLocalNotification, $cordovaBarcodeScanner, $ionicModal, $ionicPopup, $cordovaSplashscreen, T) {
+.run(function(DB, BitShares, $cordovaGlobalization, $translate, ReconnectingWebSocket, $q, MasterKey, AddressBook, Address, Asset, $http, $rootScope, $ionicPlatform, $cordovaLocalNotification, $ionicModal, $ionicPopup, $cordovaSplashscreen, T, $cordovaDevice ) {
 
-    $ionicPlatform.ready(function() {
-      // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
-      // for form inputs)
-      if(window.cordova && window.cordova.plugins.Keyboard) {
-        cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
-      }
+  $ionicPlatform.ready(function() {
+    // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
+    // for form inputs)
+    if(window.cordova && window.cordova.plugins.Keyboard) {
+      cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
+    }
 
-      if(window.StatusBar) {
-        // org.apache.cordova.statusbar required
-        StatusBar.styleDefault();
+    if(window.StatusBar) {
+      // org.apache.cordova.statusbar required
+      StatusBar.styleDefault();
       }
     
     });
-    //return;
+    
+    $rootScope.initPlatform = function(){
+      $rootScope.platform = 'iOS';
+      if(device !== undefined && device.platform !== undefined)
+        $rootScope.platform = device.platform;
+      console.log(' -- Platform: '+ $rootScope.platform);
+    }
 
     $rootScope.loadAssets = function() {
       return Asset.all().then(function(assets) {
@@ -84,7 +90,7 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
       $rootScope.current_balance  = 0;
       $rootScope.balance          = {};
       $rootScope.asset_id = asset_id;
-      $rootScope.asset = $rootScope.assets[$rootScope.asset_id];
+      $rootScope.asset = $rootScope.assets[asset_id];
       $rootScope.refreshBalance(true);
     }
     
@@ -92,7 +98,17 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
       return asset_id in $rootScope.assets;
     }
     
+    // Get asset_id (Ex: 22 for bitUSD) from symbol or id.
     $rootScope.getValidAssetId = function(asset_id){
+      if(asset_id===undefined || asset_id=='' || asset_id===-1)
+        return false;
+      if (asset_id in $rootScope.assets)
+        return asset_id;
+      var assets_keys = Object.keys($rootScope.assets);
+      for(var i=0; i<assets_keys.length; i++) {
+        if($rootScope.assets[assets_keys[i]].symbol==asset_id.toUpperCase())
+          return assets_keys[i];
+      }
       return false;
     }
     
@@ -105,150 +121,155 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
           return;
         }
 
-        var addr = bitcoin.HDNode.fromBase58(master_key.key).neutered().toString() + ':' + master_key.deriv;
-        var url = 'https://bsw.latincoin.com/api/v1/addrs/' + addr + '/balance/' + $rootScope.asset_id;
-        
-        console.log('voy con url: '+url + ' para asset:'+$rootScope.asset_id);
-        console.log($rootScope.assets[$rootScope.asset_id]);
-        var precision = $rootScope.assets[$rootScope.asset_id].precision;
 
-        $http.get(url)
-        .success(function(r) {
-          r.balances.forEach(function(b){
-            $rootScope.balance[b.asset_id] = b.amount/precision;
-            if(b.asset_id==$rootScope.asset_id)
-            {
-              $rootScope.current_balance = $rootScope.balance[b.asset_id];
-              console.log(' balance for asset:'+b.asset_id)
-            }
+        BitShares.extendedPublicFromPrivate(master_key.key).then(function(extendedPublicKey){
+
+          var addr = extendedPublicKey + ':' + master_key.deriv;
+          var url = 'https://bsw.latincoin.com/api/v1/addrs/' + addr + '/balance/' + $rootScope.asset_id;
+          
+          console.log('voy con url: '+url + ' para asset:'+$rootScope.asset_id);
+          console.log($rootScope.assets[$rootScope.asset_id]);
+          var precision = $rootScope.assets[$rootScope.asset_id].precision;
+
+          $http.get(url)
+          .success(function(r) {
+            r.balances.forEach(function(b){
+              $rootScope.balance[b.asset_id] = b.amount/precision;//1e4; 
+              if(b.asset_id==$rootScope.asset_id)
+              {
+                $rootScope.current_balance = $rootScope.balance[b.asset_id];
+                console.log(' balance for asset:'+b.asset_id)
+              }
+            });
+             
+             var tx  = {};
+             var txs = [];
+
+             var close_tx = function() {
+                
+              var assets = Object.keys(tx['assets']);
+              for(var i=0; i<assets.length; i++) {
+                 p = {}; 
+                 p['fee']  = (tx['assets'][assets[i]]['w_amount'] - tx['assets'][assets[i]]['d_amount'])/precision;
+                 p['sign'] = 0;
+                 p['date'] = tx['assets'][assets[i]]['timestamp']*1000;
+                 if(tx['assets'][assets[i]]['i_w']) { 
+                   p['sign']--;
+                   p['address'] = tx['assets'][assets[i]]['to'][0];
+                   p['amount'] = tx['assets'][assets[i]]['my_w_amount']/precision - p['fee'];
+                 }
+                 if(tx['assets'][assets[i]]['i_d']) { 
+                   p['sign']++;
+                   p['address'] = tx['assets'][assets[i]]['from'][0];
+                   p['amount'] = tx['assets'][assets[i]]['my_d_amount']/precision;
+                 }
+                 if(p['sign'] == 0)
+                 {
+                   p['addr_name'] = 'Me';
+                 }
+
+                 if(p['addr_name'] != 'Me')
+                 {
+                   if( p['address'] in $rootScope.my_book )
+                    p['addr_name'] = $rootScope.my_book[p['address']].name;
+                   else
+                    p['addr_name'] = p['address'];
+                 }
+                 p['tx_id'] = tx['txid'];
+                 txs.push(p);
+               }
+               tx = {};
+             }
+
+             r.operations.forEach(function(o){
+
+               //TODO: only USD
+               //if(o.asset_id != 22) 
+               //  return;
+
+               //console.log('vamos con op -> ' + o.id);
+
+               //Esto es para mostrar en el detalle de "renglon"
+               if(!(o.txid in $rootScope.raw_txs) )
+                 $rootScope.raw_txs[o.txid] = [];
+               
+               $rootScope.raw_txs[o.txid].push(o);
+
+               
+               if( tx['txid'] !== undefined && tx['txid'] != o.txid ) {
+                  //console.log('mando a cerrar');
+                  close_tx();
+               }
+
+               if( tx['txid'] === undefined || ( tx['assets'] !== undefined && !(o.asset_id in tx['assets']) )  ) {
+
+                  //console.log('abro');
+                  
+                  tx['txid']        = o.txid;
+                  tx['assets']      = {};
+                  tx['assets'][o.asset_id] = {
+                    'id'          : o.id,
+                    'from'        : [],
+                    'to'          : [],
+                    'w_amount'    : 0,
+                    'my_w_amount' : 0,
+                    'd_amount'    : 0,
+                    'my_d_amount' : 0,
+                    'timestamp'   : o.timestamp,
+                    'i_w'         : false,
+                    'i_d'         : false,
+                  }
+               } 
+
+               if(o.op_type == 'w') { 
+                  tx['assets'][o.asset_id]['w_amount'] += o.amount
+                  if(o.address in $rootScope.my_addresses) {
+                    tx['assets'][o.asset_id]['my_w_amount'] += o.amount;
+                    tx['assets'][o.asset_id]['i_w']          = true;
+                  } else {
+                    //TODO: lookup in the address book
+                    tx['assets'][o.asset_id]['from'].push(o.address);
+                  }
+                  
+               } else {
+                  tx['assets'][o.asset_id]['d_amount'] += o.amount
+                  if(o.address in $rootScope.my_addresses) {
+                    tx['assets'][o.asset_id]['my_d_amount'] += o.amount
+                    tx['assets'][o.asset_id]['i_d']          = true;
+                  } else {
+                    //TODO: lookup in the address book
+                    tx['assets'][o.asset_id]['to'].push(o.address)
+                  }
+               }
+               
+             });
+
+             //console.log('salgo del loop con ' + tx['txid']);
+
+             if( tx['txid'] !== undefined) {
+               //console.log('mando a cerrar');
+               close_tx();
+             }
+
+             //console.log('voy a poner txs ' + txs);
+             
+             $rootScope.transactions=txs;
+             if(show_toast == true)
+              window.plugins.toast.show( T.i('g.updated'), 'short', 'bottom');
+          })
+          .error(function(data, status, headers, config) {
+             window.plugins.toast.show( T.i('g.unable_to_refresh'), 'long', 'bottom');
+          })
+          .finally(function() {
+             console.log('RefreshBalance: finally...');
+             $rootScope.$emit('refresh-done');
           });
-           
-           var tx  = {};
-           var txs = [];
 
-           var close_tx = function() {
-              
-            var assets = Object.keys(tx['assets']);
-            for(var i=0; i<assets.length; i++) {
-               p = {}; 
-               p['fee']  = (tx['assets'][assets[i]]['w_amount'] - tx['assets'][assets[i]]['d_amount'])/precision;
-               p['sign'] = 0;
-               p['date'] = tx['assets'][assets[i]]['timestamp']*1000;
-               if(tx['assets'][assets[i]]['i_w']) { 
-                 p['sign']--;
-                 p['address'] = tx['assets'][assets[i]]['to'][0];
-                 p['amount'] = tx['assets'][assets[i]]['my_w_amount']/precision - p['fee'];
-               }
-               if(tx['assets'][assets[i]]['i_d']) { 
-                 p['sign']++;
-                 p['address'] = tx['assets'][assets[i]]['from'][0];
-                 p['amount'] = tx['assets'][assets[i]]['my_d_amount']/precision;
-               }
-               if(p['sign'] == 0)
-               {
-                 p['addr_name'] = 'Me';
-               }
-
-               if(p['addr_name'] != 'Me')
-               {
-                 if( p['address'] in $rootScope.my_book )
-                  p['addr_name'] = $rootScope.my_book[p['address']].name;
-                 else
-                  p['addr_name'] = p['address'];
-               }
-               p['tx_id'] = tx['txid'];
-               txs.push(p);
-             }
-             tx = {};
-           }
-
-           r.operations.forEach(function(o){
-
-             //TODO: only USD
-             //if(o.asset_id != 22) 
-             //  return;
-
-             //console.log('vamos con op -> ' + o.id);
-
-             //Esto es para mostrar en el detalle de "renglon"
-             if(!(o.txid in $rootScope.raw_txs) )
-               $rootScope.raw_txs[o.txid] = [];
-             
-             $rootScope.raw_txs[o.txid].push(o);
-
-             
-             if( tx['txid'] !== undefined && tx['txid'] != o.txid ) {
-                //console.log('mando a cerrar');
-                close_tx();
-             }
-
-             if( tx['txid'] === undefined || ( tx['assets'] !== undefined && !(o.asset_id in tx['assets']) )  ) {
-
-                //console.log('abro');
-                
-                tx['txid']        = o.txid;
-                tx['assets']      = {};
-                tx['assets'][o.asset_id] = {
-                  'id'          : o.id,
-                  'from'        : [],
-                  'to'          : [],
-                  'w_amount'    : 0,
-                  'my_w_amount' : 0,
-                  'd_amount'    : 0,
-                  'my_d_amount' : 0,
-                  'timestamp'   : o.timestamp,
-                  'i_w'         : false,
-                  'i_d'         : false,
-                }
-             } 
-
-             if(o.op_type == 'w') { 
-                tx['assets'][o.asset_id]['w_amount'] += o.amount
-                if(o.address in $rootScope.my_addresses) {
-                  tx['assets'][o.asset_id]['my_w_amount'] += o.amount;
-                  tx['assets'][o.asset_id]['i_w']          = true;
-                } else {
-                  //TODO: lookup in the address book
-                  tx['assets'][o.asset_id]['from'].push(o.address);
-                }
-                
-             } else {
-                tx['assets'][o.asset_id]['d_amount'] += o.amount
-                if(o.address in $rootScope.my_addresses) {
-                  tx['assets'][o.asset_id]['my_d_amount'] += o.amount
-                  tx['assets'][o.asset_id]['i_d']          = true;
-                } else {
-                  //TODO: lookup in the address book
-                  tx['assets'][o.asset_id]['to'].push(o.address)
-                }
-             }
-             
-           });
-
-           //console.log('salgo del loop con ' + tx['txid']);
-
-           if( tx['txid'] !== undefined) {
-             //console.log('mando a cerrar');
-             close_tx();
-           }
-
-           //console.log('voy a poner txs ' + txs);
-           
-           $rootScope.transactions=txs;
-           if(show_toast == true)
-            window.plugins.toast.show( T.i('g.updated'), 'short', 'bottom');
-        })
-        .error(function(data, status, headers, config) {
-           window.plugins.toast.show( T.i('g.unable_to_refresh'), 'long', 'bottom');
-        })
-        .finally(function() {
-           console.log('RefreshBalance: finally...');
-           $rootScope.$emit('refresh-done');
         });
 
       });
-
     };
+
 
     $rootScope.connectToEvents = function() {
       $rootScope.ws = new ReconnectingWebSocket('wss://bswws.latincoin.com/events');
@@ -272,8 +293,11 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
 
     $rootScope.subscribe = function() {
       MasterKey.get().then(function(master_key) {
-        var sub = bitcoin.HDNode.fromBase58(master_key.key).neutered().toString() + ':' + master_key.deriv;
-        $rootScope.ws.send('sub ' + sub);
+        BitShares.extendedPublicFromPrivate(master_key.key)
+          .then(function(extendedPublicKey){
+            var sub = extendedPublicKey + ':' + master_key.deriv;
+            $rootScope.ws.send('sub ' + sub);
+          })
       });
     }
 
@@ -315,6 +339,7 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
 
           $rootScope.global_init = function() {
 
+            $rootScope.platform         = 'iOS'; 
             $rootScope.current_balance  = 0;
             $rootScope.asset_id         = 22;
             $rootScope.balance          = {};
@@ -324,7 +349,7 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
             $rootScope.my_book          = {};
             $rootScope.assets           = {};
             $rootScope.asset            = {};
-
+            
             //*****************
             //GET LANGUAGE
             //*****************
@@ -337,7 +362,13 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
                 console.log('Unable to get preferred language');
                 $translate.use('en');
             })
-
+            
+            //*****************
+            //GET PLATFORM
+            //*****************
+            .then(function(){
+              $rootScope.initPlatform();
+            })
             //*****************
             //INIT DB
             //*****************
@@ -352,7 +383,7 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
             })
             
             //*****************
-            //Load Master key
+            //Load or Create Master key
             //*****************
             .then(function() {
               return MasterKey.get();
@@ -364,19 +395,24 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
               }
               console.log('creating master key...');
 
-              var hdnode  = bitcoin.HDNode.fromBase58( bitcoin.HDNode.fromSeedBuffer( bitcoin.ECKey.makeRandom().d.toBuffer() ).toString() );
-              var privkey = hdnode.privKey;
-              var pubkey  = hdnode.pubKey.toBuffer();
-
-              return MasterKey.store(hdnode.toString(), -1).then(function() {
-                return Address.create(
-                  -1, 
-                  bitcoin.bts.pub_to_address(pubkey), 
-                  bitcoin.bts.encode_pubkey(pubkey), 
-                  privkey.toWIF(), 
-                  true, 
-                  'main');
+              BitShares.createMasterKey().then(function(mpriv){
+                //console.log(' mpriv:'+mpriv);
+                BitShares.extractDataFromKey(mpriv).then(function(keyData){
+                  //console.log(' keyData.address:'+keyData.address);
+                  MasterKey.store(mpriv, -1).then(function() {
+                    Address.create(
+                      -1, 
+                      keyData.address, 
+                      keyData.pubkey, 
+                      keyData.privkey, 
+                      true, 
+                      'main').then( function() {
+                        $rootScope.$emit('wallet-changed');
+                      });
+                  });
+                });
               });
+             
             },
             function(error) {
               console.log('Unable to initialize master-key' + error);
