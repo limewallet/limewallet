@@ -41,9 +41,9 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
     });
     
     $rootScope.initPlatform = function(){
-      $rootScope.platform = 'iOS';
-      if(device !== undefined && device.platform !== undefined)
-        $rootScope.platform = device.platform;
+      //$rootScope.platform = 'android';
+      //if(device !== undefined && device.platform !== undefined)
+        //$rootScope.platform = device.platform;
       console.log(' -- Platform: '+ $rootScope.platform);
     }
 
@@ -86,30 +86,12 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
     };
 
     $rootScope.assetChanged = function(asset_id){
-      $rootScope.transactions=[];
-      $rootScope.current_balance  = 0;
-      $rootScope.balance          = {};
-      $rootScope.asset_id = asset_id;
-      $rootScope.asset = $rootScope.assets[asset_id];
+      $rootScope.transactions          = [];
+      $rootScope.current_balance       = 0;
+      $rootScope.balance               = {};
+      $rootScope.asset_id              = asset_id;
+      $rootScope.asset                 = $rootScope.assets[asset_id];
       $rootScope.refreshBalance(true);
-    }
-    
-    $rootScope.isValidAsset = function(asset_id){
-      return asset_id in $rootScope.assets;
-    }
-    
-    // Get asset_id (Ex: 22 for bitUSD) from symbol or id.
-    $rootScope.getValidAssetId = function(asset_id){
-      if(asset_id===undefined || asset_id=='' || asset_id===-1)
-        return false;
-      if (asset_id in $rootScope.assets)
-        return asset_id;
-      var assets_keys = Object.keys($rootScope.assets);
-      for(var i=0; i<assets_keys.length; i++) {
-        if($rootScope.assets[assets_keys[i]].symbol==asset_id.toUpperCase())
-          return assets_keys[i];
-      }
-      return false;
     }
     
     $rootScope.refreshBalance = function(show_toast) {
@@ -311,17 +293,6 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
     $rootScope.$on('new-balance', function(data) {
       $rootScope.refreshBalance();
     });
-
-    
-    // Creo que es al pedo, pero por las dudas cerramos el splash.
-    //setTimeout(function() {
-      //$cordovaSplashscreen.hide()
-    //}, 1000);
-    
-    //// FullScreen Config
-    //var showFullScreen = false, showStatusBar = true;
-    //ionic.Platform.fullScreen(showFullScreen, showStatusBar);
-
 })
 
 .config(function($stateProvider, $urlRouterProvider, $translateProvider) {
@@ -335,11 +306,12 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
       templateUrl: "templates/menu.html",
       controller: 'AppCtrl',
       resolve : {
-        'InitDone' : function($ionicPlatform, $cordovaGlobalization, $translate, DB, MasterKey, Address, $rootScope) {
+        'InitDone' : function(BitShares, $ionicPlatform, $cordovaGlobalization, $translate, DB, MasterKey, Address, $rootScope) {
 
           $rootScope.global_init = function() {
 
-            $rootScope.platform         = 'iOS'; 
+            //HACK: tocar aca hasta que funcione el plugin de device
+            $rootScope.platform         = 'Android'; 
             $rootScope.current_balance  = 0;
             $rootScope.asset_id         = 22;
             $rootScope.balance          = {};
@@ -406,9 +378,7 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
                       keyData.pubkey, 
                       keyData.privkey, 
                       true, 
-                      'main').then( function() {
-                        $rootScope.$emit('wallet-changed');
-                      });
+                      'main');
                   });
                 });
               });

@@ -431,12 +431,10 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
       } else {
         try {
           bitcoin.ECKey.fromWIF(wif);
+          deferred.resolve(true);
         } catch(err) {
           deferred.reject(err);
-          return;
         }
-    
-        deferred.resolve(true);
         
       }
       return deferred.promise;
@@ -573,9 +571,10 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
         {
           err = {'message':'Invalid address'}
           deferred.reject(err);
-          return;
         }
-        deferred.resolve(true);
+        else {
+          deferred.resolve(true);
+        }
         
       }
       return deferred.promise;
@@ -598,13 +597,13 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
         );
 
       } else {
-        if(!bitcoin.bts.is_valid_pubkey(res))
+        if(!bitcoin.bts.is_valid_pubkey(pubkey))
         {
           err = {'message':'Invalid pubkey'}
           deferred.reject(err);
-          return;
+        } else {
+          deferred.resolve(true);
         }
-        deferred.resolve(true);
         
       }
       return deferred.promise;
@@ -612,103 +611,6 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
     
     return self;
 })
-
-//QR Code service
-// .factory('Scanner', function($q, $cordovaBarcodeScanner, T, $ionicModal, $ionicPopup) {
-
-    // var self = this;
-    
-    // self.scan = function() {
-
-      // var deferred = $q.defer();
-
-      // $cordovaBarcodeScanner
-        // .scan()
-        // .then(function(result) {
-          
-          // if ( result.cancelled ) {
-
-            // //HACK for android
-            // if( device.platform == "Android" ) {
-              // $ionicModal.fromTemplate('').show().then(function() {
-                // $ionicPopup.alert({ title: T.i('home.qr_cancel') });
-              // });
-            // } else {
-              // $ionicPopup.alert({ title: T.i('home.qr_cancel') });
-            // }
-
-            // deferred.resolve(result);
-            // return;
-          // }
-
-          // var res = result.text;
-          // if( res.indexOf('bts:') == 0 ) {
-
-            // var parts = res.substr(4).split('/');
-            // if( parts.length >= 2 && bitcoin.bts.is_valid_address(parts[0]) && parts.indexOf('transfer') != -1 ) {
-
-              // var amount = undefined;
-              // var amount_inx = parts.indexOf('amount');
-              // if( amount_inx != -1 ) {
-                // obj = parts[amount_inx+1];
-                // if( (obj - parseFloat( obj ) + 1) >= 0 ) {
-                  // amount = obj;
-                // }
-              // }
-
-              // var asset = undefined;
-              // var asset_inx  = parts.indexOf('asset');
-              // if( asset_inx != -1 ) {
-                // asset = parts[asset_inx+1];
-              // }
-
-              // console.log('Metiste bts: => ' + parts[0] + '=>' + amount + '=>' + asset);
-              // deferred.resolve({cancelled:false, address:parts[0], amount:amount, asset_id:asset}); 
-              // return;
-            // }
-
-            // //window.plugins.toast.show( 'Invalid url', 'long', 'bottom');
-            // deferred.reject('Invalid url');
-            // return;
-
-          // } else if( bitcoin.bts.is_valid_address(res) ) {
-
-            // console.log('Escaneaste una address => ' + res);
-            // deferred.resolve({cancelled:false, address:res}); 
-            // return;
-
-          // } else if( bitcoin.bts.is_valid_pubkey(res) ) {
-
-            // console.log('Escaneaste una pubkey => ' + res);
-            // deferred.resolve({cancelled:false, pubkey:res}); 
-            // return;
-
-          // } else {
-            // var priv;
-            // try {
-              // priv = bitcoin.ECKey.fromWIF(res);
-            // } catch(err) {
-
-            // }
-            // if( priv === undefined) {
-              // deferred.reject('Invalid Qr');
-              // return;
-            // }
-            // console.log('Escaneaste una privada => ' + res);
-            // deferred.resolve({cancelled:false, privkey:res}); 
-            // return;
-          // }
-
-        // }, function(error) {
-          // deferred.reject(error);
-          // return;
-        // });
-
-        // return deferred.promise;
-    // };
-
-    // return self;
-// })
 
 //QR Code service
 .factory('Scanner', function($q, T, $ionicModal, $ionicPopup, $cordovaDevice, BitShares) {
@@ -744,22 +646,29 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
           if( res.indexOf('bts:') == 0 ) {
 
             var parts = res.substr(4).split('/');
-
             
             BitShares.btsIsValidAddress(parts[0]).then(
               function(is_valid){
                 if( parts.length >= 2 && parts.indexOf('transfer') != -1 ) {
-                  //TODO: check optionals
-                  var amount_inx = parts.indexOf('amount');
-                  var asset_inx  = parts.indexOf('asset');
 
-                  var obj = parts[amount_inx+1];
-                  //(asset_inx != -1 && parts[asset_inx+1] == 'USD') && 
-                  if( (obj - parseFloat( obj ) + 1) >= 0 ) {
-                    console.log('Metiste bts: => ' + parts[0] + '=>' + obj);
-                    deferred.resolve({cancelled:false, address:parts[0], amount:obj, asset_id:asset_inx}); 
-                    return;
-                  }
+                   var amount = undefined;
+                   var amount_inx = parts.indexOf('amount');
+                   if( amount_inx != -1 ) {
+                     obj = parts[amount_inx+1];
+                     if( (obj - parseFloat( obj ) + 1) >= 0 ) {
+                       amount = obj;
+                     }
+                   }
+
+                   var asset = undefined;
+                   var asset_inx  = parts.indexOf('asset');
+                   if( asset_inx != -1 ) {
+                     asset = parts[asset_inx+1];
+                   }
+
+                   console.log('Metiste bts: => ' + parts[0] + '=>' + amount + '=>' + asset);
+                   deferred.resolve({cancelled:false, address:parts[0], amount:amount, asset_id:asset}); 
+                   return;
                 }
                 //window.plugins.toast.show( 'Invalid url', 'long', 'bottom');
                 resolve.reject('Invalid url');
