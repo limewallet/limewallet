@@ -146,13 +146,13 @@
     "explain_text"            : "Sie können nun dieses Guthaben auf Ihr Wallet(Geldbörse) übertragen.<br/>Ihr Papierwallet(Geldbörse) Guthaben wird durch eine Transaktion zu Ihrem Standard-Konto hinzugefügt.",
     "transaction_sent"        : "Guthaben Übertragung war erfolgreich!",
     "loading_balance"         : "Papierwallet(Geldbörse)guthaben wird geladen",
-    "switch_currency"         : "Das gescannte Papierwallet(Geldbörse) enthält Guthaben mit scaned paper wallet contains balances in {{symbols}}.<br/> You need to switch your wallet's default currency to import them."
+    "switch_currency"         : "Das gescannte Papierwallet(Geldbörse) enthält Guthaben mit {{symbols}}.<br/> Sie müssen die Standardwährung ihres Kontos ändern, damit diese Beträge importiert werden können."
   },
   
   "assets" : {
-    "hide_asset"              : "Hide asset",
-    "show_asset"              : "Show asset",
-    "my_assets"               : "Currencies"
+    "hide_asset"              : "Asset ausblenden",
+    "show_asset"              : "Asset einblenden",
+    "my_assets"               : "Währungen"
   
   }
 }
