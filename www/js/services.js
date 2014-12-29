@@ -252,7 +252,8 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
     self.createMasterKey = function() {
       var deferred = $q.defer();
 
-      if( $rootScope.platform== "iOS" ) {
+      //if( $rootScope.platform== "iOS" ) {
+      if( true ) {
 
         window.plugins.BitsharesPlugin.createMasterKey(
           function(data){
@@ -279,7 +280,8 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
       
       var deferred = $q.defer();
 
-      if( $rootScope.platform == "iOS" ) {
+      //if( $rootScope.platform == "iOS" ) {
+      if( true ) {
 
         window.plugins.BitsharesPlugin.extractDataFromKey(
           function(data){
@@ -313,7 +315,8 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
       
       var deferred = $q.defer();
 
-      if( $rootScope.platform == "iOS" ) {
+      //if( $rootScope.platform == "iOS" ) {
+      if( true ) {
 
         window.plugins.BitsharesPlugin.extendedPublicFromPrivate(
           function(data){
@@ -335,7 +338,8 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
       
       var deferred = $q.defer();
 
-      if( $rootScope.platform == "iOS" ) {
+      //if( $rootScope.platform == "iOS" ) {
+      if( true ) {
 
         window.plugins.BitsharesPlugin.encryptString(
           function(data){
@@ -361,7 +365,8 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
       
       var deferred = $q.defer();
 
-      if( $rootScope.platform == "iOS" ) {
+      //if( $rootScope.platform == "iOS" ) {
+      if( true ) {
 
         window.plugins.BitsharesPlugin.decryptString(
           function(data){
@@ -386,7 +391,8 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
       
       var deferred = $q.defer();
 
-      if( $rootScope.platform == "iOS" ) {
+      //if( $rootScope.platform == "iOS" ) {
+      if( true ) {
 
         window.plugins.BitsharesPlugin.isValidKey(
           function(data){
@@ -416,7 +422,8 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
       
       var deferred = $q.defer();
 
-      if( $rootScope.platform == "iOS" ) {
+      //if( $rootScope.platform == "iOS" ) {
+      if( true ) {
 
         window.plugins.BitsharesPlugin.isValidWif(
           function(data){
@@ -444,7 +451,8 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
       
       var deferred = $q.defer();
       
-      if( $rootScope.platform == "iOS" ) {
+      //if( $rootScope.platform == "iOS" ) {
+      if( true ) {
 
         window.plugins.BitsharesPlugin.derivePrivate(
           function(data){
@@ -472,7 +480,8 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
       
       var deferred = $q.defer();
 
-      if( $rootScope.platform == "iOS" ) {
+      //if( $rootScope.platform == "iOS" ) {
+      if( true ) {
 
         window.plugins.BitsharesPlugin.compactSignatureForHash(
           function(data){
@@ -504,7 +513,8 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
       
       var deferred = $q.defer();
 
-      if( $rootScope.platform == "iOS" ) {
+      //if( $rootScope.platform == "iOS" ) {
+      if( true ) {
 
         window.plugins.BitsharesPlugin.btsWifToAddress(
           function(data){
@@ -529,7 +539,8 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
       
       var deferred = $q.defer();
 
-      if( $rootScope.platform == "iOS" ) {
+      //if( $rootScope.platform == "iOS" ) {
+      if( true ) {
 
         window.plugins.BitsharesPlugin.btsPubToAddress(
           function(data){
@@ -554,7 +565,8 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
       
       var deferred = $q.defer();
 
-      if( $rootScope.platform == "iOS" ) {
+      //if( $rootScope.platform == "iOS" ) {
+      if( true ) {
 
         window.plugins.BitsharesPlugin.btsIsValidAddress(
           function(data){
@@ -584,7 +596,8 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
       
       var deferred = $q.defer();
 
-      if( $rootScope.platform == "iOS" ) {
+      //if( $rootScope.platform == "iOS" ) {
+      if( true ) {
 
         window.plugins.BitsharesPlugin.btsIsValidPubkey(
           function(data){
