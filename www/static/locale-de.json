@@ -1,0 +1,158 @@
+{
+  "g" : {
+    "save"                : "speichern",
+    "cancel"              : "abbrechen",
+    "send"                : "senden",
+    "sent"                : "gesendet",
+    "receive"             : "empfangen",
+    "received"            : "empfangen",
+    "from"                : "von",
+    "to"                  : "an",
+    "remove"              : "entfernen",
+    "amount"              : "Betrag",
+    "address"             : "Adresse",
+    "public_key"          : "Öffentlicher Schlüssel",
+    "label"               : "Etikett",
+    "password"            : "Passwort",
+    "id"                  : "Id",
+    "block"               : "Block",
+    "timestamp"           : "Zeit",
+    "fee"                 : "Gebühr",
+    "confirm_password"    : "Passwort bestätigen",
+    "input_password"      : "Passwort eingeben",
+    "in_progress"         : "in Arbeit...",
+    "copied_to_clipboard" : "in die Zwischenablage kopiert",
+    "updated"             : "Aktualisiert",
+    "unable_to_refresh"   : "Fehler beim aktualisieren",
+    "loading"             : "lädt",
+    "default"             : "Voreinstellung",
+    "asset"               : "Asset"
+  },
+
+  "err" : {
+    "invalid_amount"      : "Ungültiger Betrag",
+    "enter_valid_amount"  : "Bitte geben Sie einen gültigen Betrag ein",
+    "invalid_address"     : "Ungültige Adresse",
+    "enter_valid_address" : "Bitte geben Sie eine gültige Adresse ein",
+    "invalid_address_account" : "Ungültige Adresse oder Kontoname", 
+    "invalid_password"    : "Ungültige Passwort",
+    "enter_valid_password": "Bitte geben Sie ein gültiges Passwort ein",
+    "invalid_backup"      : "Ungültige Sicherungskopie",
+    "enter_valid_backup"  : "Bitte nutzen sie gültige Sicherungskopie",
+    "empty_password"      : "Passwortfeld leer",
+    "password_mismatch"   : "Die Passwörter stimmen nicht überein",
+    "retype_passwords"    : "Confirmation password does not match the first password entered, please verify",
+    "unable_to_share_req" : "Unable to share payment request",
+    "unable_to_copy_req"  : "Unable to copy payment request",
+    "unable_to_share_ew"  : "Unable to share encrypted wallet",
+    "unable_to_copy_ew"   : "Unable to copy encrypted wallet",
+    "unable_to_create_tx" : "Unable to create transaction",
+    "unable_to_send_tx"   : "Unable to send transaction",
+    "unable_to_paste_ew"  : "Unable to paste encrypted wallet",
+    "server_error"        : "Serverproblem",
+    "backup_error"        : "There were errors trying to backup the wallet",
+    "unable_pw_balance"   : "Unable to get paper wallet balance",
+    "empty_paper_wallet"  : "Empty paper wallet",
+    "paper_no_balance"    : "The paper wallet has no available balance",
+    "invalid_asset"       : "Invalid asset",
+    "invalid_asset_desc"  : "The selected asset is not currently supported",
+    "scan_valid_asset"    : "Please require and scan a valid asset"
+  },
+
+  "home" : {
+    "balance"         : "{{asset}} GUTHABEN",
+    "no_txs"          : "Noch keine Transaktionen",
+    "pull_to_refresh" : "Pull to refresh...",
+    "pending"         : "UNERLEDIGT",
+    "on"              : "On",
+    "just_now"        : "Jetzt",
+    "Me"              : "Me",
+    "qr_cancel"       : "QR code scan cancelled",
+    "add_to_book"     : "Zum Adressbuch hinzufügen",
+    "view_details"    : "Details anschauen",
+    "address_name"     : "Adressname",
+    "save_successfull" : "Adresse wurde erfolgreich gespeichert"
+  },
+
+  "menu" : {
+    "settings"       : "Einstellungen",
+    "home"           : "Start",
+    "address_book"   : "Adressbuch",
+    "backup_wallet"  : "Wallet Backup erstellen",
+    "restore_wallet" : "Wallet wiederherstellen",
+    "account"        : "Account",
+    "my_assets"      : "Währungen"
+  },
+
+  "receive" : {
+    "payment_request"     : "Bezahlung anfordern",
+    "copied_to_clipboard" : "Bezahlungsanforderung in die Zwischenablage kopiert"
+  },
+
+  "send" : { 
+    "payment_confirm"        : "Transaktionsbestätigung",
+    "are_you_sure"           : "Are you sure you want to send {{symbol}} {{amount}} to {{address}}?{{extra_data}}",
+    "send_payment"           : "Betrag senden",
+    "sending_payment"        : "Betrag wird gesendet",
+    "generating_transaction" : "Transaktion wird erstellt",
+    "signing_transaction"    : "Transaktion wird digital signiert",
+    "sending_transaction"    : "Transaktion wird gesendet",
+    "transaction_sent"       : "Transaktion erfolgreich gesendet",
+    "address_book"           : "Kontakte",
+    "searching_account"      : "Konto durchsuchen..."
+  },
+
+  "backup" : {
+    "backing_up_wallet"   : "Sicherungskopie erstellen",
+    "copied_to_clipboard" : "Verschlüsselte Brieftasche in die Zwischenablage kopiert",
+    "encrypted_wallet"    : "Verschlüsselte Brieftasche"
+  },
+
+  "restore" : {
+    "paste_here"       : "Hier einfügen",
+    "successful"       : "Die Brieftasche wurde erfolgreich wiederhergestellt",
+    "restoring_wallet" : "Brieftasche wiederherstellen"
+  },
+
+  "detail" : {
+    "transaction_details" : "Transaktionsdetails",
+    "info"                : "Info",
+    "withdraws"           : "Auszahlungen",
+    "deposits"            : "Einzahlungen"
+  },
+
+  "addys" : {
+    "new_address"     : "Neue Adresse",
+    "are_you_sure"    : "Bist Du sicher, dass Du diese Adresse in deinen Kontakten sichern willst!?",
+    "set_as_default"  : "Als Standard festlegen",
+    "set_label"       : "Etikett festlegen",
+    "copy_address"    : "Adresse kopieren",
+    "copy_public_key" : "Öffentlichen Schlüssel kopieren",
+    "no_addys"        : "Keine Adresse hinzugefügt"
+  },
+
+  "book" : {
+    "add_to_fav"        : "Zu den Favoriten hinzufügen",
+    "remove_from_fav"   : "Von den Favoriten entfernen",
+    "remove_from_ab"    : "Aus dem Adressbuch entfernen",
+    "remove_sure"       : "Bist Du sicher, dass Du <b>{{name}}</b> aus Deinen Adressbuch entfernen möchtest?"
+  },
+  
+  "import_priv" : {
+    "paper_wallet"            : "Importiere Paper Wallet",
+    "sweep_balance"           : "Sweep balance",
+    "invalid"                 : "Import fehlgeschlagen. Ungültiger privater Schlüssel",
+    "pk_scanned_ok"           : "Paper wallet",
+    "explain_text"            : "You can now sweep this balance into your wallet.<br/>Paper wallet balance will be added to your wallet through a transaction to your default address.",
+    "transaction_sent"        : "Balance sweeped successfully!",
+    "loading_balance"         : "Loading paper wallet balance",
+    "switch_currency"         : "The scaned paper wallet contains balances in {{symbols}}.<br/> You need to switch your wallet's default currency to import them."
+  },
+  
+  "assets" : {
+    "hide_asset"              : "Asset ausblenden",
+    "show_asset"              : "Asset einblenden",
+    "my_assets"               : "Meine Währungen"
+  
+  }
+}
