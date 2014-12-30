@@ -1,3 +1,5 @@
+rm -rf platforms/android
+rm -rf plugins/*
 cordova platform add android@3.5 --usenpm
 cordova plugin add org.apache.cordova.console
 cordova plugin add org.apache.cordova.device

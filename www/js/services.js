@@ -481,13 +481,13 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
           if ( result.cancelled ) {
 
             //HACK for android
-            if( $rootScope.platform == "Android" ) {
-              $ionicModal.fromTemplate('').show().then(function() {
-                $ionicPopup.alert({ title: T.i('qr_scan_cancelled') });
-              });
-            } else {
-              $ionicPopup.alert({ title: T.i('qr_scan_cancelled') });
-            }
+            //if( device.platform == "Androidx" ) {
+              //$ionicModal.fromTemplate('').show().then(function() {
+                //$ionicPopup.alert({ title: T.i('qr_scan_cancelled') });
+              //});
+            //} else {
+              //$ionicPopup.alert({ title: T.i('qr_scan_cancelled') });
+            //}
 
             deferred.resolve(result);
             return;

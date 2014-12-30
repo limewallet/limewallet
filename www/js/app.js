@@ -295,7 +295,7 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
     });
 })
 
-.config(function($stateProvider, $urlRouterProvider, $translateProvider) {
+.config(function($ionicConfigProvider, $stateProvider, $urlRouterProvider, $translateProvider) {
 
   $translateProvider.useStaticFilesLoader({ prefix: 'static/locale-', suffix: '.json'});
 
