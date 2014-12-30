@@ -252,373 +252,211 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
     self.createMasterKey = function() {
       var deferred = $q.defer();
 
-      //if( $rootScope.platform== "iOS" ) {
-      if( true ) {
-
-        window.plugins.BitsharesPlugin.createMasterKey(
-          function(data){
-            console.log(data);
-            console.log('data.masterPrivateKey: '+data.masterPrivateKey);
-            deferred.resolve(data.masterPrivateKey);
-          },
-          function(error){
-            deferred.reject(error);
-          }
-        );
-
-      } else {        
-        var hdnode  = bitcoin.HDNode.fromBase58( bitcoin.HDNode.fromSeedBuffer( bitcoin.ECKey.makeRandom().d.toBuffer() ).toString() );        
-        deferred.resolve(hdnode.toString());
-      }
+      window.plugins.BitsharesPlugin.createMasterKey(
+        function(data){
+          deferred.resolve(data.masterPrivateKey);
+        },
+        function(error){
+          deferred.reject(error);
+        }
+      );
     
       return deferred.promise;
-
     };
 
-
     self.extractDataFromKey = function(key) {
-      
       var deferred = $q.defer();
 
-      //if( $rootScope.platform == "iOS" ) {
-      if( true ) {
-
-        window.plugins.BitsharesPlugin.extractDataFromKey(
-          function(data){
-            deferred.resolve(data);
-          },
-          function(error){
-            deferred.reject(error);
-          },
-          key
-        );
-
-      } else {
-        
-        var hdnode  = bitcoin.HDNode.fromBase58(key);
-        var privkey = hdnode.privKey;
-        var pubkey  = hdnode.pubKey.toBuffer();
-        
-        deferred.resolve({ 
-          address : bitcoin.bts.pub_to_address(pubkey),
-          pubkey  : bitcoin.bts.encode_pubkey(pubkey), 
-          privkey : privkey.toWIF() 
-        });
-
-      }
+      window.plugins.BitsharesPlugin.extractDataFromKey(
+        function(data){
+          deferred.resolve(data);
+        },
+        function(error){
+          deferred.reject(error);
+        },
+        key
+      );
 
       return deferred.promise;
-    
     };
 
     self.extendedPublicFromPrivate = function(key) {
-      
       var deferred = $q.defer();
 
-      //if( $rootScope.platform == "iOS" ) {
-      if( true ) {
+      window.plugins.BitsharesPlugin.extendedPublicFromPrivate(
+        function(data){
+          deferred.resolve(data.extendedPublicKey);
+        },
+        function(error){
+          deferred.reject(error);
+        },
+        key
+      );
 
-        window.plugins.BitsharesPlugin.extendedPublicFromPrivate(
-          function(data){
-            deferred.resolve(data.extendedPublicKey);
-          },
-          function(error){
-            deferred.reject(error);
-          },
-          key
-        );
-
-      } else {
-        deferred.resolve(bitcoin.HDNode.fromBase58(key).neutered().toString());
-      }
       return deferred.promise;
     };
 
     self.encryptString = function(data, password) {
-      
       var deferred = $q.defer();
 
-      //if( $rootScope.platform == "iOS" ) {
-      if( true ) {
+      window.plugins.BitsharesPlugin.encryptString(
+        function(data){
+          deferred.resolve(data.encryptedData);
+        },
+        function(error){
+          deferred.reject(error);
+        },
+        data, 
+        password
+      );
 
-        window.plugins.BitsharesPlugin.encryptString(
-          function(data){
-            deferred.resolve(data.encryptedData);
-          },
-          function(error){
-            deferred.reject(error);
-          },
-          data, 
-          password
-        );
-
-      } else {
-        deferred.resolve(
-          CryptoJS.AES.encrypt(data, password).toString()
-        );
-
-      }
       return deferred.promise;
     };
 
     self.decryptString = function(data, password) {
-      
       var deferred = $q.defer();
 
-      //if( $rootScope.platform == "iOS" ) {
-      if( true ) {
+      window.plugins.BitsharesPlugin.decryptString(
+        function(data){
+          deferred.resolve(data.decryptedData);
+        },
+        function(error){
+          deferred.reject(error);
+        },
+        data, 
+        password
+      );
 
-        window.plugins.BitsharesPlugin.decryptString(
-          function(data){
-            deferred.resolve(data.decryptedData);
-          },
-          function(error){
-            deferred.reject(error);
-          },
-          data, 
-          password
-        );
-
-      } else {
-        
-        deferred.resolve(CryptoJS.AES.decrypt(data, password).toString(CryptoJS.enc.Latin1));
-
-      }
       return deferred.promise;
     };
 
     self.isValidKey = function(key) {
-      
       var deferred = $q.defer();
 
-      //if( $rootScope.platform == "iOS" ) {
-      if( true ) {
+      window.plugins.BitsharesPlugin.isValidKey(
+        function(data){
+          deferred.resolve(true);
+        },
+        function(error){
+          deferred.reject(error);
+        },
+        key
+      );
 
-        window.plugins.BitsharesPlugin.isValidKey(
-          function(data){
-            deferred.resolve(true);
-          },
-          function(error){
-            deferred.reject(error);
-          },
-          key
-        );
-
-      } else {
-        
-        try {
-          bitcoin.HDNode.fromBase58(key);
-        } catch (err) {
-          deferred.reject(err);
-          return;
-        }
-        deferred.resolve(true);
-        
-      }
       return deferred.promise;
     };
 
     self.isValidWif = function(wif) {
-      
       var deferred = $q.defer();
 
-      //if( $rootScope.platform == "iOS" ) {
-      if( true ) {
-
-        window.plugins.BitsharesPlugin.isValidWif(
-          function(data){
-            deferred.resolve(true);
-          },
-          function(error){
-            deferred.reject(error);
-          },
-          wif
-        );
-
-      } else {
-        try {
-          bitcoin.ECKey.fromWIF(wif);
+      window.plugins.BitsharesPlugin.isValidWif(
+        function(data){
           deferred.resolve(true);
-        } catch(err) {
-          deferred.reject(err);
-        }
-        
-      }
+        },
+        function(error){
+          deferred.reject(error);
+        },
+        wif
+      );
+
       return deferred.promise;
     };
 
     self.derivePrivate = function(key, deriv) {
-      
       var deferred = $q.defer();
       
-      //if( $rootScope.platform == "iOS" ) {
-      if( true ) {
+      window.plugins.BitsharesPlugin.derivePrivate(
+        function(data){
+          deferred.resolve(data.extendedPrivateKey);
+        },
+        function(error){
+          deferred.reject(error);
+        }
+        , key
+        , deriv
+      );
 
-        window.plugins.BitsharesPlugin.derivePrivate(
-          function(data){
-            deferred.resolve(data.extendedPrivateKey);
-          },
-          function(error){
-            deferred.reject(error);
-          }
-          , key
-          , deriv
-
-        );
-
-      } else {
-        
-        var hdnode = bitcoin.HDNode.fromBase58(key);
-        var nkey = hdnode.derive(deriv);
-        deferred.resolve(nkey.toString());
-        
-      }
       return deferred.promise;
     };
 
     self.compactSignatureForHash = function(hash, key) {
-      
       var deferred = $q.defer();
 
-      //if( $rootScope.platform == "iOS" ) {
-      if( true ) {
+      window.plugins.BitsharesPlugin.compactSignatureForHash(
+        function(data){
+          deferred.resolve(data.compactSignatureForHash);
+        },
+        function(error){
+          deferred.reject(error);
+        }
+        , hash
+        , key
+      );
 
-        window.plugins.BitsharesPlugin.compactSignatureForHash(
-          function(data){
-            deferred.resolve(data.compactSignatureForHash);
-          },
-          function(error){
-            deferred.reject(error);
-          }
-          , hash
-          , key
-
-        );
-
-      } else {
-        
-        //HACK: expose Buffer
-        Buffer = bitcoin.ECKey.curve.n.toBuffer().constructor;
-        var to_sign = new Buffer(hash, 'hex')
-        var priv = bitcoin.ECKey.fromWIF(key); // Si ya viene en format Wif
-        var signature = bitcoin.ecdsa.sign(bitcoin.ECKey.curve, to_sign, priv.d);
-        var i = bitcoin.ecdsa.calcPubKeyRecoveryParam(bitcoin.ECKey.curve, priv.d.constructor.fromBuffer(to_sign), signature, priv.pub.Q);
-        var compact = signature.toCompact(i, priv.pub.compressed).toString('hex');
-        deferred.resolve(compact);
-      }
       return deferred.promise;
     };
 
     self.btsWifToAddress = function(wif) {
-      
       var deferred = $q.defer();
 
-      //if( $rootScope.platform == "iOS" ) {
-      if( true ) {
+      window.plugins.BitsharesPlugin.btsWifToAddress(
+        function(data){
+          deferred.resolve(data.addy);
+        },
+        function(error){
+          deferred.reject(error);
+        }
+        , wif
+      );
 
-        window.plugins.BitsharesPlugin.btsWifToAddress(
-          function(data){
-            deferred.resolve(data.addy);
-          },
-          function(error){
-            deferred.reject(error);
-          }
-          , wif
-
-        );
-
-      } else {
-        
-        deferred.resolve(bitcoin.bts.wif_to_address(wif));
-        
-      }
       return deferred.promise;
     };
 
     self.btsPubToAddress = function(pubkey) {
-      
       var deferred = $q.defer();
 
-      //if( $rootScope.platform == "iOS" ) {
-      if( true ) {
+      window.plugins.BitsharesPlugin.btsPubToAddress(
+        function(data){
+          deferred.resolve(data.addy);
+        },
+        function(error){
+          deferred.reject(error);
+        }
+        , pubkey
+      );
 
-        window.plugins.BitsharesPlugin.btsPubToAddress(
-          function(data){
-            deferred.resolve(data.addy);
-          },
-          function(error){
-            deferred.reject(error);
-          }
-          , pubkey
-
-        );
-
-      } else {
-        
-        deferred.resolve(bitcoin.bts.pub_to_address(bitcoin.bts.decode_pubkey(pubkey)));
-        
-      }
       return deferred.promise;
     };
 
     self.btsIsValidAddress = function(addy) {
-      
       var deferred = $q.defer();
 
-      //if( $rootScope.platform == "iOS" ) {
-      if( true ) {
-
-        window.plugins.BitsharesPlugin.btsIsValidAddress(
-          function(data){
-            deferred.resolve(true);
-          },
-          function(error){
-            deferred.reject(error);
-          },
-          addy
-        );
-
-      } else {
-        if(!bitcoin.bts.is_valid_address(addy))
-        {
-          err = {'message':'Invalid address'}
-          deferred.reject(err);
-        }
-        else {
+      window.plugins.BitsharesPlugin.btsIsValidAddress(
+        function(data){
           deferred.resolve(true);
-        }
-        
-      }
+        },
+        function(error){
+          deferred.reject(error);
+        },
+        addy
+      );
+
       return deferred.promise;
     };
 
     self.btsIsValidPubkey = function(pubkey) {
-      
       var deferred = $q.defer();
 
-      //if( $rootScope.platform == "iOS" ) {
-      if( true ) {
-
-        window.plugins.BitsharesPlugin.btsIsValidPubkey(
-          function(data){
-            deferred.resolve(true);
-          },
-          function(error){
-            deferred.reject(error);
-          },
-          pubkey
-        );
-
-      } else {
-        if(!bitcoin.bts.is_valid_pubkey(pubkey))
-        {
-          err = {'message':'Invalid pubkey'}
-          deferred.reject(err);
-        } else {
+      window.plugins.BitsharesPlugin.btsIsValidPubkey(
+        function(data){
           deferred.resolve(true);
-        }
-        
-      }
+        },
+        function(error){
+          deferred.reject(error);
+        },
+        pubkey
+      );
+
       return deferred.promise;
     };
     
