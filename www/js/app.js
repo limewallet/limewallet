@@ -13,7 +13,11 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
         link: function (scope) {
             scope.$watch('inputValue', function(newValue,oldValue) {
                 var arr = String(newValue).split("");
-                if (arr.length === 0) return;
+                if (arr.length === 0) 
+                {
+                  scope.inputValue = 0;
+                  return;
+                }
                 if (arr.length === 1 && (arr[0] === '.' )) return;
                 if (arr.length === 2 && newValue === '.') return;
                 if (isNaN(newValue)) {
@@ -245,6 +249,14 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
           .finally(function() {
              console.log('RefreshBalance: finally...');
              $rootScope.$emit('refresh-done');
+
+
+              // Creo que NO es al pedo, pero por las dudas cerramos el splash.
+              $cordovaSplashscreen.hide();
+              
+              // FullScreen Config
+              var showFullScreen = false, showStatusBar = true;
+              ionic.Platform.fullScreen(showFullScreen, showStatusBar);
           });
 
         });
@@ -311,7 +323,7 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
           $rootScope.global_init = function() {
 
             //HACK: tocar aca hasta que funcione el plugin de device
-            $rootScope.platform         = 'Android'; 
+            $rootScope.platform         = 'iOS'; 
             $rootScope.current_balance  = 0;
             $rootScope.asset_id         = 22;
             $rootScope.balance          = {};

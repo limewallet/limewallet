@@ -256,8 +256,8 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
 
         window.plugins.BitsharesPlugin.createMasterKey(
           function(data){
-            console.log(data);
-            console.log('data.masterPrivateKey: '+data.masterPrivateKey);
+            //console.log(data);
+            //console.log('data.masterPrivateKey: '+data.masterPrivateKey);
             deferred.resolve(data.masterPrivateKey);
           },
           function(error){
