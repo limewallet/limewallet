@@ -31,7 +31,26 @@
       </ion-header-bar>
       
       <ion-content class="has-header">
-        <div style="position:absolute;top:0px;bottom:65px;width:100%;overflow:hidden;">
+        <form novalidate name="backupFormShow" class="restoreFormNOT paddingNOT" style="height: 100%;display: block;"> 
+          <div class="list">
+            <label class="item item-input item-stacked-label">
+              <span class="input-label">{{'backup.encrypted_wallet'|translate}}</span>
+            </label>
+            <label class="item item-input item-stacked-label">
+              <textarea class="wallet_textarea" rows="10" name="backuped_wallet" ng-model="backup.wallet"> </textarea>
+            </label>
+          </div>
+          
+          <div class="action_container hide-on-keyboard-open padding">
+            <div class="one_of_two_buttons">
+              <button class="button button-energized" style="margin-right:5px;width:100%;" ng-click="doShareWallet()" ><i class=" fa fa-share-square-o"></i></button>
+            </div>
+            <div class="one_of_two_buttons">
+              <button class="button button-energized" style="margin-left:5px;width:100%;" ng-click="doCopyWallet()" ><i class=" fa fa-copy"></i></button>
+            </div>
+          </div>
+        </form>
+        <!--div style="position:absolute;top:0px;bottom:65px;width:100%;overflow:hidden;">
           <div class="list card" style="height: 90%;display: block;position:relative;">
               <span class="item item-divider">{{'backup.encrypted_wallet'|translate}}</span>
               <label class="item item-input" style="height:100%;">
@@ -46,7 +65,7 @@
           <div class="one_of_two_buttons">
             <button class="button button-energized" style="margin-left:5px;width:100%;" ng-click="doCopyWallet()" ><i class=" fa fa-copy"></i></button>
           </div>
-        </div>
+        </div-->
       </ion-content>
     </ion-modal-view>
 </script>

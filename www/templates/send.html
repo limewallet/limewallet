@@ -10,26 +10,22 @@
     <ion-content class="has-header">
       <form novalidate name="sendForm" class="send_form" >
         <div class="list">
-          
           <div class="item item-input-inset">
             <label class="item-input-wrapper wrapper_clean">
               <input required name="transactionAddress" ng-model="transaction.address" type="text" placeholder="{{'g.to'|translate}}" class="big big_placeholder">
             </label>
-            <!-- button class="button button-small button-icon icon ion-ios-book-outline" -->  
-            <!--button ng-click="showAddressBook()" class="button button-small icon ion-ios-book-outline" -->              
             <button ng-click="showAddressBook()" class="button button-energized button-small icon" >
               <i style="color:#ffffff!important;" class="fa fa-book"></i>
             </button>
           </div>
-          <!-- label class="item item-input">
-            <input required name="transactionAddress" ng-model="transaction.address" type="text" placeholder="{{'g.to'|translate}}" class="big big_placeholder">
-          </label -->
     
           <label class="item item-input">
             <i class="icon fa20 {{asset.symbol_ui_class}} placeholder-icon">{{asset.symbol_ui_text}}</i>
-            <input required name="transactionAmount" ng-model="transaction.amount" type="number" placeholder="{{'g.amount'|translate}}" class="amout_so_send input_amount big big_placeholder">
-            <number-only-input input-value="transaction.amount" input-name="transactionAmount" input-class="" />
+            <!-- required -->
+            <input old-numbers-only-inputNOT required name="transactionAmount" ng-model="transaction.amount" type="number" placeholder="{{'g.amount'|translate}}" class="input_amount big big_placeholder" ng-class="{'error':sendForm.transactionAmount.$error.number}">
+            <br/>
           </label>
+          <span class="error input" ng-show="sendForm.transactionAmount.$error.number">{{'err.enter_valid_amount'|translate}}</span>
           <input type="hidden" name="transactionAssetId" ng-model="transaction.asset_id" />
         </div>
         <div class="action_container hide-on-keyboard-open padding">

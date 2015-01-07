@@ -147,34 +147,6 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
 .controller('RestoreCtrl', function($q, T, $rootScope, $translate, $scope, Asset, MasterKey, Address, AddressBook, $http, $timeout, $location, $state, $ionicPopup, $ionicModal, $cordovaClipboard, BitShares) {
   $scope.restore = {};
 
-  window.addEventListener('native.keyboardhide', keyboardHideHandler);
-  function keyboardHideHandler(e){
-    e.preventDefault();
-    var myform = angular.element( document.querySelector( '.restoreForm' ) );
-    myform.css('bottom', "65px");
-    $scope.calculateH();
-  }
-  
-  $scope.calculateH = function(){
-    var myform = angular.element( document.querySelector( '.restoreForm' ) );
-    var mytextarea_container = angular.element( document.querySelector( '.textarea_container' ) );
-    var new_h = myform.prop('offsetHeight') - angular.element( document.querySelector( '.item-divider' ) ).prop('offsetHeight') - 20;
-    mytextarea_container.css('height', new_h + "px");
-  }
-  $scope.calculateH();
-  
-  window.addEventListener('native.keyboardshow', keyboardShowHandler);
-  function keyboardShowHandler(e){
-    e.preventDefault();
-    
-    var myform = angular.element( document.querySelector( '.restoreForm' ) );
-    //myform.css('bottom', e.keyboardHeight + "px");
-    //console.log('Keyboard height is: ' + e.keyboardHeight);
-    var mytextarea_container = angular.element( document.querySelector( '.textarea_container' ) );
-    var new_h = myform.prop('offsetHeight') - angular.element( document.querySelector( '.item-divider' ) ).prop('offsetHeight') - 20;
-    mytextarea_container.css('height', new_h + "px");
-  }
-  
   $scope.pasteWallet = function(element) {
     $cordovaClipboard
       .paste()
@@ -847,9 +819,8 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
     amount = $stateParams.amount;
 
     //document.querySelector( '.amout_so_send' ).value = amount;
-  }  
+  } 
   
-
   var address = '';
   if (!angular.isUndefined($stateParams.address))
   address = $stateParams.address;

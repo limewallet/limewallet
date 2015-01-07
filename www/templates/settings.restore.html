@@ -8,18 +8,38 @@
   
     <ion-content class="has-header" has-bouncing="false">
     
-    <form novalidate name="restoreForm" class="restoreForm padding" > 
-      <div class="list card restoreForm_inputs"  >
+    <form novalidate name="restoreForm" class="restoreFormNOT paddingNOT " style="height: 100%;display: block;"> 
+      <!-- SCROLL -->
+      <!--label class="item item-input item-stacked-label">
+        <span class="input-label">{{'backup.encrypted_wallet'|translate}}</span>
+      </label>
+      <ion-scroll zooming="false" direction="y" class="restore_wallet_textarea">
+        <textarea style="width:100%;box-sizing: border-box;-moz-box-sizing: border-box;-webkit-box-sizing: border-box;" rows="20" name="restore_wallet" ng-model="restore.wallet" placeholder="{{'restore.paste_here'|translate}}"> </textarea>
+      </ion-scroll -->
+      
+      <!-- STACKED -->
+      <div class="list">
+        <label class="item item-input item-stacked-label">
+          <span class="input-label">{{'backup.encrypted_wallet'|translate}}</span>
+        </label>
+        <label class="item item-input item-stacked-label">
+          <textarea class="wallet_textarea" rows="10" name="restore_wallet" ng-model="restore.wallet" placeholder="{{'restore.paste_here'|translate}}"> </textarea>
+        </label>
+      </div>
+      
+      <!-- A MANUK -->
+      <!-- div class="list card restoreForm_inputs">
         <span class="item item-divider">{{'backup.encrypted_wallet'|translate}}</span>
           <label class="item item-input textarea_container"  style="height:100%; ">
             <textarea style="width:100%;height:100%; box-sizing: border-box;-moz-box-sizing: border-box;-webkit-box-sizing: border-box;" rows="8" name="restore_wallet" ng-model="restore.wallet" placeholder="{{'restore.paste_here'|translate}}"> </textarea>
         </label>
+      </div -->
+    
+      <div class="action_container hide-on-keyboard-open padding">
+        <button class="button button-stableNOT button-energized button-block" ng-click="restoreWallet(restore)">
+          {{'menu.restore_wallet'|translate}}
+        </button>
       </div>
     </form>
-    <div class="action_container hide-on-keyboard-open padding">
-      <button class="button button-stableNOT button-energized button-block" ng-click="restoreWallet(restore)">
-        {{'menu.restore_wallet'|translate}}
-      </button>
-    </div>
   </ion-content>
 </ion-view>
