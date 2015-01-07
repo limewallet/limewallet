@@ -10,7 +10,7 @@
         <div class="list">
           <label class="item item-input">
             <i class="icon fa20 fa {{asset.symbol_ui_class}} placeholder-icon">{{asset.symbol_ui_text}}</i>
-            <input old-numbers-only-inputNOT required name="transactionAmount" ng-model="transaction.amount" type="number" placeholder="{{'g.amount'|translate}}" class="input_amount big big_placeholder" ng-class="{'error':receiveForm.transactionAmount.$error.number}">
+            <input numbers-only-key-press old-numbers-only-inputNOT required name="transactionAmount" ng-model="transaction.amount" type="number" placeholder="{{'g.amount'|translate}}" class="input_amount big big_placeholder" ng-class="{'error':receiveForm.transactionAmount.$error.number}">
             <br/>
           </label>
           <span class="error input" ng-show="receiveForm.transactionAmount.$error.number">{{'err.enter_valid_amount'|translate}}</span>

@@ -2,6 +2,32 @@
 
 angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'reconnectingWebSocket', 'bit_wallet.controllers','bit_wallet.services'])
 
+
+.directive('numbersOnlyKeyPress', function(){
+   return {
+     require: 'ngModel',
+     link: function(scope, element, attrs, modelCtrl) {
+      var keyCode = [8,9,37,39,48,49,50,51,52,53,54,55,56,57,96,97,98,99,100,101,102,103,104,105,110];
+      
+      // element.bind("change", function (event) {
+        // console.log(event);
+        // console.log('change');
+      // });
+      
+      element.bind("keydown keypress", function (event) {
+        //console.log(event.which + ' in? ' + (keyCode.indexOf(event.which)));
+          //if(!(Number(event.which) in keyCode)) {
+          if(keyCode.indexOf(event.keyCode)==-1) {
+              //console.log(event.keyCode  + ' PREVENTED and STOPPED!');
+              event.preventDefault();
+              event.stopPropagation();
+              //console.log(event);
+              return false;
+          }
+        });
+    }
+  }
+})
 // http://jsfiddle.net/DwKZh/763/
 // usage: <input numbers-only-input="numbers-only-input" ...
 .directive('numbersOnlyInput', function(){
