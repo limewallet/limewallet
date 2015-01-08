@@ -7,15 +7,18 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
    return {
      require: 'ngModel',
      link: function(scope, element, attrs, modelCtrl) {
-      var keyCode = [8,9,37,39,48,49,50,51,52,53,54,55,56,57,96,97,98,99,100,101,102,103,104,105,110];
-      
+      var keyCode = [8,9,37,39,46,48,49,50,51,52,53,54,55,56,57,96,97,98,99,100,101,102,103,104,105,110];
+      //190 keydown "." @ iOS
+      //46 keypress "." @ iOS
+
       // element.bind("change", function (event) {
         // console.log(event);
         // console.log('change');
       // });
       
-      element.bind("keydown keypress", function (event) {
-        //console.log(event.which + ' in? ' + (keyCode.indexOf(event.which)));
+      element.bind("keypress", function (event) { //keydown 
+          console.log(event.keyCode);
+          //console.log(event.which + ' in? ' + (keyCode.indexOf(event.which)));
           //if(!(Number(event.which) in keyCode)) {
           if(keyCode.indexOf(event.keyCode)==-1) {
               //console.log(event.keyCode  + ' PREVENTED and STOPPED!');
@@ -434,7 +437,7 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
           $rootScope.global_init = function() {
 
             //HACK: tocar aca hasta que funcione el plugin de device
-            $rootScope.platform         = 'Android'; 
+            $rootScope.platform         = 'iOS'; 
             $rootScope.current_balance  = 0;
             $rootScope.asset_id         = 22;
             $rootScope.balance          = {};

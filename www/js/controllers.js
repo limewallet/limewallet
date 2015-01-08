@@ -265,7 +265,7 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
             if(ewallet.version == 1) {
               address_book[i].address = 'BTS' + address_book[i].address.substr(4);
             }
-            var p = AddressBook.add(address_book[i].name, address_book[i].address, address_book[i].is_favorite);
+            var p = AddressBook.add(address_book[i].address, address_book[i].name, address_book[i].is_favorite);
             prom.push(p);
           }
           
@@ -845,6 +845,7 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
     $scope.address_book_modal.hide();
     sendForm.transactionAddress.value = contact.address;
     $scope.transaction.address = contact.address;
+    console.log($scope.transaction.address);
   }
   
   $scope.scanQR = function() {
