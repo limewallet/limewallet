@@ -51,7 +51,10 @@
     "backup_error"        : "Se han producido errores al intentar resguardar la billetera",
     "unable_pw_balance"   : "Imposible obtener balance de billetera"
     "empty_paper_wallet"  : "Billetera vacia",
-    "paper_no_balance"    : "La billetera de papel no tiene balances disponibles"
+    "paper_no_balance"    : "La billetera de papel no tiene balances disponibles",
+    "invalid_asset"       : "Asset inválido",
+    "invalid_asset_desc"  : "El asset seleccionado no se encuentra actualmente disponible",
+    "scan_valid_asset"    : "Por favor solicite y escanee un asset válido"
   },
 
   "home" : {

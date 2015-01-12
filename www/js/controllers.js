@@ -113,7 +113,7 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
         //TODO: check for complete ewallet
         if('master_key' in ewallet && 'address' in ewallet && 'address_book' in ewallet) {
           $scope.backup.wallet_master = JSON.stringify(ewallet,  null, '\t');
-          console.log($scope.backup.wallet_master);
+          //console.log($scope.backup.wallet_master);
           $scope.backup.wallet = $scope.backup.wallet_master;
           alertPopup.close();
           $scope.modal.show();
@@ -147,34 +147,6 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
 .controller('RestoreCtrl', function($q, T, $rootScope, $translate, $scope, Asset, MasterKey, Address, AddressBook, $http, $timeout, $location, $state, $ionicPopup, $ionicModal, $cordovaClipboard, BitShares) {
   $scope.restore = {};
 
-  window.addEventListener('native.keyboardhide', keyboardHideHandler);
-  function keyboardHideHandler(e){
-    e.preventDefault();
-    var myform = angular.element( document.querySelector( '.restoreForm' ) );
-    myform.css('bottom', "65px");
-    $scope.calculateH();
-  }
-  
-  $scope.calculateH = function(){
-    var myform = angular.element( document.querySelector( '.restoreForm' ) );
-    var mytextarea_container = angular.element( document.querySelector( '.textarea_container' ) );
-    var new_h = myform.prop('offsetHeight') - angular.element( document.querySelector( '.item-divider' ) ).prop('offsetHeight') - 20;
-    mytextarea_container.css('height', new_h + "px");
-  }
-  $scope.calculateH();
-  
-  window.addEventListener('native.keyboardshow', keyboardShowHandler);
-  function keyboardShowHandler(e){
-    e.preventDefault();
-    
-    var myform = angular.element( document.querySelector( '.restoreForm' ) );
-    //myform.css('bottom', e.keyboardHeight + "px");
-    console.log('Keyboard height is: ' + e.keyboardHeight);
-    var mytextarea_container = angular.element( document.querySelector( '.textarea_container' ) );
-    var new_h = myform.prop('offsetHeight') - angular.element( document.querySelector( '.item-divider' ) ).prop('offsetHeight') - 20;
-    mytextarea_container.css('height', new_h + "px");
-  }
-  
   $scope.pasteWallet = function(element) {
     $cordovaClipboard
       .paste()
@@ -297,10 +269,10 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
             prom.push(p);
           }
           
-          console.log('TomaloNET : ' + ewallet.default_asset);
+          //console.log('TomaloNET : ' + ewallet.default_asset);
 
           if(typeof ewallet.default_asset === 'number') {
-            console.log('TomaloNET : ' + ewallet.default_asset);
+            //console.log('TomaloNET : ' + ewallet.default_asset);
             var p = Asset.setDefault(ewallet.default_asset);
             prom.push(p);
           }
@@ -535,8 +507,8 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
   $scope.request    = 'bts:'+$scope.address+'/transfer/amount/'+$scope.amount+'/asset/'+$scope.asset.symbol; //symbol or asset_id required -> ?USD?
   $scope.imgurl     = 'http://chart.apis.google.com/chart?cht=qr&chs=300x300&chl='+encodeURIComponent($scope.request)+'&chld=H|0'
 
-  console.log('request -> ' + $scope.request);
-  console.log('imgurl -> ' + $scope.imgurl);
+  //console.log('request -> ' + $scope.request);
+  //console.log('imgurl -> ' + $scope.imgurl);
 
   $scope.showLoading = function(){
     $ionicLoading.show({
@@ -613,6 +585,7 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
 
 .controller('ImportPrivCtrl', function($scope, T, $q, Address, $http, $ionicLoading, $ionicNavBarDelegate, $ionicModal, $ionicPopup, $location, $timeout, $rootScope, $stateParams, BitShares) {
   
+  $scope.imported_pk = [];
   $scope.showLoading = function(){
     $ionicLoading.show({
       template      : '<i class="icon ion-looping"></i> ' + T.i('import_priv.loading_balance'),
@@ -634,22 +607,42 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
     $http.get(url)
     .success(function(r) {
       var total = 0;
-      if(r.error=== undefined)
-      {
+      var other_symbols = [];
+      if(r.error === undefined)
+      { 
         r.balances.forEach(function(b){
-          //TODO: just USD for now
-          if(b.asset_id == 22)
+          if(b.asset_id == $scope.asset.id) {
             total += b.amount;
-          });
+          } else {
+            //TODO: warining!!
+            if(b.amount > 0) {
+              other_symbols.push($rootScope.assets[b.asset_id].symbol);
+            }
+          }
+        });
       }
       else
       {
-        $timeout(function () {
-          $location.path('/home');
-          window.plugins.toast.show( T.i('err.unable_pw_balance'), 'long', 'bottom');
-        }, 500);
+        $location.path('/home');
+        window.plugins.toast.show( T.i('err.unable_pw_balance'), 'long', 'bottom');
+        return;
       }
-      $scope.imported_pk.amount = total/1e4;
+
+      if(total == 0 && other_symbols.length > 0) {
+
+       $ionicPopup.alert({
+         title    : T.i('import_priv.paper_wallet'),
+         template : T.i('import_priv.switch_currency', {'symbols':other_symbols.join(',')}),
+       }).then(function(res) {
+        if(res) {
+          $location.path('/home');
+        }
+       });
+
+       return;
+      }
+
+      $scope.imported_pk.amount = total/$scope.asset.precision;
     })
     .error(function(data, status, headers, config) {
       $timeout(function () {
@@ -717,9 +710,9 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
 
         $scope.sweeping.message = 'send.signing_transaction';
         
-        console.log(r.tx);
-        console.log(r.to_sign);
-        console.log(r.required_signatures);
+        //console.log(r.tx);
+        //console.log(r.to_sign);
+        //console.log(r.required_signatures);
 
         r.tx.signatures = [];
 
@@ -814,7 +807,7 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
 .controller('SendCtrl', function($scope, $q, T, BitShares, Asset, AddressBook, Scanner, Address, $http, $ionicLoading, $ionicNavBarDelegate, $ionicModal, $ionicPopup, $location, $timeout, $rootScope, $stateParams) {
   
   $scope.data = {address_book:[]};
-  $scope.transaction = {message:'send.generating_transaction', amount:0, address:'', asset_id:$scope.asset.id};
+  //$scope.transaction = {message:'send.generating_transaction', amount:0, address:'', asset_id:$scope.asset.id};
   
   // Did user scan a payment request? If so, we receive asset_id
   // if (!angular.isUndefined($stateParams.asset_id))
@@ -822,12 +815,16 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
   
   var amount = 0;
   if (!angular.isUndefined($stateParams.amount))
+  {
     amount = $stateParams.amount;
 
+    //document.querySelector( '.amout_so_send' ).value = amount;
+  } 
+  
   var address = '';
   if (!angular.isUndefined($stateParams.address))
-    address = $stateParams.address;
-  
+  address = $stateParams.address;
+
   $scope.transaction = {message:'send.generating_transaction', amount:amount, address:address};
   sendForm.transactionAmount.value = $scope.transaction.amount;
   sendForm.transactionAddress.value = $scope.transaction.address;
@@ -848,6 +845,7 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
     $scope.address_book_modal.hide();
     sendForm.transactionAddress.value = contact.address;
     $scope.transaction.address = contact.address;
+    console.log($scope.transaction.address);
   }
   
   $scope.scanQR = function() {
@@ -872,7 +870,7 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
           sendForm.transactionAmount.value = result.amount;
         }
         
-        if(result.asset_id !== undefined && result.asset_id != $scope.asset.id)
+        if(result.asset_id !== undefined && result.asset_id != $scope.asset.symbol)
         {
           window.plugins.toast.show(T.i('err.invalid_asset'), 'long', 'bottom');
           return;
@@ -917,6 +915,8 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
         template: T.i('send.searching_account')
       });
 
+      var deferred = $q.defer();
+
       var url = 'https://bsw.latincoin.com/api/v1/account/' + sendForm.transactionAddress.value;
 
       prom = $http.get(url, {timeout:10000})
@@ -943,7 +943,10 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
           .then(function() {
             $ionicLoading.hide();
           });
-          return $q.reject(false);
+          return deferred.reject();
+        }
+        else {
+          return deferred.resolve(true);
         }
       });
       
@@ -953,16 +956,19 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
         // okType   : 'button-assertive',
       // });
       console.log('no habia nada');
-      var deferred = $q.defer();
-      return deferred.resolve(true);
-      //prom = deferred.promise;
+
+      return deferred.promise;
+
+
     })
     .then(function(is_valid){
-    
+      
+
       var symbol =  '<i class="'+$scope.asset.symbol_ui_class+'">'+$scope.asset.symbol_ui_text;
       var confirmPopup = $ionicPopup.confirm({
         title    : T.i('send.payment_confirm'),
-        template : T.i('send.are_you_sure',{symbol:symbol,amount:$scope.transaction.amount,address:sendForm.transactionAddress.value})
+        template : T.i('send.are_you_sure',{symbol:symbol,amount:$scope.transaction.amount,address:sendForm.transactionAddress.value, extra_data:extra_data})
+        //template : T.i('send.are_you_sure',{symbol:symbol,amount:$scope.transaction.amount,address:sendForm.transactionAddress.value})
       });
 
       confirmPopup.then(function(res) {
