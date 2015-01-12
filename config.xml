@@ -1,12 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <widget id="com.latincoin.bitwallet" version="0.0.2" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
   <name>Bitwallet</name>
-  <description>&#xD;&#xD;&#xD;&#xD;&#xD;
-        Bitshares mobile wallet.&#xD;&#xD;&#xD;&#xD;&#xD;
-    </description>
-  <author email="hi@ionicframework" href="http://bitwallet.latincoin.com/">&#xD;&#xD;&#xD;&#xD;&#xD;
-      Latincoin Development Team&#xD;&#xD;&#xD;&#xD;&#xD;
-    </author>
+  <description>Bitshares mobile wallet.</description>
+  <author email="info@latincoin.com" href="http://bitwallet.latincoin.com/">Latincoin Development Team</author>
   <content src="index.html"/>
   <access origin="*"/>
   <preference name="webviewbounce" value="false"/>
