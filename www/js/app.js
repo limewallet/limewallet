@@ -142,6 +142,11 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
     };
 })
 
+.config(function($ionicConfigProvider) {
+  $ionicConfigProvider.views.maxCache(0);
+  $ionicConfigProvider.navBar.alignTitle('center');
+})
+
 .run(function(DB, BitShares, $cordovaGlobalization, $translate, ReconnectingWebSocket, $q, MasterKey, AddressBook, Address, Asset, $http, $rootScope, $ionicPlatform, $cordovaLocalNotification, $ionicModal, $ionicPopup, $cordovaSplashscreen, T, $cordovaDevice ) {
 
   $ionicPlatform.ready(function() {
@@ -658,12 +663,14 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
     })
     
     .state('app.home', {
-      url: "/home",
+      cache:  false,
+      url:    "/home",
       views: {
-        'menuContent' :{
-          templateUrl: "templates/home.html",
-          controller: 'HomeCtrl'
-        }
+              'menuContent' :{
+                templateUrl: "templates/home.html",
+                //templateUrl: "index.html",
+                controller: 'HomeCtrl'
+            }
       }
     })
 

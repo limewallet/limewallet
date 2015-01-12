@@ -9,6 +9,11 @@ ion-nav-bar.bar-energized{
   background-image: none!important;
 }
 
+span.title-center{
+  text-align: center;
+  display: block;
+}
+
 .bar .fa {font-size: 25px;
 line-height: 38px;}
 .fa.fa18 {font-size: 18px!important;line-height: 20px;}
