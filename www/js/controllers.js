@@ -4,6 +4,10 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
 
 })
 
+.controller('SettingsCtrl', function($scope, $ionicModal, $timeout) {
+
+})
+
 .controller('BackupCtrl', function(DB_CONFIG, T, $translate, MasterKey, Address, AddressBook, $scope, $http, $timeout, $location, $state, $ionicPopup, $ionicModal, $cordovaSocialSharing, $cordovaClipboard, BitShares, $q) {
   
   $scope.backup = {};
@@ -298,7 +302,30 @@ angular.module('bit_wallet.controllers', ['bit_wallet.services'])
 })
 
 .controller('AccountCtrl', function($translate, T, Address, MasterKey, BitShares, $scope, $rootScope, $http, $timeout, $ionicActionSheet, $ionicPopup, $cordovaClipboard) {
-
+  
+  $scope.groups = [];
+  for (var i=0; i<5; i++) {
+    $scope.groups[i] = {
+      name: 'Asset_'+i,
+      balance: 'Amount_'+i,
+      items: []
+    };
+    for (var j=0; j<3; j++) {
+      $scope.groups[i].items.push('Address_' + j);
+    }
+  }
+  
+  $scope.toggleGroup = function(group) {
+    if ($scope.isGroupShown(group)) {
+      $scope.shownGroup = null;
+    } else {
+      $scope.shownGroup = group;
+    }
+  };
+  $scope.isGroupShown = function(group) {
+    return $scope.shownGroup === group;
+  };
+  
   $scope.data = {addys:[]}
 
   $scope.loadAddys = function() {

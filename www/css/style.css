@@ -9,7 +9,7 @@ ion-nav-bar.bar-energized{
   background-image: none!important;
 }
 
-span.title-center{
+.logo-center{
   text-align: center;
   display: block;
 }
@@ -163,6 +163,9 @@ input.big {
   line-height: 26px!important;
   }
 
+/*****************/
+/* MENU **********/
+/*****************/
 .bar.bar-dark.menu_header {border-color:transparent!important;}   
 .menu .menu_header{
   background-image:none!important; 
@@ -176,9 +179,38 @@ input.big {
   border-color: #4c4c4c!important;
   background-color: #363636!important;
   color: #d4d4d4!important;
+  font-size: 14px;
 }
 .menu .item.wallet a{background-color: #222222!important}
 .menu .list .item_first{ border-top:none;}
+
+.menu .menu_header{height:100px!important;}
+.menu .scroll-content.has-header{top:100px!important;}
+.menu  .menu_container{
+  padding:10px;
+  height: 100%!important;
+  width:100%;
+  margin-bottom: 0px;
+}
+.menu  .menu_container .menu_avatar{
+  height: 52px;
+}
+.menu  .menu_container .menu_avatar img{
+  /*position: absolute;
+  top: 10px;*/
+  left: 0px;
+  max-width: 42px;
+  max-height: 42px;
+  width: 100%;
+  border-radius: 21px;
+  background-color: whitesmoke;
+  }
+  
+.menu  .menu_container .menu_name{
+  height: 28px;
+  padding-top: 5px;
+}
+/* END MENU ****/
 
 .transaction_steps{width:100%;padding-top:50px;}
 .step_doing{color:}
@@ -370,4 +402,23 @@ margin-bottom: 20px!important;
   font-size: 10px;
   line-height: 10px;
   text-transform:uppercase;
+}
+
+/********************/
+/* ACCORDION        */
+/********************/
+.list .item.item-accordion {
+  height: 38px;
+  line-height: 38px;
+  padding-top: 0;
+  padding-bottom: 0;
+  transition: 0.09s all linear;
+}
+.list .item.item-accordion.ng-hide {
+  height: 0px;
+  line-height: 0px;
+}
+.list .item.item-accordion.ng-hide-add,
+.list .item.item-accordion.ng-hide-remove {
+  display: block !important;
 }

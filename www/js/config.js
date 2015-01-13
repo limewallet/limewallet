@@ -51,6 +51,15 @@ angular.module('bit_wallet.config', [])
               {id: 14,  symbol: 'CNY',  fullname: 'Chinese Yuan' ,        precision: 10000,     is_default: 0 , symbol_ui_class : 'fa fa-cny', symbol_ui_text : ''},
               {id: 4,   symbol: 'BTC',  fullname: 'Bitcoin' ,             precision: 100000000, is_default: 0 , symbol_ui_class : 'fa fa-btc', symbol_ui_text : ''}
             ]
+        },
+        {
+            name: 'account',
+            columns: [
+                {name : 'id',                 type   : 'integer primary key'},
+                {name : 'name',               type   : 'text unique'},
+                {name : 'token',              type   : 'text'},
+                {name : 'gravatar_id',        type   : 'text'},
+            ]
         }
     ],
 });

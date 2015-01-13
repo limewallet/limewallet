@@ -154,5 +154,10 @@
     "show_asset"              : "Show asset",
     "my_assets"               : "Currencies"
   
+  },
+  
+  "settings": {
+    "default_currency"        : "Default currency"
   }
+  
 }

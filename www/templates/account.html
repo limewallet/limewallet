@@ -1,0 +1,40 @@
+<ion-view class="dark" title="{{'menu.account'|translate}}">
+    <ion-nav-buttons side="left">
+      <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
+    </ion-nav-buttons>
+    <ion-nav-buttons side="right">
+      <button class="button button-icon icon ion-ios7-plus-outline" ng-click="newAddr()"></button>
+    </ion-nav-buttons>
+    
+    <ion-content class="has-header" has-bouncing="false">
+    
+      <ion-list>
+        <div ng-repeat="group in groups">
+          <ion-item class="item-stable"
+                    ng-click="toggleGroup(group)"
+                    ng-class="{active: isGroupShown(group)}">
+              <i class="icon" ng-class="isGroupShown(group) ? 'ion-minus' : 'ion-plus'"></i>
+            &nbsp;
+            {{group.name}} <span class="item-note">$250.00</span>
+          </ion-item>
+          <ion-item class="item-accordion"
+                    ng-repeat="item in group.items"
+                    ng-show="isGroupShown(group)">
+                    {{item}}
+          </ion-item>
+        </div>
+      </ion-list>
+  
+      <!--ion-list class="addr_list">
+        <ion-item ng-repeat="addr in data.addys" ng-class="{'default_addr':addr.is_default!=0}">
+          <a ng-click="showActionSheet(addr)">
+            <span ng-if="addr.is_default!=0" class="badge-default">{{'g.default' | translate}}</span>
+            <h3 ng-if="addr.label!=''">{{addr.label}}</h3>
+            <h4>{{addr.address}} </h4>
+            <p>{{addr.created_at | date:'medium'}}</p>          
+          </a>
+        </ion-item>
+      </ion-list -->
+    </ion-content>
+  </ion-view>
+  

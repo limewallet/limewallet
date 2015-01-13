@@ -245,6 +245,32 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
     return self;
 })
 
+//Account service 
+.factory('Account', function(DB, DB_CONFIG) {
+    var self = this;
+    
+    self.get = function() {
+        return DB.query('SELECT * FROM master_key limit 1', [])
+        .then(function(result){
+            return DB.fetch(result);
+        });
+    };
+
+    self.store = function(name, token, gravatar_id) {
+        return DB.query('INSERT or REPLACE into account (id, name, token, gravatar_id) values (0,?,?,?)', [name, token, gravatar_id]);
+    }
+    
+    self.updateToken = function(token) {
+        return DB.query('UPDATE account set token=? where id=0', [token]);
+    }
+    
+    self.updateGravatarId = function(gravatar_id) {
+        return DB.query('UPDATE account set gravatar_id=? where id=0', [gravatar_id]);
+    }
+    
+    return self;
+})
+
 //Bitshares Service
 .factory('BitShares', function($translate, $q, $rootScope) {
     var self = this;

@@ -7,34 +7,42 @@
   </ion-side-menu-content>
   <ion-side-menu side="left">
     <ion-header-bar class="bar bar-header bar-dark menu_header ">
-      <h1 class="title" style="text-align:left;"><i class="icon fa18 fa fa-gears"></i>&nbsp;&nbsp;{{'menu.settings'|translate}}</h1>
+      <!-- h1 class="title" style="text-align:left;"><i class="icon fa18 fa fa-gears"></i>&nbsp;&nbsp;{{'menu.settings'|translate}}</h1 -->
+      <div class="menu_container">
+        <div class="menu_avatar"> <img src="http://robohash.org/pablo?size=42x42" alt="" /> </div>
+        <div class="menu_name"> <label for="">pablo</label></div>
+      </div>
     </ion-header-bar>
     <ion-content class="has-header dark" has-bouncing="false">
       <ion-list class="menu">
         <ion-item nav-clear menu-close href="#/app/home" class="item-icon-right item_first">
           {{'menu.home'|translate}} 
-          <i class="icon fa20 fa fa-home"></i>
+          <i class="icon fa18 fa fa-home"></i>
         </ion-item>
         <ion-item nav-clear menu-close href="#/app/address_book" class="item-icon-right">
           {{'menu.address_book'|translate}}
-          <i class="icon fa20 fa fa-book"></i>
+          <i class="icon fa18 fa fa-book"></i>
         </ion-item>
-        <ion-item nav-clear menu-close href="#/app/settings/assets" class="item-icon-right">
+        <!--ion-item nav-clear menu-close href="#/app/settings/assets" class="item-icon-right">
           {{'menu.my_assets'|translate}}
-          <i class="icon fa20 fa fa-list-ul"></i>
-        </ion-item>
+          <i class="icon fa18 fa fa-list-ul"></i>
+        </ion-item-->
         <ion-item nav-clear menu-close href="#/app/settings/account" class="item-icon-right">
           {{'menu.account'|translate}}
-          <i class="icon fa20 fa fa-list-ul"></i>
+          <i class="icon fa18 fa fa-user"></i>
         </ion-item>
-        <ion-item nav-clear menu-close href="#/app/settings/backup" class="item-icon-right wallet">
+        <ion-item nav-clear menu-close href="#/app/settings" class="item-icon-right wallet">
+          {{'menu.settings'|translate}}
+          <i class="icon fa18 fa fa fa-gears"></i>
+        </ion-item>
+        <!--ion-item nav-clear menu-close href="#/app/settings/backup" class="item-icon-right wallet">
           {{'menu.backup_wallet'|translate}} 
-          <i class="icon fa20 fa fa-cloud-upload"></i>
+          <i class="icon fa18 fa fa-cloud-upload"></i>
         </ion-item>
         <ion-item nav-clear menu-close href="#/app/settings/restore" class="item-icon-right wallet">
           {{'menu.restore_wallet'|translate}} 
-          <i class="icon fa20 fa fa-cloud-download"></i>
-        </ion-item>
+          <i class="icon fa18 fa fa-cloud-download"></i>
+        </ion-item-->
       </ion-list>
     </ion-content>
   </ion-side-menu>
