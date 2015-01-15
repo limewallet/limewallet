@@ -1,6 +1,6 @@
 bitwallet_controllers.controller('SettingsCtrl', function($scope, $rootScope, Asset, Account, $ionicModal, $timeout) {
   
-  $scope.data = {assets:[], selected_asset:{}, name:'', gravatar_id:'', use_gravatar:false, initial_name:'', watch_name:'',  gravatar_mail:''};
+  $scope.data = {assets:[], selected_asset:{}, name:'', gravatar_id:'', use_gravatar:false, initial_name:'', watch_name:'',  gravatar_mail:'', profile_changed:false};
   
   $scope.loadViewData = function() {
     // Load assets
@@ -50,21 +50,42 @@ bitwallet_controllers.controller('SettingsCtrl', function($scope, $rootScope, As
   
   var name_timeout = null;
   $scope.$watch('data.name', function(newValue, oldValue, scope) {
+    if(newValue===oldValue)
+      return;
+    
     if(name_timeout)
       name_timeout = null;
     $timeout(function () {
       scope.data.watch_name = newValue;
-    }, 500);  
+    }, 500);
+    
+    $timeout(function () {
+      $scope.data.profile_changed = true;
+    }, 500);
+    
   });
   
   var gravatar_timeout = null;
   $scope.$watch('data.gravatar_mail', function(newValue, oldValue, scope) {
+    if(newValue===oldValue)
+      return;
     if(gravatar_timeout)
       gravatar_timeout = null;
     $timeout(function () {
       scope.data.gravatar_id = scope.gravatarMD5(newValue);
       scope.data.gravatar_id = scope.gravatarMD5(newValue);
-    }, 500);  
+    }, 500);
+    $timeout(function () {
+      $scope.data.profile_changed = true;
+    }, 500);
+  });
+  
+  $scope.$watch('data.use_gravatar', function(newValue, oldValue, scope) {
+    if(newValue===oldValue)
+      return;
+    $timeout(function () {
+      $scope.data.profile_changed = true;
+    }, 500);
   });
 
   $scope.updateProfile = function(){

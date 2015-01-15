@@ -47,7 +47,7 @@
           </div>
         </div>
         <div class="item item-toggle">
-           Use Gravatar
+           Use Gravatar  - {{data.profile_changed}}
            <label class="toggle toggle-balanced">
              <input type="checkbox" ng-model="data.use_gravatar">
              <div class="track">
@@ -59,8 +59,8 @@
           <span class="input-label">Gravatar email</span>
           <input type="email" placeholder="Gravatar email" ng-model="data.gravatar_mail" ng-disabled="!data.use_gravatar">
         </label>
-        <div class="item" style="padding:5px;">
-          <button class="button button-block button-balanced" style="margin:0px;border:noneO;">
+        <div class="item" style="padding:5px;" ng-show="data.profile_changed">
+          <button ng-click="updateProfile()" class="button button-block button-balanced" style="margin:0px;">
             Update Profile
           </button>
         </div>

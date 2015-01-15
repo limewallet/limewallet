@@ -464,3 +464,8 @@ margin-bottom: 20px!important;
   border-radius: 75px;
   background-color: whitesmoke;
 }
+
+.list.settings .item.ng-hide-remove {
+  /* the transition is defined in the active class */
+  transition: 1s linear all;
+}
