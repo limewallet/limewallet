@@ -1,18 +1,27 @@
 <ion-view class="dark" title="{{'menu.backup_wallet'|translate}}">
     <ion-nav-buttons side="left">
-      <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
+      <!-- button menu-toggle="left" class="button button-icon icon ion-navicon"></button -->
+      <button ng-click="goBack()" class="button button-icon icon ion-ios7-arrow-back"></button>
     </ion-nav-buttons>
     <ion-nav-buttons side="right">
     </ion-nav-buttons>
     <ion-content class="has-header" has-bouncing="false">
       <form novalidate name="backupForm" style="height: 100%;display: block;">
         <div class="list" style="height:100%;">
-          <label class="item item-input item-stacked-label">
+          <label class="item item-input item-floating-label">
+            <span class="input-label">{{'g.password'|translate}}</span>
+            <input required name="backupPassword" ng-model="backup.password" type="password" placeholder="{{'g.password'|translate}}" class="big">
+          </label>
+          <label class="item item-input item-floating-label">
+            <span class="input-label">{{'g.confirm_password'|translate}}</span>
+            <input required name="backupRetypePassword" ng-model="backup.retype_password" type="password" placeholder="{{'g.confirm_password'|translate}}" class="big">
+          </label>
+          <!--label class="item item-input item-stacked-label">
             <input required name="backupPassword" ng-model="backup.password" type="password" placeholder="{{'g.password'|translate}}" class="big">
           </label>
           <label class="item item-input item-stacked-label">
             <input required name="backupRetypePassword" ng-model="backup.retype_password" type="password" placeholder="{{'g.confirm_password'|translate}}" class="big">
-          </label>
+          </label -->
           <div class="action_container hide-on-keyboard-open padding">
             <button class="button button-stableNOT button-energized button-block" ng-click="validatePasswords(backup)">
               {{'menu.backup_wallet'|translate}} 

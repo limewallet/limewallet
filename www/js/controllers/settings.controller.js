@@ -1,0 +1,74 @@
+bitwallet_controllers.controller('SettingsCtrl', function($scope, $rootScope, Asset, Account, $ionicModal, $timeout) {
+  
+  $scope.data = {assets:[], selected_asset:{}, name:'', gravatar_id:'', use_gravatar:false, initial_name:'', watch_name:'',  gravatar_mail:''};
+  
+  $scope.loadViewData = function() {
+    // Load assets
+    Asset.all().then(function(assets) {
+      assets.forEach(function(asset){
+        $scope.data.assets.push({value:asset.id, label:asset.symbol});
+        if(asset.is_default!=0)
+          $scope.data.selected_asset = $scope.data.assets[$scope.data.assets.length-1];
+      });
+    });
+    
+    // Load Account
+    Account.get().then(function(account){
+      if(!account){
+        return;
+      }
+      $scope.data.name          = account.name;
+      $scope.data.initial_name  = account.name;
+      $scope.data.gravatar_id   = account.gravatar_id;
+      if(account.gravatar_id)
+        $scope.data.use_gravatar = true;
+    });
+  }
+
+  // On asset change reload wallet asset.
+  $scope.assetChanged = function(){
+    Asset.setDefault($scope.data.selected_asset.value).then(function() {
+      console.log('selected:'+$scope.data.selected_asset);
+      if($rootScope.asset_id!=$scope.data.selected_asset.value)
+        $timeout(function () {
+          $rootScope.assetChanged($scope.data.selected_asset.value);
+        }, 250);  
+        
+    });
+  }
+  
+  $scope.loadViewData();
+  
+  // Generate MD5 for gravatar email.
+  $scope.gravatarMD5 = function(value){
+    if(!value || value.length==0)
+    {
+      return '';
+    }
+    return md5(value.toLowerCase());
+  }
+  
+  var name_timeout = null;
+  $scope.$watch('data.name', function(newValue, oldValue, scope) {
+    if(name_timeout)
+      name_timeout = null;
+    $timeout(function () {
+      scope.data.watch_name = newValue;
+    }, 500);  
+  });
+  
+  var gravatar_timeout = null;
+  $scope.$watch('data.gravatar_mail', function(newValue, oldValue, scope) {
+    if(gravatar_timeout)
+      gravatar_timeout = null;
+    $timeout(function () {
+      scope.data.gravatar_id = scope.gravatarMD5(newValue);
+      scope.data.gravatar_id = scope.gravatarMD5(newValue);
+    }, 500);  
+  });
+
+  $scope.updateProfile = function(){
+    
+  }
+  
+})

@@ -250,7 +250,7 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
     var self = this;
     
     self.get = function() {
-        return DB.query('SELECT * FROM master_key limit 1', [])
+        return DB.query('SELECT * FROM account limit 1', [])
         .then(function(result){
             return DB.fetch(result);
         });

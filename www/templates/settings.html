@@ -4,7 +4,7 @@
     </ion-nav-buttons>
     
     <ion-content class="has-header" has-bouncing="false">
-      <div class="list">
+      <div class="list settings">
         <div class="item item-divider">
           Currency
         </div>
@@ -12,40 +12,52 @@
           <div class="input-label">
             {{'g.default'|translate}}
           </div>
-          <select>
+          <select ng-model="data.selected_asset"
+                ng-options="opt as opt.label for opt in data.assets"
+                ng-change="assetChanged()">
+            </select>
+          <!--select>
             <option selected>USD</option>
             <option>CNY</option>
             <option>GOLD</option>
             <option>BTC</option>
-          </select>
+          </select-->
         </label>
         <div class="item item-divider">
           Profile
         </div>
-        <label class="item item-input">
+        <!--label class="item item-input">
           <span class="input-label">Name</span>
-          <input type="text" value="pablo">
+          <input type="text" value="pablo" placeholder="" ng-disabled="data.name">
+          <div class="line-divider"></div>
+        </label -->
+        <label class="item item-input item-floating-label">
+          <span class="input-label">Name</span>
+          <input type="text" placeholder="Name" ng-model="data.name" ng-disabled="data.initial_name.length>0">
+          <div class="line-divider"></div>
         </label>
         <div class="item item-image">
           <span class="input-label" style="padding-left:16px;text-align:left;">Photo</span>
           <div style="width:100%;height:150px;">
             <div style="width:150px;text-align:center;margin:0 auto;">
-              <img src="http://robohash.org/pablo?size=150x150"  />
-              <!-- http://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50?s=150 -->
+              <img class="avatar_rounded" src="http://robohash.org/{{data.watch_name}}?size=150x150" ng-show="data.name && !data.use_gravatar" />
+              <img class="avatar_rounded" src="http://www.gravatar.com/avatar/{{data.gravatar_id}}?s=150" ng-show="data.use_gravatar" />
+              <img class="avatar_rounded" src="img/user_empty.png" ng-show="!data.use_gravatar && !data.name" />
             </div>
           </div>
         </div>
         <div class="item item-toggle">
            Use Gravatar
            <label class="toggle toggle-balanced">
-             <input type="checkbox">
+             <input type="checkbox" ng-model="data.use_gravatar">
              <div class="track">
                <div class="handle"></div>
              </div>
            </label>
         </div>
-        <label class="item item-input">
-          <input type="text" placeholder="Gravatar email" disabled>
+        <label class="item item-input item-floating-label">
+          <span class="input-label">Gravatar email</span>
+          <input type="email" placeholder="Gravatar email" ng-model="data.gravatar_mail" ng-disabled="!data.use_gravatar">
         </label>
         <div class="item" style="padding:5px;">
           <button class="button button-block button-balanced" style="margin:0px;border:noneO;">
@@ -57,15 +69,16 @@
         </div>
         <div class="item item-button-right">
           Backup
-          <button class="button button-outline button-balanced">
+          <a class="button button-outline button-balanced" href="#/app/settings/backup">
             <i class="icon fa18 fa fa-cloud-upload"></i>
-          </button>
+          </a>
+          <div class="line-divider"></div>
         </div>
         <div class="item item-button-right">
           Restore
-          <button class="button button-outline button-balanced">
+          <a class="button button-outline button-balanced" href="#/app/settings/restore">
             <i class="icon fa18 fa fa-cloud-download"></i>
-          </button>
+          </a>
         </div>
       </div>
     </ion-content>

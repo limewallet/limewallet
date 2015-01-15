@@ -1,4 +1,9 @@
 angular.module('bit_wallet.config', [])
+
+.constant('ENVIRONMENT', {
+  test: false
+})
+
 .constant('DB_CONFIG', {
     name: 'wallet.db',
     version : 1.1,

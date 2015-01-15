@@ -1,6 +1,6 @@
 // BitWallet
 
-angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'reconnectingWebSocket', 'bit_wallet.controllers','bit_wallet.services'])
+angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'reconnectingWebSocket', 'bit_wallet.controllers','bit_wallet.services', 'bit_wallet.config'])
 
 
 .directive('numbersOnlyKeyPress', function(){
@@ -228,11 +228,12 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
           var url = 'https://bsw.latincoin.com/api/v1/addrs/' + addr + '/balance/' + $rootScope.asset_id;
           
           console.log('voy con url: '+url + ' para asset:'+$rootScope.asset_id);
-          console.log($rootScope.assets[$rootScope.asset_id]);
+          //console.log($rootScope.assets[$rootScope.asset_id]);
           var precision = $rootScope.assets[$rootScope.asset_id].precision;
 
           $http.get(url)
           .success(function(r) {
+            console.log(r);
             r.balances.forEach(function(b){
               $rootScope.balance[b.asset_id] = b.amount/precision;//1e4; 
               if(b.asset_id==$rootScope.asset_id)
@@ -378,7 +379,6 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
       });
     };
 
-
     $rootScope.connectToEvents = function() {
       $rootScope.ws = new ReconnectingWebSocket('wss://bswws.latincoin.com/events');
 
@@ -419,9 +419,11 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
     $rootScope.$on('new-balance', function(data) {
       $rootScope.refreshBalance();
     });
+    
+    
 })
 
-.config(function($ionicConfigProvider, $stateProvider, $urlRouterProvider, $translateProvider) {
+.config(function($ionicConfigProvider, $stateProvider, $urlRouterProvider, $translateProvider, ENVIRONMENT) {
   
   $ionicConfigProvider.views.maxCache(0);
   $ionicConfigProvider.navBar.alignTitle('left');
@@ -449,6 +451,20 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
             $rootScope.my_book          = {};
             $rootScope.assets           = {};
             $rootScope.asset            = {};
+            $rootScope.name             = '';
+            $rootScope.gravatar_id      = '';
+            
+            //*****************
+            // INIT DEV/PROD ENVIRONMENT
+            //*****************
+            if (typeof BitShares.setTest === "function") { 
+              BitShares.setTest(ENVIRONMENT.test);
+              console.log('aplico - ENVIRONMENT.test:'+ENVIRONMENT.test);
+            }
+            else
+            {
+              console.log('no aplica - ENVIRONMENT.test:'+ENVIRONMENT.test);
+            }
             
             //*****************
             //GET LANGUAGE
@@ -469,6 +485,7 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
             .then(function(){
               $rootScope.initPlatform();
             })
+            
             //*****************
             //INIT DB
             //*****************
