@@ -457,14 +457,7 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
             //*****************
             // INIT DEV/PROD ENVIRONMENT
             //*****************
-            if (typeof BitShares.setTest === "function") { 
-              BitShares.setTest(ENVIRONMENT.test);
-              console.log('aplico - ENVIRONMENT.test:'+ENVIRONMENT.test);
-            }
-            else
-            {
-              console.log('no aplica - ENVIRONMENT.test:'+ENVIRONMENT.test);
-            }
+            BitShares.setTest(ENVIRONMENT.test);
             
             //*****************
             //GET LANGUAGE

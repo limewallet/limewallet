@@ -486,6 +486,14 @@ angular.module('bit_wallet.services', ['bit_wallet.config'])
       return deferred.promise;
     };
     
+    self.setTest = function(value) {
+      
+      if (typeof window.plugins.BitsharesPlugin.setTest === "function") { 
+        window.plugins.BitsharesPlugin.setTest(value);
+      }
+      return;
+    };
+    
     return self;
 })
 
