@@ -1,4 +1,4 @@
-bitwallet_controllers.controller('SendCtrl', function($scope, $q, T, BitShares, Asset, AddressBook, Scanner, Address, $http, $ionicLoading, $ionicNavBarDelegate, $ionicModal, $ionicPopup, $location, $timeout, $rootScope, $stateParams) {
+bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T, BitShares, Asset, AddressBook, Scanner, Address, $http, $ionicLoading, $ionicNavBarDelegate, $ionicModal, $ionicPopup, $location, $timeout, $rootScope, $stateParams) {
   
   $scope.data = {address_book:[]};
   //$scope.transaction = {message:'send.generating_transaction', amount:0, address:'', asset_id:$scope.asset.id};
@@ -111,7 +111,12 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, T, BitShares, 
 
       var deferred = $q.defer();
 
-      var url = 'https://bsw.latincoin.com/api/v1/account/' + sendForm.transactionAddress.value;
+      var url;
+      if(ENVIRONMENT.test) {
+        url = 'https://bsw-test.latincoin.com/api/v1/account/' + sendForm.transactionAddress.value;
+      } else {
+        url = 'https://bsw.latincoin.com/api/v1/account/' + sendForm.transactionAddress.value;
+      }
 
       prom = $http.get(url, {timeout:10000})
       .success(function(r) {
@@ -208,7 +213,12 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, T, BitShares, 
               }]
             }
 
-            var url = 'https://bsw.latincoin.com/api/v1/txs/new';
+            var url;
+            if(ENVIRONMENT.test) {
+              url = 'https://bsw-test.latincoin.com/api/v1/txs/new';
+            } else {
+              url = 'https://bsw.latincoin.com/api/v1/txs/new';
+            }
             $http.post(url, tx_req)
             .success(function(r) {
               if(r.error !== undefined) {
@@ -262,7 +272,11 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, T, BitShares, 
                 console.log('firmado .. mandando'); 
                 $scope.transaction.message = 'send.sending_transaction';
 
-                url = 'https://bsw.latincoin.com/api/v1/txs/send';
+                if(ENVIRONMENT.test) {
+                  url = 'https://bsw-test.latincoin.com/api/v1/txs/send';
+                } else {
+                  url = 'https://bsw.latincoin.com/api/v1/txs/send';
+                }
                 $http.post(url, r.tx)
                 .success(function(r) {
                   $scope.sending_modal.hide();

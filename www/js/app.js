@@ -142,7 +142,7 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
     };
 })
 
-.run(function(DB, BitShares, $cordovaGlobalization, $translate, ReconnectingWebSocket, $q, MasterKey, AddressBook, Address, Asset, $http, $rootScope, $ionicPlatform, $cordovaLocalNotification, $ionicModal, $ionicPopup, $cordovaSplashscreen, T, $cordovaDevice ) {
+.run(function(DB, ENVIRONMENT, BitShares, $cordovaGlobalization, $translate, ReconnectingWebSocket, $q, MasterKey, AddressBook, Address, Asset, $http, $rootScope, $ionicPlatform, $cordovaLocalNotification, $ionicModal, $ionicPopup, $cordovaSplashscreen, T, $cordovaDevice ) {
 
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
@@ -225,7 +225,13 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
         BitShares.extendedPublicFromPrivate(master_key.key).then(function(extendedPublicKey){
 
           var addr = extendedPublicKey + ':' + master_key.deriv;
-          var url = 'https://bsw.latincoin.com/api/v1/addrs/' + addr + '/balance/' + $rootScope.asset_id;
+          var url;
+          
+          if(ENVIRONMENT.test) {
+            url = 'https://bsw-test.latincoin.com/api/v1/addrs/' + addr + '/balance/' + $rootScope.asset_id;
+          } else {
+            url = 'https://bsw.latincoin.com/api/v1/addrs/' + addr + '/balance/' + $rootScope.asset_id;
+          }
           
           console.log('voy con url: '+url + ' para asset:'+$rootScope.asset_id);
           //console.log($rootScope.assets[$rootScope.asset_id]);
@@ -380,7 +386,12 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
     };
 
     $rootScope.connectToEvents = function() {
-      $rootScope.ws = new ReconnectingWebSocket('wss://bswws.latincoin.com/events');
+
+      if(ENVIRONMENT.test) {
+        $rootScope.ws = new ReconnectingWebSocket('ws://bswws-test.latincoin.com/events');
+      } else {
+        $rootScope.ws = new ReconnectingWebSocket('wss://bswws.latincoin.com/events');
+      }
 
       $rootScope.ws.onopen = function () {
         console.log('ONOPEN -> mando subscribe');

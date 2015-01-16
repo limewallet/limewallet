@@ -315,7 +315,7 @@ bitwallet_controllers
   };
 })
 
-.controller('ImportPrivCtrl', function($scope, T, $q, Address, $http, $ionicLoading, $ionicNavBarDelegate, $ionicModal, $ionicPopup, $location, $timeout, $rootScope, $stateParams, BitShares) {
+.controller('ImportPrivCtrl', function($scope, ENVIRONMENT, T, $q, Address, $http, $ionicLoading, $ionicNavBarDelegate, $ionicModal, $ionicPopup, $location, $timeout, $rootScope, $stateParams, BitShares) {
   
   $scope.imported_pk = [];
   $scope.showLoading = function(){
@@ -335,7 +335,15 @@ bitwallet_controllers
   }
   
   $scope.getImportedKeyBalance = function(addr){
-    var url = 'https://bsw.latincoin.com/api/v1/addrs/' + addr + '/balance';
+    
+    var url;
+    if(ENVIRONMENT.test) {
+      url = 'https://bsw-test.latincoin.com/api/v1/addrs/' + addr + '/balance';
+    } else {
+      url = 'https://bsw.latincoin.com/api/v1/addrs/' + addr + '/balance';
+    }
+
+
     $http.get(url)
     .success(function(r) {
       var total = 0;
@@ -424,7 +432,13 @@ bitwallet_controllers
 
       console.log('voy a llamar a new en sweeping');
 
-      var url = 'https://bsw.latincoin.com/api/v1/txs/new';
+      var url;
+      if(ENVIRONMENT.test) {
+        url = 'https://bsw-test.latincoin.com/api/v1/txs/new';
+      } else {
+        url = 'https://bsw.latincoin.com/api/v1/txs/new';
+      }
+
       $http.post(url, tx_req)
       .success(function(r) {
         if(r.error !== undefined) {
@@ -464,7 +478,12 @@ bitwallet_controllers
           console.log('firmado .. mandando'); 
           $scope.sweeping.message = 'send.sending_transaction';
 
-          url = 'https://bsw.latincoin.com/api/v1/txs/send';
+          if(ENVIRONMENT.test) {
+            url = 'https://bsw-test.latincoin.com/api/v1/txs/send';
+          } else {
+            url = 'https://bsw.latincoin.com/api/v1/txs/send';
+          }
+
           $http.post(url, r.tx)
           .success(function(r) {
             $scope.sweeping_modal.hide();
