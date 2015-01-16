@@ -2,12 +2,23 @@ html, body {
     height: 100%;
 }
 
+/**************/
+/* BAR hack ***/
+/**************/
+.bar.bar-energized {
+  /* border-color: #01a8db; */
+  /*background-color: #01bbf4!important;*/
+  /* background-image: linear-gradient(0deg, #01a8db, #01a8db 50%, transparent 50%); */
+  background-image:none!important;
+  color: #fff;
+}
+
 ion-nav-view {
   background-color: #fff!important;
 }
-ion-nav-bar.bar-energized{
+/*ion-nav-bar.bar-energized{
   background-image: none!important;
-}
+}*/
 
 .logo-center{
   margin: 0 auto;
@@ -179,7 +190,7 @@ input.big {
   border-color: #4c4c4c!important;
   background-color: #363636!important;
   color: #d4d4d4!important;
-  font-size: 14px;
+  /*font-size: 14px;*/
 }
 .menu .item.wallet a{background-color: #222222!important}
 .menu .list .item_first{ border-top:none;}
@@ -454,7 +465,7 @@ margin-bottom: 20px!important;
   text-transform:uppercase;
 }
 
-.list.settings .input-label, .input-label{
+.list.settings .input-label, .input-label, .list.settings .item.item-toggle{
   color: #999!important;
 }
 
@@ -469,3 +480,12 @@ margin-bottom: 20px!important;
   /* the transition is defined in the active class */
   transition: 1s linear all;
 }
+
+.list.settings .not_enabled{
+  background-color:#f0f0f0;
+}
+
+/* *************** */
+/* REGISTER ********/
+/* *************** */
+.register_color{color:#f0f0f0!important;}

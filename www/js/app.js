@@ -239,7 +239,7 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
 
           $http.get(url)
           .success(function(r) {
-            console.log(r);
+            //console.log(r);
             r.balances.forEach(function(b){
               $rootScope.balance[b.asset_id] = b.amount/precision;//1e4; 
               if(b.asset_id==$rootScope.asset_id)
@@ -290,6 +290,9 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
 
              r.operations.forEach(function(o){
 
+               if(ENVIRONMENT.test && o.asset_id == 0)
+                return;
+             
                //TODO: only USD
                //if(o.asset_id != 22) 
                //  return;
@@ -358,9 +361,11 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
                close_tx();
              }
 
-             //console.log('voy a poner txs ' + txs);
+             console.log('voy a poner txs:');
+             console.log(txs);
              
              $rootScope.transactions=txs;
+             
              if(show_toast == true)
               window.plugins.toast.show( T.i('g.updated'), 'short', 'bottom');
           })
@@ -519,7 +524,7 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
               BitShares.createMasterKey().then(function(mpriv){
                 //console.log(' mpriv:'+mpriv);
                 BitShares.extractDataFromKey(mpriv).then(function(keyData){
-                  //console.log(' keyData.address:'+keyData.address);
+                  console.log(' keyData.address:'+keyData.address);
                   MasterKey.store(mpriv, -1).then(function() {
                     Address.create(
                       -1, 
@@ -688,6 +693,18 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
           templateUrl: "templates/import_priv.html",
           controller: 'ImportPrivCtrl'
         }
+      }
+    })
+    
+    .state('app.register', {
+      cache:  false,
+      url:    "/register",
+      views: {
+              'menuContent' :{
+                templateUrl: "templates/register.html",
+                //templateUrl: "index.html",
+                controller: 'RegisterCtrl'
+            }
       }
     })
     

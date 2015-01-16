@@ -1,0 +1,60 @@
+<ion-view class="dark">
+    <ion-nav-title>
+    </ion-nav-title>
+    <ion-nav-buttons side="right">
+      <a class="button icon-right button-clear" href="#/app/home">SKIP </a>
+    </ion-nav-buttons>
+    <ion-content class="has-header" has-bouncing="false" overflow-scroll="true">
+        <div class="padding energized_bg register_color">
+          <h4 class="register_color">{{'register.create_account'|translate}}</h4>
+          <!-- h4 class="register_color">Why register an account?</h4 -->
+          <p>
+            Please enter the name for your account.<br/>
+            This global unique name will be your identity in the network. You can later share it in order receive payments.
+            <!-- Choose a name and a photo for your account.<br/> It simplifies sending and receiving money while staying anonymous in blockchain. -->
+          </p>
+        </div>
+        <div class="list settings">
+          <label class="item item-input item-floating-label">
+            <span class="input-label">{{'settings.account_name'|translate}}</span>
+            <input type="text" placeholder="{{'settings.account_name'|translate}}" ng-model="data.name" ng-disabled="data.initial_name.length>0">
+            <div class="line-divider"></div>
+          </label>
+          <div class="item item-image">
+            <span class="input-label" style="padding-left:16px;text-align:left;"></span>
+            <!-- {{'settings.photo'|translate}} -->
+            <div style="width:100%;height:150px;">
+              <div style="width:150px;text-align:center;margin:0 auto;">
+                <img class="avatar_rounded" src="http://robohash.org/{{data.watch_name}}?size=150x150" ng-show="data.name && !data.use_gravatar" />
+                <img class="avatar_rounded" src="http://www.gravatar.com/avatar/{{data.gravatar_id}}?s=150" ng-show="data.use_gravatar" />
+                <img class="avatar_rounded" src="img/user_empty.png" ng-show="!data.use_gravatar && !data.name" />
+              </div>
+            </div>
+          </div>
+          <div class="item item-toggle">
+             {{'settings.use_gravatar'|translate}}
+             <label class="toggle toggle-balanced">
+               <input type="checkbox" ng-model="data.use_gravatar">
+               <div class="track">
+                 <div class="handle"></div>
+               </div>
+             </label>
+          </div>
+          <label class="item item-input item-floating-label" style="padding-right: 16px!important;" ng-show="data.use_gravatar">
+            <span class="input-label">{{'settings.gravatar_email'|translate}}</span>
+            <input type="email" placeholder="{{'settings.gravatar_email'|translate}}" ng-model="data.gravatar_mail" ng-disabled="!data.use_gravatar">
+          </label>
+        </div>
+      
+      
+        <button ng-click="updateProfile()" class="button button-block button-energized">
+          {{'g.register'|translate|uppercase}}
+        </button>
+      
+      <!--Why create account?
+      It simplifies sending and receiving money while stay anonymous in Bitshares blockchain.
+      
+      TITAN: Transfer Invisibly To Any Name -->
+    </ion-content>
+  </ion-view>
+  

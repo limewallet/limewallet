@@ -13,7 +13,7 @@
   
   
   <ion-content class="has-header" has-bouncing="false">
-    <div class="balance_container energized_bg energized_NOT">
+    <div class="balance_container energized_bg">
       <div class="balance">
         <span class="balance_text"><i class="{{asset.symbol_ui_class}}">{{asset.symbol_ui_text}}</i>
         <!--img src="img/bit{{asset.symbol|lowercase}}_395x395.png" class="asset_img" / --> {{$root.current_balance| number : 2}}</span>
@@ -31,6 +31,7 @@
     <div class="punta2"></div>
     <div class="index_buttons">
       <div class="button_send">
+        <!--a class="button button-assertive button-block" href="#/app/register">Register</a -->
         <a class="button button-assertive button-block" href="#/app/send///">{{'g.send' | translate}}</a>
       </div>
       <div class="button_receive">

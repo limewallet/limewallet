@@ -26,7 +26,18 @@
     "unable_to_refresh"   : "Unable to refresh",
     "loading"             : "Loading",
     "default"             : "Default",
-    "asset"               : "Asset"
+    "asset"               : "Asset",
+    "register"            : "Register",
+    "later"               : "Later",
+    "currency"                : "Currency",
+    "balance"                 : "Balance",
+    "profile"                 : "Profile",
+    "name"                    : "Name",
+    "photo"                   : "Photo",
+    "wallet"                  : "Wallet",
+    "restore"                 : "Restore",
+    "backup"                  : "Backup"
+    
   },
 
   "err" : {
@@ -157,7 +168,16 @@
   },
   
   "settings": {
-    "default_currency"        : "Default currency"
+    "default_currency"        : "Default currency",
+    "hide_balance"            : "Hide balance",
+    "account_name"            : "Account name",
+    "use_gravatar"            : "Use Gravatar",
+    "gravatar_email"          : "Gravatar email",
+    "update_profile"          : "Update Profile"
+  },
+  
+  "register":{
+    "create_account"          : "Account registration"
   }
   
 }

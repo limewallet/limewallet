@@ -1,6 +1,6 @@
 bitwallet_controllers.controller('SettingsCtrl', function($scope, $rootScope, Asset, Account, $ionicModal, $timeout) {
   
-  $scope.data = {assets:[], selected_asset:{}, name:'', gravatar_id:'', use_gravatar:false, initial_name:'', watch_name:'',  gravatar_mail:'', profile_changed:false};
+  $scope.data = {assets:[], selected_asset:{}, name:'', gravatar_id:'', use_gravatar:false, initial_name:'', watch_name:'',  gravatar_mail:'', profile_changed:false, hide_balance:false};
   
   $scope.loadViewData = function() {
     // Load assets
