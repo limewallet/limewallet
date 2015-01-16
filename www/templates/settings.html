@@ -16,21 +16,10 @@
                 ng-options="opt as opt.label for opt in data.assets"
                 ng-change="assetChanged()">
             </select>
-          <!--select>
-            <option selected>USD</option>
-            <option>CNY</option>
-            <option>GOLD</option>
-            <option>BTC</option>
-          </select-->
         </label>
         <div class="item item-divider">
           Profile
         </div>
-        <!--label class="item item-input">
-          <span class="input-label">Name</span>
-          <input type="text" value="pablo" placeholder="" ng-disabled="data.name">
-          <div class="line-divider"></div>
-        </label -->
         <label class="item item-input item-floating-label">
           <span class="input-label">Name</span>
           <input type="text" placeholder="Name" ng-model="data.name" ng-disabled="data.initial_name.length>0">

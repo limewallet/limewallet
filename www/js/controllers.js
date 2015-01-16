@@ -601,7 +601,7 @@ bitwallet_controllers
   $scope.loadAssets = function() {
     Asset.all().then(function(assets) {
       assets.forEach(function(asset) {
-        $scope.data.assets[asset.asset_id] = asset;
+        $scope.data.assets[asset.id] = asset;
       });
       $scope.ops = $rootScope.raw_txs[$stateParams.tx_id];
     });
@@ -635,6 +635,7 @@ bitwallet_controllers
         fee=fee+op.amount;
       if(precision==-1)
         precision = $scope.data.assets[op.asset_id].precision;
+        //precision = $rootScope.asset.precision;
     })
     return fee/precision;
   }
