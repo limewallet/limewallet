@@ -52,7 +52,7 @@ angular.module('bit_wallet.config', [])
             ],
             rows:[
               {id: 24,  symbol: 'USD',  fullname: 'United States Dollar', precision: 10000 ,    is_default: 1 , symbol_ui_class : 'fa fa-dollar', symbol_ui_text : ''},
-              {id: 27,  symbol: 'GOLD', fullname: 'Gold' ,                precision: 1000000,   is_default: 0 , symbol_ui_class : '', symbol_ui_text : 'GC'},
+              {id: 27,  symbol: 'GOLD', fullname: 'Gold' ,                precision: 1000000,   is_default: 0 , symbol_ui_class : '', symbol_ui_text : 'ozt'},
               {id: 28,  symbol: 'CNY',  fullname: 'Chinese Yuan' ,        precision: 10000,     is_default: 0 , symbol_ui_class : 'fa fa-cny', symbol_ui_text : ''},
               {id: 25,  symbol: 'BTC',  fullname: 'Bitcoin' ,             precision: 100000000, is_default: 0 , symbol_ui_class : 'fa fa-btc', symbol_ui_text : ''}
             ]

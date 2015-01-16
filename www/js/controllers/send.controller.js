@@ -205,7 +205,6 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
           
             var tx_req = {
               "asset" : $scope.asset.id, // ? sendForm.transactionAssetId.value ?
-              "fee"   : 250,
               "from"  : from,
               "to"    : [{
                   "address" : dst_addr, //sendForm.transactionAddress.value,
