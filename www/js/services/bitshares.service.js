@@ -1,6 +1,6 @@
 bit_wallet_services
 //Bitshares Service
-.factory('BitShares', function($translate, $q, $http, MasterKey, $rootScope) {
+.factory('BitShares', function($translate, $q, $http, MasterKey, $rootScope, ENVIRONMENT) {
     var self = this;
 
     self.createMasterKey = function() {
@@ -221,48 +221,50 @@ bit_wallet_services
       }
       return;
     };
+
+    self.getBalance = function(address) {
+      var url      = ENVIRONMENT.apiurl('/addrs/'+address+'/balance');
+      var deferred = $q.defer();
+
+      $http.get(url, {timeout:ENVIRONMENT.timeout})
+      .success(function(res) {
+        if(res.error !== 'undefined')
+          return deferred.reject(res.error);
+        return deferred.resolve(res);
+      })
+      .error(function(data, status, headers, config) {
+        return deferred.reject();
+      });
+
+      return deferred.promise;
+    }
     
     self.getBalances = function() {
       var deferred = $q.defer();
-      
       MasterKey.get().then(function(master_key) {
+
         if(master_key === undefined)  {
-          console.log('resfreshBalance -> no master key!!!');
+          deferred.reject('no_master_key');
           return;
         }
 
         self.extendedPublicFromPrivate(master_key.key).then(function(extendedPublicKey){
-          
-          // var addr = extendedPublicKey+ ':' + master_key.deriv;
-          // var url = 'https://bsw-test.latincoin.com/api/v1/addrs/'+addr+'/balance';
-          
-          var url = 'https://bsw-test.latincoin.com/api/v1/addrs/DVS7Ufqcu8qptJzDo9SBXytNdMkaHJEBP4BG/balance';
-          var balance = {};
-          prom = $http.get(url, {timeout:2000})
-          .success(function(r) {
-            r.balances.forEach(function(b){
-              b.asset_id = 22;
-              balance[b.asset_id] = b.amount/$rootScope.assets[b.asset_id].precision;
-              r.address.forEach(function(a){
-                balance[b.asset_id][a] = 0;
-              });
-            });
-            
-            console.log(r.address_balance)
-            // r.address_balance.forEach(function(ab){
-              // //balance[ab][] = b.amount/$rootScope.assets[b.asset_id].precision;
-              // console.log(ab);
-            // });
-            return deferred.resolve(true);
-          })
-          .error(function(data, status, headers, config) {
-            return deferred.reject();
-          })
-          .finally(function() {
-            
+          self.getBalance(extendedPublicKey+':'+master_key.deriv).then(function(balance) {
+            deferred.resolve
+          }, function(err) {
+            //net error or remote API error
+            deferred.reject(err);
           });
+
+        }, function(err) {
+          //Plugin error
+          deferred.reject(err);  
         })
-      })
+      }, function(err) {
+        //DB Error
+        deferred.reject(err);    
+      });
+
       return deferred.promise;
     };
 

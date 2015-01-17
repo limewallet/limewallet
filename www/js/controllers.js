@@ -6,77 +6,6 @@ bitwallet_controllers
 
 })
 
-.controller('AssetsCtrl', function($translate, T, $location, $window, Asset, $scope, $rootScope, $http, $timeout, $ionicActionSheet, $ionicPopup) {
-
-  $scope.data = {assets:[]}
-
-  $scope.loadAssets = function() {
-    Asset.all().then(function(assets) {
-      $scope.data.assets = assets;
-    });
-  };
-
-  $scope.loadAssets();
-  
-  $rootScope.$on('assets-loaded', function(event, data) {
-    //console.log('...loading assets in home.html');
-    $scope.loadAssets();
-  });
-  
-  $scope.showActionSheet = function(asset){
-   var hideSheet = $ionicActionSheet.show({
-     buttons: [
-       { text: '<b>'+T.i('addys.set_as_default')+'</b>' },
-       //{ text: asset.is_enabled!=0?T.i('assets.hide_asset'):T.i('assets.show_asset') }
-       ],
-     cancelText: T.i('g.cancel'),
-     cancel: function() {
-          // add cancel code..
-        },
-     buttonClicked: function(index) {
-      // Set as default
-      if(index==0)
-      {
-        Asset.setDefault(asset.id).then(function() {
-          //console.log('paso por aca');
-          //$rootScope.balance          = {};
-          //$rootScope.transactions     = [];
-          //$rootScope.raw_txs          = {};
-          //$rootScope.loadAssets();
-          //ALTO HACK
-          //$scope.$apply(function() {
-            $location.path('/home');
-            $rootScope.assetChanged(asset.id);
-            //$window.location.reload();
-          //});
-        });
-      }
-      // Hide asset
-      else if(index==1)
-      {
-        if(asset.is_enabled!=0)
-        {
-          Asset.hide(asset.id).then(function() {
-            $rootScope.loadAssets();
-            //$scope.loadAssets();
-          });
-        }
-        else{
-          Asset.show(asset.id).then(function() {
-            //$scope.loadAssets();
-            $rootScope.loadAssets();
-          });
-        }
-        
-      }
-      
-      return true;
-     }
-   });
-  }
-  
-})
-
 .directive('imageonload', function() {
     return {
         restrict: 'A',
@@ -413,17 +342,7 @@ bitwallet_controllers
   $scope.initImport();
 })
 
-.controller('AddressBookCtrl', function($scope, T, $ionicPopup, $ionicActionSheet, AddressBook, $rootScope, $ionicNavBarDelegate, $stateParams){
-
-  $scope.data = {addys:[]}
-
-  $scope.loadAddys = function() {
-    AddressBook.all().then(function(addys) {
-        $scope.data.addys = addys;
-    });
-  };
-
-  $scope.loadAddys();
+.controller('AddressBookCtrl', function($scope, $state, T, $ionicHistory, $ionicPopup, $ionicActionSheet, AddressBook, $rootScope, $ionicNavBarDelegate, $stateParams){
 
   $scope.showActionSheet = function(addr){
     var fav_text = 'book.add_to_fav';
@@ -471,21 +390,8 @@ bitwallet_controllers
 
 })
 
-.controller('TxCtrl', function($scope, $rootScope, $ionicNavBarDelegate, $stateParams, Asset){
-  
-  $scope.data = {assets:[]}
+.controller('TxCtrl', function($scope, $rootScope, $ionicNavBarDelegate, $stateParams){
 
-  $scope.loadAssets = function() {
-    Asset.all().then(function(assets) {
-      assets.forEach(function(asset) {
-        $scope.data.assets[asset.id] = asset;
-      });
-      $scope.ops = $rootScope.raw_txs[$stateParams.tx_id];
-    });
-  };
-
-  $scope.loadAssets();
-  
   $scope.getWithdraws = function(){
     var ops = [];
     angular.forEach($scope.ops, function(op){
@@ -521,7 +427,7 @@ bitwallet_controllers
   };
 })
 
-.controller('HomeCtrl', function(T, Scanner, AddressBook, Asset, $ionicActionSheet, $scope, $state, $http, $ionicModal, $rootScope, $ionicPopup, $timeout, $location, BitShares, $q) {
+.controller('HomeCtrl', function(T, Scanner, AddressBook, $ionicActionSheet, $scope, $state, $http, $ionicModal, $rootScope, $ionicPopup, $timeout, $location, BitShares, $q) {
   
   $scope.scanQR = function() {
            

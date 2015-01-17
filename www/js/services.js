@@ -74,9 +74,12 @@ bit_wallet_services
         var deferred = $q.defer();
  
         self.db.transaction(function(transaction) {
+            //console.log('voy con query ' + query);
             transaction.executeSql(query, bindings, function(transaction, result) {
+                //console.log('todo OK query ' + query + '=>' + bindings);
                 deferred.resolve(result);
             }, function(transaction, error) {
+                //console.log('ERROR EN query ' + query + '=>' + bindings);
                 deferred.reject(error);
             });
         });
@@ -201,53 +204,25 @@ bit_wallet_services
     return self;
 })
 
-//Asset service 
-.factory('Asset', function(DB, DB_CONFIG) {
+//Settings service 
+.factory('Setting', function(DB, DB_CONFIG) {
     var self = this;
-    
-    self.all = function() {
-        return DB.query('SELECT * FROM asset order by is_default desc, is_enabled desc, id asc')
-        .then(function(result){
-            return DB.fetchAll(result);
-        });
-    };
-    
-    self.allEnabled = function() {
-        return DB.query('SELECT * FROM asset where is_enabled = 1 order by is_default desc, is_enabled desc, id asc')
-        .then(function(result){
-            return DB.fetchAll(result);
-        });
-    };
 
-    self.bySymbol = function(name) {
-        return DB.query('SELECT * FROM asset where symbol = ?',[name])
-        .then(function(result){
-            return DB.fetch(result);
-        });
-    };
+    self.DEFAULT_ASSET = 'default_asset';
     
-    self.getDefault = function() {
-        return DB.query('SELECT * FROM asset order by is_default desc limit 1',[])
+    self.get = function(name) {
+        return DB.query('SELECT value FROM setting where name=?', [name])
         .then(function(result){
             return DB.fetch(result);
         });
     };
 
-    self.setDefault = function(id) {
-        return DB.query('UPDATE asset set is_default=0', [])
-        .then(function(result){
-          return DB.query('UPDATE asset set is_default=1 where id = ?', [id]);
-        });
+    self.set = function(name, value) {
+        console.log( "name=" + name );
+        console.log( "value=" + value );
+        return DB.query('INSERT or REPLACE into setting (name, value) values (?,?)', [name, value.toString()]);
     };
-    
-    self.hide = function(id) {
-        return DB.query('UPDATE asset set is_enabled=0 where id = ? and is_default=0', [id]);
-    };
-    
-    self.show = function(id) {
-        return DB.query('UPDATE asset set is_enabled=1 where id = ?', [id]);
-    };
-    
+
     return self;
 })
 

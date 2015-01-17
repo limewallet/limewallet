@@ -1,12 +1,36 @@
 angular.module('bit_wallet.config', [])
 
 .constant('ENVIRONMENT', {
-  test: true
+  test: true,
+  assets : function() {
+    if( !this.test ) {
+      return [
+        {id: 22,  symbol: 'USD',  fullname: 'United States Dollar', precision: 10000 ,    symbol_ui_class : 'fa fa-dollar', symbol_ui_text : ''},
+        {id: 7,   symbol: 'GOLD', fullname: 'Gold' ,                precision: 1000000,   symbol_ui_class : '', symbol_ui_text : 'ozt'},
+        {id: 14,  symbol: 'CNY',  fullname: 'Chinese Yuan' ,        precision: 10000,     symbol_ui_class : 'fa fa-cny', symbol_ui_text : ''},
+        {id: 4,   symbol: 'BTC',  fullname: 'Bitcoin' ,             precision: 100000000, symbol_ui_class : 'fa fa-btc', symbol_ui_text : ''}
+      ]
+    } else {
+     return [
+        {id: 24,  symbol: 'USD',  fullname: 'United States Dollar', precision: 10000 ,    symbol_ui_class : 'fa fa-dollar', symbol_ui_text : ''},
+        {id: 27,  symbol: 'GOLD', fullname: 'Gold' ,                precision: 1000000,   symbol_ui_class : '', symbol_ui_text : 'ozt'},
+        {id: 28,  symbol: 'CNY',  fullname: 'Chinese Yuan' ,        precision: 10000,     symbol_ui_class : 'fa fa-cny', symbol_ui_text : ''},
+        {id: 25,  symbol: 'BTC',  fullname: 'Bitcoin' ,             precision: 100000000, symbol_ui_class : 'fa fa-btc', symbol_ui_text : ''}
+      ]
+    }
+  },
+  apiurl : function(path) {
+    var url = this.test ? 'https://bsw-test.latincoin.com/api/v1' : 'https://bsw.latincoin.com/api/v1';
+    return url + path;
+  },
+  wsurl : function() {
+    return this.test ? 'http://bswws-test.latincoin.com/events' : 'https://bswws.latincoin.com/events';
+  }
 })
 
 .constant('DB_CONFIG', {
     name: 'wallet.db',
-    version : 1.1,
+    version : 1.2,
     tables: [
         {
             name: 'master_key',
@@ -39,39 +63,19 @@ angular.module('bit_wallet.config', [])
             ]
         },
         {
-            name: 'asset',
-            columns: [
-                {name : 'id',               type   : 'integer primary key'},
-                {name : 'symbol',           type   : 'text unique'},
-                {name : 'fullname',         type   : 'text'},
-                {name : 'is_default',       type   : 'integer default 0'},
-                {name : 'is_enabled',       type   : 'integer'},
-                {name : 'precision',        type   : 'integer'},
-                {name : 'symbol_ui_class',  type   : 'text'},
-                {name : 'symbol_ui_text',   type   : 'text'}
-            ],
-            /*
-            rows:[
-              {id: 22,  symbol: 'USD',  fullname: 'United States Dollar', precision: 10000 ,    is_default: 1 , symbol_ui_class : 'fa fa-dollar', symbol_ui_text : ''},
-              {id: 7,   symbol: 'GOLD', fullname: 'Gold' ,                precision: 1000000,   is_default: 0 , symbol_ui_class : '', symbol_ui_text : 'GC'},
-              {id: 14,  symbol: 'CNY',  fullname: 'Chinese Yuan' ,        precision: 10000,     is_default: 0 , symbol_ui_class : 'fa fa-cny', symbol_ui_text : ''},
-              {id: 4,   symbol: 'BTC',  fullname: 'Bitcoin' ,             precision: 100000000, is_default: 0 , symbol_ui_class : 'fa fa-btc', symbol_ui_text : ''}
-            ]
-            */
-           rows:[
-              {id: 24,  symbol: 'USD',  fullname: 'United States Dollar', precision: 10000 ,    is_default: 1 , symbol_ui_class : 'fa fa-dollar', symbol_ui_text : ''},
-              {id: 27,  symbol: 'GOLD', fullname: 'Gold' ,                precision: 1000000,   is_default: 0 , symbol_ui_class : '', symbol_ui_text : 'ozt'},
-              {id: 28,  symbol: 'CNY',  fullname: 'Chinese Yuan' ,        precision: 10000,     is_default: 0 , symbol_ui_class : 'fa fa-cny', symbol_ui_text : ''},
-              {id: 25,  symbol: 'BTC',  fullname: 'Bitcoin' ,             precision: 100000000, is_default: 0 , symbol_ui_class : 'fa fa-btc', symbol_ui_text : ''}
-            ]
-        },
-        {
             name: 'account',
             columns: [
                 {name : 'id',                 type   : 'integer primary key'},
                 {name : 'name',               type   : 'text unique'},
                 {name : 'token',              type   : 'text'},
                 {name : 'gravatar_id',        type   : 'text'},
+            ]
+        },
+        {
+            name: 'setting',
+            columns: [
+                {name : 'name',               type   : 'text primary key'},
+                {name : 'value',              type   : 'text'}
             ]
         }
     ],

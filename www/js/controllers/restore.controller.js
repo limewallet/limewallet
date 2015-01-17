@@ -1,4 +1,4 @@
-bitwallet_controllers.controller('RestoreCtrl', function($q, T, $rootScope, $translate, $scope, Asset, MasterKey, Address, AddressBook, $http, $timeout, $location, $state, $ionicPopup, $ionicModal, $cordovaClipboard, BitShares, $ionicNavBarDelegate) {
+bitwallet_controllers.controller('RestoreCtrl', function($q, T, Setting, $rootScope, $translate, $scope, MasterKey, Address, AddressBook, $http, $timeout, $location, $state, $ionicPopup, $ionicModal, $cordovaClipboard, BitShares, $ionicNavBarDelegate) {
   $scope.restore = {};
 
   $scope.pasteWallet = function(element) {
@@ -127,7 +127,7 @@ bitwallet_controllers.controller('RestoreCtrl', function($q, T, $rootScope, $tra
 
           if(typeof ewallet.default_asset === 'number') {
             //console.log('TomaloNET : ' + ewallet.default_asset);
-            var p = Asset.setDefault(ewallet.default_asset);
+            var p = Setting.set(Setting.DEFAULT_ASSET, ewallet.default_asset);
             prom.push(p);
           }
 

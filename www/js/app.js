@@ -142,7 +142,7 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
     };
 })
 
-.run(function(DB, ENVIRONMENT, BitShares, $cordovaGlobalization, $translate, ReconnectingWebSocket, $q, MasterKey, AddressBook, Address, Asset, $http, $rootScope, $ionicPlatform, $cordovaLocalNotification, $ionicModal, $ionicPopup, $cordovaSplashscreen, T, $cordovaDevice ) {
+.run(function(DB, ENVIRONMENT, $state, BitShares, $ionicHistory, $cordovaGlobalization, $translate, ReconnectingWebSocket, $q, MasterKey, AddressBook, Address, $http, $rootScope, $ionicPlatform, $cordovaLocalNotification, $ionicModal, $ionicPopup, $cordovaSplashscreen, T, $cordovaDevice ) {
 
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
@@ -157,7 +157,7 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
       }
     
     });
-    
+
     $rootScope.initPlatform = function(){
       //$rootScope.platform = 'android';
       //if(device !== undefined && device.platform !== undefined)
@@ -165,20 +165,25 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
       console.log(' -- Platform: '+ $rootScope.platform);
     }
 
-    $rootScope.loadAssets = function() {
-      return Asset.all().then(function(assets) {
-        assets.forEach(function(asset) {
-          $rootScope.assets[asset.id]  = asset;
-          $rootScope.balance[asset.id] = 0;
-
-          if(asset.is_default != 0)
-            $rootScope.asset_id = asset.id;
-
-          console.log('loaded asset: '+ asset.id);
-        });
-        $rootScope.asset = $rootScope.assets[$rootScope.asset_id];
-        console.log('Assets loaded');
+    $rootScope.goHome = function() {
+      $ionicHistory.nextViewOptions({
+        disableAnimate : true,
       });
+      $state.go('app.home');
+    }
+
+    $rootScope.loadAssets = function() {
+      ENVIRONMENT.assets().forEach(function(asset) {
+        $rootScope.assets[asset.id]  = asset;
+        $rootScope.balance[asset.id] = 0;
+
+        //if(asset.is_default != 0)
+        //  $rootScope.asset_id = asset.id;
+
+        console.log('loaded asset: '+ asset.id);
+      });
+      $rootScope.asset = $rootScope.assets[$rootScope.asset_id];
+      console.log('Assets loaded');
     };
 
     $rootScope.loadAddressBook = function() {
@@ -235,6 +240,7 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
           
           console.log('voy con url: '+url + ' para asset:'+$rootScope.asset_id);
           //console.log($rootScope.assets[$rootScope.asset_id]);
+          console.log($rootScope.assets);
           var precision = $rootScope.assets[$rootScope.asset_id].precision;
 
           $http.get(url)
@@ -459,7 +465,7 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
             //HACK: tocar aca hasta que funcione el plugin de device
             $rootScope.platform         = 'iOS'; 
             $rootScope.current_balance  = 0;
-            $rootScope.asset_id         = 22;
+            $rootScope.asset_id         = ENVIRONMENT.test ? 24 : 22;
             $rootScope.balance          = {};
             $rootScope.transactions     = [];
             $rootScope.raw_txs          = {};
