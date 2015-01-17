@@ -228,7 +228,7 @@ bit_wallet_services
 
       $http.get(url, {timeout:ENVIRONMENT.timeout})
       .success(function(res) {
-        if(res.error !== 'undefined')
+        if(!angular.isUndefined(res.error))
           return deferred.reject(res.error);
         return deferred.resolve(res);
       })
@@ -238,35 +238,7 @@ bit_wallet_services
 
       return deferred.promise;
     }
-    
-    self.getBalances = function() {
-      var deferred = $q.defer();
-      MasterKey.get().then(function(master_key) {
 
-        if(master_key === undefined)  {
-          deferred.reject('no_master_key');
-          return;
-        }
-
-        self.extendedPublicFromPrivate(master_key.key).then(function(extendedPublicKey){
-          self.getBalance(extendedPublicKey+':'+master_key.deriv).then(function(balance) {
-            deferred.resolve
-          }, function(err) {
-            //net error or remote API error
-            deferred.reject(err);
-          });
-
-        }, function(err) {
-          //Plugin error
-          deferred.reject(err);  
-        })
-      }, function(err) {
-        //DB Error
-        deferred.reject(err);    
-      });
-
-      return deferred.promise;
-    };
 
     return self;
 });

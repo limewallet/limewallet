@@ -2,6 +2,7 @@ angular.module('bit_wallet.config', [])
 
 .constant('ENVIRONMENT', {
   test: true,
+  timeout : 10000,
   assets : function() {
     if( !this.test ) {
       return [
