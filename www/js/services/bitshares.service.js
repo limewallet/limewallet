@@ -225,15 +225,16 @@ bit_wallet_services
     self.getBalance = function(address) {
       var url      = ENVIRONMENT.apiurl('/addrs/'+address+'/balance');
       var deferred = $q.defer();
-
+      console.log('Bitshares::getBalance ' + url);
       $http.get(url, {timeout:ENVIRONMENT.timeout})
       .success(function(res) {
         if(!angular.isUndefined(res.error))
-          return deferred.reject(res.error);
-        return deferred.resolve(res);
+          deferred.reject(res.error);
+        else
+          deferred.resolve(res);
       })
       .error(function(data, status, headers, config) {
-        return deferred.reject();
+        deferred.reject();
       });
 
       return deferred.promise;

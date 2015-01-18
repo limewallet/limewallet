@@ -1,11 +1,11 @@
-bitwallet_controllers.controller('SettingsCtrl', function($scope, Setting, $rootScope, Account, $ionicModal, $timeout) {
+bitwallet_controllers.controller('SettingsCtrl', function($scope, Wallet, Setting, $rootScope, Account, $ionicModal, $timeout) {
   
   $scope.data = {assets:[], selected_asset:{}, name:'', gravatar_id:'', use_gravatar:false, initial_name:'', watch_name:'',  gravatar_mail:'', profile_changed:false, hide_balance:false};
   
   $scope.loadViewData = function() {
     // Load assets
-    Object.keys($scope.assets).forEach(function(aid){
-      var asset = $scope.assets[aid];
+    Object.keys(Wallet.assets.list).forEach(function(aid){
+      var asset = Wallet.assets.list[aid];
       $scope.data.assets.push({value:asset.id, label:asset.symbol});
       if($scope.asset_id == asset.id)
         $scope.data.selected_asset = $scope.data.assets[$scope.data.assets.length-1];

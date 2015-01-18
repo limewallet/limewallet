@@ -210,10 +210,12 @@ bit_wallet_services
 
     self.DEFAULT_ASSET = 'default_asset';
     
-    self.get = function(name) {
+    self.get = function(name, _default) {
         return DB.query('SELECT value FROM setting where name=?', [name])
         .then(function(result){
-            return DB.fetch(result);
+          if( result === undefined )
+            return {value:_default};
+          return DB.fetch(result);
         });
     };
 

@@ -38,18 +38,18 @@
         <a class="button button-balanced button-block" href="#/app/receive">{{'g.receive' | translate}}</a>
       </div>
     </div>
-    <div ng-hide="$root.transactions.length" class="index_transactions">
+    <div ng-hide="$scope.data.transactions.length" class="index_transactions">
       <div class="display_table no_transactions"> 
         <span class="display_table_cell vmiddle" style="text-align:center;">{{'home.no_txs' | translate}}</span>
       </div>
     </div> 
-    <ion-scroll ng-hide="!$root.transactions.length" zooming="false" direction="y" class="index_transactions transactions">
+    <ion-scroll ng-hide="!$scope.data.transactions.length" zooming="false" direction="y" class="index_transactions transactions">
       <ion-refresher
       pulling-text="{{'home.pull_to_refresh' | translate}}"
         on-refresh="doRefresh()">
       </ion-refresher>
       <ion-list style="height: 100%;">
-        <ion-item ng-repeat="tx in $root.transactions" class="item item-icon-left"> <!-- item-thumbnail-left -->
+        <ion-item ng-repeat="tx in $scope.data.transactions" class="item item-icon-left"> <!-- item-thumbnail-left -->
           <a ng-click="showActionSheet(tx)">
             <div ng-class="{'sent':tx.sign<0, 'received':tx.sign>0, 'self':tx.sign==0}">
               <div ng-class="{true:'pending', false:''}[tx.state=='P']">

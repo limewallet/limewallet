@@ -142,7 +142,7 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
     };
 })
 
-.run(function(DB, ENVIRONMENT, $state, BitShares, $ionicHistory, $cordovaGlobalization, $translate, ReconnectingWebSocket, $q, MasterKey, AddressBook, Address, $http, $rootScope, $ionicPlatform, $cordovaLocalNotification, $ionicModal, $ionicPopup, $cordovaSplashscreen, T, $cordovaDevice ) {
+.run(function(DB, $state, $ionicHistory, $rootScope, $ionicPlatform, Wallet) {
 
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
@@ -154,295 +154,17 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
     if(window.StatusBar) {
       // org.apache.cordova.statusbar required
       StatusBar.styleDefault();
-      }
-    
+    }
+
+  });
+
+  $rootScope.goHome = function() {
+    $ionicHistory.nextViewOptions({
+      disableAnimate : true,
     });
+    $state.go('app.home');
+  }
 
-    $rootScope.initPlatform = function(){
-      //$rootScope.platform = 'android';
-      //if(device !== undefined && device.platform !== undefined)
-        //$rootScope.platform = device.platform;
-      console.log(' -- Platform: '+ $rootScope.platform);
-    }
-
-    $rootScope.goHome = function() {
-      $ionicHistory.nextViewOptions({
-        disableAnimate : true,
-      });
-      $state.go('app.home');
-    }
-
-    $rootScope.loadAssets = function() {
-      ENVIRONMENT.assets().forEach(function(asset) {
-        $rootScope.assets[asset.id]  = asset;
-        $rootScope.balance[asset.id] = 0;
-
-        //if(asset.is_default != 0)
-        //  $rootScope.asset_id = asset.id;
-
-        console.log('loaded asset: '+ asset.id);
-      });
-      $rootScope.asset = $rootScope.assets[$rootScope.asset_id];
-      console.log('Assets loaded');
-    };
-
-    $rootScope.loadAddressBook = function() {
-      return AddressBook.all().then(function(addys) {
-        
-        addys.forEach(function(addr) {
-          console.log('loadAddressBook ' + addr.address + '->' + addr.name);
-          $rootScope.my_book[addr.address] = addr;
-        });
-
-        console.log('AddressBook loaded');
-        $rootScope.$emit('address-book-changed');
-      });
-    }
-
-    $rootScope.loadMyAddresses = function() {
-      return Address.all().then(function(addys) {
-        addys.forEach(function(addr) {
-          $rootScope.my_addresses[addr.address] = addr;  
-        });
-        console.log('MyAddresses loaded');
-      });
-    };
-
-    $rootScope.assetChanged = function(asset_id){
-      $rootScope.transactions          = [];
-      $rootScope.current_balance       = 0;
-      $rootScope.balance               = {};
-      $rootScope.asset_id              = asset_id;
-      $rootScope.asset                 = $rootScope.assets[asset_id];
-      $rootScope.refreshBalance(true);
-    }
-    
-    $rootScope.refreshBalance = function(show_toast) {
-      console.log('resfreshBalance -> IN');
-
-      MasterKey.get().then(function(master_key) {
-        if(master_key === undefined)  {
-          console.log('resfreshBalance -> no master key!!!');
-          return;
-        }
-
-
-        BitShares.extendedPublicFromPrivate(master_key.key).then(function(extendedPublicKey){
-
-          var addr = extendedPublicKey + ':' + master_key.deriv;
-          var url;
-          
-          if(ENVIRONMENT.test) {
-            url = 'https://bsw-test.latincoin.com/api/v1/addrs/' + addr + '/balance/' + $rootScope.asset_id;
-          } else {
-            url = 'https://bsw.latincoin.com/api/v1/addrs/' + addr + '/balance/' + $rootScope.asset_id;
-          }
-          
-          console.log('voy con url: '+url + ' para asset:'+$rootScope.asset_id);
-          //console.log($rootScope.assets[$rootScope.asset_id]);
-          console.log($rootScope.assets);
-          var precision = $rootScope.assets[$rootScope.asset_id].precision;
-
-          $http.get(url)
-          .success(function(r) {
-            //console.log(r);
-            r.balances.forEach(function(b){
-              $rootScope.balance[b.asset_id] = b.amount/precision;//1e4; 
-              if(b.asset_id==$rootScope.asset_id)
-              {
-                $rootScope.current_balance = $rootScope.balance[b.asset_id];
-                console.log(' balance for asset:'+b.asset_id)
-              }
-            });
-             
-             var tx  = {};
-             var txs = [];
-
-             var close_tx = function() {
-                
-              var assets = Object.keys(tx['assets']);
-              for(var i=0; i<assets.length; i++) {
-                 p = {}; 
-                 p['fee']  = (tx['assets'][assets[i]]['w_amount'] - tx['assets'][assets[i]]['d_amount'])/precision;
-                 p['sign'] = 0;
-                 p['date'] = tx['assets'][assets[i]]['timestamp']*1000;
-                 if(tx['assets'][assets[i]]['i_w']) { 
-                   p['sign']--;
-                   p['address'] = tx['assets'][assets[i]]['to'][0];
-                   p['amount'] = tx['assets'][assets[i]]['my_w_amount']/precision - p['fee'];
-                 }
-                 if(tx['assets'][assets[i]]['i_d']) { 
-                   p['sign']++;
-                   p['address'] = tx['assets'][assets[i]]['from'][0];
-                   p['amount'] = tx['assets'][assets[i]]['my_d_amount']/precision;
-                 }
-                 if(p['sign'] == 0)
-                 {
-                   p['addr_name'] = 'Me';
-                 }
-
-                 if(p['addr_name'] != 'Me')
-                 {
-                   if( p['address'] in $rootScope.my_book )
-                    p['addr_name'] = $rootScope.my_book[p['address']].name;
-                   else
-                    p['addr_name'] = p['address'];
-                 }
-                 p['tx_id'] = tx['txid'];
-                 txs.push(p);
-               }
-               tx = {};
-             }
-
-             r.operations.forEach(function(o){
-
-               if(ENVIRONMENT.test && o.asset_id == 0)
-                return;
-             
-               //TODO: only USD
-               //if(o.asset_id != 22) 
-               //  return;
-
-               //console.log('vamos con op -> ' + o.id);
-
-               //Esto es para mostrar en el detalle de "renglon"
-               if(!(o.txid in $rootScope.raw_txs) )
-                 $rootScope.raw_txs[o.txid] = [];
-               
-               $rootScope.raw_txs[o.txid].push(o);
-
-               
-               if( tx['txid'] !== undefined && tx['txid'] != o.txid ) {
-                  //console.log('mando a cerrar');
-                  close_tx();
-               }
-
-               if( tx['txid'] === undefined || ( tx['assets'] !== undefined && !(o.asset_id in tx['assets']) )  ) {
-
-                  //console.log('abro');
-                  
-                  tx['txid']        = o.txid;
-                  tx['assets']      = {};
-                  tx['assets'][o.asset_id] = {
-                    'id'          : o.id,
-                    'from'        : [],
-                    'to'          : [],
-                    'w_amount'    : 0,
-                    'my_w_amount' : 0,
-                    'd_amount'    : 0,
-                    'my_d_amount' : 0,
-                    'timestamp'   : o.timestamp,
-                    'i_w'         : false,
-                    'i_d'         : false,
-                  }
-               } 
-
-               if(o.op_type == 'w') { 
-                  tx['assets'][o.asset_id]['w_amount'] += o.amount
-                  if(o.address in $rootScope.my_addresses) {
-                    tx['assets'][o.asset_id]['my_w_amount'] += o.amount;
-                    tx['assets'][o.asset_id]['i_w']          = true;
-                  } else {
-                    //TODO: lookup in the address book
-                    tx['assets'][o.asset_id]['from'].push(o.address);
-                  }
-                  
-               } else {
-                  tx['assets'][o.asset_id]['d_amount'] += o.amount
-                  if(o.address in $rootScope.my_addresses) {
-                    tx['assets'][o.asset_id]['my_d_amount'] += o.amount
-                    tx['assets'][o.asset_id]['i_d']          = true;
-                  } else {
-                    //TODO: lookup in the address book
-                    tx['assets'][o.asset_id]['to'].push(o.address)
-                  }
-               }
-               
-             });
-
-             //console.log('salgo del loop con ' + tx['txid']);
-
-             if( tx['txid'] !== undefined) {
-               //console.log('mando a cerrar');
-               close_tx();
-             }
-
-             console.log('voy a poner txs:');
-             console.log(txs);
-             
-             $rootScope.transactions=txs;
-             
-             if(show_toast == true)
-              window.plugins.toast.show( T.i('g.updated'), 'short', 'bottom');
-          })
-          .error(function(data, status, headers, config) {
-             window.plugins.toast.show( T.i('g.unable_to_refresh'), 'long', 'bottom');
-          })
-          .finally(function() {
-             console.log('RefreshBalance: finally...');
-             $rootScope.$emit('refresh-done');
-
-
-              // Creo que NO es al pedo, pero por las dudas cerramos el splash.
-              $cordovaSplashscreen.hide();
-              
-              // FullScreen Config
-              var showFullScreen = false, showStatusBar = true;
-              ionic.Platform.fullScreen(showFullScreen, showStatusBar);
-          });
-
-        });
-
-      });
-    };
-
-    $rootScope.connectToEvents = function() {
-
-      if(ENVIRONMENT.test) {
-        $rootScope.ws = new ReconnectingWebSocket('ws://bswws-test.latincoin.com/events');
-      } else {
-        $rootScope.ws = new ReconnectingWebSocket('wss://bswws.latincoin.com/events');
-      }
-
-      $rootScope.ws.onopen = function () {
-        console.log('ONOPEN -> mando subscribe');
-        $rootScope.subscribe();
-      };
-
-      $rootScope.ws.onmessage = function (event) {
-        clearTimeout($rootScope.tid);
-        $rootScope.tid = setTimeout( function() { $rootScope.ws.send('ping'); }, 10000);
-
-        if(event.data.indexOf('nb') == 2) {
-          //Refresh balance in 100ms, if we get two notifications (Withdraw from two addresses) just refresh once.
-          clearTimeout($rootScope.rid);
-          $rootScope.rid = setTimeout( function() { $rootScope.$emit('new-balance', event.data); }, 100);
-        } 
-      };
-    }
-
-    $rootScope.subscribe = function() {
-      MasterKey.get().then(function(master_key) {
-        BitShares.extendedPublicFromPrivate(master_key.key)
-          .then(function(extendedPublicKey){
-            var sub = extendedPublicKey + ':' + master_key.deriv;
-            $rootScope.ws.send('sub ' + sub);
-          })
-      });
-    }
-
-    $rootScope.$on('wallet-changed', function() {
-
-      $rootScope.loadMyAddresses();
-      $rootScope.assetChanged();
-      $rootScope.subscribe();
-    });
-
-    $rootScope.$on('new-balance', function(data) {
-      $rootScope.refreshBalance();
-    });
-    
-    
 })
 
 .config(function($ionicConfigProvider, $stateProvider, $urlRouterProvider, $translateProvider, ENVIRONMENT) {
@@ -458,21 +180,10 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
       templateUrl: "templates/menu.html",
       controller: 'AppCtrl',
       resolve : {
-        'InitDone' : function(BitShares, $ionicPlatform, $cordovaGlobalization, $translate, DB, MasterKey, Address, $rootScope) {
+        'InitDone' : function(T, Wallet, BitShares, $ionicPlatform, $cordovaSplashscreen, $cordovaGlobalization, $translate, DB, $rootScope) {
 
           $rootScope.global_init = function() {
 
-            //HACK: tocar aca hasta que funcione el plugin de device
-            $rootScope.platform         = 'iOS'; 
-            $rootScope.current_balance  = 0;
-            $rootScope.asset_id         = ENVIRONMENT.test ? 24 : 22;
-            $rootScope.balance          = {};
-            $rootScope.transactions     = [];
-            $rootScope.raw_txs          = {};
-            $rootScope.my_addresses     = {};
-            $rootScope.my_book          = {};
-            $rootScope.assets           = {};
-            $rootScope.asset            = {};
             $rootScope.name             = '';
             $rootScope.gravatar_id      = '';
             
@@ -495,92 +206,48 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
             })
             
             //*****************
-            //GET PLATFORM
-            //*****************
-            .then(function(){
-              $rootScope.initPlatform();
-            })
-            
-            //*****************
             //INIT DB
             //*****************
             .then(function() {
                return DB.init();
             })
-            .then(function(lang) {
+            .then(function() {
                 console.log('DB initialized OK');
               },
               function(error) {
-                console.log('Unable to get initialize DB');
+                console.log('Unable to initialize DB:' + error);
             })
             
             //*****************
-            //Load or Create Master key
+            // Wallet init
             //*****************
             .then(function() {
-              return MasterKey.get();
+              return Wallet.init();
             })
-            .then(function(master_key) {
-              if(master_key !== undefined) {
-                console.log('master key present');
-                return;
-              }
-              console.log('creating master key...');
-
-              BitShares.createMasterKey().then(function(mpriv){
-                //console.log(' mpriv:'+mpriv);
-                BitShares.extractDataFromKey(mpriv).then(function(keyData){
-                  console.log(' keyData.address:'+keyData.address);
-                  MasterKey.store(mpriv, -1).then(function() {
-                    Address.create(
-                      -1, 
-                      keyData.address, 
-                      keyData.pubkey, 
-                      keyData.privkey, 
-                      true, 
-                      'main');
-                  });
-                });
-              });
-             
+            .then(function() {
+              console.log('Wallet initialized OK');
             },
             function(error) {
-              console.log('Unable to initialize master-key' + error);
-            })
-            
-            //*****************
-            //Load Assets
-            //*****************
-            .then(function() {
-              return $rootScope.loadAssets();
-            })
-            
-            //****************
-            //Load AddressBook
-            //****************
-            .then(function() {
-              return $rootScope.loadAddressBook();
-            })
-            
-            //****************
-            //Load MyAddress
-            //****************
-            .then(function() {
-              return $rootScope.loadMyAddresses();
-            })
-            
-            //****************
-            //Connect to events
-            //****************
-            .then(function() {
-              $rootScope.connectToEvents();
+              console.log('Unable to initialize Wallet:' + error);
             })
             
             //****************
             //Refresh Balance
             //****************
             .then(function() {
-              $rootScope.refreshBalance();
+              Wallet.refreshBalance().then(function() {
+                console.log(Wallet.transactions);
+                window.plugins.toast.show( T.i('g.updated'), 'short', 'bottom');
+              }, function(err) {
+                window.plugins.toast.show( T.i('g.unable_to_refresh'), 'long', 'bottom');
+              });
+
+              // Creo que NO es al pedo, pero por las dudas cerramos el splash.
+              $cordovaSplashscreen.hide();
+                
+              // FullScreen Config
+              var showFullScreen = false, showStatusBar = true;
+              ionic.Platform.fullScreen(showFullScreen, showStatusBar);
             });
           }
 

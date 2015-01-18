@@ -3,6 +3,10 @@ angular.module('bit_wallet.config', [])
 .constant('ENVIRONMENT', {
   test: true,
   timeout : 10000,
+  default_asset : function () { 
+    if( !this.test ) return 22;
+    return 24;
+  },
   assets : function() {
     if( !this.test ) {
       return [
@@ -25,7 +29,7 @@ angular.module('bit_wallet.config', [])
     return url + path;
   },
   wsurl : function() {
-    return this.test ? 'http://bswws-test.latincoin.com/events' : 'https://bswws.latincoin.com/events';
+    return this.test ? 'ws://bswws-test.latincoin.com/events' : 'wss://bswws.latincoin.com/events';
   }
 })
 

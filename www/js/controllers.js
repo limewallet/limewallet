@@ -427,7 +427,9 @@ bitwallet_controllers
   };
 })
 
-.controller('HomeCtrl', function(T, Scanner, AddressBook, $ionicActionSheet, $scope, $state, $http, $ionicModal, $rootScope, $ionicPopup, $timeout, $location, BitShares, $q) {
+.controller('HomeCtrl', function(T, Wallet, Scanner, AddressBook, $ionicActionSheet, $scope, $state, $http, $ionicModal, $rootScope, $ionicPopup, $timeout, $location, BitShares, $q) {
+
+  $scope.data = {transactions:Wallet.transactions};
   
   $scope.scanQR = function() {
            
