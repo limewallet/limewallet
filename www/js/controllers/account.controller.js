@@ -1,5 +1,5 @@
 bitwallet_controllers
-.controller('AccountCtrl', function($translate, T, Address, MasterKey, BitShares, $scope, $rootScope, $http, $timeout, $ionicActionSheet, $ionicPopup, $cordovaClipboard) {
+.controller('AccountCtrl', function($translate, T, Address, MasterKey, Wallet, BitShares, $scope, $rootScope, $http, $timeout, $ionicActionSheet, $ionicPopup, $cordovaClipboard) {
   
   /*$scope.groups       = [];
   $scope.shownGroups = [];
@@ -14,9 +14,13 @@ bitwallet_controllers
     }
   }
   
-  BitShares.getBalances().then(function(balances) {
-    
-  })
+  Wallet.getBalances().then(function(balances) {
+    console.log('balances!!!');
+    console.log(balances);    
+  }, function(err) {
+    console.log('ERRRO IN BALANCE'); 
+    console.log(err);
+  });
   
   $scope.toggleGroup = function(group) {
     //console.log($scope.shownGroups);

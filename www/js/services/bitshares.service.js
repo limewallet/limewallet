@@ -225,48 +225,21 @@ bit_wallet_services
     self.getBalance = function(address) {
       var url      = ENVIRONMENT.apiurl('/addrs/'+address+'/balance');
       var deferred = $q.defer();
-
+      console.log('Bitshares::getBalance ' + url);
       $http.get(url, {timeout:ENVIRONMENT.timeout})
       .success(function(res) {
-        if(res.error !== 'undefined')
-          return deferred.reject(res.error);
-        return deferred.resolve(res);
+        if(!angular.isUndefined(res.error))
+          deferred.reject(res.error);
+        else
+          deferred.resolve(res);
       })
       .error(function(data, status, headers, config) {
-        return deferred.reject();
+        deferred.reject();
       });
 
       return deferred.promise;
     }
-    
-    self.getBalances = function() {
-      var deferred = $q.defer();
-      MasterKey.get().then(function(master_key) {
 
-        if(master_key === undefined)  {
-          deferred.reject('no_master_key');
-          return;
-        }
-
-        self.extendedPublicFromPrivate(master_key.key).then(function(extendedPublicKey){
-          self.getBalance(extendedPublicKey+':'+master_key.deriv).then(function(balance) {
-            deferred.resolve
-          }, function(err) {
-            //net error or remote API error
-            deferred.reject(err);
-          });
-
-        }, function(err) {
-          //Plugin error
-          deferred.reject(err);  
-        })
-      }, function(err) {
-        //DB Error
-        deferred.reject(err);    
-      });
-
-      return deferred.promise;
-    };
 
     return self;
 });
