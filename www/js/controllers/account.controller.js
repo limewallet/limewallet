@@ -1,7 +1,7 @@
 bitwallet_controllers
 .controller('AccountCtrl', function($translate, T, Address, MasterKey, BitShares, $scope, $rootScope, $http, $timeout, $ionicActionSheet, $ionicPopup, $cordovaClipboard) {
   
-  $scope.groups       = [];
+  /*$scope.groups       = [];
   $scope.shownGroups = [];
   for (var i=0; i<5; i++) {
     $scope.groups[i] = {
@@ -33,7 +33,7 @@ bitwallet_controllers
     return $scope.shownGroups.indexOf(group.name)>-1;
     //return $scope.shownGroup === group;
   };
-  
+  */
   $scope.data = {addys:[]}
 
   $scope.loadAddys = function() {

@@ -437,7 +437,7 @@ margin-bottom: 20px!important;
 /********************/
 /* SETTINGS LIST    */
 /********************/
-.list.settings .item{
+.list.settings .item, .list.balances .item{
   border-color:transparent!important;
   border:none;
   border-width: 0px; 
@@ -489,3 +489,70 @@ margin-bottom: 20px!important;
 /* REGISTER ********/
 /* *************** */
 .register_color{color:#f0f0f0!important;}
+
+/******************/
+/* BALANCES */
+
+.list.balances .item{ height:88px;}
+.list.balances .item .asset_data{
+  margin-left: 72px;
+  height: 56px;
+  padding-top: 20px;
+  margin-left:72px;
+}
+
+.list.balances .item .asset_balance{
+float: right;
+color: #aaa;
+font-size: 16px;
+}
+
+.fab {
+      position: relative;
+      display: inline-block;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      color: #fff;
+      overflow: hidden;
+      transition: box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      transition-delay: 0.2s;
+      box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
+}
+
+.fab {
+    position: absolute;
+    top:16px;
+    left:16px;
+}      
+.fab.red {
+  background-color: #d23f31;
+}
+
+.fab.blue {
+  background-color: #4285f4;
+}
+
+.fab.green {
+  background-color: #0f9d58;
+}
+
+.fab:active {
+  box-shadow: 0 8px 17px 0 rgba(0, 0, 0, 0.2);
+  transition-delay: 0s;
+}
+
+.fab > i {
+  margin: 20px 20px 21px 22px !important;
+}
+.fab > i.fa-btc {
+  margin: 19px 20px 20px 20px !important;
+}
+
+.fab > i.ozt {
+  display:block;
+  margin: 18px 20px 21px 17px !important;
+}
+.fab > i::shadow path {
+  fill: #fff;
+}

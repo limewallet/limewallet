@@ -8,22 +8,16 @@
     
     <ion-content class="has-header" has-bouncing="false">
     
-      <ion-list>
-        <div ng-repeat="group in groups">
-          <ion-item class="item-stable"
-                    ng-click="toggleGroup(group)"
-                    ng-class="{active: isGroupShown(group)}">
-              <i class="icon" ng-class="isGroupShown(group) ? 'ion-minus' : 'ion-plus'"></i>
-            &nbsp;
-            {{group.name}} <span class="item-note">$250.00</span>
-          </ion-item>
-          <ion-item class="item-accordion"
-                    ng-repeat="item in group.items"
-                    ng-show="isGroupShown(group)">
-                    {{item}}
-          </ion-item>
-        </div>
-      </ion-list>
+      <div class="list balances">
+          <div ng-repeat="asset in assets" class="item"
+                    ng-click="showAddys(asset)"
+                    ng-class="{active: isAssetActive(group)}">
+            <div class="fab blue ">
+              <i class="fa20 {{asset.symbol_ui_class}}">{{asset.symbol_ui_text}}</i>
+            </div>
+            <div class="asset_data">&nbsp;{{asset.symbol}} <span class="asset_balance">$250.00</span></div>  
+          </div>
+      </div>
   
       <!--ion-list class="addr_list">
         <ion-item ng-repeat="addr in data.addys" ng-class="{'default_addr':addr.is_default!=0}">
