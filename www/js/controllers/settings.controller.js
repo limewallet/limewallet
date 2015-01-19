@@ -53,13 +53,14 @@ bitwallet_controllers.controller('SettingsCtrl', function($scope, Wallet, Settin
     
     if(name_timeout)
       name_timeout = null;
-    $timeout(function () {
+    name_timeout = $timeout(function () {
       scope.data.watch_name = newValue;
-    }, 500);
+      $timeout(function () {
+        $scope.data.profile_changed = true;
+      }, 500);
+    }, 1000);
     
-    $timeout(function () {
-      $scope.data.profile_changed = true;
-    }, 500);
+    
     
   });
   
@@ -69,13 +70,13 @@ bitwallet_controllers.controller('SettingsCtrl', function($scope, Wallet, Settin
       return;
     if(gravatar_timeout)
       gravatar_timeout = null;
-    $timeout(function () {
+    gravatar_timeout = $timeout(function () {
       scope.data.gravatar_id = scope.gravatarMD5(newValue);
-      scope.data.gravatar_id = scope.gravatarMD5(newValue);
-    }, 500);
-    $timeout(function () {
-      $scope.data.profile_changed = true;
-    }, 500);
+      $timeout(function () {
+        $scope.data.profile_changed = true;
+      }, 500);
+    }, 1000);
+    
   });
   
   $scope.$watch('data.use_gravatar', function(newValue, oldValue, scope) {
