@@ -27,6 +27,7 @@ ion-nav-view {
 
 .bar .fa {font-size: 25px;
 line-height: 38px;}
+.fa.fa16 {font-size: 16px!important;line-height: 18px;}
 .fa.fa18 {font-size: 18px!important;line-height: 20px;}
 .fa.fa20 {font-size: 20px!important;}
 .fa.fa300{font-weight: 300;}
@@ -434,9 +435,9 @@ margin-bottom: 20px!important;
   display: block !important;
 }
 
-/********************/
-/* SETTINGS LIST    */
-/********************/
+/*******************************/
+/* LISTS (Settings & balances) */
+/*******************************/
 .list.settings .item, .list.balances .item, .list.addys_balances .item{
   border-color:transparent!important;
   border:none;
@@ -476,7 +477,7 @@ margin-bottom: 20px!important;
   background-color: whitesmoke;
 }
 
-.list.settings .item.ng-hide-remove {
+.list.settings .item.ng-hide-remove, .list.addys_balances .item.ng-hide-remove {
   /* the transition is defined in the active class */
   transition: 1s linear all;
 }
@@ -493,6 +494,24 @@ margin-bottom: 20px!important;
 /******************/
 /* BALANCES */
 
+.list.addys_balances .line-divider{
+  clear: both;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  background-color: #eee;
+  /* margin-left: 16px; */
+  width: 100%;
+  height: 1px;
+  z-index: 100;
+}
+
+.list.balances .item.active
+, .list.balances .item.active .asset_balance
+, .list.balances .item.active .asset_data{
+  color: #fff!important;
+}
+
 .list.balances .item{ height:88px;}
 .list.balances .item .asset_data{
   margin-left: 72px;
@@ -501,10 +520,11 @@ margin-bottom: 20px!important;
   margin-left:72px;
 }
 
+.list.balances .item .asset_balance, .list.balances .item .asset_data{
+color: #aaa;}
 .list.balances .item .asset_balance{
-float: right;
-color: #aaa;
-font-size: 16px;
+  float: right;
+  font-size: 16px;
 }
 
 .fab {
@@ -529,8 +549,13 @@ font-size: 16px;
   background-color: #d23f31;
 }
 
-.fab.blue {
-  background-color: #4285f4;
+.fab.blue, .list.balances .item.active {
+  background-color: #5abb5c; /*$balanced // #4285f4;*/
+}
+
+.list.balances .item.active .fab.blue{
+  background-color: #fff!important;
+  color:#5abb5c; /*#4285f4;*/
 }
 
 .fab.green {

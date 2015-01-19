@@ -92,7 +92,8 @@
     "backup_wallet"  : "Backup Wallet",
     "restore_wallet" : "Restore Wallet",
     "account"        : "Account",
-    "my_assets"      : "Currencies"
+    "my_assets"      : "Currencies",
+    "assets"         : "Assets"
   },
 
   "receive" : {

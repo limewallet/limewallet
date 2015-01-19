@@ -49,8 +49,66 @@ bit_wallet_services
       });
       return deferred.promise;
     };
+    
+    self.deriveNewAddress = function() {
+      var deferred = $q.defer();
+      
+      MasterKey.get().then(function(master_key) {
+        master_key.deriv = parseInt(master_key.deriv)+1;
 
-
+        BitShares.derivePrivate(master_key.key, master_key.deriv)
+        .then(
+          function(extendedPrivateKey){
+            BitShares.extractDataFromKey(extendedPrivateKey)
+            .then(
+              function(keyData){
+                MasterKey.store(master_key.key, master_key.deriv).then(function() {
+                  Address.create(master_key.deriv, 
+                                keyData.address, 
+                                keyData.pubkey, 
+                                keyData.privkey, 
+                                false, '').then(function(){
+                    self.loadAccountAddresses().then(function(){
+                        self.subscribeToNotifications();
+                        deferred.resolve();
+                    },
+                    function(err){
+                      deferred.reject(err);
+                    })
+                  });
+                });
+                
+            },
+            function(err){
+              deferred.reject(err);
+            })
+        },
+        function(err){
+          deferred.reject(err);
+        })
+      });
+     
+      return deferred.promise;
+    };
+    
+    self.onDerivedAddressChanged = function(){
+      var deferred = $q.defer();
+      var addys = [];
+      angular.copy(self.data.addresses, addys);
+      Address.all().then(function(addys) {
+        angular.forEach(addys, function(addr) {
+          addys[addr.address].label = addr.label;  
+        });
+        self.data.addresses = addys;
+        deferred.resolve();
+      }, function(err) {
+        //DB Error (Address::all)
+        deferred.reject(err);
+      });
+      return deferred.promise;
+      
+    }
+    
     self.onAddressBookChanged = function() {
       var txs = [];
       angular.copy(self.data.transactions, txs);
@@ -64,8 +122,8 @@ bit_wallet_services
          }
          //console.log('ADDRNAME => ' + txs[i]['addr_name']);
       }
-      
       self.data.transactions = txs;
+        
     }
 
     self.loadAddressBook = function() {
