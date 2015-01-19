@@ -90,4 +90,4 @@ bitwallet_controllers.controller('SettingsCtrl', function($scope, Wallet, Settin
     
   }
   
-})
+});

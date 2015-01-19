@@ -1,5 +1,4 @@
-bit_wallet_services
-//Wallet Service
+bitwallet_services
 .factory('Wallet', function($translate, $rootScope, $q, ENVIRONMENT, BitShares, ReconnectingWebSocket, MasterKey, Address, Setting, AddressBook) {
     var self = this;
 
@@ -186,10 +185,10 @@ bit_wallet_services
     self.init = function() {
       var deferred = $q.defer();
 
-      self.connectToBackend(ENVIRONMENT.wsurl());
+      self.connectToBackend(ENVIRONMENT.wsurl);
 
       //Load Assets
-      angular.forEach( ENVIRONMENT.assets() , function(asset) {
+      angular.forEach( ENVIRONMENT.assets , function(asset) {
         asset.amount = 0;
         self.data.assets[asset.id] = asset;
       });
@@ -199,7 +198,7 @@ bit_wallet_services
       .then(function() {
         
         //Get default asset
-        Setting.get(Setting.DEFAULT_ASSET, ENVIRONMENT.default_asset())
+        Setting.get(Setting.DEFAULT_ASSET, ENVIRONMENT.default_asset)
         .then(function(default_asset){
           console.log('Seting::DEFAULT_ASSET ' + JSON.stringify(default_asset));
           self.data.asset = self.data.assets[default_asset.value];

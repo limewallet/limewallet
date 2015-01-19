@@ -75,11 +75,6 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
     });
   }
   
-  $scope.goBack = function() {
-    console.log('trying to go back SendCtrl');
-    $ionicNavBarDelegate.back();
-  };
-  
   $scope.validateSend = function(transaction) {
     //$scope.transaction.amount = sendForm.transactionAmount.value;
     console.log(' Amount: ['+$scope.transaction.amount+'] Precision: ['+$scope.wallet.asset.precision+']');
@@ -351,4 +346,4 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
       backdropClickToClose: false,
       hardwareBackButtonClose: false
   });  
-})
+});

@@ -1,5 +1,4 @@
-bit_wallet_services
-//Bitshares Service
+bitwallet_services
 .factory('BitShares', function($translate, $q, $http, MasterKey, $rootScope, ENVIRONMENT) {
     var self = this;
 
@@ -243,4 +242,3 @@ bit_wallet_services
 
     return self;
 });
-
