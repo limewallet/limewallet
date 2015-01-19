@@ -130,7 +130,7 @@ bit_wallet_services
         //Get default asset
         Setting.get(Setting.DEFAULT_ASSET, ENVIRONMENT.default_asset())
         .then(function(default_asset){
-          console.log('Seting::DEFAULT_ASSET ' + JSON.stringify(default_asset));
+          console.log('Setting::DEFAULT_ASSET ' + JSON.stringify(default_asset));
           self.setDefaultAsset(default_asset.value);
 
           //Load derived address from masterkey
@@ -236,6 +236,8 @@ bit_wallet_services
           //Update assets balance
           res.balances.forEach(function(bal){
             self.assets.list[bal.asset_id].amount = bal.amount/self.assets.list[bal.asset_id].precision;
+            console.log('self.assets.current');
+            console.log(self.assets.current);
             self.setDefaultAsset(self.assets.current.id);
           });
 

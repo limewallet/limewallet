@@ -24,6 +24,13 @@ angular.module('bit_wallet.config', [])
       ]
     }
   },
+  default_asset_ : function(){
+    if( !this.test ) {
+      return {id: 22,  symbol: 'USD',  fullname: 'United States Dollar', precision: 10000 ,    symbol_ui_class : 'fa fa-dollar', symbol_ui_text : ''};
+    } else {
+     return {id: 24,  symbol: 'USD',  fullname: 'United States Dollar', precision: 10000 ,    symbol_ui_class : 'fa fa-dollar', symbol_ui_text : ''};
+    }
+  },
   apiurl : function(path) {
     var url = this.test ? 'https://bsw-test.latincoin.com/api/v1' : 'https://bsw.latincoin.com/api/v1';
     return url + path;

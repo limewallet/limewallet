@@ -437,7 +437,7 @@ margin-bottom: 20px!important;
 /********************/
 /* SETTINGS LIST    */
 /********************/
-.list.settings .item, .list.balances .item{
+.list.settings .item, .list.balances .item, .list.addys_balances .item{
   border-color:transparent!important;
   border:none;
   border-width: 0px; 

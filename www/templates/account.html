@@ -15,10 +15,18 @@
             <div class="fab blue ">
               <i class="fa20 {{asset.symbol_ui_class}}">{{asset.symbol_ui_text}}</i>
             </div>
-            <div class="asset_data">&nbsp;{{asset.symbol}} <span class="asset_balance">$250.00</span></div>  
+            <div class="asset_data">&nbsp;{{asset.fullname}} <span class="asset_balance">$250.00</span></div>  
           </div>
       </div>
-  
+      <div class="list addys_balances">
+        <div ng-repeat="addr in data.addys" class="item">
+          <a ng-click="showActionSheet(addr)">
+            <h3 class="energized" ng-show="addr.name && addr.name.length>0">{{addr.name}} <span style="float:right;"><i class="fa18 {{selected_asset.symbol_ui_class}}">{{selected_asset.symbol_ui_text}}</i>{{'125.00'}}</span> </h3>
+            <h3 class="energized" ng-show="!addr.name || addr.name.length<=0">Address #{{$index+1}} <span style="float:right;font-weight:300;">{{'125.00'}}</span> </h3>
+            <h4><span ng-if="addr.is_favorite==1" class="float_left"> <i style="color:#5abb5c;" class="fa fa-check"></i></span>&nbsp;{{addr.address}} </h4>
+          </a>
+        </div>
+      </div>
       <!--ion-list class="addr_list">
         <ion-item ng-repeat="addr in data.addys" ng-class="{'default_addr':addr.is_default!=0}">
           <a ng-click="showActionSheet(addr)">

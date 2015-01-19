@@ -213,8 +213,8 @@ bit_wallet_services
     self.get = function(name, _default) {
         return DB.query('SELECT value FROM setting where name=?', [name])
         .then(function(result){
-          if( result === undefined )
-            return {value:_default};
+          if( result === undefined || result.rows.length==0)
+            return _default; //{value:_default};
           return DB.fetch(result);
         });
     };

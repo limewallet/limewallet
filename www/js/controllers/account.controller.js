@@ -1,6 +1,7 @@
 bitwallet_controllers
-.controller('AccountCtrl', function($translate, T, Address, MasterKey, Wallet, BitShares, $scope, $rootScope, $http, $timeout, $ionicActionSheet, $ionicPopup, $cordovaClipboard) {
-  
+.controller('AccountCtrl', function($translate, T, Address, MasterKey, Wallet, BitShares, $scope, $rootScope, $http, $timeout, $ionicActionSheet, $ionicPopup, $cordovaClipboard, Wallet) {
+  $scope.assets         = Wallet.assets.list;
+  $scope.selected_asset = Wallet.assets.current;;
   /*$scope.groups       = [];
   $scope.shownGroups = [];
   for (var i=0; i<5; i++) {
