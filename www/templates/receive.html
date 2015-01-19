@@ -9,7 +9,7 @@
       <form novalidate name="receiveForm">
         <div class="list">
           <label class="item item-input">
-            <i class="icon fa20 fa {{asset.symbol_ui_class}} placeholder-icon">{{asset.symbol_ui_text}}</i>
+            <i class="icon fa20 fa {{wallet.asset.symbol_ui_class}} placeholder-icon">{{wallet.asset.symbol_ui_text}}</i>
             <input numbers-only-key-press old-numbers-only-inputNOT required name="transactionAmount" ng-model="transaction.amount" type="number" placeholder="{{'g.amount'|translate}}" class="input_amount big big_placeholder" ng-class="{'error':receiveForm.transactionAmount.$error.number}">
             <br/>
           </label>

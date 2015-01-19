@@ -1,44 +1,26 @@
 bitwallet_controllers
-.controller('AccountCtrl', function($translate, T, Address, MasterKey, Wallet, BitShares, $scope, $rootScope, $http, $timeout, $ionicActionSheet, $ionicPopup, $cordovaClipboard, Wallet) {
-  $scope.assets         = Wallet.assets.list;
-  $scope.selected_asset = Wallet.assets.current;;
-  /*$scope.groups       = [];
-  $scope.shownGroups = [];
-  for (var i=0; i<5; i++) {
-    $scope.groups[i] = {
-      name: 'Asset_'+i,
-      balance: 'Amount_'+i,
-      items: []
-    };
-    for (var j=0; j<3; j++) {
-      $scope.groups[i].items.push('Address_' + j);
-    }
-  }
+.controller('AccountCtrl', function($translate, T, Address, MasterKey, Wallet, BitShares, $scope, $rootScope, $http, $timeout, $ionicActionSheet, $ionicPopup, $cordovaClipboard) {
   
-  Wallet.getBalances().then(function(balances) {
-    console.log('balances!!!');
-    console.log(balances);    
-  }, function(err) {
-    console.log('ERRRO IN BALANCE'); 
-    console.log(err);
+  $scope.assets      = [];
+
+  angular.forEach( Object.keys($scope.wallet.assets), function(asset_id) {
+
+    var items = []
+    angular.forEach(Object.keys($scope.wallet.addresses), function(addy) {
+      var amount = 0;
+      if( asset_id in $scope.wallet.addresses[addy].balances )
+        amount = $scope.wallet.addresses[addy].balances[asset_id];
+
+      items.push({addy:addy, balance:amount});
+    });
+
+    $scope.assets.push({
+      asset    : $scope.wallet.assets[asset_id],
+      items    : items
+    });
+
   });
   
-  $scope.toggleGroup = function(group) {
-    //console.log($scope.shownGroups);
-    //console.log(group.name);
-    if ($scope.isGroupShown(group)) {
-      $scope.shownGroups.splice($scope.shownGroups.indexOf(group.name), 1);
-      //$scope.shownGroup = null;
-    } else {
-      $scope.shownGroups.push(group.name);
-      //$scope.shownGroup = group;
-    }
-  };
-  $scope.isGroupShown = function(group) {
-    return $scope.shownGroups.indexOf(group.name)>-1;
-    //return $scope.shownGroup === group;
-  };
-  */
   $scope.data = {addys:[]}
 
   $scope.loadAddys = function() {
