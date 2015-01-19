@@ -37,10 +37,21 @@ bitwallet_services
     self.loadAccountAddresses = function() {
       var deferred = $q.defer();
       Address.all().then(function(addys) {
+        var new_balance_addys   = [];
+        var balance_addys_keys  = Object.keys(self.data.addresses);
+        
         angular.forEach(addys, function(addr) {
-          addr.balances = {}
-          self.data.addresses[addr.address] = addr;  
+          addr.balances = {};
+          if(balance_addys_keys.indexOf(addr.address)>-1)
+            addr.balances = self.data.addresses[addr.address].balances;
+          else
+          {
+            console.log(addr.address + ' not in:');
+            console.log(balance_addys_keys);
+          }
+          new_balance_addys[addr.address] = addr;  
         });
+        self.data.addresses = new_balance_addys;
         deferred.resolve();
       }, function(err) {
         //DB Error (Address::all)
@@ -92,17 +103,21 @@ bitwallet_services
     
     self.onDerivedAddressChanged = function(){
       var deferred = $q.defer();
-      var addys = [];
-      angular.copy(self.data.addresses, addys);
-      Address.all().then(function(addys) {
-        angular.forEach(addys, function(addr) {
-          addys[addr.address].label = addr.label;  
-        });
-        self.data.addresses = addys;
+      // var addresses = [];
+      // angular.copy(self.data.addresses, addresses);
+      // Address.all().then(function(addys) {
+        // angular.forEach(addys, function(addr) {
+          // if(addresses[addr.address])
+            // addresses[addr.address].label = addr.label;  
+        // });
+        // self.data.addresses = addresses;
+        // deferred.resolve();
+      // }, function(err) {
+        // //DB Error (Address::all)
+        // deferred.reject(err);
+      // });
+      self.loadAccountAddresses().then(function(){
         deferred.resolve();
-      }, function(err) {
-        //DB Error (Address::all)
-        deferred.reject(err);
       });
       return deferred.promise;
       

@@ -6,44 +6,36 @@
       <button class="button button-icon icon ion-ios7-plus-outline" ng-click="newAddr()"></button>
     </ion-nav-buttons>
     
-    <ion-content class="has-header" has-bouncing="false">
+    <ion-content class="has-header assets" has-bouncing="false">
     
       <div class="list balances">
           <div ng-repeat="obj in assets" class="item" ng-class="{'active':selectedAsset == obj.asset.id}"
                     ng-click="showAddys(obj.asset.id)"
                     ng-class="{active: isAssetActive(obj.asset)}">
             <div class="fab blue ">
-              <i class="fa20 {{obj.asset.symbol_ui_class}}">{{obj.asset.symbol_ui_text}}</i>
+              <i class="fa20 {{obj.asset.symbol_ui_class}} {{obj.asset.symbol_ui_text}}">{{obj.asset.symbol_ui_text}}</i>
             </div>
             <div class="asset_data">&nbsp;{{obj.asset.fullname}} <span class="asset_balance">{{obj.asset.amount | number : 2}}</span></div>  
           </div>
       </div>
-      <div class="list addys_balances">
-        <div class="line-divider"></div>
-        <div ng-repeat="obj in assets" id="addys_for_{{obj.asset.id}}" class="addys" ng-show="selectedAsset == obj.asset.id">
-          <div ng-repeat="addy in obj.items" class="item">
-            <a ng-click="showActionSheet(obj.addy)">
-              <h2 class="energizedNOT" ng-show="obj.addy.name && obj.addy.name.length>0">{{obj.addy.name}} 
-                <span style="float:right;font-weight:300;"><i class="fa16 {{obj.asset.symbol_ui_class}}">{{obj.asset.symbol_ui_text}}</i>&nbsp;{{addy.balance | number : 2}}</span> 
-              </h2>
-              <h2 class="energizedNOT" ng-show="!obj.addy.name || obj.addy.name.length<=0">Address #{{$index+1}} 
-                <span style="float:right;font-weight:300;"><i class="fa16 {{obj.asset.symbol_ui_class}}">{{obj.asset.symbol_ui_text}}</i>&nbsp;{{addy.balance | number : 2}}</span> 
-              </h2>
-              <h4><!--span ng-if="obj.addy.is_favorite==1" class="float_left"> <i style="color:#5abb5c;" class="fa fa-check"></i></span>&nbsp;-->{{addy.addy}} </h4>
-            </a>
+      <div class="line-divider"></div>
+      <ion-scroll zooming="false" direction="y" class="addys_balances_scroll">
+        <div class="list addys_balances">
+          <div ng-repeat="obj in assets" id="addys_for_{{obj.asset.id}}" class="addys" ng-show="selectedAsset == obj.asset.id">
+            <div ng-repeat="item in obj.items" class="item">
+              <a ng-click="showActionSheet(item.addy)">
+                <h2 class="energizedNOT" ng-show="item.addy.label && item.addy.label.length>0">{{item.addy.label}} 
+                  <span style="float:right;font-weight:300;"><i class="fa16 {{obj.asset.symbol_ui_class}}">{{obj.asset.symbol_ui_text}}</i>&nbsp;{{item.balance | number : 2}}</span> 
+                </h2>
+                <h2 class="energizedNOT" ng-show="!item.addy.label || item.addy.label.length<=0">Address #{{$index+1}} 
+                  <span style="float:right;font-weight:300;"><i class="fa16 {{obj.asset.symbol_ui_class}}">{{obj.asset.symbol_ui_text}}</i>&nbsp;{{item.balance | number : 2}}</span> 
+                </h2>
+                <h4><!--span ng-if="item.addy.is_favorite==1" class="float_left"> <i style="color:#5abb5c;" class="fa fa-check"></i></span>&nbsp;-->{{item.addy.address}} </h4>
+              </a>
+            </div>
           </div>
         </div>
-      </div>
-      <!--ion-list class="addr_list">
-        <ion-item ng-repeat="addr in data.addys" ng-class="{'default_addr':addr.is_default!=0}">
-          <a ng-click="showActionSheet(addr)">
-            <span ng-if="addr.is_default!=0" class="badge-default">{{'g.default' | translate}}</span>
-            <h3 ng-if="addr.label!=''">{{addr.label}}</h3>
-            <h4>{{addr.address}} </h4>
-            <p>{{addr.created_at | date:'medium'}}</p>          
-          </a>
-        </ion-item>
-      </ion-list -->
+      </ion-scroll>
     </ion-content>
   </ion-view>
   

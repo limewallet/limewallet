@@ -70,7 +70,7 @@ line-height: 38px;}
 }
 .index_buttons .button_send{padding-left:4%;padding-right:2%;width:50%;float:left;text-align:center;}
 .index_buttons .button_receive{padding-left:2%;padding-right:4%;width:50%;float:left;text-align:center;}
-.index_transactions, .addys_empty, .restore_wallet_textarea{
+.index_transactions, .addys_empty, .restore_wallet_textarea, .addys_balances_scroll{
   display:block;
   overflow: hidden;
   width:100%;
@@ -80,6 +80,7 @@ line-height: 38px;}
   }
 .addys_empty{top:43px!important;}
 .restore_wallet_textarea{top:43px!important;bottom:67px;}
+.addys_balances_scroll{top:352px!important;}
 
 .row75{
   height: 75% !important;
@@ -477,9 +478,14 @@ margin-bottom: 20px!important;
   background-color: whitesmoke;
 }
 
-.list.settings .item.ng-hide-remove, .list.addys_balances .item.ng-hide-remove {
+.list.settings .item.ng-hide-remove{
   /* the transition is defined in the active class */
   transition: 1s linear all;
+}
+
+.list.addys_balances .addys.ng-hide-remove {
+  /* the transition is defined in the active class */
+  transition: 3s linear all;
 }
 
 .list.settings .not_enabled{
@@ -494,17 +500,19 @@ margin-bottom: 20px!important;
 /******************/
 /* BALANCES */
 
-.list.addys_balances .line-divider{
+.assets .line-divider{
   clear: both;
-  position: absolute;
+  /*position: absolute;
   top: 0px;
-  left: 0px;
+  left: 0px;*/
   background-color: #eee;
   /* margin-left: 16px; */
   width: 100%;
   height: 1px;
   z-index: 100;
 }
+
+.list.balances{margin-bottom:0px!important;}
 
 .list.balances .item.active
 , .list.balances .item.active .asset_balance

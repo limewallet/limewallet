@@ -25,7 +25,7 @@ bitwallet_controllers
         if( asset_id in $scope.wallet.addresses[addy].balances )
           amount = $scope.wallet.addresses[addy].balances[asset_id];
 
-        items.push({addy:addy, balance:amount});
+        items.push({addy:$scope.wallet.addresses[addy], balance:amount});
       });
 
       $scope.assets.push({
@@ -72,7 +72,9 @@ bitwallet_controllers
   }
   
   $scope.showActionSheet = function(addr){
-   var hideSheet = $ionicActionSheet.show({
+    console.log('Addr showActionSheet:');
+    console.log(addr);
+    var hideSheet = $ionicActionSheet.show({
      buttons: [
        //{ text: '<b>'+T.i('addys.set_as_default')+'</b>' },
        { text: T.i('addys.set_label') },
