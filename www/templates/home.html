@@ -15,17 +15,9 @@
   <ion-content class="has-header" has-bouncing="false">
     <div class="balance_container energized_bg">
       <div class="balance">
-        <span class="balance_text"><i class="{{asset.symbol_ui_class}}">{{asset.symbol_ui_text}}</i>
-        <!--img src="img/bit{{asset.symbol|lowercase}}_395x395.png" class="asset_img" / --> {{$root.current_balance| number : 2}}</span>
+        <span class="balance_text"><i class="{{wallet.asset.symbol_ui_class}}">{{wallet.asset.symbol_ui_text}}</i> {{wallet.asset.amount | number : 2}}</span>
         <br/>
-        <span class="{{asset.symbol|lowercase}}">{{ 'home.balance' | translate:{asset:asset.symbol} }}</span>
-        <!--ion-slide-box on-slide-changed="bitAssetHasChanged($index)" show-pager="true" does-continue="true" active-slide="activeSlideAsset" ng-cloak >
-          <ion-slide ng-repeat="asset in slideAssets" ng-if="asset.is_enabled!=0">
-              <span class="balance_text"><i class="{{asset.symbol_ui_class}}">{{asset.symbol_ui_text}}</i>{{$root.balance[asset.id]| number : 2}}</span>
-              <br/>
-              <span class="{{asset.symbol|lowercase}}">{{ 'home.balance' | translate:{asset:asset.symbol} }}</span>
-          </ion-slide>
-        </ion-slide-box -->
+        <span class="{{wallet.asset.symbol|lowercase}}">{{ 'home.balance' | translate:{asset:wallet.asset.symbol} }}</span>
       </div>
     </div>
     <div class="punta2"></div>
@@ -38,18 +30,18 @@
         <a class="button button-balanced button-block" href="#/app/receive">{{'g.receive' | translate}}</a>
       </div>
     </div>
-    <div ng-hide="$scope.data.transactions.length" class="index_transactions">
+    <div ng-hide="wallet.transactions.length" class="index_transactions">
       <div class="display_table no_transactions"> 
         <span class="display_table_cell vmiddle" style="text-align:center;">{{'home.no_txs' | translate}}</span>
       </div>
     </div> 
-    <ion-scroll ng-hide="!$scope.data.transactions.length" zooming="false" direction="y" class="index_transactions transactions">
+    <ion-scroll ng-hide="!wallet.transactions.length" zooming="false" direction="y" class="index_transactions transactions">
       <ion-refresher
       pulling-text="{{'home.pull_to_refresh' | translate}}"
         on-refresh="doRefresh()">
       </ion-refresher>
       <ion-list style="height: 100%;">
-        <ion-item ng-repeat="tx in $scope.data.transactions" class="item item-icon-left"> <!-- item-thumbnail-left -->
+        <ion-item ng-repeat="tx in wallet.transactions" class="item item-icon-left"> <!-- item-thumbnail-left -->
           <a ng-click="showActionSheet(tx)">
             <div ng-class="{'sent':tx.sign<0, 'received':tx.sign>0, 'self':tx.sign==0}">
               <div ng-class="{true:'pending', false:''}[tx.state=='P']">
@@ -58,7 +50,7 @@
                 <i class="icon ion-ios7-refresh-outline"></i>
                 <i ng-show="tx.state=='P'" class="icon ion-loading-c"></i>
                 <h2>
-                  <span class="tx_amount"><i class="{{asset.symbol_ui_class}}">{{asset.symbol_ui_text}}</i>&nbsp;{{tx.amount| number : 2}}</span> 
+                  <span class="tx_amount"><i class="{{wallet.asset.symbol_ui_class}}">{{wallet.asset.symbol_ui_text}}</i>&nbsp;{{tx.amount| number : 2}}</span> 
                   <span class="self_text">{{'g.received' | translate}}</span>
                   <span class="sent_text">{{'g.sent' | translate}}</span>
                   <span class="received_text">{{'g.received' | translate}}</span>

@@ -64,7 +64,7 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
           sendForm.transactionAmount.value = result.amount;
         }
         
-        if(result.asset_id !== undefined && result.asset_id != $scope.asset.symbol)
+        if(result.asset_id !== undefined && result.asset_id != $scope.wallet.asset.symbol)
         {
           window.plugins.toast.show(T.i('err.invalid_asset'), 'long', 'bottom');
           return;
@@ -82,8 +82,8 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
   
   $scope.validateSend = function(transaction) {
     //$scope.transaction.amount = sendForm.transactionAmount.value;
-    console.log(' Amount: ['+$scope.transaction.amount+'] Precision: ['+$scope.asset.precision+']');
-    var amount = parseInt(parseFloat($scope.transaction.amount)*$scope.asset.precision);
+    console.log(' Amount: ['+$scope.transaction.amount+'] Precision: ['+$scope.wallet.asset.precision+']');
+    var amount = parseInt(parseFloat($scope.transaction.amount)*$scope.wallet.asset.precision);
     console.log($scope.transaction.amount + ' => ' + amount);
     if ( isNaN(amount) || amount <= 0 ) {
        $ionicPopup.alert({
@@ -163,7 +163,7 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
     .then(function(is_valid){
       
 
-      var symbol =  '<i class="'+$scope.asset.symbol_ui_class+'">'+$scope.asset.symbol_ui_text;
+      var symbol =  '<i class="'+$scope.wallet.asset.symbol_ui_class+'">'+$scope.wallet.asset.symbol_ui_text;
       var confirmPopup = $ionicPopup.confirm({
         title    : T.i('send.payment_confirm'),
         template : T.i('send.are_you_sure',{symbol:symbol,amount:$scope.transaction.amount,address:sendForm.transactionAddress.value, extra_data:extra_data})
@@ -175,7 +175,7 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
           $scope.sending_modal.show();
 
           var from  = [];
-          var addys = Object.keys($rootScope.my_addresses);
+          var addys = Object.keys($scope.wallet.addresses);
           for(var i=0; i<addys.length; i++) {
             from.push({"address":addys[i]});
           }
@@ -204,7 +204,7 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
           prom_addy.then(function() {
           
             var tx_req = {
-              "asset" : $scope.asset.id, // ? sendForm.transactionAssetId.value ?
+              "asset" : $scope.wallet.asset.id, // ? sendForm.transactionAssetId.value ?
               "from"  : from,
               "to"    : [{
                   "address" : dst_addr, //sendForm.transactionAddress.value,
@@ -281,7 +281,7 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
                   $scope.sending_modal.hide();
                   $location.path('/home');
                   window.plugins.toast.show( T.i('send.transaction_sent'), 'long', 'bottom')
-                  $rootScope.transactions.unshift({sign:-1, address:sendForm.transactionAddress.value, addr_name:sendForm.transactionAddress.value, amount:amount/1e4, state:'P', date: new Date().getTime()});
+                  $scope.wallet.transactions.unshift({sign:-1, address:sendForm.transactionAddress.value, addr_name:sendForm.transactionAddress.value, amount:amount/$scope.wallet.assets[$scope.wallet.asset.id].precision, state:'P', date: new Date().getTime()});
                   
                 })
                 .error(function(data, status, headers, config) {

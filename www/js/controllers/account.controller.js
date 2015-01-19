@@ -1,25 +1,25 @@
 bitwallet_controllers
 .controller('AccountCtrl', function($translate, T, Address, MasterKey, Wallet, BitShares, $scope, $rootScope, $http, $timeout, $ionicActionSheet, $ionicPopup, $cordovaClipboard) {
   
-  $scope.groups       = [];
+  $scope.groups      = [];
   $scope.shownGroups = [];
-  for (var i=0; i<5; i++) {
-    $scope.groups[i] = {
-      name: 'Asset_'+i,
-      balance: 'Amount_'+i,
-      items: []
-    };
-    for (var j=0; j<3; j++) {
-      $scope.groups[i].items.push('Address_' + j);
-    }
-  }
-  
-  Wallet.getBalances().then(function(balances) {
-    console.log('balances!!!');
-    console.log(balances);    
-  }, function(err) {
-    console.log('ERRRO IN BALANCE'); 
-    console.log(err);
+
+  angular.forEach( Object.keys($scope.wallet.assets), function(asset_id) {
+
+    var items = []
+    angular.forEach(Object.keys($scope.wallet.addresses), function(addy) {
+      var amount = 0;
+      if( asset_id in $scope.wallet.addresses[addy].balances )
+        amount = $scope.wallet.addresses[addy].balances[asset_id];
+
+      items.push({addy:addy, balance:amount});
+    });
+
+    $scope.groups.push({
+      asset    : $scope.wallet.assets[asset_id],
+      items   : items
+    });
+
   });
   
   $scope.toggleGroup = function(group) {

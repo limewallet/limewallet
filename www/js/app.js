@@ -186,6 +186,16 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
 
             $rootScope.name             = '';
             $rootScope.gravatar_id      = '';
+
+            $rootScope.wallet = Wallet.data;
+            $rootScope.$watch(
+                function(){ return Wallet.data },
+              function(newVal) {
+                $rootScope.wallet = newVal;
+              }
+            );
+
+
             
             //*****************
             // INIT DEV/PROD ENVIRONMENT
@@ -236,7 +246,6 @@ angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'r
             //****************
             .then(function() {
               Wallet.refreshBalance().then(function() {
-                console.log(Wallet.transactions);
                 window.plugins.toast.show( T.i('g.updated'), 'short', 'bottom');
               }, function(err) {
                 window.plugins.toast.show( T.i('g.unable_to_refresh'), 'long', 'bottom');

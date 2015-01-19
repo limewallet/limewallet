@@ -15,12 +15,14 @@
                     ng-class="{active: isGroupShown(group)}">
               <i class="icon" ng-class="isGroupShown(group) ? 'ion-minus' : 'ion-plus'"></i>
             &nbsp;
-            {{group.name}} <span class="item-note">$250.00</span>
+            {{group.asset.symbol}} 
+            <span class="item-note"><i class="{{group.asset.symbol_ui_class}}">{{group.asset.symbol_ui_text}}</i> {{group.asset.amount | number : 2}}</span>
           </ion-item>
           <ion-item class="item-accordion"
-                    ng-repeat="item in group.items"
-                    ng-show="isGroupShown(group)">
-                    {{item}}
+              ng-repeat="item in group.items"
+              ng-show="isGroupShown(group)">
+              {{item.addy}} 
+              <span class="item-note"><i class="{{group.asset.symbol_ui_class}}">{{group.asset.symbol_ui_text}}</i> {{item.balance | number : 2}}</span>
           </ion-item>
         </div>
       </ion-list>

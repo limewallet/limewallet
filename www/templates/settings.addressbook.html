@@ -4,13 +4,13 @@
     </ion-nav-buttons>
     
     <ion-content class="has-header" has-bouncing="false">
-      <div ng-hide="data.addys.length" class="addys_empty">
+      <div ng-hide="wallet.address_book.length" class="addys_empty">
         <div class="display_table no_transactions"> 
           <span class="display_table_cell vmiddle" style="text-align:center;">{{'addys.no_addys' | translate}}</span>
         </div>
       </div> 
       <ion-list>
-        <ion-item ng-repeat="addr in data.addys">
+        <ion-item ng-repeat="addr in wallet.address_book">
           <a ng-click="showActionSheet(addr)">
             <h3 class="calm">{{addr.name}}</h3>
             <h4><span ng-if="addr.is_favorite==1" class="float_left"> <i style="color:#5abb5c;" class="fa fa-check"></i></span>&nbsp;{{addr.address}} </h4>

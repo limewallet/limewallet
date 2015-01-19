@@ -1,13 +1,14 @@
-bitwallet_controllers.controller('SettingsCtrl', function($scope, Wallet, Setting, $rootScope, Account, $ionicModal, $timeout) {
+bitwallet_controllers.controller('SettingsCtrl', function($scope, Wallet, Setting, $rootScope, Account, $ionicModal, $timeout, T) {
   
   $scope.data = {assets:[], selected_asset:{}, name:'', gravatar_id:'', use_gravatar:false, initial_name:'', watch_name:'',  gravatar_mail:'', profile_changed:false, hide_balance:false};
   
   $scope.loadViewData = function() {
+    var wallet = $scope.wallet;
     // Load assets
-    Object.keys(Wallet.assets.list).forEach(function(aid){
-      var asset = Wallet.assets.list[aid];
+    Object.keys(wallet.assets).forEach(function(aid){
+      var asset = wallet.assets[aid];
       $scope.data.assets.push({value:asset.id, label:asset.symbol});
-      if($scope.asset_id == asset.id)
+      if(wallet.asset.id == asset.id)
         $scope.data.selected_asset = $scope.data.assets[$scope.data.assets.length-1];
     });
     
@@ -26,14 +27,11 @@ bitwallet_controllers.controller('SettingsCtrl', function($scope, Wallet, Settin
 
   // On asset change reload wallet asset.
   $scope.assetChanged = function(){
-    Setting.set(Setting.DEFAULT_ASSET, $scope.data.selected_asset.value).then(function() {
-      console.log('selected:'+$scope.data.selected_asset);
-      if($rootScope.asset_id!=$scope.data.selected_asset.value)
-        $timeout(function () {
-          $rootScope.assetChanged($scope.data.selected_asset.value);
-        }, 250);  
+    Wallet.switchAsset($scope.data.selected_asset.value)
+    .then(function() {
+      window.plugins.toast.show( T.i('g.updated'), 'short', 'bottom');
     }, function(err) {
-      console.log('ERROR: '+err);  
+      window.plugins.toast.show( T.i('g.unable_to_refresh'), 'long', 'bottom');
     });
   }
   

@@ -22,8 +22,7 @@ bitwallet_controllers
   $scope.address    = $stateParams.address;
   $scope.amount     = $stateParams.amount;
   //$scope.asset_id   = $rootScope.asset_id;
-  $scope.asset      = $rootScope.asset; //$rootScope.assets[$rootScope.asset_id];
-  $scope.request    = 'bts:'+$scope.address+'/transfer/amount/'+$scope.amount+'/asset/'+$scope.asset.symbol; //symbol or asset_id required -> ?USD?
+  $scope.request    = 'bts:'+$scope.address+'/transfer/amount/'+$scope.amount+'/asset/'+$scope.wallet.asset.symbol; //symbol or asset_id required -> ?USD?
   $scope.imgurl     = 'http://chart.apis.google.com/chart?cht=qr&chs=300x300&chl='+encodeURIComponent($scope.request)+'&chld=H|0'
 
   //console.log('request -> ' + $scope.request);
@@ -76,10 +75,9 @@ bitwallet_controllers
 })
 
 .controller('ReceiveCtrl', function($scope, $rootScope, T, Address, $http, $ionicNavBarDelegate, $ionicModal, $ionicPopup, $location, $state) {
-  $scope.asset = $rootScope.asset; //$rootScope.assets[$rootScope.asset_id];
   
   $scope.doGenerateQRCodeRecvPayment = function(){
-    var amount = parseInt(parseFloat(receiveForm.transactionAmount.value)*$scope.asset.precision);
+    var amount = parseInt(parseFloat(receiveForm.transactionAmount.value)*$scope.wallet.asset.precision);
     if( isNaN(amount) || amount <= 0 ) {
       $ionicPopup.alert({
         title    : T.i('err.invalid_amount')+' <i class="fa fa-warning float_right"></i>',
@@ -138,12 +136,12 @@ bitwallet_controllers
       if(r.error === undefined)
       { 
         r.balances.forEach(function(b){
-          if(b.asset_id == $scope.asset.id) {
+          if(b.asset_id == $scope.wallet.asset.id) {
             total += b.amount;
           } else {
             //TODO: warining!!
             if(b.amount > 0) {
-              other_symbols.push($rootScope.assets[b.asset_id].symbol);
+              other_symbols.push($scope.wallet.assets[b.asset_id].symbol);
             }
           }
         });
@@ -169,7 +167,7 @@ bitwallet_controllers
        return;
       }
 
-      $scope.imported_pk.amount = total/$scope.asset.precision;
+      $scope.imported_pk.amount = total/$scope.wallet.asset.precision;
     })
     .error(function(data, status, headers, config) {
       $timeout(function () {
@@ -276,7 +274,7 @@ bitwallet_controllers
             $scope.sweeping_modal.hide();
             $location.path('/home');
             window.plugins.toast.show( T.i('import_priv.transaction_sent'), 'long', 'bottom')
-            $rootScope.transactions.unshift({sign:1, address:$scope.imported_pk.address, addr_name:$scope.imported_pk.address, amount:amount/$scope.asset.precision, state:'P', date: new Date().getTime()});
+            $rootScope.transactions.unshift({sign:1, address:$scope.imported_pk.address, addr_name:$scope.imported_pk.address, amount:amount/$scope.wallet.asset.precision, state:'P', date: new Date().getTime()});
           })
           .error(function(data, status, headers, config) {
              console.log('error...: '+status);
@@ -342,7 +340,7 @@ bitwallet_controllers
   $scope.initImport();
 })
 
-.controller('AddressBookCtrl', function($scope, $state, T, $ionicHistory, $ionicPopup, $ionicActionSheet, AddressBook, $rootScope, $ionicNavBarDelegate, $stateParams){
+.controller('AddressBookCtrl', function($scope, $state, Wallet, T, $ionicHistory, $ionicPopup, $ionicActionSheet, AddressBook, $rootScope, $ionicNavBarDelegate, $stateParams){
 
   $scope.showActionSheet = function(addr){
     var fav_text = 'book.add_to_fav';
@@ -365,7 +363,7 @@ bitwallet_controllers
         var fav = addr.is_favorite ? 0 : 1;
         console.log('mandamos: ' + addr.id + '->' + fav);
         AddressBook.setFavorite(addr.id, fav).then(function() {
-          $scope.loadAddys();
+          Wallet.loadAddressBook();
         });
       }
       // Remove from address book
@@ -417,7 +415,7 @@ bitwallet_controllers
       else
         fee=fee+op.amount;
       if(precision==-1)
-        precision = $scope.data.assets[op.asset_id].precision;
+        precision = $scope.wallet.assets[op.asset_id].precision;
         //precision = $rootScope.asset.precision;
     })
     return fee/precision;
@@ -429,8 +427,6 @@ bitwallet_controllers
 
 .controller('HomeCtrl', function(T, Wallet, Scanner, AddressBook, $ionicActionSheet, $scope, $state, $http, $ionicModal, $rootScope, $ionicPopup, $timeout, $location, BitShares, $q) {
 
-  $scope.data = {transactions:Wallet.transactions};
-  
   $scope.scanQR = function() {
            
     Scanner.scan()
@@ -468,21 +464,7 @@ bitwallet_controllers
   });
 
   $rootScope.$on('address-book-changed', function(event, data) {
-    var txs = [];
-    angular.copy($rootScope.transactions, txs);
-    for(var i=0; i<txs.length; i++) {
-       
-       if(txs[i]['addr_name'] != 'Me')
-       {
-         if( txs[i]['address'] in $rootScope.my_book )
-          txs[i]['addr_name'] = $rootScope.my_book[txs[i]['address']].name;
-         else
-          txs[i]['addr_name'] = txs[i]['address'];
-       }
-       console.log('ADDRNAME => ' + txs[i]['addr_name']);
-    }
-    
-    $rootScope.transactions = txs;
+    Wallet.onAddressBookChanged();
   });
 
   $scope.showActionSheet = function(tx) {
@@ -511,7 +493,9 @@ bitwallet_controllers
               return;
 
            AddressBook.add(tx.address, name).then(function() {
-             $rootScope.loadAddressBook();
+             Wallet.loadAddressBook().then(function(){
+               $rootScope.$emit('address-book-changed');
+             });
              window.plugins.toast.show( T.i('home.save_successfull'), 'short', 'bottom');
            });
 

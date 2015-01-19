@@ -3,16 +3,14 @@ bit_wallet_services
 .factory('Wallet', function($translate, $rootScope, $q, ENVIRONMENT, BitShares, ReconnectingWebSocket, MasterKey, Address, Setting, AddressBook) {
     var self = this;
 
-    self.assets = {
-      current : {},
-      list    : {}
+    self.data = {
+      assets       : {},
+      asset        : {},
+      address_book : {},
+      addresses    : {},
+      transactions : [],
+      raw_txs      : {}
     }
-
-    self.address_book = {};
-    self.addresses    = {};
-
-    self.transactions = [];
-    self.raw_txs      = {};
 
     self.timeout = {
       ping    : 0,
@@ -20,13 +18,14 @@ bit_wallet_services
     };
 
     self.switchAsset = function(asset_id) {
+      self.data.transactions = [],
       self.setDefaultAsset(asset_id);
-      Setting.set(Setting.DEFAULT_ASSET, asset_id);
+      return self.refreshBalance();
     }
 
     self.setDefaultAsset = function(asset_id) {
-      self.assets.current = self.assets.list[asset_id];
-      console.log('setDefaultAsset ' + JSON.stringify(self.assets.current));
+      self.data.asset = self.data.assets[asset_id];
+      Setting.set(Setting.DEFAULT_ASSET, asset_id);
     }
 
     self.ADDRESS_BOOK_CHANGE = 'w-address-book-changed';
@@ -41,9 +40,8 @@ bit_wallet_services
       Address.all().then(function(addys) {
         angular.forEach(addys, function(addr) {
           addr.balances = {}
-          self.addresses[addr.address] = addr;  
+          self.data.addresses[addr.address] = addr;  
         });
-        console.log('Account addresses loaded');
         deferred.resolve();
       }, function(err) {
         //DB Error (Address::all)
@@ -53,14 +51,30 @@ bit_wallet_services
     };
 
 
+    self.onAddressBookChanged = function() {
+      var txs = [];
+      angular.copy(self.data.transactions, txs);
+      for(var i=0; i<txs.length; i++) {
+         if(txs[i]['addr_name'] != 'Me')
+         {
+           if( txs[i]['address'] in self.data.address_book )
+            txs[i]['addr_name'] = self.data.address_book[txs[i]['address']].name;
+           else
+            txs[i]['addr_name'] = txs[i]['address'];
+         }
+         //console.log('ADDRNAME => ' + txs[i]['addr_name']);
+      }
+      
+      self.data.transactions = txs;
+    }
+
     self.loadAddressBook = function() {
       var deferred = $q.defer();
       AddressBook.all()
       .then(function(addys) {
         
         addys.forEach(function(addr) {
-          console.log('loadAddressBook ' + addr.address + '->' + addr.name);
-          self.address_book[addr.address] = addr;
+          self.data.address_book[addr.address] = addr;
         });
 
         deferred.resolve();
@@ -82,11 +96,10 @@ bit_wallet_services
     }
 
     self.onReconnect = function() {
-      disconnect_count++;
+      self.disconnect_count++;
     }
 
     self.onConnectedToBackend = function () {
-      console.log('onConnectedToBackend -> mando subscribe');
       self.subscribeToNotifications();
       if( self.disconnect_count > 0 )
         self.refreshBalance();
@@ -120,7 +133,7 @@ bit_wallet_services
       //Load Assets
       angular.forEach( ENVIRONMENT.assets() , function(asset) {
         asset.amount = 0;
-        self.assets.list[asset.id] = asset;
+        self.data.assets[asset.id] = asset;
       });
 
       //Create master key
@@ -131,7 +144,7 @@ bit_wallet_services
         Setting.get(Setting.DEFAULT_ASSET, ENVIRONMENT.default_asset())
         .then(function(default_asset){
           console.log('Seting::DEFAULT_ASSET ' + JSON.stringify(default_asset));
-          self.setDefaultAsset(default_asset.value);
+          self.data.asset = self.data.assets[default_asset.value];
 
           //Load derived address from masterkey
           self.loadAccountAddresses()
@@ -235,21 +248,23 @@ bit_wallet_services
 
           //Update assets balance
           res.balances.forEach(function(bal){
-            self.assets.list[bal.asset_id].amount = bal.amount/self.assets.list[bal.asset_id].precision;
-            self.setDefaultAsset(self.assets.current.id);
+            self.data.assets[bal.asset_id].amount = bal.amount/self.data.assets[bal.asset_id].precision;
           });
 
+          self.data.asset = self.data.assets[self.data.asset.id];
+
           //Update address balance
-          angular.forEach(Object.keys(self.addresses), function(addy) {
+          angular.forEach(Object.keys(self.data.addresses), function(addy) {
             if (addy in res.address_balance) {
-              self.addresses[addy].balances = res.address_balance[addy];
+              self.data.addresses[addy].balances = res.address_balance[addy];
+              angular.forEach( Object.keys(self.data.addresses[addy].balances), function(asset_id) {
+                self.data.addresses[addy].balances[asset_id] /= self.data.assets[asset_id].precision;
+              });
             }
           });
 
           //Generate tx list
-          self.buildTxList(res, self.assets.current.id);
-
-          console.log(JSON.stringify(self.transactions));
+          self.buildTxList(res, self.data.asset.id);
 
           deferred.resolve();
         }, function(err) {
@@ -269,7 +284,7 @@ bit_wallet_services
 
        var close_tx = function() {
 
-        var precision = self.assets.current.precision;
+        var precision = self.data.asset.precision;
         var assets = Object.keys(tx['assets']);
         for(var i=0; i<assets.length; i++) {
            p = {}; 
@@ -293,8 +308,8 @@ bit_wallet_services
 
            if(p['addr_name'] != 'Me')
            {
-             if( p['address'] in self.address_book )
-              p['addr_name'] = self.address_book[p['address']].name;
+             if( p['address'] in self.data.address_book )
+              p['addr_name'] = self.data.address_book[p['address']].name;
              else
               p['addr_name'] = p['address'];
            }
@@ -304,31 +319,31 @@ bit_wallet_services
          tx = {};
        }
 
-       console.log(JSON.stringify(res));
+       //console.log(JSON.stringify(res));
 
        res.operations.forEach(function(o){
 
          if(o.asset_id != asset_id)
          {
-           console.log('me voy xq ' + o.asset_id + '!=' + asset_id);
+           //console.log('me voy xq ' + o.asset_id + '!=' + asset_id);
            return;
          }
 
          //Esto es para mostrar en el detalle de "renglon"
          //TODO: Pedir por API
-         if(!(o.txid in self.raw_txs) )
-           self.raw_txs[o.txid] = [];
-         self.raw_txs[o.txid].push(o);
+         if(!(o.txid in self.data.raw_txs) )
+           self.data.raw_txs[o.txid] = [];
+         self.data.raw_txs[o.txid].push(o);
 
          
          if( tx['txid'] !== undefined && tx['txid'] != o.txid ) {
-            console.log('mando a cerrar');
+            //console.log('mando a cerrar');
             close_tx();
          }
 
          if( tx['txid'] === undefined || ( tx['assets'] !== undefined && !(o.asset_id in tx['assets']) )  ) {
 
-            console.log('abro');
+            //console.log('abro');
             
             tx['txid']        = o.txid;
             tx['assets']      = {};
@@ -348,7 +363,7 @@ bit_wallet_services
 
          if(o.op_type == 'w') { 
             tx['assets'][o.asset_id]['w_amount'] += o.amount
-            if(o.address in self.addresses) {
+            if(o.address in self.data.addresses) {
               tx['assets'][o.asset_id]['my_w_amount'] += o.amount;
               tx['assets'][o.asset_id]['i_w']          = true;
             } else {
@@ -358,7 +373,7 @@ bit_wallet_services
             
          } else {
             tx['assets'][o.asset_id]['d_amount'] += o.amount
-            if(o.address in self.addresses) {
+            if(o.address in self.data.addresses) {
               tx['assets'][o.asset_id]['my_d_amount'] += o.amount
               tx['assets'][o.asset_id]['i_d']          = true;
             } else {
@@ -369,14 +384,14 @@ bit_wallet_services
          
        });
 
-       console.log('salgo del loop con ' + tx['txid']);
+       //console.log('salgo del loop con ' + tx['txid']);
 
        if( tx['txid'] !== undefined) {
-         console.log('mando a cerrar');
+         //console.log('mando a cerrar');
          close_tx();
        }
 
-       self.transactions=txs;
+       self.data.transactions=txs;
     }
 
     return self;

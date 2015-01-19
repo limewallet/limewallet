@@ -15,10 +15,13 @@ bit_wallet_services
           });
         }
         self.db = window.sqlitePlugin.openDatabase({name: DB_CONFIG.name});
- 
+
         proms = []
+        //console.log('voy a entrar al forEach');
         angular.forEach(DB_CONFIG.tables, function(table) {
             var columns = [];
+
+            //console.log('SOY EL FOREACH');
  
             angular.forEach(table.columns, function(column) {
                 columns.push(column.name + ' ' + column.type);
@@ -61,11 +64,14 @@ bit_wallet_services
 
                 return $q.all(mproms);
               }
+            }, function(err) {
+              console.log('ERROR forEach ' + err);
             });
 
             proms.push(p);
         });
 
+        //console.log('me voy con todas las proms juntas');
         return $q.all(proms);
     };
  
@@ -213,15 +219,13 @@ bit_wallet_services
     self.get = function(name, _default) {
         return DB.query('SELECT value FROM setting where name=?', [name])
         .then(function(result){
-          if( result === undefined )
+          if( result.rows.length == 0 )
             return {value:_default};
           return DB.fetch(result);
         });
     };
 
     self.set = function(name, value) {
-        console.log( "name=" + name );
-        console.log( "value=" + value );
         return DB.query('INSERT or REPLACE into setting (name, value) values (?,?)', [name, value.toString()]);
     };
 
