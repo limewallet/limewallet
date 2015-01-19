@@ -50,5 +50,5 @@ bitwallet_controllers
       $scope.data.profile_changed = true;
     }, 500);
   });
-})
+});
 

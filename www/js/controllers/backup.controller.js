@@ -1,4 +1,5 @@
-bitwallet_controllers.controller('BackupCtrl', function(DB_CONFIG, T, $translate, MasterKey, Address, AddressBook, $scope, $http, $timeout, $location, $state, $ionicPopup, $ionicModal, $cordovaSocialSharing, $cordovaClipboard, BitShares, $q, $ionicNavBarDelegate) {
+bitwallet_controllers
+.controller('BackupCtrl', function(DB_CONFIG, T, $translate, MasterKey, Address, AddressBook, $scope, $http, $timeout, $location, $state, $ionicPopup, $ionicModal, $cordovaSocialSharing, $cordovaClipboard, BitShares, $q, $ionicNavBarDelegate) {
   
   $scope.backup = {};
   
@@ -136,9 +137,4 @@ bitwallet_controllers.controller('BackupCtrl', function(DB_CONFIG, T, $translate
   }).then(function(modal) {
     $scope.modal = modal;
   });
-  
-  $scope.goBack = function() {
-    console.log('trying to go back SendCtrl');
-    $ionicNavBarDelegate.back();
-  };
-})
+});

@@ -1,5 +1,4 @@
-bit_wallet_services
-//QR Code service
+bitwallet_services
 .factory('Scanner', function($q, T, $ionicModal, $ionicPopup, $cordovaDevice, BitShares) {
 
     var self = this;

@@ -149,10 +149,5 @@ bitwallet_controllers.controller('RestoreCtrl', function($q, T, Setting, $rootSc
 
     });
   }
-  
-  $scope.goBack = function() {
-    console.log('trying to go back SendCtrl');
-    $ionicNavBarDelegate.back();
-  };
-})
+});
 
