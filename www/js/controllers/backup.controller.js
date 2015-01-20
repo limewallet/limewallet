@@ -81,21 +81,7 @@ bitwallet_controllers
             }); 
           proms2.push(p2);
         });
-        
-        /*for(var i=0; i<addys.length; i++) {
-          //addys[i].privkey = CryptoJS.AES.encrypt(addys[i].privkey, backupForm.backupPassword.value).toString();
-          var addy = addys[i];
-          console.log('--backup address:'+addy.label + ' - ' + addy.address);
-          var p2 = BitShares.encryptString(addy.privkey, backupForm.backupPassword.value).then(
-            function(encryptedData){
-              addy.privkey = encryptedData;
-              console.log('--backup address inside promise:'+addy.label + ' - ' + addy.address + ' - ' + encryptedData);
-              ewallet_address.push(addy);
-            }); 
-          proms2.push(p2);
-        }*/
         return $q.all(proms2);
-        
       })
       .then(function() {
         ewallet['address'] = ewallet_address;

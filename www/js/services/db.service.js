@@ -1,5 +1,5 @@
 bitwallet_services
-.factory('DB', function($q, DB_CONFIG) {
+.service('DB', function($q, DB_CONFIG) {
     var self = this;
     self.db = null;
  
@@ -108,7 +108,7 @@ bitwallet_services
 })
 
 //MasterKey service 
-.factory('MasterKey', function(DB) {
+.service('MasterKey', function(DB) {
     var self = this;
     
     self.get = function() {
@@ -126,7 +126,7 @@ bitwallet_services
 })
 
 //Address service 
-.factory('Address', function(DB) {
+.service('Address', function(DB) {
     var self = this;
     
     self.all = function() {
@@ -176,7 +176,7 @@ bitwallet_services
 })
 
 //AddressBook service 
-.factory('AddressBook', function(DB) {
+.service('AddressBook', function(DB) {
     var self = this;
     
     self.all = function() {
@@ -208,18 +208,40 @@ bitwallet_services
 })
 
 //Settings service 
-.factory('Setting', function(DB, DB_CONFIG) {
+.service('Setting', function(DB, DB_CONFIG, $q) {
     var self = this;
 
     self.DEFAULT_ASSET = 'default_asset';
+    self.BSW_TOKEN     = 'bsw_token';
     
     self.get = function(name, _default) {
-        return DB.query('SELECT value FROM setting where name=?', [name])
+        var deferred = $q.defer();
+        DB.query('SELECT name, value FROM setting where name=?', [name])
         .then(function(result){
-          if( result.rows.length == 0 )
-            return {value:_default};
-          return DB.fetch(result);
+          console.log( 'GET ' + JSON.stringify(result) );
+
+          if( result.rows.length == 0 ) {
+            if( _default !== undefined )
+            {
+              console.log('ROW 0 RESOLVE');
+              deferred.resolve({name:name, value:_default});
+            }
+            else
+            {
+              console.log('ROW 0 REJECT');
+              deferred.resolve();
+            }
+            return;
+          }
+
+          console.log('ROW !=0 RESOLVE');
+          deferred.resolve(DB.fetch(result));
+        }, function(err) {
+          console.log('rompo ' + err);
+          deferred.reject(err);  
         });
+
+        return deferred.promise;
     };
 
     self.set = function(name, value) {
@@ -230,26 +252,44 @@ bitwallet_services
 })
 
 //Account service 
-.factory('Account', function(DB, DB_CONFIG) {
+.service('Account', function(DB, BitShares, $q) {
     var self = this;
     
     self.get = function() {
-        return DB.query('SELECT * FROM account limit 1', [])
-        .then(function(result){
-            return DB.fetch(result);
-        });
+      return DB.query('SELECT * FROM account limit 1', [])
+      .then(function(result){
+        return DB.fetch(result);
+      });
     };
 
-    self.store = function(name, token, gravatar_id) {
-        return DB.query('INSERT or REPLACE into account (id, name, token, gravatar_id) values (0,?,?,?)', [name, token, gravatar_id]);
-    }
-    
-    self.updateToken = function(token) {
-        return DB.query('UPDATE account set token=? where id=0', [token]);
+    self.store = function(name, gravatar_id) {
+      return DB.query('INSERT or REPLACE into account (id, name, gravatar_id) values (0,?,?)', [name, gravatar_id]);
     }
     
     self.updateGravatarId = function(gravatar_id) {
-        return DB.query('UPDATE account set gravatar_id=? where id=0', [gravatar_id]);
+      return DB.query('UPDATE account set gravatar_id=? where id=0', [gravatar_id]);
+    }
+
+    self.register = function(address) {
+      var deferred = $q.defer();
+
+      console.log('Account::register');
+      BitShares.getBackendToken(address).then(function(token) {
+        console.log('toma el tokan ' + token);
+        self.get().then(function(account) {
+          BitShares.registerAccount(token, address, account).then(function() {
+            deferred.resolve();
+          }, function(err) {
+            deferred.reject(err);
+          });
+        }, function(err) {
+          deferred.reject(err);
+        });
+      }, function(err) {
+        deferred.reject(err);
+      });
+
+      return deferred.promise;
     }
     
     return self;

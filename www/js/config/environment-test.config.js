@@ -13,6 +13,7 @@ bitwallet_config
     var url = 'https://bsw-test.latincoin.com/api/v1';
     return url + path;
   },
-  wsurl : 'ws://bswws-test.latincoin.com/events'
+  wsurl : 'ws://bswws-test.latincoin.com/events',
+  apiPubkey : 'DVS6BaM6BKs9gBBEhZqmQj9KjAV8A8f23yeJXhnbWa4VpqEtyXHMq'
 });
 
