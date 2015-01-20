@@ -1,5 +1,5 @@
 bitwallet_services
-.factory('Scanner', function($q, T, $ionicModal, $ionicPopup, $cordovaDevice, BitShares) {
+.service('Scanner', function($q, T, $ionicModal, $ionicPopup, $cordovaDevice, BitShares) {
 
     var self = this;
     

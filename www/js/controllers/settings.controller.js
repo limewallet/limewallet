@@ -88,7 +88,14 @@ bitwallet_controllers.controller('SettingsCtrl', function($scope, Wallet, Settin
   });
 
   $scope.updateProfile = function(){
-    
+
+    var addy = Wallet.getMainAddress();
+    console.log('TOMA addy ' + JSON.stringify(addy));
+    Account.store('menchomedina', '').then(function() {
+      Account.register(addy);
+    }, function(err) {
+
+    });
   }
   
 });

@@ -1,5 +1,5 @@
 bitwallet_services
-.factory('Wallet', function($translate, $rootScope, $q, ENVIRONMENT, BitShares, ReconnectingWebSocket, MasterKey, Address, Setting, AddressBook) {
+.service('Wallet', function($translate, $rootScope, $q, ENVIRONMENT, BitShares, ReconnectingWebSocket, MasterKey, Address, Setting, AddressBook) {
     var self = this;
 
     self.data = {
@@ -32,6 +32,16 @@ bitwallet_services
 
     self.emit = function(event_id, event_data) {
       $rootScope.$emit(event_id, event_data);
+    }
+
+    self.getMainAddress = function() {
+      var res;
+      angular.forEach( Object.keys(self.data.addresses), function(addy) {
+        if( self.data.addresses[addy].deriv == -1 ) {
+          res = self.data.addresses[addy];
+        }
+      });
+      return res;
     }
 
     self.loadAccountAddresses = function() {

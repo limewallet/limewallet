@@ -1,6 +1,41 @@
 bitwallet_services
-.factory('BitShares', function($translate, $q, $http, MasterKey, $rootScope, ENVIRONMENT) {
+.service('BitShares', function($translate, $q, $http, MasterKey, $rootScope, Setting, ENVIRONMENT) {
     var self = this;
+
+    self.compactSignatureForMessage = function(msg, wif) {
+      var deferred = $q.defer();
+
+      window.plugins.BitsharesPlugin.compactSignatureForMessage(
+        function(data){
+          deferred.resolve(data.compactSignatureForHash);
+        },
+        function(error){
+          deferred.reject(error);
+        },
+        msg, 
+        wif
+      );
+    
+      return deferred.promise;
+    };
+
+    self.recoverPubkey = function(msg, signature) {
+      var deferred = $q.defer();
+
+      window.plugins.BitsharesPlugin.recoverPubkey(
+        function(data){
+          deferred.resolve(data.pubKey);
+        },
+        function(error){
+          deferred.reject(error);
+        },
+        msg, 
+        signature
+      );
+    
+      return deferred.promise;
+    };
+
 
     self.createMasterKey = function() {
       var deferred = $q.defer();
@@ -221,12 +256,22 @@ bitwallet_services
       return;
     };
 
-    self.getBalance = function(address) {
-      var url      = ENVIRONMENT.apiurl('/addrs/'+address+'/balance');
+    self.apiCall = function(url, payload) {
       var deferred = $q.defer();
-      console.log('Bitshares::getBalance ' + url);
-      $http.get(url, {timeout:ENVIRONMENT.timeout})
-      .success(function(res) {
+      console.log('Bitshares::apiCall ' + url);
+
+      var req;
+      
+      if(payload !== undefined)
+      {
+        console.log('ApiCall POST ' + JSON.stringify(payload));
+        req = $http.post(url, payload ,{timeout:ENVIRONMENT.timeout});
+      }
+      else
+        req = $http.get(url, {timeout:ENVIRONMENT.timeout});
+
+      req.success(function(res) {
+        console.log('vuelve APICALL ' + JSON.stringify(res));
         if(!angular.isUndefined(res.error))
           deferred.reject(res.error);
         else
@@ -239,6 +284,93 @@ bitwallet_services
       return deferred.promise;
     }
 
+    self.getBalance = function(address) {
+      var url = ENVIRONMENT.apiurl('/addrs/'+address+'/balance');
+      return self.apiCall(url);
+    }
+
+    self.getSignupInfo = function() {
+      var url = ENVIRONMENT.apiurl('/signup');
+      return self.apiCall(url);
+    }
+
+    self.pushSignupInfo = function(signupInfo) {
+      var url = ENVIRONMENT.apiurl('/signup');
+      return self.apiCall(url, signupInfo);
+    }
+
+    self.registerAccount = function(token, address, account) {
+      var url = ENVIRONMENT.apiurl('/account');
+
+      var payload = {
+        name       : account.name,
+        pubkey     : address.pubkey, 
+        gravatarId : account.gravatar_id,
+        token      : token
+      }
+
+      return self.apiCall(url, payload);
+    }
+
+    self.getBackendToken = function(address) {
+
+      var deferred = $q.defer();
+
+      Setting.get(Setting.BSW_TOKEN).then(function(res) {
+
+        if(res !== undefined) {
+          deferred.resolve(res.value);
+          return;
+        }
+
+        self.getSignupInfo().then(function(res) {
+          self.recoverPubkey(res.msg, res.signature).then(function(pubkey) {
+            if( pubkey != ENVIRONMENT.apiPubkey ) {
+              deferred.reject('invalid pub key');
+              return;
+            }
+            self.compactSignatureForMessage(res.msg, address.privkey).then(function(signature) {
+              var myData = {
+                message   : res.msg,
+                signature : signature,
+                pubkey    : address.pubkey
+              };
+              
+              self.pushSignupInfo(myData).then(function(res) {
+
+                if(angular.isUndefined(res.token)) {
+                  deferred.reject('invalid token');
+                  return;
+                }
+
+                Setting.set(Setting.BSW_TOKEN, res.token).then(function() {
+                  deferred.resolve(res.token);
+                }, function(err) {
+                  deferred.reject(err);
+                });
+
+              }, function(err) {
+                deferred.reject(err);
+              });
+
+            }, function(err) {
+              deferred.reject(err);
+            });
+
+          }, function(err) {
+            deferred.reject(err);
+          });
+
+        }, function(err) {
+          deferred.reject(err);
+        });
+
+      }, function(err) {
+        deferred.reject(err); 
+      });
+
+      return deferred.promise;
+    }
 
     return self;
 });
