@@ -15,10 +15,12 @@
             <div class="fab blue ">
               <i class="fa20 {{obj.asset.symbol_ui_class}} {{obj.asset.symbol_ui_text}}">{{obj.asset.symbol_ui_text}}</i>
             </div>
-            <div class="asset_data">&nbsp;{{obj.asset.fullname}} <span class="asset_balance">{{obj.asset.amount | number : 2}}</span></div>  
+            <div class="asset_data">&nbsp;{{obj.asset.fullname}} 
+              <span class="asset_balance"><i class="fa18 {{obj.asset.symbol_ui_class}}">{{obj.asset.symbol_ui_text}}</i>&nbsp;{{obj.asset.amount | number : 2}}</span>
+            </div>  
           </div>
       </div>
-      <div class="line-divider"></div>
+      <div class="" style="padding:5px;" > {{wallet.assets[selectedAsset].fullname}} addresses</div>
       <ion-scroll zooming="false" direction="y" class="addys_balances_scroll">
         <div class="list addys_balances">
           <div ng-repeat="obj in assets" id="addys_for_{{obj.asset.id}}" class="addys" ng-show="selectedAsset == obj.asset.id">

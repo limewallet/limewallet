@@ -80,7 +80,7 @@ line-height: 38px;}
   }
 .addys_empty{top:43px!important;}
 .restore_wallet_textarea{top:43px!important;bottom:67px;}
-.addys_balances_scroll{top:352px!important;}
+.addys_balances_scroll{top:372px!important;}
 
 .row75{
   height: 75% !important;
@@ -512,7 +512,11 @@ margin-bottom: 20px!important;
   z-index: 100;
 }
 
-.list.balances{margin-bottom:0px!important;}
+.list.balances{
+  margin-bottom:5px!important;
+  /*box-shadow: 0 3px 7px 0 rgba(90, 187, 92, 1);*/
+  box-shadow: 0 3px 7px 0 rgba(0, 0, 0, 0.24);
+}
 
 .list.balances .item.active
 , .list.balances .item.active .asset_balance

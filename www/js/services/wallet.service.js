@@ -44,11 +44,6 @@ bitwallet_services
           addr.balances = {};
           if(balance_addys_keys.indexOf(addr.address)>-1)
             addr.balances = self.data.addresses[addr.address].balances;
-          else
-          {
-            console.log(addr.address + ' not in:');
-            console.log(balance_addys_keys);
-          }
           new_balance_addys[addr.address] = addr;  
         });
         self.data.addresses = new_balance_addys;
