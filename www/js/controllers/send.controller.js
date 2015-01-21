@@ -271,7 +271,7 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
                 } else {
                   url = 'https://bsw.latincoin.com/api/v1/txs/send';
                 }
-                $http.post(url, r.tx)
+                $http.post(url, {tx:r.tx, secret:r.secret})
                 .success(function(r) {
                   $scope.sending_modal.hide();
                   $location.path('/home');
