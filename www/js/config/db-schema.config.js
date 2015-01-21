@@ -38,8 +38,8 @@ bitwallet_config
             columns: [
                 {name : 'id',                 type   : 'integer primary key'},
                 {name : 'name',               type   : 'text unique'},
-                {name : 'token',              type   : 'text'},
                 {name : 'gravatar_id',        type   : 'text'},
+                {name : 'registered',         type   : 'integer'},
             ]
         },
         {

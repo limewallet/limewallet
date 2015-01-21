@@ -263,7 +263,11 @@ bitwallet_services
     };
 
     self.store = function(name, gravatar_id) {
-      return DB.query('INSERT or REPLACE into account (id, name, gravatar_id) values (0,?,?)', [name, gravatar_id]);
+      return DB.query('INSERT or REPLACE into account (id, name, gravatar_id, registered) values (0,?,?,?)', [name, gravatar_id, 0]);
+    }
+    
+    self.registeredOk = function() {
+      return DB.query('INSERT or REPLACE into account (id, registered) values (0,?)', [1]);
     }
     
     self.updateGravatarId = function(gravatar_id) {
@@ -275,8 +279,13 @@ bitwallet_services
 
       console.log('Account::register');
       BitShares.getBackendToken(address).then(function(token) {
-        console.log('toma el tokan ' + token);
+        console.log('toma el token ' + token);
         self.get().then(function(account) {
+          if(account===undefined || account.name.length<1)
+          {
+            deferred.reject('Account is undefined');
+            return;
+          }
           BitShares.registerAccount(token, address, account).then(function() {
             deferred.resolve();
           }, function(err) {

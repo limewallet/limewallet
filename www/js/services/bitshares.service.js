@@ -42,6 +42,7 @@ bitwallet_services
 
       window.plugins.BitsharesPlugin.createMasterKey(
         function(data){
+          //deferred.resolve('xprv9s21ZrQH143K3ijyttwKLLMY5TXj9QxrGoEg8EbLpsSyNabQ4QrbMzFj5j5FPkc8m58AZrVo8TMH5XEYuL2bdWaD2yhgiF68f9vsMkSTkkS');
           deferred.resolve(data.masterPrivateKey);
         },
         function(error){
@@ -293,7 +294,12 @@ bitwallet_services
       var url = ENVIRONMENT.apiurl('/signup');
       return self.apiCall(url);
     }
-
+    
+    self.getAccount = function(name) {
+      var url = ENVIRONMENT.apiurl('/account/'+name);
+      return self.apiCall(url);
+    }
+    
     self.pushSignupInfo = function(signupInfo) {
       var url = ENVIRONMENT.apiurl('/signup');
       return self.apiCall(url, signupInfo);
@@ -311,7 +317,7 @@ bitwallet_services
 
       return self.apiCall(url, payload);
     }
-
+    
     self.getBackendToken = function(address) {
 
       var deferred = $q.defer();

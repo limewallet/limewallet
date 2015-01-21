@@ -41,6 +41,11 @@
   },
 
   "err" : {
+    "unavailable_name"    : "Chosen name unavailable",
+    "choose_another_name" : "Please type another name.",
+    "invalid_name"        : "Invalid name",
+    "enter_valid_name"    : "Please enter a valid name",
+    "valid_name_chars"    : "Name must contain lowercase alphanumeric characters and dashes, must start with a letter and cannot end with a dash.",
     "invalid_amount"      : "Invalid amount",
     "enter_valid_amount"  : "Please enter a valid amount",
     "invalid_address"     : "Invalid address",
@@ -67,7 +72,8 @@
     "paper_no_balance"    : "The paper wallet has no available balance",
     "invalid_asset"       : "Invalid asset",
     "invalid_asset_desc"  : "The selected asset is not currently supported",
-    "scan_valid_asset"    : "Please require and scan a valid asset"
+    "scan_valid_asset"    : "Please require and scan a valid asset",
+    "occurred"            : "An error has occurred"
   },
 
   "home" : {
@@ -178,7 +184,8 @@
   },
   
   "register":{
-    "create_account"          : "Account registration"
+    "create_account"          : "Account registration",
+    "account_registered"      : "Account registered successfully!"
   }
   
 }
