@@ -30,9 +30,12 @@
         <a class="button button-balanced button-block" href="#/app/receive">{{'g.receive' | translate | uppercase}}</a>
       </div>
     </div>
-    <div ng-hide="wallet.transactions.length" class="index_transactions">
+    <div ng-show="!wallet.transactions.length" class="index_transactions">
       <div class="display_table no_transactions"> 
-        <span class="display_table_cell vmiddle" style="text-align:center;">{{'home.no_txs' | translate}}</span>
+        <span ng-show="refresh_status==0" class="display_table_cell vmiddle" style="text-align:center;">{{'home.no_txs' | translate}}</span>
+        <span ng-show="refresh_status==1" class="display_table_cell vmiddle" style="text-align:center;"><i class="icon ion-looping"></i></span>
+        <span ng-show="refresh_status==-1" class="display_table_cell vmiddle" style="text-align:center;"><a ng-click="doRefresh()">ERROR DALE CLICKOR</a></i></span>
+          
       </div>
     </div> 
     <ion-scroll ng-hide="!wallet.transactions.length" zooming="false" direction="y" class="index_transactions transactions">

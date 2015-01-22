@@ -19,12 +19,30 @@ bitwallet_module
 
   });
 
+  $rootScope.refresh_status = 0;
+
   $rootScope.goHome = function() {
     $ionicHistory.nextViewOptions({
       disableAnimate : true,
     });
     $state.go('app.home');
   }
+
+  $rootScope.$on(Wallet.REFRESH_START, function(event, data) {
+    $rootScope.refresh_status = 1;
+    console.log('Wallet refrsh start');
+  });
+
+  $rootScope.$on(Wallet.REFRESH_DONE, function(event, data) {
+    $rootScope.refresh_status = 0;
+    console.log('Wallet refrsh done');
+  });
+
+  $rootScope.$on(Wallet.REFRESH_ERROR, function(event, data) {
+    $rootScope.refresh_status = -1;
+    console.log('Wallet refrsh error');
+  });
+
   
   $rootScope.goTo = function(param) {
     $state.go(param);
