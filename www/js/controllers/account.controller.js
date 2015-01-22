@@ -209,7 +209,7 @@ bitwallet_controllers.controller('AccountCtrl', function($translate, T, BitShare
     
     var deferred = $q.defer();
     
-    console.log('name:'+$scope.data.name + ' / ' + $scope.data.name.length);
+    //console.log('name:'+$scope.data.name + ' / ' + $scope.data.name.length);
     // Check name is not null or empty;
     if(!$scope.data.name || $scope.data.name.length<1)
     {
