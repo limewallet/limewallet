@@ -1,6 +1,17 @@
 bitwallet_controllers
 .controller('HomeCtrl', function(T, Wallet, Scanner, AddressBook, $ionicActionSheet, $scope, $state, $http, $ionicModal, $rootScope, $ionicPopup, $timeout, $location, BitShares, $q) {
-
+  
+  $scope.$watch('master_key_new', function(newValue, oldValue, scope) {
+    if(newValue===oldValue)
+      return;
+    if($scope && $scope.master_key_new)
+    {
+      $scope.master_key_new = false;
+      $state.go('app.account');
+      return;
+    }
+  });
+  
   $scope.scanQR = function() {
            
     Scanner.scan()

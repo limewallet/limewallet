@@ -67,7 +67,8 @@ bitwallet_module
 
           $rootScope.global_init = function() {
 
-            $rootScope.wallet = Wallet.data;
+            $rootScope.master_key_new   = false;
+            $rootScope.wallet           = Wallet.data;
             $rootScope.$watch(
                 function(){ return Wallet.data },
               function(newVal) {

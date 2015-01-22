@@ -1,8 +1,13 @@
 <ion-view class="dark" title="{{'menu.account'|translate}}">
-    <ion-nav-buttons side="left">
-      <!-- button menu-toggle="left" class="button button-icon icon ion-navicon"></button -->
-      <button ng-click="goHome()" class="button button-icon icon ion-ios7-arrow-back"></button>
+    <ion-nav-title>
+    </ion-nav-title>
+    <ion-nav-buttons side="left" >
+      <button ng-show="wallet.account.registered!=0" ng-click="goHome()" class="button button-icon icon ion-ios7-arrow-back"></button>
     </ion-nav-buttons>
+    <ion-nav-buttons side="right" >
+      <a ng-show="wallet.account.registered==0" class="button icon-right button-clear" href="#/app/home">{{'g.later'|translate|uppercase}}</a>
+    </ion-nav-buttons>
+    
     <ion-content class="has-header register" has-bouncing="false" scroll="false" overflow-scroll="false">
         <ion-scroll zooming="false" direction="y" class="register_details margin-bottom-buttonNOT">
           <div class="energized_bg register_container">

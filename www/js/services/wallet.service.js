@@ -286,6 +286,7 @@ bitwallet_services
                 keyData.privkey, 
                 true, 
                 'main').then(function() {
+                  $rootScope.master_key_new = true;
                   deferred.resolve({key:masterPrivateKey, deriv:-1});  
                 },function(err) {
                   //DB Error (Address::create) 
