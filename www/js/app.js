@@ -45,9 +45,6 @@ bitwallet_module
 
           $rootScope.global_init = function() {
 
-            $rootScope.name             = '';
-            $rootScope.gravatar_id      = '';
-
             $rootScope.wallet = Wallet.data;
             $rootScope.$watch(
                 function(){ return Wallet.data },

@@ -92,7 +92,8 @@ bitwallet_controllers
   };
 
   $scope.doRefresh = function() {
-    $rootScope.refreshBalance(true);
+    //$rootScope.refreshBalance(true);
+    Wallet.refreshBalance();
   };
   
   $scope.loadMore = function() {

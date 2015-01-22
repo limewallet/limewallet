@@ -1,5 +1,5 @@
 bitwallet_services
-.service('Wallet', function($translate, $rootScope, $q, ENVIRONMENT, BitShares, ReconnectingWebSocket, MasterKey, Address, Setting, AddressBook) {
+.service('Wallet', function($translate, $rootScope, $q, ENVIRONMENT, BitShares, ReconnectingWebSocket, MasterKey, Address, Setting, AddressBook, Account) {
     var self = this;
 
     self.data = {
@@ -8,7 +8,8 @@ bitwallet_services
       address_book : {},
       addresses    : {},
       transactions : [],
-      raw_txs      : {}
+      raw_txs      : {},
+      account      : {}
     }
 
     self.timeout = {
@@ -43,7 +44,7 @@ bitwallet_services
       });
       return res;
     }
-
+    
     self.loadAccountAddresses = function() {
       var deferred = $q.defer();
       Address.all().then(function(addys) {
@@ -229,7 +230,14 @@ bitwallet_services
 
             //Load addressbook
             self.loadAddressBook().then(function() {
-              deferred.resolve();
+              //deferred.resolve();
+              
+              // Load account data (bitshares accountname, photo)
+              self.loadAccount().then(function(account) {
+                deferred.resolve();
+              }, function(err) {
+                deferred.reject(err); 
+              });
             }, function(err) {
               deferred.reject(err); 
             });
@@ -469,8 +477,29 @@ bitwallet_services
        }
 
        self.data.transactions=txs;
-    }
+    };
 
+    self.loadAccount = function() {
+      self.data.account = { name          : 'unregistered', 
+                            gravatar_id   : null,
+                            registered    : 0,
+                            photo         :'img/user_empty.png'};
+                            
+      var deferred = $q.defer();
+      Account.get().then(function(result){
+        console.log('loadAccount::' + JSON.stringify(result));
+        if(result!==undefined)
+          self.data.account = { name          : result.name, 
+                                gravatar_id   : result.gravatar_id,
+                                registered    : result.registered,
+                                photo         :(result.gravatar_id===undefined || result.gravatar_id.length==0)
+                                                ?'http://robohash.org/'+result.name+'?size=56x56'
+                                                :'http://www.gravatar.com/avatar/'+result.gravatar_id+'?s=150'};
+        deferred.resolve(self.data.account);
+      });
+      return deferred.promise;
+    };
+    
     return self;
 });
 
