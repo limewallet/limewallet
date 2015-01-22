@@ -250,14 +250,6 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
                         r.tx.signatures.push(compact);
                         console.log(compact);
                       })
-                      
-                    // console.log(addy.address);
-                    // var priv = bitcoin.ECKey.fromWIF(addy.privkey);
-                    // var signature = bitcoin.ecdsa.sign(bitcoin.ECKey.curve, to_sign, priv.d);
-                    // var i = bitcoin.ecdsa.calcPubKeyRecoveryParam(bitcoin.ECKey.curve, priv.d.constructor.fromBuffer(to_sign), signature, priv.pub.Q);
-                    // var compact = signature.toCompact(i, priv.pub.compressed).toString('hex');
-                    // console.log(compact);
-                    // r.tx.signatures.push(compact);
                   });
                 prom.push(p);
               });

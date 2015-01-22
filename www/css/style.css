@@ -479,8 +479,8 @@ margin-bottom: 20px!important;
 }
 
 .list.settings img.avatar_rounded{
-  max-width: 150px;
-  max-height: 150px;
+  width: 150px;
+  height: 150px;
   border-radius: 75px;
   background-color: whitesmoke;
 }

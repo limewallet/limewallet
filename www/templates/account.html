@@ -33,6 +33,8 @@
                 <div style="width:150px;text-align:center;margin:0 auto;">
                   <img class="avatar_rounded" src="http://robohash.org/{{data.watch_name}}?size=150x150" ng-show="data.name && !data.use_gravatar" />
                   <img class="avatar_rounded" src="http://www.gravatar.com/avatar/{{data.gravatar_id}}?s=150" ng-show="data.use_gravatar" />
+                  <!-- &d=http%3A%2F%2Fwww.gravatar.com%2Favatar%2F283b8a1ba9e2fe4bcc24e1810e4d335f.png -->
+                  
                   <img class="avatar_rounded" src="img/user_empty.png" ng-show="!data.use_gravatar && !data.name" />
                 </div>
               </div>
@@ -53,7 +55,7 @@
           </div>
         </ion-scroll>
       
-        <button ng-click="registerAccount()" class="button button-block button-energized no-margin hide-on-keyboard-open" style="position:absolute;bottom:0px;">
+        <button ng-disabled="!data.can_update" ng-click="updateOrRegisterAccount()" class="button button-block button-energized no-margin hide-on-keyboard-open" style="position:absolute;bottom:0px;">
           {{(wallet.account.registered!=0)?('g.update'|translate|uppercase):('g.register'|translate|uppercase)}}
         </button>
     </ion-content>

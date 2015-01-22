@@ -27,6 +27,7 @@
     "unable_to_refresh"   : "Unable to refresh",
     "loading"             : "Loading",
     "registering"         : "Registration in progress",
+    "updating"            : "Update in progress",
     "default"             : "Default",
     "asset"               : "Asset",
     "register"            : "Register",
@@ -50,6 +51,8 @@
     "choose_another_name" : "Please type another name.",
     "invalid_name"        : "Invalid name",
     "enter_valid_name"    : "Please enter a valid name",
+    "invalid_email"       : "Invalid email",
+    "enter_valid_email"   : "Please enter a valid email",
     "valid_name_chars"    : "Name must contain lowercase alphanumeric characters and dashes, must start with a letter and cannot end with a dash.",
     "invalid_amount"      : "Invalid amount",
     "enter_valid_amount"  : "Please enter a valid amount",
@@ -191,6 +194,7 @@
   "register":{
     "create_account"          : "Account registration",
     "edit_account"            : "photo edition",
+    "account_updated"         : "Account updated successfully!",
     "account_registered"      : "Account registered successfully!"
   }
   

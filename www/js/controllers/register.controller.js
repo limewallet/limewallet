@@ -12,12 +12,15 @@ bitwallet_controllers
   }
   
   
-  var name_timeout = null;
+  var name_timeout = undefined;
   $scope.$watch('data.name', function(newValue, oldValue, scope) {
     if(newValue===oldValue)
       return;
     if(name_timeout)
-      name_timeout = null;
+    {
+      $timeout.cancel(name_timeout);
+      name_timeout = undefined;
+    }
     name_timeout = $timeout(function () {
       scope.data.watch_name = newValue;
       $timeout(function () {
@@ -26,12 +29,15 @@ bitwallet_controllers
     }, 1000);
   });
   
-  var gravatar_timeout = null;
+  var gravatar_timeout = undefined;
   $scope.$watch('data.gravatar_mail', function(newValue, oldValue, scope) {
     if(newValue===oldValue)
       return;
     if(gravatar_timeout)
-      gravatar_timeout = null;
+    {
+      $timeout.cancel(gravatar_timeout);
+      gravatar_timeout = undefined;
+    }
     gravatar_timeout = $timeout(function () {
       scope.data.gravatar_id = scope.gravatarMD5(newValue);
       $timeout(function () {
