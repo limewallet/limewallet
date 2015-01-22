@@ -33,10 +33,6 @@ bitwallet_controllers
     });
   }
 
-  $rootScope.$on('refresh-done', function(event, data) {
-    $scope.$broadcast('scroll.refreshComplete');
-  });
-
   $rootScope.$on('address-book-changed', function(event, data) {
     Wallet.onAddressBookChanged();
   });
@@ -92,8 +88,14 @@ bitwallet_controllers
   };
 
   $scope.doRefresh = function() {
-    //$rootScope.refreshBalance(true);
-    Wallet.refreshBalance();
+    Wallet.refreshBalance()
+    .then(function() {
+      $scope.$broadcast('scroll.refreshComplete');
+      window.plugins.toast.show( T.i('g.updated'), 'short', 'bottom');
+    }, function(err) {
+      $scope.$broadcast('scroll.refreshComplete');
+      window.plugins.toast.show( T.i('g.unable_to_refresh'), 'long', 'bottom');
+    });
   };
   
   $scope.loadMore = function() {

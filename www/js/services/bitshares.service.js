@@ -291,6 +291,11 @@ bitwallet_services
       return self.apiCall(url);
     }
 
+    self.getBalanceForAsset = function(address, asset_id) {
+      var url = ENVIRONMENT.apiurl('/addrs/'+address+'/balance/' + asset_id);
+      return self.apiCall(url);
+    }
+
     self.getSignupInfo = function() {
       var url = ENVIRONMENT.apiurl('/signup');
       return self.apiCall(url);

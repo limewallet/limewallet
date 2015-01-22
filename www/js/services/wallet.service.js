@@ -3,13 +3,13 @@ bitwallet_services
     var self = this;
 
     self.data = {
-      assets       : {},
-      asset        : {},
-      address_book : {},
-      addresses    : {},
-      transactions : [],
-      raw_txs      : {},
-      account      : {}
+      assets        : {},
+      asset         : {},
+      address_book  : {},
+      addresses     : {},
+      transactions  : [],
+      raw_txs       : {},
+      account       : {},
     }
 
     self.timeout = {
@@ -17,10 +17,14 @@ bitwallet_services
       refresh : 0
     };
 
+    self.setRefreshing = function(param) {
+      self.is_refreshing.val = param;
+    }
+
     self.switchAsset = function(asset_id) {
       self.data.transactions = [],
       self.setDefaultAsset(asset_id);
-      return self.refreshBalance();
+      return self.refreshBalance(true);
     }
 
     self.setDefaultAsset = function(asset_id) {
@@ -30,6 +34,9 @@ bitwallet_services
 
     self.ADDRESS_BOOK_CHANGE = 'w-address-book-changed';
     self.NEW_BALANCE         = 'w-new-balance';
+    self.REFRESH_START       = 'w-refresh-start';
+    self.REFRESH_DONE        = 'w-refresh-done';
+    self.REFRESH_ERROR       = 'w-refresh-error';
 
     self.emit = function(event_id, event_data) {
       $rootScope.$emit(event_id, event_data);
@@ -328,8 +335,10 @@ bitwallet_services
     self.refreshBalance = function() {
       var deferred = $q.defer();
 
+      self.emit(self.REFRESH_START);
+
       self.getMasterPubkey().then(function(res) {
-        BitShares.getBalance(res.masterPubkey+':'+res.deriv).then(function(res) {
+        BitShares.getBalanceForAsset(res.masterPubkey+':'+res.deriv, self.data.asset.id).then(function(res) {
 
           //Update assets balance
           res.balances.forEach(function(bal){
@@ -352,11 +361,14 @@ bitwallet_services
           self.buildTxList(res, self.data.asset.id);
 
           deferred.resolve();
+          self.emit(self.REFRESH_DONE);
         }, function(err) {
           deferred.reject(err);
+          self.emit(self.REFRESH_ERROR);
         })
       }, function(err) {
         deferred.reject(err); 
+        self.emit(self.REFRESH_ERROR);
       });
 
       return deferred.promise;
