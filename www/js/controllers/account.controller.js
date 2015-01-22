@@ -1,5 +1,11 @@
-bitwallet_controllers.controller('AccountCtrl', function($translate, T, BitShares, $scope, $rootScope, $http, $timeout, $ionicPopup, $ionicLoading, $q, Account, Wallet, $interval) {
-  $scope.data = { name:'', gravatar_id:'', use_gravatar:false, initial_name:'', watch_name:'',  gravatar_mail:'', profile_changed:false};
+bitwallet_controllers.controller('AccountCtrl', function($translate, T, BitShares, $scope, $http, $timeout, $ionicPopup, $ionicLoading, $q, Account, Wallet, $interval, Address) {
+  $scope.data = { name            : $scope.wallet.account.name, 
+                  gravatar_id     : $scope.wallet.account.gravatar_id, 
+                  use_gravatar    : !($scope.wallet.account.gravatar_id===undefined || $scope.wallet.account.gravatar_id==null || $scope.wallet.account.gravatar_id.length==0), 
+                  initial_name    : $scope.wallet.account.name, 
+                  watch_name      : $scope.wallet.account.name,  
+                  gravatar_mail   : '', 
+                  can_update      : false};
   
   // Generate MD5 for gravatar email.
   $scope.gravatarMD5 = function(value){
@@ -11,30 +17,37 @@ bitwallet_controllers.controller('AccountCtrl', function($translate, T, BitShare
   }
   
   
-  var name_timeout = null;
+  var name_timeout = undefined;
   $scope.$watch('data.name', function(newValue, oldValue, scope) {
     if(newValue===oldValue)
       return;
     if(name_timeout)
-      name_timeout = null;
+    {
+      $timeout.cancel(name_timeout);
+      name_timeout = undefined;
+    }
     name_timeout = $timeout(function () {
-      scope.data.watch_name = newValue;
+      $scope.data.watch_name = newValue;
       $timeout(function () {
-        $scope.data.profile_changed = true;
+        $scope.data.can_update = true;
       }, 500);
     }, 1000);
   });
   
-  var gravatar_timeout = null;
+  var gravatar_timeout = undefined;
   $scope.$watch('data.gravatar_mail', function(newValue, oldValue, scope) {
     if(newValue===oldValue)
       return;
     if(gravatar_timeout)
-      gravatar_timeout = null;
+    {
+      $timeout.cancel(gravatar_timeout);
+      gravatar_timeout = undefined;
+    }
     gravatar_timeout = $timeout(function () {
-      scope.data.gravatar_id = scope.gravatarMD5(newValue);
+      $scope.data.gravatar_id = $scope.gravatarMD5(newValue);
+      
       $timeout(function () {
-        $scope.data.profile_changed = true;
+        $scope.data.can_update = true;
       }, 500);
     }, 1000);
   });
@@ -61,7 +74,7 @@ bitwallet_controllers.controller('AccountCtrl', function($translate, T, BitShare
     
   $scope.showLoading = function(){
     $ionicLoading.show({
-      template     : '<i class="icon ion-looping"></i> ' + T.i('g.registering'),
+      template     : '<i class="icon ion-looping"></i> ' + T.i($scope.wallet.account.registered==0?'g.registering':'g.updating'),
       animation    : 'fade-in',
       showBackdrop : true,
       maxWidth     : 200,
@@ -72,7 +85,108 @@ bitwallet_controllers.controller('AccountCtrl', function($translate, T, BitShare
   $scope.hideLoading = function(){
     $ionicLoading.hide();
   }
+   
+  $scope.updateOrRegisterAccount = function(){
+    if($scope.wallet.account.registered==0)
+      $scope.registerAccount();
+    else
+      $scope.updateAccount();
+  }
+  
+  //Update
+  $scope.updateAccount = function(){
+    $scope.showLoading();
+    $scope.doUpdateAccount().then(function(){
+      $scope.hideLoading();
+      Wallet.loadAccount();
+      $scope.goHome();
+      window.plugins.toast.show( T.i('register.account_updated'), 'long', 'bottom');
+    }, function(error){
+      $scope.hideLoading();
+      $ionicPopup.alert({
+         title    : T.i(error.title) + ' <i class="fa fa-warning float_right"></i>',
+         template : T.i(error.message),
+         okType   : 'button-assertive', 
+       });
+       return;
+    });
+  }
+  
+  $scope.doUpdateAccount = function(){
     
+    var deferred = $q.defer();
+    
+    // Check name is not null or empty;
+    if(!$scope.data.gravatar_mail || $scope.data.gravatar_mail.length<1)
+    {
+      deferred.reject({title:'err.invalid_email', message:'err.enter_valid_email'});
+      return deferred.promise;
+    }
+      
+    Account.updateGravatarId($scope.data.gravatar_id).then(function(){
+      var addys         = [];
+      var addys_keys    = Object.keys($scope.wallet.addresses);
+      for(var i=0; i<addys_keys.length; i++) {
+        var address     = {address:addys_keys[i]};
+        addys.push(address);
+      }
+      var assets        = [];
+      var assets_keys   = Object.keys($scope.wallet.assets);
+      for(var i=0; i<assets_keys.length; i++) {
+        assets.push(parseInt(assets_keys[i]));
+      }
+      var address = Wallet.getMainAddress();
+      Account.update(address, addys, assets).then(function(result){
+        if(result===undefined || !result.required_signatures || result.required_signatures===undefined || result.required_signatures.length==0 )
+        {
+          Account.clearGravatarId().then(function(){
+            deferred.reject({title:'err.occurred', message:'err.account_registration'});
+          });
+          return;
+        }
+        var prom = [];
+        result.tx.signatures = [];
+        angular.forEach(result.required_signatures, function(req_addy) {
+          var p = Address.by_address(req_addy)
+            .then(function(addy) {
+              return BitShares.compactSignatureForHash(result.to_sign, addy.privkey)
+                .then(function(compact){
+                  console.log(addy.address);
+                  result.tx.signatures.push(compact);
+                  console.log(compact);
+                })
+            });
+          prom.push(p);
+        });
+
+        $q.all(prom).then(function() {
+          BitShares.getBackendToken(address).then(function(token) {
+            BitShares.sendTx(token, result.secret, result.tx).then(function(result) {
+              //console.log(JSON.stringify(result));
+              deferred.resolve(result);
+            }, function(err) {
+              deferred.reject({title:'err.occurred', message:err});
+            });
+          }, function(err) {
+            deferred.reject({title:'err.occurred', message:err});
+          });
+        },function(error) {
+          deferred.reject({title:'err.occurred', message:error});
+        })
+      },function(error){
+        deferred.reject({title:'err.occurred', message:error});
+        return;
+      });
+          
+    },
+    function(error){
+      deferred.reject({title:'err.occurred', message:error});
+    });
+      
+    return deferred.promise;
+  }
+  
+  // Register
   $scope.registerAccount = function(){
     $scope.showLoading();
     $scope.doRegisterAccount().then(function(){

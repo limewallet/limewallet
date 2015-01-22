@@ -43,8 +43,8 @@ bitwallet_services
       window.plugins.BitsharesPlugin.createMasterKey(
         function(data){
           //deferred.resolve('xprv9s21ZrQH143K3ijyttwKLLMY5TXj9QxrGoEg8EbLpsSyNabQ4QrbMzFj5j5FPkc8m58AZrVo8TMH5XEYuL2bdWaD2yhgiF68f9vsMkSTkkS'); // unknown
-          //deferred.resolve('xprv9s21ZrQH143K28Eo8MEiEbchHxrSFDFMtb73UEh5htu9vzrqpReaeS5vmJHi7aipUb9ck3FTfoj3AQJhdWJ7HL6ywwsuYdMupmPv13osE5c'); // daniel-hadad
-          deferred.resolve(data.masterPrivateKey);
+          deferred.resolve('xprv9s21ZrQH143K28Eo8MEiEbchHxrSFDFMtb73UEh5htu9vzrqpReaeS5vmJHi7aipUb9ck3FTfoj3AQJhdWJ7HL6ywwsuYdMupmPv13osE5c'); // daniel-hadad
+          //deferred.resolve(data.masterPrivateKey);
         },
         function(error){
           deferred.reject(error);
@@ -319,6 +319,32 @@ bitwallet_services
         pubkey     : address.pubkey, 
         gravatarId : account.gravatar_id,
         token      : token
+      }
+
+      return self.apiCall(url, payload);
+    }
+    
+    self.updateAccount = function(token, addys, assets, account) {
+      var url = ENVIRONMENT.apiurl('/txs/update_account');
+
+      var payload = {
+        pay_from      : addys,
+        pay_in        : assets, 
+        name          : account.name,
+        public_data   : {gravatarId:account.gravatar_id},
+        token         : token
+      }
+
+      return self.apiCall(url, payload);
+    }
+    
+    self.sendTx = function(token, secret, tx) {
+      var url = ENVIRONMENT.apiurl('/txs/send');
+
+      var payload = {
+        secret      : secret,
+        tx          : tx,
+        token       : token
       }
 
       return self.apiCall(url, payload);
