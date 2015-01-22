@@ -1,6 +1,6 @@
 bitwallet_controllers.controller('SettingsCtrl', function($scope, Wallet, Setting, $rootScope, Account, $ionicModal, $timeout, T) {
   
-  $scope.data = {assets:[], selected_asset:{}, name:'', gravatar_id:'', use_gravatar:false, initial_name:'', watch_name:'',  gravatar_mail:'', profile_changed:false, hide_balance:false};
+  $scope.data = {assets:[], selected_asset:{}, hide_balance:false};
   
   $scope.loadViewData = function() {
     var wallet = $scope.wallet;
@@ -36,66 +36,5 @@ bitwallet_controllers.controller('SettingsCtrl', function($scope, Wallet, Settin
   }
   
   $scope.loadViewData();
-  
-  // Generate MD5 for gravatar email.
-  $scope.gravatarMD5 = function(value){
-    if(!value || value.length==0)
-    {
-      return '';
-    }
-    return md5(value.toLowerCase());
-  }
-  
-  var name_timeout = null;
-  $scope.$watch('data.name', function(newValue, oldValue, scope) {
-    if(newValue===oldValue)
-      return;
-    
-    if(name_timeout)
-      name_timeout = null;
-    name_timeout = $timeout(function () {
-      scope.data.watch_name = newValue;
-      $timeout(function () {
-        $scope.data.profile_changed = true;
-      }, 500);
-    }, 1000);
-    
-    
-    
-  });
-  
-  var gravatar_timeout = null;
-  $scope.$watch('data.gravatar_mail', function(newValue, oldValue, scope) {
-    if(newValue===oldValue)
-      return;
-    if(gravatar_timeout)
-      gravatar_timeout = null;
-    gravatar_timeout = $timeout(function () {
-      scope.data.gravatar_id = scope.gravatarMD5(newValue);
-      $timeout(function () {
-        $scope.data.profile_changed = true;
-      }, 500);
-    }, 1000);
-    
-  });
-  
-  $scope.$watch('data.use_gravatar', function(newValue, oldValue, scope) {
-    if(newValue===oldValue)
-      return;
-    $timeout(function () {
-      $scope.data.profile_changed = true;
-    }, 500);
-  });
-
-  $scope.updateProfile = function(){
-
-    var addy = Wallet.getMainAddress();
-    console.log('TOMA addy ' + JSON.stringify(addy));
-    Account.store('menchomedina', '').then(function() {
-      Account.register(addy);
-    }, function(err) {
-
-    });
-  }
   
 });

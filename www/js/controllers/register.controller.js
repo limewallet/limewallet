@@ -1,5 +1,5 @@
 bitwallet_controllers
-.controller('RegisterCtrl', function($translate, T, BitShares, $scope, $rootScope, $http, $timeout, $ionicPopup, $ionicLoading, $q, Account, Wallet) {
+.controller('RegisterCtrl', function($translate, T, BitShares, $scope, $rootScope, $http, $timeout, $ionicPopup, $ionicLoading, $q, Account, Wallet, $interval) {
   $scope.data = { name:'', gravatar_id:'', use_gravatar:false, initial_name:'', watch_name:'',  gravatar_mail:'', profile_changed:false};
   
   // Generate MD5 for gravatar email.
@@ -16,7 +16,6 @@ bitwallet_controllers
   $scope.$watch('data.name', function(newValue, oldValue, scope) {
     if(newValue===oldValue)
       return;
-    
     if(name_timeout)
       name_timeout = null;
     name_timeout = $timeout(function () {
@@ -25,9 +24,6 @@ bitwallet_controllers
         $scope.data.profile_changed = true;
       }, 500);
     }, 1000);
-    
-    
-    
   });
   
   var gravatar_timeout = null;
@@ -66,7 +62,7 @@ bitwallet_controllers
     
   $scope.showLoading = function(){
     $ionicLoading.show({
-      template     : '<i class="icon ion-looping"></i> ' + T.i('g.loading'),
+      template     : '<i class="icon ion-looping"></i> ' + T.i('g.registering'),
       animation    : 'fade-in',
       showBackdrop : true,
       maxWidth     : 200,
@@ -82,6 +78,7 @@ bitwallet_controllers
     $scope.showLoading();
     $scope.doRegisterAccount().then(function(){
       $scope.hideLoading();
+      Wallet.loadAccount();
       $scope.goHome();
       window.plugins.toast.show( T.i('register.account_registered'), 'long', 'bottom');
     }, function(error){
@@ -116,27 +113,54 @@ bitwallet_controllers
       return deferred.promise;;
     }
     
+    var account_reg_interval;
+    var account_reg_count = 10;
     // validate name
     $scope.isNameAvailable($scope.data.name).then(
       function(){
         Account.store($scope.data.name, $scope.data.gravatar_id).then(function(){
           var addy = Wallet.getMainAddress();
-          Account.register(addy).then(function(){
-            /*
-              stop = $interval(function() {
+          Account.register(addy).then(function(result){
+            console.log('register.controller.js::register [Account.register OK]');
+            if(result===undefined || !result.txid || result.txid===undefined || result.txid.length==0 )
+            {
+              console.log('register.controller.js::register [Account.register result is NULL]');
+              Account.clear().then(function(){
+                deferred.reject({title:'err.occurred', message:'err.account_registration'});
+              });
+              return;
+            }
             
-              stop=undefined;
-              
-            }, 1000);
-            */
-            Account.registeredOk().then(function(){
-              return deferred.resolve();
-            },function(error){
-              return deferred.resolve();
-            });
+            // Se pudo registrar, nos colgamos de un interval para validar que la transaccion se propago encuestando a account.
+            account_reg_interval = $interval(function() {
+              console.log('register.controller.js::register [INTERVAL:'+account_reg_count+']');
+              BitShares.getAccount($scope.data.name).then(function(){
+                console.log('register.controller.js::register [INTERVAL: Bitshares.getAccount OK]');
+                $interval.cancel(account_reg_interval);
+                account_reg_interval=undefined;
+                Account.registeredOk().then(function(){
+                  return deferred.resolve();
+                },function(error){
+                  return deferred.resolve();
+                });
+              },
+              function(error){
+                account_reg_count-=1;
+                console.log('register.controller.js::register [INTERVAL: Bitshares.getAccount ERROR]');
+                if(account_reg_count==0)
+                {  
+                  $interval.cancel(account_reg_interval);
+                  account_reg_interval=undefined;
+                  Account.clear().then(function(){
+                    deferred.reject({title:'err.occurred', message:'err.account_registration'});
+                  });
+                  return;
+                }
+              });            
+            }, 3000);
           },function(error){
             
-            deferred.reject({title:'err.occurred', message:error});
+            deferred.reject({title:'err.occurred', message:error=='unknown error'?'err.duplicate_key':error});
             return;
           });
               

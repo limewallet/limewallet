@@ -8,7 +8,7 @@
   <ion-side-menu side="left">
     <ion-header-bar class="bar bar-header bar-dark menu_header ">
       <!-- h1 class="title" style="text-align:left;"><i class="icon fa18 fa fa-gears"></i>&nbsp;&nbsp;{{'menu.settings'|translate}}</h1 -->
-      <div class="menu_container">
+      <div class="menu_container" nav-clear menu-close ng-click="goTo('app.account')">
         <div class="menu_avatar"> <img src="{{wallet.account.photo}}" alt="" /> </div>
         <div class="menu_name"> <label for="">{{wallet.account.name}}</label></div>
       </div>
@@ -23,7 +23,7 @@
           {{'menu.address_book'|translate}}
           <i class="icon fa18 fa fa-book"></i>
         </ion-item>
-        <ion-item nav-clear menu-close href="#/app/settings/account" class="item-icon-right">
+        <ion-item nav-clear menu-close href="#/app/assets" class="item-icon-right">
           {{'menu.assets'|translate}}
           <i class="icon fa18 fa fa-bank"></i>
         </ion-item>

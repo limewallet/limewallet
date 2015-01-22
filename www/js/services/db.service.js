@@ -28,7 +28,7 @@ bitwallet_services
 
             var p = self.query(query)
             .then(function() {
-              console.log('Table ' + table.name + ' initialized');
+              //console.log('Table ' + table.name + ' initialized');
               if(table.rows !== undefined && table.rows.length > 0 ) {
 
                 var mproms = [];
@@ -266,8 +266,12 @@ bitwallet_services
       return DB.query('INSERT or REPLACE into account (id, name, gravatar_id, registered) values (0,?,?,?)', [name, gravatar_id, 0]);
     }
     
+    self.clear = function() {
+      return DB.query('DELETE from account');
+    }
+    
     self.registeredOk = function() {
-      return DB.query('INSERT or REPLACE into account (id, registered) values (0,?)', [1]);
+      return DB.query('UPDATE account set registered=1 where id=0');
     }
     
     self.updateGravatarId = function(gravatar_id) {
@@ -278,7 +282,7 @@ bitwallet_services
       var deferred = $q.defer();
       console.log('Account::register');
       BitShares.getBackendToken(address).then(function(token) {
-        console.log('toma el token ' + token);
+        //console.log('toma el token ' + token);
         self.get().then(function(account) {
           if(account===undefined || account.name.length<1)
           {
@@ -286,8 +290,8 @@ bitwallet_services
             return;
           }
           BitShares.registerAccount(token, address, account).then(function(result) {
-            console.log(JSON.stringify(result));
-            deferred.resolve();
+            //console.log(JSON.stringify(result));
+            deferred.resolve(result);
             
           }, function(err) {
             deferred.reject(err);

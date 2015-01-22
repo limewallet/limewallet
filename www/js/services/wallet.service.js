@@ -481,7 +481,7 @@ bitwallet_services
 
     self.loadAccount = function() {
       self.data.account = { name          : 'unregistered', 
-                            gravatar_id   : null,
+                            gravatar_id   : undefined,
                             registered    : 0,
                             photo         :'img/user_empty.png'};
                             
@@ -492,7 +492,7 @@ bitwallet_services
           self.data.account = { name          : result.name, 
                                 gravatar_id   : result.gravatar_id,
                                 registered    : result.registered,
-                                photo         :(result.gravatar_id===undefined || result.gravatar_id.length==0)
+                                photo         :(result.gravatar_id===undefined || result.gravatar_id===null || result.gravatar_id.length==0)
                                                 ?'http://robohash.org/'+result.name+'?size=56x56'
                                                 :'http://www.gravatar.com/avatar/'+result.gravatar_id+'?s=150'};
         deferred.resolve(self.data.account);

@@ -26,9 +26,11 @@
     "updated"             : "Updated",
     "unable_to_refresh"   : "Unable to refresh",
     "loading"             : "Loading",
+    "registering"         : "Registration in progress",
     "default"             : "Default",
     "asset"               : "Asset",
     "register"            : "Register",
+    "update"              : "Update",
     "later"               : "Later",
     "currency"                : "Currency",
     "balance"                 : "Balance",
@@ -42,6 +44,8 @@
   },
 
   "err" : {
+    "duplicate_key"       : "Are you restoring a wallet already registered? Remember name and master key are both unique in the network.<br/> If not, please try again.",
+    "account_registration": "Account registration could not be completed. Please try again.",
     "unavailable_name"    : "Chosen name unavailable",
     "choose_another_name" : "Please type another name.",
     "invalid_name"        : "Invalid name",
@@ -186,6 +190,7 @@
   
   "register":{
     "create_account"          : "Account registration",
+    "edit_account"            : "photo edition",
     "account_registered"      : "Account registered successfully!"
   }
   

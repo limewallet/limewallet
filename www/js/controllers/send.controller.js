@@ -149,7 +149,7 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
         // template : T.i('err.enter_valid_address'),
         // okType   : 'button-assertive',
       // });
-      console.log('no habia nada');
+      //console.log('no habia nada');
 
       return deferred.promise;
 

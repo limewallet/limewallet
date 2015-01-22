@@ -25,6 +25,10 @@ bitwallet_module
     });
     $state.go('app.home');
   }
+  
+  $rootScope.goTo = function(param) {
+    $state.go(param);
+  }
 
 })
 
@@ -145,17 +149,6 @@ bitwallet_module
       }
     })
     
-    .state('app.account', {
-      url: "/settings/account",
-      views: {
-        'menuContent' :{
-          //templateUrl: "templates/settings.account.html",
-          templateUrl: "templates/account.html",
-          controller: 'AccountCtrl'
-        }
-      }
-    })
-    
     .state('app.settings', {
       url: "/settings",
       views: {
@@ -167,10 +160,10 @@ bitwallet_module
     })
     
     .state('app.assets', {
-      url: "/settings/assets",
+      url: "/assets",
       views: {
         'menuContent' :{
-          templateUrl: "templates/settings.assets.html",
+          templateUrl: "templates/assets.html",
           controller: 'AssetsCtrl'
         }
       }
@@ -244,6 +237,18 @@ bitwallet_module
                 templateUrl: "templates/register.html",
                 //templateUrl: "index.html",
                 controller: 'RegisterCtrl'
+            }
+      }
+    })
+    
+    .state('app.account', {
+      cache:  false,
+      url:    "/account",
+      views: {
+              'menuContent' :{
+                templateUrl: "templates/account.html",
+                //templateUrl: "index.html",
+                controller: 'AccountCtrl'
             }
       }
     })

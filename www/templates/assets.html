@@ -1,0 +1,45 @@
+<ion-view class="dark" title="{{'menu.assets'|translate}}">
+    <ion-nav-buttons side="left">
+      <button ng-click="goHome()" class="button button-icon icon ion-ios7-arrow-back"></button>
+    </ion-nav-buttons>
+    <ion-nav-buttons side="right">
+      <button class="button button-icon icon ion-ios7-plus-outline" ng-click="newAddr()"></button>
+    </ion-nav-buttons>
+    
+    <ion-content class="has-header assets" has-bouncing="false">
+    
+      <div class="list balances">
+          <div ng-repeat="obj in assets" class="item" ng-class="{'active':selectedAsset == obj.asset.id}"
+                    ng-click="showAddys(obj.asset.id)"
+                    ng-class="{active: isAssetActive(obj.asset)}">
+            <div class="fab blue ">
+              <i class="fa20 {{obj.asset.symbol_ui_class}} {{obj.asset.symbol_ui_text}}">{{obj.asset.symbol_ui_text}}</i>
+            </div>
+            <div class="asset_data">&nbsp;{{obj.asset.symbol}} 
+              <span class="asset_balance"><i class="fa18 {{obj.asset.symbol_ui_class}}">{{obj.asset.symbol_ui_text}}</i>&nbsp;{{obj.asset.amount | number : 2}}</span>
+            </div>  
+          </div>
+      </div>
+      <div class="assets_by_address_title" > 
+        Balance by address
+      </div>
+      <ion-scroll zooming="false" direction="y" class="addys_balances_scroll">
+        <div class="list addys_balances">
+          <div ng-repeat="obj in assets" id="addys_for_{{obj.asset.id}}" class="addys" ng-show="selectedAsset == obj.asset.id">
+            <div ng-repeat="item in obj.items" class="item">
+              <a ng-click="showActionSheet(item.addy)">
+                <h2 class="energizedNOT" ng-show="item.addy.label && item.addy.label.length>0">{{item.addy.label}} 
+                  <span style="float:right;font-weight:300;"><i class="fa16 {{obj.asset.symbol_ui_class}}">{{obj.asset.symbol_ui_text}}</i>&nbsp;{{item.balance | number : 2}}</span> 
+                </h2>
+                <h2 class="energizedNOT" ng-show="!item.addy.label || item.addy.label.length<=0">Address #{{$index+1}} 
+                  <span style="float:right;font-weight:300;"><i class="fa16 {{obj.asset.symbol_ui_class}}">{{obj.asset.symbol_ui_text}}</i>&nbsp;{{item.balance | number : 2}}</span> 
+                </h2>
+                <h4><!--span ng-if="item.addy.is_favorite==1" class="float_left"> <i style="color:#5abb5c;" class="fa fa-check"></i></span>&nbsp;-->{{item.addy.address}} </h4>
+              </a>
+            </div>
+          </div>
+        </div>
+      </ion-scroll>
+    </ion-content>
+  </ion-view>
+  
