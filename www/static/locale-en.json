@@ -85,6 +85,8 @@
   },
 
   "home" : {
+    "tap_to_refresh"  : "Tap to refresh",
+    "show_balance"    : "Show balance",
     "balance"         : "{{asset}} BALANCE",
     "no_txs"          : "No transactions yet",
     "pull_to_refresh" : "Pull to refresh...",

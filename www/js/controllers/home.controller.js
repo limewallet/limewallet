@@ -12,6 +12,32 @@ bitwallet_controllers
     }
   });
   
+  $scope.$on( '$ionicView.beforeEnter', function(){
+    if(!$scope || !$scope.wallet || !$scope.wallet.ui)
+      return;
+    if(!$scope.wallet.ui.balance.allow_hide)
+    { 
+      $scope.wallet.ui.balance.hidden = false;
+      return;
+    }
+    $scope.wallet.ui.balance.hidden = true;
+    
+  });
+  
+  $timeout(function () {
+    $scope.wallet.initialized = true;
+  }, 2000); 
+  
+  $scope.toggleBalance = function(){
+    if($scope.wallet.ui.balance.allow_hide)
+    {
+      $scope.wallet.ui.balance.hidden = !$scope.wallet.ui.balance.hidden;
+      return;
+    }
+    if($scope.wallet.ui.balance.hidden)
+      $scope.wallet.ui.balance.hidden = false;
+  }
+  
   $scope.scanQR = function() {
            
     Scanner.scan()
@@ -113,7 +139,7 @@ bitwallet_controllers
     //$scope.$broadcast('scroll.infiniteScrollComplete');
     return;
   };
-
+  
   $scope.$on('$stateChangeSuccess', function() {
     //return;
     $scope.loadMore();

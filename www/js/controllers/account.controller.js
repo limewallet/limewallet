@@ -52,6 +52,22 @@ bitwallet_controllers.controller('AccountCtrl', function($translate, T, BitShare
     }, 1000);
   });
   
+  var use_gravatar_timeout = undefined;
+  $scope.$watch('data.use_gravatar', function(newValue, oldValue, scope) {
+    if(newValue===oldValue)
+      return;
+    if(use_gravatar_timeout)
+    {
+      $timeout.cancel(use_gravatar_timeout);
+      use_gravatar_timeout = undefined;
+    }
+    if($scope.wallet.account.gravatar_id===undefined || $scope.wallet.account.gravatar_id==null || $scope.wallet.account.gravatar_id.length<1)
+      return;
+    use_gravatar_timeout = $timeout(function () {
+      $scope.data.can_update = true;
+    }, 1000);
+  });
+  
   $scope.isNameAvailable = function(name) {
     var deferred = $q.defer();
     BitShares.getAccount($scope.data.name).then(
@@ -117,7 +133,7 @@ bitwallet_controllers.controller('AccountCtrl', function($translate, T, BitShare
     var deferred = $q.defer();
     
     // Check name is not null or empty;
-    if(!$scope.data.gravatar_mail || $scope.data.gravatar_mail.length<1)
+    if($scope.data.use_gravatar && (!$scope.data.gravatar_mail || $scope.data.gravatar_mail.length<1))
     {
       deferred.reject({title:'err.invalid_email', message:'err.enter_valid_email'});
       return deferred.promise;

@@ -3,13 +3,15 @@ bitwallet_services
     var self = this;
 
     self.data = {
-      assets        : {},
-      asset         : {},
-      address_book  : {},
-      addresses     : {},
-      transactions  : [],
-      raw_txs       : {},
-      account       : {},
+      assets            : {},
+      asset             : {},
+      address_book      : {},
+      addresses         : {},
+      transactions      : [],
+      raw_txs           : {},
+      account           : {},
+      ui                : { balance:  { hidden:false, allow_hide:false  } },
+      initialized  : false
     }
 
     self.timeout = {
@@ -31,13 +33,31 @@ bitwallet_services
       self.data.asset = self.data.assets[asset_id];
       Setting.set(Setting.DEFAULT_ASSET, asset_id);
     }
-
+    
+    self.setUIHideBalance = function(hide_balance) {
+      self.data.ui.balance.allow_hide = hide_balance;
+      Setting.set(Setting.UI_ALLOW_HIDE_BALANCE, hide_balance);
+    }
+    
+    self.loadUIConfig = function(){
+      var deferred = $q.defer();
+      Setting.get(Setting.UI_ALLOW_HIDE_BALANCE, false).then(function(hide_balance){
+        self.data.ui.balance.allow_hide = hide_balance.value;
+        self.data.ui.balance.hidden     = hide_balance.value;
+        deferred.resolve();
+      }, function(error){
+        deferred.resolve();
+      });
+      
+      return deferred.promise;
+    }
     self.ADDRESS_BOOK_CHANGE = 'w-address-book-changed';
     self.NEW_BALANCE         = 'w-new-balance';
     self.REFRESH_START       = 'w-refresh-start';
     self.REFRESH_DONE        = 'w-refresh-done';
     self.REFRESH_ERROR       = 'w-refresh-error';
-
+    self.DATA_INITIALIZED    = 'w-data-initialized';
+    
     self.emit = function(event_id, event_data) {
       $rootScope.$emit(event_id, event_data);
     }
@@ -230,29 +250,38 @@ bitwallet_services
         .then(function(default_asset){
           console.log('Seting::DEFAULT_ASSET ' + JSON.stringify(default_asset));
           self.data.asset = self.data.assets[default_asset.value];
+          
+          // Load ui config
+          self.loadUIConfig().then(function(account) {
+                
+            //Load derived address from masterkey
+            self.loadAccountAddresses()
+            .then(function() {
 
-          //Load derived address from masterkey
-          self.loadAccountAddresses()
-          .then(function() {
-
-            //Load addressbook
-            self.loadAddressBook().then(function() {
-              //deferred.resolve();
-              
-              // Load account data (bitshares accountname, photo)
-              self.loadAccount().then(function(account) {
-                deferred.resolve();
+              //Load addressbook
+              self.loadAddressBook().then(function() {
+                //deferred.resolve();
+                
+                // Load account data (bitshares accountname, photo)
+                self.loadAccount().then(function(account) {
+                  deferred.resolve();
+                  self.data.initialized = true;
+                  self.emit(self.DATA_INITIALIZED);
+                }, function(err) {
+                  deferred.reject(err); 
+                });
               }, function(err) {
                 deferred.reject(err); 
               });
+
             }, function(err) {
-              deferred.reject(err); 
+              deferred.reject(err);
             });
 
           }, function(err) {
-            deferred.reject(err);
+            deferred.reject(err); 
           });
-
+        
         }, function(err) {
           deferred.reject(err); 
         });
@@ -513,6 +542,22 @@ bitwallet_services
       return deferred.promise;
     };
     
+    self.updateAccountFromNetwork = function(addy){
+      BitShares.getAccount(addy.pubkey).then(
+        function(data){
+          var gravatar_id = undefined;
+          if(data.public_data && data.public_data.gravatarId)
+            gravatar_id=data.public_data.gravatarId;
+          Account.store(data.name, gravatar_id).then(function(){
+            Account.registeredOk().then(function(){
+              self.loadAccount();
+            });
+          });
+        },
+        function(error){
+        }
+      )
+    };
     return self;
 });
 
