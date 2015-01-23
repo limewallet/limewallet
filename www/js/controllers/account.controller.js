@@ -1,4 +1,12 @@
 bitwallet_controllers.controller('AccountCtrl', function($translate, T, BitShares, $scope, $http, $timeout, $ionicPopup, $ionicLoading, $q, Account, Wallet, $interval, Address) {
+  
+  $scope.recoverAccountData = function(){
+    setTimeout(function() {
+      var addy = Wallet.getMainAddress();
+      Wallet.updateAccountFromNetwork(addy);  
+    },100);
+  }
+
   $scope.data = { name            : $scope.wallet.account.name, 
                   gravatar_id     : $scope.wallet.account.gravatar_id, 
                   use_gravatar    : !($scope.wallet.account.gravatar_id===undefined || $scope.wallet.account.gravatar_id==null || $scope.wallet.account.gravatar_id.length==0), 
@@ -31,7 +39,7 @@ bitwallet_controllers.controller('AccountCtrl', function($translate, T, BitShare
       $timeout(function () {
         $scope.data.can_update = true;
       }, 500);
-    }, 1000);
+    }, 500);
   });
   
   var gravatar_timeout = undefined;
@@ -44,12 +52,15 @@ bitwallet_controllers.controller('AccountCtrl', function($translate, T, BitShare
       gravatar_timeout = undefined;
     }
     gravatar_timeout = $timeout(function () {
-      $scope.data.gravatar_id = $scope.gravatarMD5(newValue);
-      
+      if($scope.data.gravatar_mail && $scope.data.gravatar_mail.length>0)
+        $scope.data.gravatar_id = $scope.gravatarMD5($scope.data.gravatar_mail);
+      else
+        $scope.data.gravatar_id = undefined;
+
       $timeout(function () {
         $scope.data.can_update = true;
       }, 500);
-    }, 1000);
+    }, 500);
   });
   
   var use_gravatar_timeout = undefined;
@@ -61,11 +72,13 @@ bitwallet_controllers.controller('AccountCtrl', function($translate, T, BitShare
       $timeout.cancel(use_gravatar_timeout);
       use_gravatar_timeout = undefined;
     }
-    if($scope.wallet.account.gravatar_id===undefined || $scope.wallet.account.gravatar_id==null || $scope.wallet.account.gravatar_id.length<1)
-      return;
+    //if(!newValue && ($scope.wallet.account.gravatar_id===undefined || $scope.wallet.account.gravatar_id==null || $scope.wallet.account.gravatar_id.length<1))
+    //  return;
     use_gravatar_timeout = $timeout(function () {
+      if(!$scope.data.use_gravatar)
+        $scope.data.gravatar_mail = undefined;
       $scope.data.can_update = true;
-    }, 1000);
+    }, 500);
   });
   
   $scope.isNameAvailable = function(name) {
@@ -155,9 +168,11 @@ bitwallet_controllers.controller('AccountCtrl', function($translate, T, BitShare
       Account.update(address, addys, assets).then(function(result){
         if(result===undefined || !result.required_signatures || result.required_signatures===undefined || result.required_signatures.length==0 )
         {
-          Account.clearGravatarId().then(function(){
-            deferred.reject({title:'err.occurred', message:'err.account_registration'});
-          });
+          //Account.clearGravatarId().then(function(){
+          //  deferred.reject({title:'err.occurred', message:'err.account_registration'});
+          //});
+          $scope.recoverAccountData();
+          deferred.reject({title:'err.occurred', message:'err.account_registration'});
           return;
         }
         var prom = [];
