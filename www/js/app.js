@@ -22,6 +22,7 @@ bitwallet_module
   $rootScope.refresh_status = 0;
 
   $rootScope.goHome = function() {
+    $ionicHistory.clearHistory();
     $ionicHistory.nextViewOptions({
       disableAnimate : true,
     });
@@ -66,7 +67,6 @@ bitwallet_module
         'InitDone' : function(T, Wallet, BitShares, $ionicPlatform, $cordovaSplashscreen, $cordovaGlobalization, $translate, DB, $rootScope) {
 
           $rootScope.global_init = function() {
-
             $rootScope.master_key_new   = false;
             $rootScope.wallet           = Wallet.data;
             $rootScope.$watch(
@@ -76,8 +76,6 @@ bitwallet_module
               }
             );
 
-
-            
             //*****************
             // INIT DEV/PROD ENVIRONMENT
             //*****************

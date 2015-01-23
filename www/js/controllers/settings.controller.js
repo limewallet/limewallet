@@ -1,6 +1,6 @@
 bitwallet_controllers.controller('SettingsCtrl', function($scope, Wallet, Setting, $rootScope, Account, $ionicModal, $timeout, T) {
   
-  $scope.data = {assets:[], selected_asset:{}, hide_balance:false};
+  $scope.data = {assets:[], selected_asset:{}, hide_balance:$scope.wallet.ui.balance.allow_hide};
   
   $scope.loadViewData = function() {
     var wallet = $scope.wallet;
@@ -22,6 +22,24 @@ bitwallet_controllers.controller('SettingsCtrl', function($scope, Wallet, Settin
       window.plugins.toast.show( T.i('g.unable_to_refresh'), 'long', 'bottom');
     });
   }
+  
+  var balance_timeout = undefined;
+  $scope.$watch('data.hide_balance', function(newValue, oldValue, scope) {
+    if(newValue===oldValue)
+      return;
+    if($scope)
+    {
+      if(balance_timeout)
+      {
+        $timeout.cancel(balance_timeout);
+        balance_timeout = undefined;
+      }
+      balance_timeout = $timeout(function () {
+        Wallet.setUIHideBalance($scope.data.hide_balance);
+      }, 500);
+      return;
+    }
+  });
   
   $scope.loadViewData();
   

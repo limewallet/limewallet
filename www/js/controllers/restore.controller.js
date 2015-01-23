@@ -1,4 +1,4 @@
-bitwallet_controllers.controller('RestoreCtrl', function($q, T, Setting, $rootScope, $translate, $scope, MasterKey, Address, AddressBook, $http, $timeout, $location, $state, $ionicPopup, $ionicModal, $cordovaClipboard, BitShares, $ionicNavBarDelegate) {
+bitwallet_controllers.controller('RestoreCtrl', function($q, T, Setting, $rootScope, $translate, $scope, MasterKey, Address, AddressBook, $http, $timeout, $location, $state, $ionicPopup, $ionicModal, $cordovaClipboard, BitShares, $ionicNavBarDelegate, Wallet) {
   $scope.restore = {};
 
   $scope.pasteWallet = function(element) {
@@ -134,7 +134,13 @@ bitwallet_controllers.controller('RestoreCtrl', function($q, T, Setting, $rootSc
           return $q.all(prom);
         })
         .then(function() {
+          // Check registered account
+          
           setTimeout(function() { $rootScope.global_init(); },0);
+          setTimeout(function() {
+            var addy = Wallet.getMainAddress();
+            Wallet.updateAccountFromNetwork(addy);
+          },1500);
           $ionicPopup.alert({
             title: T.i('menu.restore_wallet'),
             template: T.i('restore.successful')

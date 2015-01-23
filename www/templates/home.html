@@ -14,7 +14,10 @@
   
   <ion-content class="has-header" has-bouncing="false">
     <div class="balance_container energized_bg">
-      <div class="balance">
+      <div class="balance hidden" ng-show="wallet.ui.balance.hidden" ng-click="toggleBalance()">
+        <span class="balance_hidden_text">{{'home.show_balance' | translate | uppercase}} <!-- i class="fa fa16 fa-eye"></i --></span>
+      </div>
+      <div class="balance" ng-show="!wallet.ui.balance.hidden && wallet.initialized" ng-click="toggleBalance()">
         <span class="balance_text"><i class="{{wallet.asset.symbol_ui_class}}">{{wallet.asset.symbol_ui_text}}</i> {{wallet.asset.amount | number : 2}}</span>
         <br/>
         <span class="{{wallet.asset.symbol|lowercase}}">{{ 'home.balance' | translate:{asset:wallet.asset.symbol} }}</span>
@@ -34,7 +37,7 @@
       <div class="display_table no_transactions"> 
         <span ng-show="refresh_status==0" class="display_table_cell vmiddle" style="text-align:center;">{{'home.no_txs' | translate}}</span>
         <span ng-show="refresh_status==1" class="display_table_cell vmiddle" style="text-align:center;"><i class="icon ion-looping"></i></span>
-        <span ng-show="refresh_status==-1" class="display_table_cell vmiddle" style="text-align:center;"><a ng-click="doRefresh()">ERROR DALE CLICKOR</a></i></span>
+        <span ng-show="refresh_status==-1" class="display_table_cell vmiddle" style="text-align:center;"><a ng-click="doRefresh()">{{'home.tap_to_refresh'|translate}}</a></i></span>
           
       </div>
     </div> 

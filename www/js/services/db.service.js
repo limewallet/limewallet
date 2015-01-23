@@ -211,8 +211,9 @@ bitwallet_services
 .service('Setting', function(DB, DB_CONFIG, $q) {
     var self = this;
 
-    self.DEFAULT_ASSET = 'default_asset';
-    self.BSW_TOKEN     = 'bsw_token';
+    self.DEFAULT_ASSET          = 'default_asset';
+    self.BSW_TOKEN              = 'bsw_token';
+    self.UI_ALLOW_HIDE_BALANCE  = 'allow_hide_balance';
     
     self.get = function(name, _default) {
         var deferred = $q.defer();
