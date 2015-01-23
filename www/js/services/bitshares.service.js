@@ -43,8 +43,8 @@ bitwallet_services
       window.plugins.BitsharesPlugin.createMasterKey(
         function(data){
           //deferred.resolve('xprv9s21ZrQH143K3ijyttwKLLMY5TXj9QxrGoEg8EbLpsSyNabQ4QrbMzFj5j5FPkc8m58AZrVo8TMH5XEYuL2bdWaD2yhgiF68f9vsMkSTkkS'); // nisman
-          //deferred.resolve('xprv9s21ZrQH143K28Eo8MEiEbchHxrSFDFMtb73UEh5htu9vzrqpReaeS5vmJHi7aipUb9ck3FTfoj3AQJhdWJ7HL6ywwsuYdMupmPv13osE5c'); // daniel-hadad
-          deferred.resolve(data.masterPrivateKey);
+          deferred.resolve('xprv9s21ZrQH143K28Eo8MEiEbchHxrSFDFMtb73UEh5htu9vzrqpReaeS5vmJHi7aipUb9ck3FTfoj3AQJhdWJ7HL6ywwsuYdMupmPv13osE5c'); // daniel-hadad
+          //deferred.resolve(data.masterPrivateKey);
         },
         function(error){
           deferred.reject(error);
@@ -363,6 +363,7 @@ bitwallet_services
 
         self.getSignupInfo().then(function(res) {
           self.recoverPubkey(res.msg, res.signature).then(function(pubkey) {
+            console.log(pubkey);
             if( pubkey != ENVIRONMENT.apiPubkey ) {
               deferred.reject('invalid pub key');
               return;

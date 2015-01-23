@@ -204,6 +204,10 @@ input.big {
 
 .menu .menu_header{height:132px!important;}
 .menu .scroll-content.has-header{top:132px!important;}
+ 
+.platform-ios .menu .menu_header{height:152px!important;}
+.platform-ios .menu .scroll-content.has-header{top:152px!important;}
+
 .menu  .menu_container{
   padding:16px;
   height: 100%!important;
