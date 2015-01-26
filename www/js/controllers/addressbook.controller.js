@@ -1,6 +1,21 @@
 bitwallet_controllers
 .controller('AddressBookCtrl', function($scope, $state, Wallet, T, $ionicHistory, $ionicPopup, $ionicActionSheet, AddressBook, $rootScope, $ionicNavBarDelegate, $stateParams){
-
+  
+  $scope.data = {addys : []};
+  $scope.loadViewData = function() {
+    var addys = [];
+    //console.log('Object.keys($scope.wallet.address_book)' + Object.keys($scope.wallet.address_book).length);
+    angular.forEach( Object.keys($scope.wallet.address_book), function(addy) {
+      addys.push($scope.wallet.address_book[addy]);
+    });
+    $scope.data.addys = addys;
+  }
+  
+  $scope.loadViewData();
+  $rootScope.$on('address-book-changed', function(event, data) {
+    $scope.loadViewData();
+  });
+  
   $scope.showActionSheet = function(addr){
     var fav_text = 'book.add_to_fav';
     if(addr.is_favorite)
@@ -22,7 +37,9 @@ bitwallet_controllers
         var fav = addr.is_favorite ? 0 : 1;
         console.log('mandamos: ' + addr.id + '->' + fav);
         AddressBook.setFavorite(addr.id, fav).then(function() {
-          Wallet.loadAddressBook();
+          Wallet.loadAddressBook().then(function(){
+           $rootScope.$emit('address-book-changed');
+         });
         });
       }
       // Remove from address book
@@ -36,7 +53,9 @@ bitwallet_controllers
           if(!res)
             return;
             AddressBook.remove(addr.id).then(function() {
-              $scope.loadAddys();
+              Wallet.loadAddressBook().then(function(){
+                $rootScope.$emit('address-book-changed');
+              });
             });
          });
       }

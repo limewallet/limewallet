@@ -13,14 +13,16 @@
   
   
   <ion-content class="has-header" has-bouncing="false">
-    <div class="balance_container energized_bg">
-      <div class="balance hidden" ng-show="wallet.ui.balance.hidden" ng-click="toggleBalance()">
-        <span class="balance_hidden_text">{{'home.show_balance' | translate | uppercase}} <!-- i class="fa fa16 fa-eye"></i --></span>
-      </div>
-      <div class="balance" ng-show="!wallet.ui.balance.hidden && wallet.initialized" ng-click="toggleBalance()">
-        <span class="balance_text"><i class="{{wallet.asset.symbol_ui_class}}">{{wallet.asset.symbol_ui_text}}</i> {{wallet.asset.amount | number : 2}}</span>
-        <br/>
-        <span class="{{wallet.asset.symbol|lowercase}}">{{ 'home.balance' | translate:{asset:wallet.asset.symbol} }}</span>
+    <div class="balance_container energized_bg" ng-cloak>
+      <div >
+        <div class="balance hidden" ng-show="wallet.ui.balance.hidden" ng-click="toggleBalance()">
+          <span class="balance_hidden_text">{{'home.show_balance' | translate | uppercase}} <!-- i class="fa fa16 fa-eye"></i --></span>
+        </div>
+        <div class="balance" ng-show="!wallet.ui.balance.hidden && wallet.initialized" ng-click="toggleBalance()">
+          <span class="balance_text"><i class="{{wallet.asset.symbol_ui_class}}">{{wallet.asset.symbol_ui_text}}</i> {{wallet.asset.amount | number : 2}}</span>
+          <br/>
+          <span class="{{wallet.asset.symbol|lowercase}}">{{ 'home.balance' | translate:{asset:wallet.asset.symbol} }}</span>
+        </div>
       </div>
     </div>
     <div class="punta2"></div>

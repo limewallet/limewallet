@@ -363,6 +363,12 @@ margin-bottom: 20px!important;
 .tx_details .row .col{font-size:11px!important;}
 
 .send_form .item-input-inset{padding:0px 8px 0px 0px!important}
+
+div.full_width{width:100%;text-align: center;}
+img.i_centered {margin-left: auto;
+    margin-right: auto;
+    }
+
 .item-input-wrapper.wrapper_clean{ 
   background-color:transparent!important; 
   display: flex;

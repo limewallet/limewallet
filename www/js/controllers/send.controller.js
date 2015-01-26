@@ -120,7 +120,9 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
           return;
         }
         owner_key  = r.owner_key;
-        extra_data = '</br><img src="'+ 'http://robohash.org/'+r.name+'?size=150x150' + '"></img>';
+        extra_data = '</br><div class="full_width"><img class="i_centered" src="'+ 'http://robohash.org/'+r.name+'?size=150x150' + '" /></div>';
+        if(r.public_data && r.public_data.gravatarId)
+          extra_data = '</br><div class="full_width"><img class="i_centered" src="http://www.gravatar.com/avatar/'+r.public_data.gravatarId+'?s=150" /></div>';
       })
       .error(function(data, status, headers, config) {
         err_msg = T.i('err.server_error');
@@ -158,7 +160,7 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
     .then(function(is_valid){
       
 
-      var symbol =  '<i class="'+$scope.wallet.asset.symbol_ui_class+'">'+$scope.wallet.asset.symbol_ui_text;
+      var symbol =  '<i class="'+$scope.wallet.asset.symbol_ui_class+'">'+$scope.wallet.asset.symbol_ui_text+'</i>';
       var confirmPopup = $ionicPopup.confirm({
         title    : T.i('send.payment_confirm'),
         template : T.i('send.are_you_sure',{symbol:symbol,amount:$scope.transaction.amount,address:sendForm.transactionAddress.value, extra_data:extra_data})

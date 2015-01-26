@@ -7,7 +7,7 @@ bitwallet_controllers
     if($scope && $scope.master_key_new)
     {
       $scope.master_key_new = false;
-      $state.go('app.account');
+      $state.go('app.account', {first_time:'1'});
       return;
     }
   });
