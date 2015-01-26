@@ -44,6 +44,7 @@ bitwallet_services
       Setting.get(Setting.UI_ALLOW_HIDE_BALANCE, false).then(function(hide_balance){
         self.data.ui.balance.allow_hide = hide_balance.value;
         self.data.ui.balance.hidden     = hide_balance.value;
+        console.log('load UI_ALLOW_HIDE_BALANCE:' + hide_balance.value);  
         deferred.resolve();
       }, function(error){
         deferred.resolve();
@@ -177,10 +178,11 @@ bitwallet_services
       var deferred = $q.defer();
       AddressBook.all()
       .then(function(addys) {
-        
+        var addys_book = [];
         addys.forEach(function(addr) {
-          self.data.address_book[addr.address] = addr;
+          addys_book[addr.address] = addr;
         });
+        self.data.address_book = addys_book;
 
         deferred.resolve();
       },

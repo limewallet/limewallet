@@ -10,7 +10,7 @@
       <div class="list card">
 
         <div class="item">
-          <h2>{{'g.amount'|translate}}: {{amount}} {{asset.symbol}}</h2>
+          <h2>{{'g.amount'|translate}}: <i class="icon fa16 {{wallet.asset.symbol_ui_class}} placeholder-icon">{{wallet.asset.symbol_ui_text}}</i>{{amount}} </h2>
           <h4>{{address}}</h4>
         </div>
 
@@ -18,7 +18,7 @@
           <img ng-src="{{imgurl}}" id="qr_image" imageonload />
         </div>
       </div>
-      <div class="action_container2 padding">
+      <div class="action_container">
         <div class="one_of_two_buttons">
           <button class="button button-balanced" style="margin-right:7px;width:100%;" ng-click="doShareRecvPayment()">
             <i class="fa20 fa fa-share-square-o"></i>

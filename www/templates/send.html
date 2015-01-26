@@ -28,12 +28,15 @@
           <span class="error input" ng-show="sendForm.transactionAmount.$error.number">{{'err.enter_valid_amount'|translate}}</span>
           <input type="hidden" name="transactionAssetId" ng-model="transaction.asset_id" />
         </div>
-        <div class="action_container hide-on-keyboard-open padding">
+        <!-- div class="action_container hide-on-keyboard-open padding">
           <button class="button button-assertive  button-block" ng-click="validateSend(transaction)">
             {{'g.send'|translate}} 
           </button>
-        </div>
+        </div -->
       </form>
+      <button ng-click="validateSend(transaction)" class="button button-block button-assertive no-margin hide-on-keyboard-open" style="position:absolute;bottom:0px;">
+          {{'g.send'|translate}} 
+      </button>
     </ion-content>
   </ion-view>
 

@@ -17,11 +17,13 @@
         </div>
       </form>
       
-      <div class="action_container hide-on-keyboard-open padding">
+      <!--div class="action_container hide-on-keyboard-open padding">
         <button class="button button-balanced" style="margin-right:7px;width:100%;" ng-click="doGenerateQRCodeRecvPayment()">
           <i class=" fa20 fa fa-qrcode"></i>
         </button>
-      </div>
-
+      </div -->
+      <button ng-click="doGenerateQRCodeRecvPayment()" class="button button-block button-balanced no-margin hide-on-keyboard-open" style="position:absolute;bottom:0px;">
+          <i class=" fa20 fa fa-qrcode"></i>
+      </button>
     </ion-content>
   </ion-view>

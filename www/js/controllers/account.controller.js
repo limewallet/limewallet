@@ -1,4 +1,4 @@
-bitwallet_controllers.controller('AccountCtrl', function($translate, T, BitShares, $scope, $http, $timeout, $ionicPopup, $ionicLoading, $q, Account, Wallet, $interval, Address) {
+bitwallet_controllers.controller('AccountCtrl', function($translate, T, BitShares, $scope, $http, $timeout, $ionicPopup, $ionicLoading, $q, Account, Wallet, $interval, Address, $stateParams) {
   
   $scope.recoverAccountData = function(){
     setTimeout(function() {
@@ -13,7 +13,15 @@ bitwallet_controllers.controller('AccountCtrl', function($translate, T, BitShare
                   initial_name    : $scope.wallet.account.name, 
                   watch_name      : $scope.wallet.account.name,  
                   gravatar_mail   : '', 
-                  can_update      : false};
+                  can_update      : false,
+                  first_time      : 0};
+  
+  if (!angular.isUndefined($stateParams.first_time))
+  {
+    $scope.data.first_time = Number($stateParams.first_time);
+  }
+  console.log('$stateParams.first_time= ' + $stateParams.first_time);
+  console.log('$scope.data.first_time= ' + $scope.data.first_time);
   
   // Generate MD5 for gravatar email.
   $scope.gravatarMD5 = function(value){

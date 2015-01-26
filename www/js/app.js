@@ -26,6 +26,7 @@ bitwallet_module
     $ionicHistory.nextViewOptions({
       disableAnimate : true,
     });
+    console.log('clear history and go home!');
     $state.go('app.home');
   }
 
@@ -228,6 +229,7 @@ bitwallet_module
 
     .state('app.address_book', {
       url: "/address_book",
+      cache: false,
       views: {
         'menuContent' :{
           templateUrl: "templates/settings.addressbook.html",
@@ -260,7 +262,7 @@ bitwallet_module
     
     .state('app.account', {
       cache:  false,
-      url:    "/account",
+      url:    "/account/:first_time",
       views: {
               'menuContent' :{
                 templateUrl: "templates/account.html",
