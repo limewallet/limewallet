@@ -286,6 +286,21 @@ bitwallet_services
       return deferred.promise;
     }
 
+    
+    // buy usd | sell btc => deposit
+    // sell usd | buy btc => withdraw
+    // buy btc => pay in btc
+
+    self.getSellQuote = function(asset, amount) {
+      var url = ENVIRONMENT.apiurl('/sell/'+asset+'/'+amount);
+      return self.apiCall(url);
+    }
+    
+    self.getBuyQuote = function(asset, amount) {
+      var url = ENVIRONMENT.apiurl('/buy/'+asset+'/'+amount);
+      return self.apiCall(url);
+    }
+    
     self.getBalance = function(address) {
       var url = ENVIRONMENT.apiurl('/addrs/'+address+'/balance');
       return self.apiCall(url);

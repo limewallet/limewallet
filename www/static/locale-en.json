@@ -1,5 +1,6 @@
 {
   "g" : {
+    "next"                : "Next",
     "later"               : "Later",
     "save"                : "Save",
     "cancel"              : "Cancel",
@@ -109,7 +110,9 @@
     "restore_wallet" : "Restore Wallet",
     "account"        : "Account",
     "my_assets"      : "Currencies",
-    "assets"         : "Assets"
+    "assets"         : "Assets",
+    "withdraw"       : "Withdraw",
+    "deposit"        : "Deposit"
   },
 
   "receive" : {

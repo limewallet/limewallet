@@ -272,6 +272,18 @@ bitwallet_module
       }
     })
     
+    .state('app.deposit', {
+      cache:  false,
+      url:    "/deposit",
+      views: {
+              'menuContent' :{
+                templateUrl: "templates/deposit.html",
+                //templateUrl: "index.html",
+                controller: 'DepositCtrl'
+            }
+      }
+    })
+    
     .state('app.home', {
       cache:  false,
       url:    "/home",
