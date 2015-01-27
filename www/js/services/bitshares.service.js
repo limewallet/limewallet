@@ -301,6 +301,19 @@ bitwallet_services
       return self.apiCall(url);
     }
     
+    self.acceptQuote = function(quote, signature, token, address) {
+      var url = ENVIRONMENT.apiurl('/accept');
+
+      var payload = {
+        quote       : quote,
+        signature   : signature, 
+        destination : address.address,
+        token       : token
+      }
+
+      return self.apiCall(url, payload);
+    }
+    
     self.getBalance = function(address) {
       var url = ENVIRONMENT.apiurl('/addrs/'+address+'/balance');
       return self.apiCall(url);

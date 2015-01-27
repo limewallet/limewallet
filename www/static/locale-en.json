@@ -1,5 +1,6 @@
 {
   "g" : {
+    "requote"             : "Requote",
     "next"                : "Next",
     "later"               : "Later",
     "save"                : "Save",
@@ -46,6 +47,15 @@
   },
 
   "err" : {
+    "unable_to_copy_uri"  : "Wallet was unable to copy payment URI",
+    "cant_accept"         : "Unable to accept quote",
+    "cant_accept_retry"   : "Wallet was unable to accept quote and begin transaction. Please retry later.",
+    "no_token"            : "Unable to login",
+    "no_token_retry"      : "Wallet was unable to get access token. Please retry later.",
+    "no_quote"            : "No quote found",
+    "no_quote_input_val"  : "Please input desired amount and get a quote",
+    "quote_expired"       : "Quote has expired",
+    "quote_expired_retry" : "Please get a new quote.",
     "duplicate_key"       : "Are you restoring a wallet already registered? Remember name and master key are both unique in the network.<br/> If not, please try again.",
     "account_registration": "Account registration could not be completed. Please try again.",
     "unavailable_name"    : "Chosen name unavailable",
@@ -201,6 +211,10 @@
     "edit_account"            : "photo edition",
     "account_updated"         : "Account updated successfully!",
     "account_registered"      : "Account registered successfully!"
+  },
+  
+  "deposit":{
+    "uri_copied"              : "Bitcoin payment URI copied succesfully"
   }
   
 }

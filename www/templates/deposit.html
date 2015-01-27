@@ -8,9 +8,8 @@
     
     <ion-content class="has-header register deposit" has-bouncing="false" scroll="false" overflow-scroll="false">
         <ion-scroll zooming="false" direction="y" class="register_details margin-bottom-buttonNOT">
-          <div class="energized_bg register_container">
+          <div class="energized_bg register_container" ng-show="data.step==1">
             <h4 class="register_color">Deposit BITCOIN and get <b>bit{{wallet.asset.symbol}}</b></h4>
-          
           </div>
           <div class="step1" ng-show="data.step==1">
             <div class="register_container energized_bg register_color">
@@ -44,18 +43,46 @@
           <div class="step2" ng-show="data.step==2">
             <div class="register_container energized_bg register_color">
               <p>
-                Please send {{amount_btc|number:2}} BTC to 
-                
+                Please send <b>{{data.tx.cl_pay|number:2}} BTC</b> to <b>{{data.tx.cl_pay_addr}}</b>
+                <h3 ng-show="data.quote_expired===false">Time remaining {{data.timer}}</h3>
+                <h3 ng-show="data.quote_expired===true">Quote Time expired!</h3>
               </p>
             </div>
-            <div class="list settings">
-              
+            
+            <div class="tabs-striped tabs-top tabs-background-energized tabs-color-light">
+              <div class="tabs" style="position: relative;top: 0px;">
+                <a class="tab-item" href="#" ng-click="data.active_tab=1" ng-class="{'active':data.active_tab==1}">
+                  <i class="icon ion-link"></i>
+                </a>
+                <a class="tab-item" href="#" ng-click="data.active_tab=2" ng-class="{'active':data.active_tab==2}">
+                  <i class="icon ion-qr-scanner"></i>
+                </a>
+              </div>
+            </div>
+            <div class="list settings" ng-disabled="data.quote_expired===false" ng-show="data.active_tab===1">
+              <div class="item">
+                <span class="input-label">Bitcoin URI</span>
+                <p class="wrap_text grisado">{{data.deposit_short_uri}}</p>
+              </div>
+              <div class="item" style="min-height:66px;">
+                <a class="button button-outline button-stable float_right" ng-click="copyUri()"><i class=" fa fa-copy"></i></a>
+                <a class="button button-outline button-stable float_right margin_r_16" href="{{data.deposit_short_uri}}" target="_system">PAY</a>
+              </div>
+            </div>
+            <div class="list settings" ng-disabled="data.quote_expired===false" ng-show="data.active_tab===2">
+              <div class="item">
+                <span class="input-label">Bitcoin URI QRCode</span>
+                <img ng-src="{{data.deposit_qrcode}}" id="qr_image" imageonload />
+              </div>
             </div>
           </div>
         </ion-scroll>
       
-        <button ng-click="next()" class="button button-block button-energized no-margin hide-on-keyboard-open button_taller" style="position:absolute;bottom:0px;">
+        <button ng-click="next()" ng-show="data.step==1" class="button button-block button-energized no-margin hide-on-keyboard-open button_taller" style="position:absolute;bottom:0px;">
           {{'g.next'|translate|uppercase}}
+        </button>
+        <button ng-click="requote()" ng-show="data.step==2 && data.quote_expired==true" class="button button-block button-energized no-margin hide-on-keyboard-open button_taller" style="position:absolute;bottom:0px;">
+          {{'g.requote'|translate|uppercase}}
         </button>
     </ion-content>
 
