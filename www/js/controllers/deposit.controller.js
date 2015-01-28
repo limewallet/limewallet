@@ -6,12 +6,15 @@ bitwallet_controllers
         amount_btc:         undefined,
         quoting_usd:        false,
         quoting_btc:        false,
+        quoting_btc_error:  undefined,
+        quoting_usd_error:  undefined,
         step:               1,
         quote_expired:      false,
         
         deposit_uri:        undefined,
         deposit_qrcode:     undefined,
         deposit_short_uri:  undefined,  
+        
         quote:              undefined,
         signature:          undefined,
         tx:                 undefined,
@@ -22,10 +25,14 @@ bitwallet_controllers
         active_tab:         1
   }
   
+  $scope.default_data = {};
+  angular.copy($scope.data, $scope.default_data);
+  
   var usd_timeout = undefined;
   $scope.$watch('data.amount_usd', function(newValue, oldValue, scope) {
     if(newValue===oldValue)
       return;
+    $scope.clearErrors();
     if(usd_timeout)
     {
       $timeout.cancel(usd_timeout);
@@ -45,13 +52,14 @@ bitwallet_controllers
         $scope.data.signature   = res.signature;
         $timeout(function () {
           $scope.data.quoting_btc = false;
-        } , 150);
-        console.log(res);
+        } , 200);
+        //console.log(res);
       }, function(error){
-        $scope.data.quoting_btc = false;
-        console.log(error);
-        $scope.data.quote       = undefined;
-        $scope.data.signature   = undefined;
+        $scope.data.quoting_btc       = false;
+        $scope.setMessageErr('BTC', error);
+        //console.log(error);
+        $scope.data.quote             = undefined;
+        $scope.data.signature         = undefined;
       });
     }, 750);
   });
@@ -60,6 +68,7 @@ bitwallet_controllers
   $scope.$watch('data.amount_btc', function(newValue, oldValue, scope) {
     if(newValue===oldValue)
       return;
+    $scope.clearErrors();
     if(btc_timeout)
     {
       $timeout.cancel(btc_timeout);
@@ -79,17 +88,34 @@ bitwallet_controllers
         $scope.data.signature   = res.signature;
         $timeout(function () {
           $scope.data.quoting_usd = false;
-        } , 150);
-        console.log(res);
+        } , 200);
+        //console.log(res);
       }, function(error){
-        $scope.data.quoting_usd = false;
-        $scope.data.quote       = undefined;
-        $scope.data.signature   = undefined;
-        console.log(error);
+        $scope.data.quoting_usd       = false;
+        $scope.setMessageErr('USD', error);
+        $scope.data.quote             = undefined;
+        $scope.data.signature         = undefined;
+        //console.log(error);
       });
     }, 750);
   });
   
+  $scope.setMessageErr = function(asset, error){
+    var message = error;
+    var errors = ['max_op', 'min_op'];
+    if(errors.indexOf(error)>=0)
+      message = T.i('err.'+error, {amount:(error=='max_op'?'50.0 USD':'0.50 USD')});
+    if(asset=='USD')
+      $scope.data.quoting_usd_error = message;
+    else
+      $scope.data.quoting_btc_error = message;
+  };
+        
+        
+  $scope.clearErrors = function(){
+    $scope.data.quoting_btc_error = undefined;
+    $scope.data.quoting_usd_error = undefined;
+  };
   // $scope.showLoading = function(){
     // $ionicLoading.show({
       // template     : '<i class="icon ion-looping"></i> ' + T.i('g.loading'),
@@ -109,7 +135,7 @@ bitwallet_controllers
     var n = parseInt(d.getTime()/1000);
     if(!$scope.data.quote.timestamp)
       return 0;
-    console.log('['+$scope.data.quote.timestamp+'] + ['+$scope.data.quote_ttl+'] - ['+n+'] = '+($scope.data.quote.timestamp+$scope.data.quote_ttl-n));
+    //console.log('['+$scope.data.quote.timestamp+'] + ['+$scope.data.quote_ttl+'] - ['+n+'] = '+($scope.data.quote.timestamp+$scope.data.quote_ttl-n));
     return parseInt($scope.data.quote.timestamp)+$scope.data.quote_ttl-n;
     
   }
@@ -130,7 +156,7 @@ bitwallet_controllers
       return;
     }
     
-    if($scope.remainingTime()<0)
+    if($scope.remainingTime()<=0)
     {
       $scope.showAlert('err.quote_expired', 'err.quote_expired_retry');
       return;
@@ -166,7 +192,7 @@ bitwallet_controllers
   // actual timer method, counts down every second, stops on zero
   $scope.onTimeout = function() {
       var seconds = $scope.remainingTime(); 
-      if(seconds<0) {
+      if(seconds<=0) {
           $scope.$broadcast('timer-stopped', 0);
           return;
       }
@@ -187,11 +213,22 @@ bitwallet_controllers
 
   // triggered, when the timer stops, you can do something here, maybe show a visual indicator or vibrate the device
   $scope.$on('timer-stopped', function(event, remaining) {
-      if(remaining === 0) {
-        console.log('your time ran out!');
-      }
-      $scope.data.quote_expired = true;
-      $timeout.cancel(counter_timeout);
+    if(remaining === 0) {
+      console.log('your time ran out!');
+    }
+    $scope.data.quote_expired = true;
+    $timeout.cancel(counter_timeout);
+    
+    $timeout(function(){
+      var expiredPopup = $ionicPopup.alert({
+         title    : T.i('err.quote_expired'),
+         template : T.i('err.quote_expired_retry'),
+       });
+       expiredPopup.then(function(res) {
+          $scope.requote();
+       });
+    }, 250);
+    
   });
   
   $scope.copyUri = function(){
@@ -204,6 +241,10 @@ bitwallet_controllers
         //error
         window.plugins.toast.show(T.i('err.unable_to_copy_uri'), 'short', 'bottom');
       });
+  }
+  
+  $scope.requote = function(){
+    angular.copy($scope.default_data, $scope.data);
   }
 })
 

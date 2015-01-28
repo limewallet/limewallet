@@ -47,6 +47,8 @@
   },
 
   "err" : {
+    "max_op"              : "Max allowed {{amount}}",
+    "min_op"              : "Min allowed {{amount}}",
     "unable_to_copy_uri"  : "Wallet was unable to copy payment URI",
     "cant_accept"         : "Unable to accept quote",
     "cant_accept_retry"   : "Wallet was unable to accept quote and begin transaction. Please retry later.",
