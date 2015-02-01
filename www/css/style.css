@@ -674,6 +674,8 @@ span.quote_error{padding-left: 16px;}
 
 /* Pie Chart */
 .instant_quote {line-height:50px;left: 16px;top: 20px;padding-left: 16px;position: absolute;}
+.instant_quote2{line-height:20px;padding-left: 16px;position: relative!important;}
+
 .chart_container{
   text-align:center;
   position:relative;

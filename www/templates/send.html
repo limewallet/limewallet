@@ -8,6 +8,14 @@
     </ion-nav-buttons>
   
     <ion-content class="has-header">
+      <div id="bitcoin_payment_info" class="register_container energized_bg register_color">
+        <p style="margin-top:13px;">
+          PAY IN BITCOINS
+        </p>
+        <div class="row">
+          <span class="instant_quote2" >{{'g.instant_quote'|translate|uppercase}}: <span style="font-size:18px;font-weight:bold;">0.51 BTC = 165 bitUSD</span>
+        </div>
+      </div>
       <form novalidate name="sendForm" class="send_form" >
         <div class="list">
           <div class="item item-input-inset">
@@ -34,8 +42,8 @@
           </button>
         </div -->
       </form>
-      <button ng-click="validateSend(transaction)" class="button button-block button-assertive no-margin hide-on-keyboard-open" style="position:absolute;bottom:0px;">
-          {{'g.send'|translate}} 
+      <button ng-click="validateSend(transaction)" class="button button-block button-assertive no-margin hide-on-keyboard-open button_taller" style="position:absolute;bottom:0px;">
+          {{'g.send'|translate|uppercase}} 
       </button>
     </ion-content>
   </ion-view>
