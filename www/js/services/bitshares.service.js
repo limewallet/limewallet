@@ -307,7 +307,7 @@ bitwallet_services
       var payload = {
         quote       : quote,
         signature   : signature, 
-        destination : address.address,
+        destination : address,
         token       : token
       }
 

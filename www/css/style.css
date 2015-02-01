@@ -93,7 +93,7 @@ line-height: 38px;}
 .index_buttons .button_receive a.button, .index_buttons .button_send a.button{
   border-radius:0px;
 }
-.index_transactions, .addys_empty, .restore_wallet_textarea, .addys_balances_scroll, .register_details{
+.index_transactions, .addys_empty, .restore_wallet_textarea, .addys_balances_scroll, .register_details, .txs_empty{
   display:block;
   overflow: hidden;
   width:100%;
@@ -101,11 +101,12 @@ line-height: 38px;}
   top:192px;
   position:absolute!important; bottom:0;
   }
-.addys_empty{top:43px!important;}
+.addys_empty{top:0px!important;}
 .restore_wallet_textarea{top:43px!important;bottom:67px;}
 .addys_balances_scroll{top:342px!important;}
 .register_details{top:0px!important;margin-bottom:20px;}
 .margin-bottom-button{margin-bottom:67px;}
+.txs_empty{top:0px!important;margin-bottom:67px;}
 
 .row75{
   height: 75% !important;
@@ -422,7 +423,7 @@ img.i_centered {margin-left: auto;
   border-width: 0px; 
   /*border-style: solid; */
 }
-.list.settings .item .line-divider{
+.list.settings .item .line-divider, .list.settings .line-divider{
   clear: both;
   position: absolute;
   bottom: 1px;
@@ -510,7 +511,7 @@ img.i_centered {margin-left: auto;
   padding-top: 15px;
   margin-left:72px;
 }
-
+.deposits .list.balances .item .asset_data{padding-top: 0px!important;}
 .list.balances .item .asset_balance, .list.balances .item .asset_data{
 color: #aaa;}
 .list.balances .item .asset_balance{
@@ -543,6 +544,19 @@ color: #aaa;}
 .fab.blue, .list.balances .item.active{
   background-color:#2e99b7 /* ff8100 #007DC4 */; 
 }
+
+.deposits .fab  > i {
+  display:block;
+  margin: 13px 20px 21px 12px !important;
+}
+.fab.WP {background-color: #d23f31;}/*WAITING_CLIENT_PAYMENT*/
+.fab.PC {background-color: #d23f31;}/*PAID_BY_CLIENT*/
+.fab.CC {background-color: #d23f31;}/*CLIENT_TX_CONFIRMED*/
+.fab.SC {background-color: #d23f31;}/*SENT_TO_CLIENT*/
+.fab.OK {background-color: #d23f31;}/*COMPLETED*/
+.fab.EX {background-color: #d23f31;}/*EXPIRED*/
+.fab.CA {background-color: #d23f31;}/*CANCELED*/
+.fab.FW {background-color: #d23f31;}/*FORWARDED*/
 
 .list.balances .item.active .fab.blue{
   background-color: #fff!important;
@@ -592,7 +606,7 @@ color: #aaa;}
 /******************************/
 /*DEPOSIT *********************/ 
 /******************************/
-.deposit .quote i.icon.ion-loading-c {
+.deposit .quote i.icon.ion-loading-c , .withdraw .quote i.icon.ion-loading-c {
   position: absolute;
   top: 42px;
   right: 16px;
@@ -608,7 +622,7 @@ color: #aaa;}
   transform: rotate(270deg);
 }
 
-.deposit h3{
+.deposit h3, .withdraw h3{
   color: #fff;
   padding-left: 16px;
 }
@@ -652,4 +666,41 @@ span.quote_error{padding-left: 16px;}
   height: 250px;
   margin-left: auto;
   margin-right: auto;
+}
+
+/* WITHDRAW */
+.withdraw div.bitcoin_address{width:100%!important;padding:0!important;}
+.withdraw div.bitcoin_address .line-divider{width:auto;right:65px!important;}
+
+/* Pie Chart */
+.instant_quote {line-height:50px;left: 16px;top: 20px;padding-left: 16px;position: absolute;}
+.chart_container{
+  text-align:center;
+  position:relative;
+  }
+.chart {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 50px;
+  margin-top: 16px;
+  margin-bottom: 5px;
+  text-align: center;
+  margin-right:auto;
+  margin-left:auto;
+}
+.chart canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.percent {
+  display: inline-block;
+  line-height: 50px;
+  z-index: 2;
+}
+.percent:after {
+  content: ''; /*'%'*/
+  margin-left: 0.1em;
+  font-size: .8em;
 }

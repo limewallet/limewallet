@@ -1,5 +1,7 @@
 {
   "g" : {
+    "instant_quote"       : "Instant quote",
+    "withdraw_address"    : "Withdraw address",
     "requote"             : "Requote",
     "next"                : "Next",
     "later"               : "Later",
@@ -47,6 +49,10 @@
   },
 
   "err" : {
+    "quote_expired_requote" :        "Ups...quote expired. Please requote!",
+    "btc_addr_error"        : "Bitcoin address missing or invalid",
+    "btc_addr_error_input"  : "Please type or paste a valid bitcoin address",
+    "unable_to_paste_btc_addr": "Unable to paste bitcoin address",
     "max_op"              : "Max allowed {{amount}}",
     "min_op"              : "Min allowed {{amount}}",
     "unable_to_copy_uri"  : "Wallet was unable to copy payment URI",
@@ -124,7 +130,9 @@
     "my_assets"      : "Currencies",
     "assets"         : "Assets",
     "withdraw"       : "Withdraw",
-    "deposit"        : "Deposit"
+    "deposit"        : "Deposit",
+    "withdraws"      : "Withdraws",
+    "deposits"       : "Deposits"
   },
 
   "receive" : {
@@ -216,7 +224,27 @@
   },
   
   "deposit":{
-    "uri_copied"              : "Bitcoin payment URI copied succesfully"
-  }
+    "uri_copied"              : "Bitcoin payment URI copied succesfully",
+    "no_deposits"             : "No deposits done yet",
+    "new_deposit"             : "New deposit",
+    "deposit_succesful"       : "Successfull deposit! Wait for transaction updates."
+  },
   
+  "withdraw":{
+    "no_withdraws"            : "No withdraws done yet",
+    "new_withdraw"            : "New withdraw",
+    "withdraw_succesful"      : "Successfull withdraw! Wait for transaction updates."
+  },
+  
+  "xchg":{
+    "WP": "WAITING_CLIENT_PAYMENT",
+    "PC": "PAID_BY_CLIENT",
+    "CC": "CLIENT_TX_CONFIRMED",
+    "SC": "SENT_TO_CLIENT",
+    "OK": "COMPLETED",
+    "EX": "EXPIRED",
+    "CA": "CANCELED",
+    "FW": "FORWARDED"
+  }
+    
 }
