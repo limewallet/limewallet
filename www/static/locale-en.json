@@ -1,5 +1,9 @@
 {
   "g" : {
+    "instant_quote"       : "Instant quote",
+    "withdraw_address"    : "Withdraw address",
+    "requote"             : "Requote",
+    "next"                : "Next",
     "later"               : "Later",
     "save"                : "Save",
     "cancel"              : "Cancel",
@@ -45,6 +49,21 @@
   },
 
   "err" : {
+    "quote_expired_requote" :        "Ups...quote expired. Please requote!",
+    "btc_addr_error"        : "Bitcoin address missing or invalid",
+    "btc_addr_error_input"  : "Please type or paste a valid bitcoin address",
+    "unable_to_paste_btc_addr": "Unable to paste bitcoin address",
+    "max_op"              : "Max allowed {{amount}}",
+    "min_op"              : "Min allowed {{amount}}",
+    "unable_to_copy_uri"  : "Wallet was unable to copy payment URI",
+    "cant_accept"         : "Unable to accept quote",
+    "cant_accept_retry"   : "Wallet was unable to accept quote and begin transaction. Please retry later.",
+    "no_token"            : "Unable to login",
+    "no_token_retry"      : "Wallet was unable to get access token. Please retry later.",
+    "no_quote"            : "No quote found",
+    "no_quote_input_val"  : "Please input desired amount and get a quote",
+    "quote_expired"       : "Quote has expired",
+    "quote_expired_retry" : "Please get a new quote.",
     "duplicate_key"       : "Are you restoring a wallet already registered? Remember name and master key are both unique in the network.<br/> If not, please try again.",
     "account_registration": "Account registration could not be completed. Please try again.",
     "unavailable_name"    : "Chosen name unavailable",
@@ -109,7 +128,11 @@
     "restore_wallet" : "Restore Wallet",
     "account"        : "Account",
     "my_assets"      : "Currencies",
-    "assets"         : "Assets"
+    "assets"         : "Assets",
+    "withdraw"       : "Withdraw",
+    "deposit"        : "Deposit",
+    "withdraws"      : "Withdraws",
+    "deposits"       : "Deposits"
   },
 
   "receive" : {
@@ -198,6 +221,30 @@
     "edit_account"            : "photo edition",
     "account_updated"         : "Account updated successfully!",
     "account_registered"      : "Account registered successfully!"
-  }
+  },
   
+  "deposit":{
+    "uri_copied"              : "Bitcoin payment URI copied succesfully",
+    "no_deposits"             : "No deposits done yet",
+    "new_deposit"             : "New deposit",
+    "deposit_succesful"       : "Successfull deposit! Wait for transaction updates."
+  },
+  
+  "withdraw":{
+    "no_withdraws"            : "No withdraws done yet",
+    "new_withdraw"            : "New withdraw",
+    "withdraw_succesful"      : "Successfull withdraw! Wait for transaction updates."
+  },
+  
+  "xchg":{
+    "WP": "WAITING_CLIENT_PAYMENT",
+    "PC": "PAID_BY_CLIENT",
+    "CC": "CLIENT_TX_CONFIRMED",
+    "SC": "SENT_TO_CLIENT",
+    "OK": "COMPLETED",
+    "EX": "EXPIRED",
+    "CA": "CANCELED",
+    "FW": "FORWARDED"
+  }
+    
 }

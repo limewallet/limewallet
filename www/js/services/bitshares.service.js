@@ -43,8 +43,8 @@ bitwallet_services
       window.plugins.BitsharesPlugin.createMasterKey(
         function(data){
           //deferred.resolve('xprv9s21ZrQH143K3ijyttwKLLMY5TXj9QxrGoEg8EbLpsSyNabQ4QrbMzFj5j5FPkc8m58AZrVo8TMH5XEYuL2bdWaD2yhgiF68f9vsMkSTkkS'); // nisman
-          //deferred.resolve('xprv9s21ZrQH143K28Eo8MEiEbchHxrSFDFMtb73UEh5htu9vzrqpReaeS5vmJHi7aipUb9ck3FTfoj3AQJhdWJ7HL6ywwsuYdMupmPv13osE5c'); // daniel-hadad
-          deferred.resolve(data.masterPrivateKey);
+          deferred.resolve('xprv9s21ZrQH143K28Eo8MEiEbchHxrSFDFMtb73UEh5htu9vzrqpReaeS5vmJHi7aipUb9ck3FTfoj3AQJhdWJ7HL6ywwsuYdMupmPv13osE5c'); // daniel-hadad
+          //deferred.resolve(data.masterPrivateKey);
         },
         function(error){
           deferred.reject(error);
@@ -286,6 +286,34 @@ bitwallet_services
       return deferred.promise;
     }
 
+    
+    // buy usd | sell btc => deposit
+    // sell usd | buy btc => withdraw
+    // buy btc => pay in btc
+
+    self.getSellQuote = function(asset, amount) {
+      var url = ENVIRONMENT.apiurl('/sell/'+asset+'/'+amount);
+      return self.apiCall(url);
+    }
+    
+    self.getBuyQuote = function(asset, amount) {
+      var url = ENVIRONMENT.apiurl('/buy/'+asset+'/'+amount);
+      return self.apiCall(url);
+    }
+    
+    self.acceptQuote = function(quote, signature, token, address) {
+      var url = ENVIRONMENT.apiurl('/accept');
+
+      var payload = {
+        quote       : quote,
+        signature   : signature, 
+        destination : address,
+        token       : token
+      }
+
+      return self.apiCall(url, payload);
+    }
+    
     self.getBalance = function(address) {
       var url = ENVIRONMENT.apiurl('/addrs/'+address+'/balance');
       return self.apiCall(url);

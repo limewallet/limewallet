@@ -1,0 +1,105 @@
+<ion-view class="dark" title="{{'menu.deposit'|translate}}">
+    <ion-nav-buttons side="left">
+      <button ng-click="goHome()" class="button button-icon icon ion-ios-arrow-back"></button>
+    </ion-nav-buttons>
+    
+    <ion-content class="has-header register deposit" has-bouncing="false" scroll="false" overflow-scroll="false">
+        <ion-scroll zooming="false" direction="y" class="register_details margin-bottom-buttonNOT">
+          <div class="energized_bg register_container" ng-show="data.step==1">
+            <h4 class="register_color">Deposit BITCOIN and get <b>bit{{wallet.asset.symbol}}</b></h4>
+          </div>
+          <div class="step1" ng-show="data.step==1">
+            <div class="register_container energized_bg register_color">
+              <p>
+                You can load your wallet by converting bitcoin into your preferred bitasset.<br/>
+                Type the amount of bit{{wallet.asset.symbol}} you want to load and get a quote for each bitcoin, and vice versa.
+              </p>
+            </div>
+            <div class="list settings quote">
+              <div class="row" ng-cloak>
+                <div class="col col-50">
+                  <label class="item item-input item-floating-label">
+                    <span class="input-label">{{wallet.asset.symbol}}</span>
+                    <input type="number" placeholder="{{wallet.asset.symbol}}" ng-model="data.amount_usd">
+                    <i class="icon ion-loading-c" ng-cloak ng-show="data.quoting_usd"></i>
+                    <div class="line-divider"></div>            
+                  </label>
+                  <span class="quote_error assertive" ng-show="data.quoting_btc_error!==undefined">{{data.quoting_btc_error}}</span>
+                </div>
+                <div class="col col-50">
+                  <label class="item item-input item-floating-label">
+                    <span class="input-label">BTC</span>
+                    <input type="number" placeholder="BTC" ng-model="data.amount_btc">
+                    <i class="icon ion-loading-c" ng-cloak ng-show="data.quoting_btc"> </i>
+                    <div class="line-divider"></div>   
+                  </label>
+                  <span class="quote_error assertive" ng-show="data.quoting_usd_error!==undefined">{{data.quoting_usd_error}}</span>
+                </div>
+              </div>
+              <div id="row" class="chart_container">
+                <span class="instant_quote" ng-show="data.timer.start+data.timer.stop>0">{{'g.instant_quote'|translate|uppercase}}:</span>
+                <span class="chart" easypiechart start="data.timer.start" stop="data.timer.stop" percent="data.timer.percent" options="data.timer.options">
+                  <span class="percent" ng-bind="data.timer.remaining"></span>
+                </span>
+                <br/><span class="assertive padding" ng-show="data.timer.expired==1">{{'err.quote_expired_requote'|translate|uppercase}}</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="step2" ng-show="data.step==2">
+            <div class="register_container energized_bg register_color">
+              <p>
+                Please send <b>{{data.tx.cl_pay|number:2}} BTC</b> to <b>{{data.tx.cl_pay_addr}}</b>
+                <!-- h3 ng-show="data.quote_expired===false">Time remaining {{data.timer}}</h3>
+                <h3 ng-show="data.quote_expired===true">Quote time expired!</h3 -->
+              </p>
+              <div id="row" class="chart_container">
+                <span class="instant_quote" ng-show="data.timer.start+data.timer.stop>0">{{'g.instant_quote'|translate|uppercase}}:</span>
+                <span class="chart" easypiechart start="data.timer.start" stop="data.timer.stop" percent="data.timer.percent" options="data.timer.options">
+                  <span class="percent" ng-bind="data.timer.remaining"></span>
+                </span>
+                <br/><span class="assertive padding" ng-show="data.timer.expired==1">{{'err.quote_expired_requote'|translate|uppercase}}</span>
+              </div>
+            </div>
+            
+            <div class="tabs-striped tabs-top tabs-background-energized tabs-color-light">
+              <div class="tabs" style="position: relative;top: 0px;">
+                <a class="tab-item" href="#" ng-click="data.active_tab=1" ng-class="{'active':data.active_tab==1}">
+                  <i class="icon ion-link"></i>
+                </a>
+                <a class="tab-item" href="#" ng-click="data.active_tab=2" ng-class="{'active':data.active_tab==2}">
+                  <i class="fa fa-qrcode"></i>
+                </a>
+              </div>
+            </div>
+            <div class="list settings" ng-disabled="data.quote_expired===false" ng-show="data.active_tab===1">
+              <div class="item">
+                <span class="input-label">Bitcoin URI</span>
+                <p class="wrap_text bitcoin_uri">{{data.deposit_short_uri}}</p>
+              </div>
+              <div class="item" style="min-height:66px;">
+                <a class="button button-outline button-stable float_right" ng-click="copyUri()"><i class=" fa fa-copy"></i></a>
+                <a class="button button-outline button-stable float_right margin_r_16" href="{{data.deposit_short_uri}}" target="_system">PAY</a>
+              </div>
+            </div>
+            <div class="list settings" ng-disabled="data.quote_expired===false" ng-show="data.active_tab===2">
+              <div class="item">
+                <span class="input-label">Bitcoin URI QRCode</span>
+                <div class="qr_container">
+                  <img ng-src="{{data.deposit_qrcode}}" id="qr_image" imageonload />
+                </div>
+              </div>
+            </div>
+          </div>
+        </ion-scroll>
+      
+        <button ng-click="next()" ng-show="data.step==1" class="button button-block button-energized no-margin hide-on-keyboard-open button_taller" style="position:absolute;bottom:0px;">
+          {{'g.next'|translate|uppercase}}
+        </button>
+        <button ng-click="requote()" ng-show="data.step==2 && data.timer.expired==true" class="button button-block button-energized no-margin hide-on-keyboard-open button_taller" style="position:absolute;bottom:0px;">
+          {{'g.requote'|translate|uppercase}}
+        </button>
+    </ion-content>
+
+  </ion-view>
+  

@@ -1,6 +1,6 @@
 // BitWallet
 
-var bitwallet_module = angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'reconnectingWebSocket', 'bit_wallet.controllers','bit_wallet.services', 'bit_wallet.config']);
+var bitwallet_module = angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'reconnectingWebSocket', 'bit_wallet.controllers','bit_wallet.services', 'bit_wallet.config', 'easypiechart']);
 
 bitwallet_module
 .run(function(DB, $state, $ionicHistory, $rootScope, $ionicPlatform, Wallet) {
@@ -268,6 +268,54 @@ bitwallet_module
                 templateUrl: "templates/account.html",
                 //templateUrl: "index.html",
                 controller: 'AccountCtrl'
+            }
+      }
+    })
+    
+    .state('app.deposit', {
+      cache:  false,
+      url:    "/deposit",
+      views: {
+              'menuContent' :{
+                templateUrl: "templates/deposit.html",
+                //templateUrl: "index.html",
+                controller: 'DepositCtrl'
+            }
+      }
+    })
+    
+    .state('app.deposit_list', {
+      cache:  false,
+      url:    "/deposit_list",
+      views: {
+              'menuContent' :{
+                templateUrl: "templates/deposit_list.html",
+                //templateUrl: "index.html",
+                controller: 'DepositListCtrl'
+            }
+      }
+    })
+    
+    .state('app.withdraw', {
+      cache:  false,
+      url:    "/withdraw",
+      views: {
+              'menuContent' :{
+                templateUrl: "templates/withdraw.html",
+                //templateUrl: "index.html",
+                controller: 'WithdrawCtrl'
+            }
+      }
+    })
+    
+    .state('app.withdraw_list', {
+      cache:  false,
+      url:    "/withdraw_list",
+      views: {
+              'menuContent' :{
+                templateUrl: "templates/withdraw_list.html",
+                //templateUrl: "index.html",
+                controller: 'WithdrawListCtrl'
             }
       }
     })

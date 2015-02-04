@@ -1,18 +1,11 @@
 bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T, BitShares, AddressBook, Scanner, Address, $http, $ionicLoading, $ionicNavBarDelegate, $ionicModal, $ionicPopup, $location, $timeout, $rootScope, $stateParams) {
   
-  $scope.data = {address_book:[]};
-  //$scope.transaction = {message:'send.generating_transaction', amount:0, address:'', asset_id:$scope.asset.id};
-  
-  // Did user scan a payment request? If so, we receive asset_id
-  // if (!angular.isUndefined($stateParams.asset_id))
-    // $scope.data.asset = $rootScope.assets[$stateParams.asset_id];
+  $scope.data = {address_book:[], is_btc:true};
   
   var amount = 0;
   if (!angular.isUndefined($stateParams.amount))
   {
     amount = $stateParams.amount;
-
-    //document.querySelector( '.amout_so_send' ).value = amount;
   } 
   
   var address = '';
@@ -74,6 +67,56 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
       window.plugins.toast.show(error, 'long', 'bottom')
     });
   }
+  
+  $scope.nanobar = undefined;
+  $scope.isBTC = function(){
+    // 1.- Quotear
+    // 2.- Mostrar quote amounts
+    // 3.- Init timer
+    // 4.- En cada tic ajustar -> $scope.nanobar.go( 30 ); // size bar 30%
+    // 5.- On expired, ir a 1
+    
+    var options = {
+      bg: '#acf',
+
+      // leave target blank for global nanobar
+      target: document.getElementById('bitcoin_payment_info'),
+
+      // id for new nanobar
+      id: 'mynano'
+    };
+
+    $scope.nanobar = new Nanobar( options );
+
+    $scope.startTimer();
+
+  }
+  
+  var ttl = 60;
+  var counter_timeout = ttl;
+  $scope.onTimeout = function() {
+    counter_timeout = counter_timeout - 1;
+    if(counter_timeout==0)
+    {
+      $scope.stopTimer();
+      return;
+    }
+    $scope.nanobar.go((ttl-counter_timeout)*100/ttl);
+    quote_timeout = $timeout($scope.onTimeout, 1000);
+  }
+  $scope.startTimer = function() {
+    counter_timeout = ttl;
+    quote_timeout = $timeout($scope.onTimeout, 1000);
+  };
+  $scope.stopTimer = function() {
+    $timeout.cancel(counter_timeout);
+    counter_timeout = ttl;
+    $scope.startTimer();
+  }
+  $scope.$on( '$ionicView.enter', function(){
+    $scope.isBTC();
+  });
+  
   
   $scope.validateSend = function(transaction) {
     //$scope.transaction.amount = sendForm.transactionAmount.value;

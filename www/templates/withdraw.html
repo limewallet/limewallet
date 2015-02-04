@@ -1,0 +1,70 @@
+<ion-view class="dark" title="{{'menu.withdraw'|translate}}">
+    <ion-nav-buttons side="left">
+      <button ng-click="goHome()" class="button button-icon icon ion-ios-arrow-back"></button>
+    </ion-nav-buttons>
+    
+    <ion-content class="has-header register withdraw" has-bouncing="false" scroll="false" overflow-scroll="false">
+        <ion-scroll zooming="false" direction="y" class="register_details margin-bottom-buttonNOT">
+          <div class="energized_bg register_container" ng-show="data.step==1">
+            <h4 class="register_color">Withdraw BITCOIN exchanging your <b>bit{{wallet.asset.symbol}}</b></h4>
+          </div>
+          <div class="step1">
+            <div class="register_container energized_bg register_color">
+              <p>
+                You can withdraw bitcoins from your wallet by converting your preferred bitasset into bitcoins.<br/>
+                Type the destination bitcoin address and the amount you want to withdraw.
+              </p>
+            </div>
+            <div class="list settings quote">
+              <div class="row" ng-cloak>
+                <div class="item-input-inset bitcoin_address">
+                  <label class="item item-input item-floating-label" style="width:300px;">
+                    <span class="input-label">{{'g.withdraw_address'|translate}}</span>
+                    <input required name="transactionAddress" ng-model="data.bitcoin_address" type="text" placeholder="{{'g.withdraw_address'|translate}}" class="big big_placeholder">
+                  </label>
+                  <button ng-click="pasteBitcoinAddress()" class="button button-outline button-stable button-small icon" style="margin-top:20px;">
+                    <i class="fa fa-paste"></i>
+                  </button>
+                  <div class="line-divider" style="clear:both;"></div>            
+                </div>
+                <span class="quote_error assertive" ng-show="data.address_error!==undefined">{{data.address_error}}</span>
+              </div>
+              
+              <div class="row" ng-cloak>
+                <div class="col col-50">
+                  <label class="item item-input item-floating-label">
+                    <span class="input-label">{{wallet.asset.symbol}}</span>
+                    <input type="number" placeholder="{{wallet.asset.symbol}}" ng-model="data.amount_usd">
+                    <i class="icon ion-loading-c" ng-cloak ng-show="data.quoting_usd"></i>
+                    <div class="line-divider"></div>            
+                  </label>
+                  <span class="quote_error assertive" ng-show="data.quoting_btc_error!==undefined">{{data.quoting_btc_error}}</span>
+                </div>
+                <div class="col col-50">
+                  <label class="item item-input item-floating-label">
+                    <span class="input-label">BTC</span>
+                    <input type="number" placeholder="BTC" ng-model="data.amount_btc">
+                    <i class="icon ion-loading-c" ng-cloak ng-show="data.quoting_btc"> </i>
+                    <div class="line-divider"></div>   
+                  </label>
+                  <span class="quote_error assertive" ng-show="data.quoting_usd_error!==undefined">{{data.quoting_usd_error}}</span>
+                </div>
+              </div>
+              <div id="row" class="chart_container">
+                <span class="instant_quote" ng-show="data.timer.start+data.timer.stop>0">{{'g.instant_quote'|translate|uppercase}}:</span>
+                <span class="chart" easypiechart start="data.timer.start" stop="data.timer.stop" percent="data.timer.percent" options="data.timer.options">
+                  <span class="percent" ng-bind="data.timer.remaining"></span>
+                </span>
+                <br/><span class="assertive padding" ng-show="data.timer.expired==1">{{'err.quote_expired_requote'|translate|uppercase}}</span>
+              </div>
+            </div>
+          </div>
+        </ion-scroll>
+      
+        <button ng-click="doWithdraw()" class="button button-block button-energized no-margin hide-on-keyboard-open button_taller" style="position:absolute;bottom:0px;">
+          {{'menu.withdraw'|translate|uppercase}}
+        </button>
+    </ion-content>
+
+  </ion-view>
+  

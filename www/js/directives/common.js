@@ -144,7 +144,8 @@ bitwallet_module
         restrict: 'A',
         link: function(scope, element, attrs) {
           element.on('load', function() {
-            scope.hideLoading();
+            if (scope.hideLoading && typeof(scope.hideLoading) == "function")
+              scope.hideLoading();
           });
         }
     };
