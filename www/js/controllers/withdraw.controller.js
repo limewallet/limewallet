@@ -51,7 +51,7 @@ bitwallet_controllers
       $scope.data.quoting_btc = true;
       $scope.data.amount_btc = undefined;
       // llamo a quotear
-      BitShares.getSellQuote('USD', $scope.data.amount_usd).then(function(res){
+      BitShares.getSellQuote('USD_BTC', $scope.data.amount_usd).then(function(res){
         $scope.data.amount_btc = Number(res.quote.client_recv.replace(' BTC', ''));
         $scope.data.quote       = res.quote;
         $scope.data.signature   = res.signature;
@@ -89,7 +89,7 @@ bitwallet_controllers
       $scope.data.quoting_usd = true;
       $scope.data.amount_usd = undefined;
       // llamo a quotear
-      BitShares.getBuyQuote('BTC', $scope.data.amount_btc).then(function(res){
+      BitShares.getBuyQuote('BTC_USD', $scope.data.amount_btc).then(function(res){
         $scope.data.amount_usd  = Number(res.quote.client_pay.replace(' USD', ''));
         $scope.data.quote       = res.quote;
         $scope.data.signature   = res.signature;
