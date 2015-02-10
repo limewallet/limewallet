@@ -248,6 +248,10 @@ bitwallet_services
     self.set = function(name, value) {
         return DB.query('INSERT or REPLACE into setting (name, value) values (?,?)', [name, value.toString()]);
     };
+    
+    self.remove = function(name) {
+        return DB.query('DELETE from setting where name=?', [name]);
+    };
 
     return self;
 })

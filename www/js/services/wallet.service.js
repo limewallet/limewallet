@@ -266,9 +266,17 @@ bitwallet_services
                 
                 // Load account data (bitshares accountname, photo)
                 self.loadAccount().then(function(account) {
-                  deferred.resolve();
-                  self.data.initialized = true;
-                  self.emit(self.DATA_INITIALIZED);
+                
+                  //Remove last WS TOKEN
+                  Setting.remove(Setting.BSW_TOKEN).then(function(){
+                    deferred.resolve();
+                    self.data.initialized = true;
+                    self.emit(self.DATA_INITIALIZED);
+                  }, function(){
+                    deferred.resolve();
+                    self.data.initialized = true;
+                    self.emit(self.DATA_INITIALIZED);
+                  });
                 }, function(err) {
                   deferred.reject(err); 
                 });

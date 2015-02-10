@@ -69,6 +69,35 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
   }
   
   $scope.nanobar = undefined;
+  var ttl = 60;
+  var counter_timeout = ttl;
+  
+  $scope.onTimeout = function() {
+    counter_timeout = counter_timeout - 1;
+    if(counter_timeout==0)
+    {
+      $scope.stopTimer();
+      return;
+    }
+    $scope.nanobar.go((ttl-counter_timeout)*100/ttl);
+    quote_timeout = $timeout($scope.onTimeout, 1000);
+  }
+  
+  $scope.startTimer = function() {
+    counter_timeout = ttl;
+    quote_timeout = $timeout($scope.onTimeout, 1000);
+  };
+  
+  $scope.stopTimer = function() {
+    $timeout.cancel(counter_timeout);
+    counter_timeout = ttl;
+    $scope.startTimer();
+  }
+  
+  $scope.$on( '$ionicView.enter', function(){
+    $scope.isBTC();
+  });
+  
   $scope.isBTC = function(){
     // 1.- Quotear
     // 2.- Mostrar quote amounts
@@ -91,32 +120,6 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
     $scope.startTimer();
 
   }
-  
-  var ttl = 60;
-  var counter_timeout = ttl;
-  $scope.onTimeout = function() {
-    counter_timeout = counter_timeout - 1;
-    if(counter_timeout==0)
-    {
-      $scope.stopTimer();
-      return;
-    }
-    $scope.nanobar.go((ttl-counter_timeout)*100/ttl);
-    quote_timeout = $timeout($scope.onTimeout, 1000);
-  }
-  $scope.startTimer = function() {
-    counter_timeout = ttl;
-    quote_timeout = $timeout($scope.onTimeout, 1000);
-  };
-  $scope.stopTimer = function() {
-    $timeout.cancel(counter_timeout);
-    counter_timeout = ttl;
-    $scope.startTimer();
-  }
-  $scope.$on( '$ionicView.enter', function(){
-    $scope.isBTC();
-  });
-  
   
   $scope.validateSend = function(transaction) {
     //$scope.transaction.amount = sendForm.transactionAmount.value;

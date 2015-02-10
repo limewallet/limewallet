@@ -1,5 +1,5 @@
 bitwallet_controllers
-.controller('DepositCtrl', function($translate, T, Address, MasterKey, Wallet, BitShares, $scope, $rootScope, $http, $timeout, $ionicActionSheet, $ionicPopup, $cordovaClipboard, $ionicLoading, $timeout, BitShares) {
+.controller('DepositCtrl', function($translate, T, Address, MasterKey, Wallet, BitShares, $scope, $rootScope, $http, $timeout, $ionicActionSheet, $ionicPopup, $cordovaClipboard, $ionicLoading, $timeout, BitShares, Setting) {
   
   $scope.data = {
         amount_usd:         undefined,
@@ -53,11 +53,11 @@ bitwallet_controllers
         $scope.data.signature   = res.signature;
         $timeout(function () {
           $scope.data.quoting_btc = false;
-          $scope.doStartTimer();
+          $scope.startTimer();
         } , 200);
         //console.log(res);
       }, function(error){
-        $scope.doStopTimer();
+        $scope.stopTimer();
         $scope.data.quoting_btc       = false;
         $scope.setMessageErr('BTC', error);
         //console.log(error);
@@ -91,11 +91,11 @@ bitwallet_controllers
         $scope.data.signature   = res.signature;
         $timeout(function () {
           $scope.data.quoting_usd = false;
-          $scope.doStartTimer();
+          $scope.startTimer();
         } , 200);
         //console.log(res);
       }, function(error){
-        $scope.doStopTimer();
+        $scope.stopTimer();
         $scope.data.quoting_usd       = false;
         $scope.setMessageErr('USD', error);
         $scope.data.quote             = undefined;
@@ -140,9 +140,8 @@ bitwallet_controllers
     var n = parseInt(d.getTime()/1000);
     if(!$scope.data.quote.timestamp)
       return 0;
-    //console.log('['+$scope.data.quote.timestamp+'] + ['+$scope.data.quote_ttl+'] - ['+n+'] = '+($scope.data.quote.timestamp+$scope.data.quote_ttl-n));
-    return parseInt($scope.data.quote.timestamp)+$scope.data.quote_ttl-n;
-    
+    //return parseInt($scope.data.quote.timestamp)+$scope.data.quote_ttl-n;
+    return 100;
   }
   
   $scope.showAlert = function(title, message){
@@ -174,14 +173,15 @@ bitwallet_controllers
         console.log('BitShares.acceptQuote:'+JSON.stringify(result));
         
         $scope.data.tx                = result.tx;
-        $scope.data.deposit_short_uri = 'bitcoin:'+$scope.data.tx.cl_pay_addr+'?amount='+$scope.data.tx.cl_pay;
+        $scope.data.deposit_short_uri = 'bitcoin://'+$scope.data.tx.cl_pay_addr+'?amount='+$scope.data.tx.cl_pay;
         $scope.data.deposit_uri       = $scope.data.deposit_short_uri+'?label=bitwallet_deposit?message=convert_bts_to_bitUSD';
         $scope.data.deposit_qrcode    = 'http://chart.apis.google.com/chart?cht=qr&chs=300x300&chl='+encodeURIComponent($scope.data.deposit_uri)+'&chld=H|0'
-        //$scope.startTimer();
         $scope.data.step = 2;
         
         
       }, function(error){
+        if(error=='auth_failed')
+          Setting.remove(Setting.BSW_TOKEN);
         $scope.showAlert('err.cant_accept', 'err.cant_accept_retry');
         return;
       });
@@ -232,55 +232,102 @@ bitwallet_controllers
     
   // });
   
-  $scope.doStopTimer = function(){
-    $scope.data.timer.start=0;
-    $scope.data.timer.stop=1;
-  }
+  // $scope.doStopTimer = function(){
+    // $scope.data.timer.start=0;
+    // $scope.data.timer.stop=1;
+  // }
   
-  $scope.doStartTimer = function(){
-    $scope.doStopTimer();
+  // $scope.doStartTimer = function(){
+    // $scope.doStopTimer();
     
-    $scope.data.timer.remaining = undefined;
-    $scope.data.timer.options   =  {
-        //barColor: '#ef1e25',
-        //trackColor: '#f9f9f9',
-        scaleColor: '#dfe0e0',
-        scaleLength: 5,
-        //lineCap: 'round',
-        //lineWidth: 3,
-        size: 50,
-        rotate: 0,
-        animate:{
-					duration:$scope.remainingTime()*1000,
-					enabled:true
-				},
-        trackColor:'#01bbf4', //'#66cc33', //#498f24
-				barColor:'#ffffff',
-				scaleColor:'#dfe0e0'  ,//'#dfe0e0','#E67E22',
-				lineWidth:18,
-				lineCap:'circle',
-        onStep: function(from, to, currentValue){
-          //console.log('onStep: '+from +'-'+ to +'-'+ currentValue);
-          //if(from!=to)
-          //  $scope.parcont = (100-parseInt(currentValue));
-        },
-        onStop: function(from, to){
-          console.log('onStop: '+from +'-'+ to);
-          $scope.data.timer.expired =1;
-        }
-			};
+    // $scope.data.timer.remaining = undefined;
+    // $scope.data.timer.options   =  {
+        // //barColor: '#ef1e25',
+        // //trackColor: '#f9f9f9',
+        // scaleColor: '#dfe0e0',
+        // scaleLength: 5,
+        // //lineCap: 'round',
+        // //lineWidth: 3,
+        // size: 50,
+        // rotate: 0,
+        // animate:{
+					// duration:$scope.remainingTime()*1000,
+					// enabled:true
+				// },
+        // trackColor:'#01bbf4', //'#66cc33', //#498f24
+				// barColor:'#ffffff',
+				// scaleColor:'#dfe0e0'  ,//'#dfe0e0','#E67E22',
+				// lineWidth:18,
+				// lineCap:'circle',
+        // onStep: function(from, to, currentValue){
+          // //console.log('onStep: '+from +'-'+ to +'-'+ currentValue);
+          // //if(from!=to)
+          // //  $scope.parcont = (100-parseInt(currentValue));
+        // },
+        // onStop: function(from, to){
+          // console.log('onStop: '+from +'-'+ to);
+          // $scope.data.timer.expired =1;
+        // }
+			// };
       
-      $scope.data.timer.expired = 0;
-      $scope.data.timer.percent = 100;
-      $timeout(
-        function(){
-          $scope.data.timer.start=1;
-          $scope.data.timer.stop=0;
-        }
-        , 200);
-  
-  }
+      // $scope.data.timer.expired = 0;
+      // $scope.data.timer.percent = 100;
+      // $timeout(
+        // function(){
+          // $scope.data.timer.start=1;
+          // $scope.data.timer.stop=0;
+        // }
+        // , 200);
+  // }
 
+  $scope.nanobar  = undefined;
+  $scope.nanobar2 = undefined;
+  var ttl = 60;
+  var counter_timeout = ttl;
+  
+  $scope.onTimeout = function() {
+    counter_timeout = counter_timeout - 1;
+    if(counter_timeout==0)
+    {
+      $scope.stopTimer();
+      $scope.nanobar.go(100);
+      $scope.nanobar2.go(100);
+      $scope.data.timer.expired = 1;
+      return;
+    }
+    $scope.nanobar.go((ttl-counter_timeout)*100/ttl);
+    $scope.nanobar2.go((ttl-counter_timeout)*100/ttl);
+    quote_timeout = $timeout($scope.onTimeout, 1000);
+  }
+  
+  $scope.startTimer = function() {
+    ttl = $scope.remainingTime();
+    counter_timeout = ttl;
+    var options = {
+      target: document.getElementById('quote_ttl'),
+      id: 'mynano'
+    };
+    $scope.nanobar = new Nanobar( options );
+    var options2 = {
+      target: document.getElementById('quote_ttl2'),
+      id: 'mynano2'
+    };
+    $scope.nanobar2 = new Nanobar( options2 );
+    
+    $scope.data.timer.expired = 0;
+    counter_timeout = ttl;
+    quote_timeout = $timeout($scope.onTimeout, 1000);
+  };
+  
+  $scope.stopTimer = function() {
+    counter_timeout = ttl;
+    if($scope.nanobar)
+      $timeout(function(){
+          $scope.nanobar.go(0);
+          $scope.nanobar2.go(0);
+        }, 1000);
+  }
+  
   $scope.copyUri = function(){
     $cordovaClipboard
       .copy($scope.data.deposit_uri)
