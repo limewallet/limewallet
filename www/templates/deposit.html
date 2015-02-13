@@ -6,13 +6,11 @@
     <ion-content class="has-header register deposit" has-bouncing="false" scroll="false" overflow-scroll="false">
         <ion-scroll zooming="false" direction="y" class="register_details margin-bottom-buttonNOT">
           <div class="energized_bg register_container" ng-show="data.step==1">
-            <h4 class="register_color">Deposit BITCOIN and get <b>bit{{wallet.asset.symbol}}</b></h4>
+            <h4 class="register_color" ng-bind-html="'g.deposit_title'|translate:{asset:wallet.asset}"></h4>
           </div>
           <div class="step1" ng-show="data.step==1">
             <div class="register_container energized_bg register_color">
-              <p>
-                You can load your wallet by converting bitcoin into your preferred bitasset.<br/>
-                Type the amount of bit{{wallet.asset.symbol}} you want to load and get a quote for each bitcoin, and vice versa.
+              <p ng-bind-html="'g.deposit_paragraph'|translate:{asset:wallet.asset}">
               </p>
             </div>
             <div class="list settings quote" id="quote_ttl">
@@ -37,11 +35,6 @@
                 </div>
               </div>
               <div id="row" class="chart_container">
-                <!--span class="instant_quote" ng-show="data.timer.start+data.timer.stop>0">{{'g.instant_quote'|translate|uppercase}}:</span>
-                <span class="chart" easypiechart start="data.timer.start" stop="data.timer.stop" percent="data.timer.percent" options="data.timer.options">
-                  <span class="percent" ng-bind="data.timer.remaining"></span>
-                </span>
-                <br/-->
                 <span class="assertive padding" ng-show="data.timer.expired==1">{{'err.quote_expired_requote'|translate|uppercase}}</span>
               </div>
             </div>
@@ -49,47 +42,15 @@
           
           <div class="step2" ng-show="data.step==2">
             <div class="register_container energized_bg register_color">
-              <p>
-                Please send <b>{{data.tx.cl_pay|number:2}} BTC</b> to <b>{{data.tx.cl_pay_addr}}</b>
-                <!-- h3 ng-show="data.quote_expired===false">Time remaining {{data.timer}}</h3>
-                <h3 ng-show="data.quote_expired===true">Quote time expired!</h3 -->
+              <p ng-bind-html="'g.please_send_btc_to'|translate:{amount:(data.tx.cl_pay|number:2), addy:data.tx.cl_pay_addr}">
               </p>
-              <!--div id="row" class="chart_container">
-                <span class="instant_quote" ng-show="data.timer.start+data.timer.stop>0">{{'g.instant_quote'|translate|uppercase}}:</span>
-                <span class="chart" easypiechart start="data.timer.start" stop="data.timer.stop" percent="data.timer.percent" options="data.timer.options">
-                  <span class="percent" ng-bind="data.timer.remaining"></span>
-                </span>
-                <br/><span class="assertive padding" ng-show="data.timer.expired==1">{{'err.quote_expired_requote'|translate|uppercase}}</span>
-              </div -->
             </div>
-            <div style="width:100%;display:block;position:relative;padding-top:" id="quote_ttl2">
-              <div style="width:300px;margin:0 auto;display:block;">
-                <div style="padding-top:15px;" class="button-bar tabbed">
-                  <a class="button button-small button-energized active" ng-click="data.active_tab=1" ng-class="{'active':data.active_tab==1}">
-                    <i class="icon ion-link"></i>
-                  </a>
-                  <a class="button button-small button-energized" ng-click="data.active_tab=2" ng-class="{'active':data.active_tab==2}">
-                    <i class="icon fa fa-qrcode"></i>
-                  </a>
-                </div>
-              </div>
-            </div>
-            <div class="list settings" ng-disabled="data.quote_expired===false" ng-show="data.active_tab===1">
+            <div class="list settings" id="quote_ttl2">
               <div class="item">
-                <span class="input-label">Bitcoin URI</span>
-                <p class="wrap_text bitcoin_uri">{{data.deposit_short_uri}}</p>
-              </div>
-              <!--div class="item" style="min-height:66px;">
-                <a class="button button-outline button-stable float_right" ng-click="copyUri()"><i class=" fa fa-copy"></i></a>
-                <a class="button button-outline button-stable float_right margin_r_16" href="{{data.deposit_short_uri}}" target="_system">PAY</a>
-              </div-->
-            </div>
-            <div class="list settings" ng-disabled="data.quote_expired===false" ng-show="data.active_tab===2">
-              <div class="item">
-                <span class="input-label">Bitcoin URI QRCode</span>
                 <div class="qr_container">
-                  <img ng-src="{{data.deposit_qrcode}}" id="qr_image" imageonload />
+                  <img ng-src="{{data.deposit_qrcode}}" style="width:100%;height:auto;" id="qr_image" imageonload ng-click="copyUri()" />
                 </div>
+                <span style="font-size:14px;" class="input-label">{{'g.tap_copy_btc_uri'|translate}}</span>
               </div>
             </div>
           </div>
@@ -101,21 +62,17 @@
         
         <div style="position:absolute;bottom:0px;height:67px;width:100%;" class="hide-on-keyboard-open" ng-show="data.step==2">
           <div ng-show="data.timer.expired==true">
-            <button ng-click="requote()" class="button button-block button-stable no-margin button_taller" >
+            <!-- button ng-click="requote()" class="button button-block button-stable no-margin button_taller" >
               {{'g.requote'|translate|uppercase}}
+            </button -->
+            <button ng-click="alreadyPaid()" class="button button-block button-stable no-margin button_taller" >
+              {{'g.already_paid'|translate|uppercase}}
             </button>
           </div>
           <div ng-show="data.timer.expired==false" style="display:block;">
-            <div style="width:50%;float:left;">
-              <a class="button button-block button-energized no-margin button_taller" style="line-height:67px;" href="{{data.deposit_short_uri}}" target="_system">
-                PAY
-              </a>
-            </div>
-            <div style="width:50%;float:left;">
-              <button ng-click="copyUri()" class="button button-block button-energized no-margin button_taller">
-                <i class=" fa fa-copy"></i>
-              </button>
-            </div>
+            <a class="button button-block button-energized no-margin button_taller" style="line-height:67px;" href="{{data.deposit_short_uri}}" target="_system">
+              PAY
+            </a>
           </div>
         </div>
     </ion-content>

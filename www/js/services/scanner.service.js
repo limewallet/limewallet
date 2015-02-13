@@ -108,16 +108,6 @@ bitwallet_services
     };
 
     return self;
-})
-
-
-//i18n Helper
-.factory('T', function($translate) {
-    var self = this;
-    
-    self.i = function(txt, obj) {
-      return $translate.instant(txt, obj);
-    };
-
-    return self;
 });
+
+

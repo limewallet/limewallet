@@ -51,9 +51,9 @@
           <a ng-click="showActionSheet(tx)">
             <div ng-class="{'sent':tx.sign<0, 'received':tx.sign>0, 'self':tx.sign==0}">
               <div ng-class="{true:'pending', false:''}[tx.state=='P']">
-                <i class="icon ion-ios7-upload-outline" ></i> 
-                <i class="icon ion-ios7-download-outline"></i>
-                <i class="icon ion-ios7-refresh-outline"></i>
+                <i class="icon ion-ios-upload-outline" ></i> 
+                <i class="icon ion-ios-download-outline"></i>
+                <i class="icon ion-ios-refresh-outline"></i>
                 <i ng-show="tx.state=='P'" class="icon ion-loading-c"></i>
                 <h2>
                   <span class="tx_amount"><i class="{{wallet.asset.symbol_ui_class}}">{{wallet.asset.symbol_ui_text}}</i>&nbsp;{{tx.amount| number : 2}}</span> 
@@ -62,9 +62,9 @@
                   <span class="received_text">{{'g.received' | translate}}</span>
                   <span ng-if="tx.state=='P'" class="pending_text">{{'home.pending' | translate}}</span></h2>
                 <p>
-                <span class="sent_text">{{'g.to'|translate}}</span><span class="received_text">{{'g.from'|translate}}</span>
+                <span class="sent_text">{{'g.to'|translate}}</span> <span class="received_text">{{'g.from'|translate}}</span>
                 <span class="self_text">{{'g.from'|translate}}</span>: <span class="tx_address">{{tx.addr_name | translate}}</span>
-                <br/>{{'home.on'|translate}} {{ tx.date|date:'medium'}}</p>
+                <br/>{{'home.on'|translate}} {{ tx.TS|date:'medium'}} / {{tx.cl_recv_curr}} {{tx.cl_pay_curr}}</p>
               </div>
             </div>
           </a>

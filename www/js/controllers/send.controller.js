@@ -1,6 +1,6 @@
 bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T, BitShares, AddressBook, Scanner, Address, $http, $ionicLoading, $ionicNavBarDelegate, $ionicModal, $ionicPopup, $location, $timeout, $rootScope, $stateParams) {
   
-  $scope.data = {address_book:[], is_btc:true};
+  $scope.data = {address_book:[], is_btc:false};
   
   var amount = 0;
   if (!angular.isUndefined($stateParams.amount))
@@ -68,6 +68,8 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
     });
   }
   
+  /*********************************************************/
+  /* BITCOINS payment handlers *****************************/
   $scope.nanobar = undefined;
   var ttl = 60;
   var counter_timeout = ttl;
@@ -105,18 +107,15 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
     // 4.- En cada tic ajustar -> $scope.nanobar.go( 30 ); // size bar 30%
     // 5.- On expired, ir a 1
     
-    var options = {
-      bg: '#acf',
-
-      // leave target blank for global nanobar
-      target: document.getElementById('bitcoin_payment_info'),
-
-      // id for new nanobar
-      id: 'mynano'
-    };
-
-    $scope.nanobar = new Nanobar( options );
-
+    if($scope.nanobar===undefined)
+    {
+      var options = {
+        bg: '#acf',
+        target: document.getElementById('quote_ttl'), //bitcoin_payment_info
+        id: 'mynano'
+      };
+      $scope.nanobar = new Nanobar( options );
+    }
     $scope.startTimer();
 
   }
@@ -152,15 +151,7 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
 
       var deferred = $q.defer();
 
-      var url;
-      if(ENVIRONMENT.test) {
-        url = 'https://bsw-test.latincoin.com/api/v1/account/' + sendForm.transactionAddress.value;
-      } else {
-        url = 'https://bsw.latincoin.com/api/v1/account/' + sendForm.transactionAddress.value;
-      }
-
-      prom = $http.get(url, {timeout:10000})
-      .success(function(r) {
+      prom = BitShares.getAccount(sendForm.transactionAddress.value).then(function(r) {
         if(r.error !== undefined) {
           err_msg = T.i('err.invalid_address_account');
           return;
@@ -169,11 +160,11 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
         extra_data = '</br><div class="full_width"><img class="i_centered" src="'+ 'http://robohash.org/'+r.name+'?size=150x150' + '" /></div>';
         if(r.public_data && r.public_data.gravatarId)
           extra_data = '</br><div class="full_width"><img class="i_centered" src="http://www.gravatar.com/avatar/'+r.public_data.gravatarId+'?s=150" /></div>';
-      })
-      .error(function(data, status, headers, config) {
+      }, function(error){
         err_msg = T.i('err.server_error');
-      })
-      .finally(function() {
+      });
+      
+      $q.all([prom]).then(function() {
         $ionicLoading.hide();
 
         if( err_msg !== undefined ) {
@@ -192,16 +183,7 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
         }
       });
       
-      // $ionicPopup.alert({
-        // title    : T.i('err.invalid_address') + ' <i class="fa fa-warning float_right"></i>',
-        // template : T.i('err.enter_valid_address'),
-        // okType   : 'button-assertive',
-      // });
-      //console.log('no habia nada');
-
       return deferred.promise;
-
-
     })
     .then(function(is_valid){
       
@@ -210,7 +192,6 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
       var confirmPopup = $ionicPopup.confirm({
         title    : T.i('send.payment_confirm'),
         template : T.i('send.are_you_sure',{symbol:symbol,amount:$scope.transaction.amount,address:sendForm.transactionAddress.value, extra_data:extra_data})
-        //template : T.i('send.are_you_sure',{symbol:symbol,amount:$scope.transaction.amount,address:sendForm.transactionAddress.value})
       });
 
       confirmPopup.then(function(res) {
@@ -235,7 +216,6 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
                         
                       })
             prom_addy = p;
-            //dst_addr = bitcoin.bts.pub_to_address(bitcoin.bts.decode_pubkey(owner_key));
           }
           else
           {
@@ -245,24 +225,7 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
           }
           
           prom_addy.then(function() {
-          
-            var tx_req = {
-              "asset" : $scope.wallet.asset.id, // ? sendForm.transactionAssetId.value ?
-              "from"  : from,
-              "to"    : [{
-                  "address" : dst_addr, //sendForm.transactionAddress.value,
-                  "amount"  : amount
-              }]
-            }
-
-            var url;
-            if(ENVIRONMENT.test) {
-              url = 'https://bsw-test.latincoin.com/api/v1/txs/new';
-            } else {
-              url = 'https://bsw.latincoin.com/api/v1/txs/new';
-            }
-            $http.post(url, tx_req)
-            .success(function(r) {
+            BitShares.prepareSendAsset($scope.wallet.asset.id, from, dst_addr, amount).then(function(r){
               if(r.error !== undefined) {
                 console.log('There where errors ' + r.error);
                 var alertPopup = $ionicPopup.alert({
@@ -303,24 +266,15 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
               });
 
               $q.all(prom).then(function() {
-                console.log('firmado .. mandando'); 
                 $scope.transaction.message = 'send.sending_transaction';
 
-                if(ENVIRONMENT.test) {
-                  url = 'https://bsw-test.latincoin.com/api/v1/txs/send';
-                } else {
-                  url = 'https://bsw.latincoin.com/api/v1/txs/send';
-                }
-                $http.post(url, {tx:r.tx, secret:r.secret})
-                .success(function(r) {
+                BitShares.sendAsset(r.tx, r.secret).then(function(r) {
                   $scope.sending_modal.hide();
-                  $location.path('/home');
+                  $scope.goHome();
                   window.plugins.toast.show( T.i('send.transaction_sent'), 'long', 'bottom')
                   $scope.wallet.transactions.unshift({sign:-1, address:sendForm.transactionAddress.value, addr_name:sendForm.transactionAddress.value, amount:amount/$scope.wallet.assets[$scope.wallet.asset.id].precision, state:'P', date: new Date().getTime()});
                   
-                })
-                .error(function(data, status, headers, config) {
-                   console.log('error...: '+status);
+                }, function(){
                     var alertPopup = $ionicPopup.alert({
                        title: T.i('err.unable_to_send_tx') + ' <i class="fa fa-warning float_right"></i>',
                        template: T.i('err.server_error'),
@@ -329,18 +283,12 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
                     .then(function() {
                       $scope.sending_modal.hide();
                     });
-                })
-                .finally(function() {
-                   console.log('finally...');
                 });
-
                  
               });
 
-            })
-            .error(function(data, status, headers, config) {
-               console.log('error...: '+status);
-                 var alertPopup = $ionicPopup.alert({
+            }, function(error){
+               var alertPopup = $ionicPopup.alert({
                     title: T.i('err.unable_to_send_tx') + ' <i class="fa fa-warning float_right"></i>',
                     template: T.i('err.server_error'),
                     okType: 'button-assertive', 
@@ -348,9 +296,6 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
                 .then(function() {
                   $scope.sending_modal.hide();
                 });
-            })
-            .finally(function() {
-               console.log('finally...');
             });
 
           });

@@ -266,7 +266,7 @@ bitwallet_services
       
       if(payload !== undefined)
       {
-        console.log('ApiCall POST ' + JSON.stringify(payload));
+        //console.log('ApiCall POST ' + JSON.stringify(payload));
         req = $http.post(url, payload ,{timeout:ENVIRONMENT.timeout});
       }
       else
@@ -286,10 +286,17 @@ bitwallet_services
       return deferred.promise;
     }
 
+    // *************************************************** //
+    // Exchange Service Api Calls ************************ //
+    self.listExchangeTxs = function(token) {
+      var url = ENVIRONMENT.apiurl('/xtxs/'+token+'/list');
+      return self.apiCall(url);
+    }
     
-    // buy usd | sell btc => deposit
-    // sell usd | buy btc => withdraw
-    // buy btc => pay in btc
+    self.getExchangeTx = function(token, txid) {
+      var url = ENVIRONMENT.apiurl('/xtxs/'+token+'/'+txid);
+      return self.apiCall(url);
+    }
 
     self.getSellQuote = function(asset, amount) {
       var url = ENVIRONMENT.apiurl('/sell/'+asset+'/'+amount);
@@ -301,18 +308,26 @@ bitwallet_services
       return self.apiCall(url);
     }
     
-    self.acceptQuote = function(quote, signature, token, address) {
+    self.X_DEPOSIT    = 'deposit';
+    self.X_WITHDRAW   = 'withdraw';
+    self.X_BTC_PAY    = 'btc_pay';
+    
+    self.acceptQuote = function(quote, signature, token, address, extra_data) {
       var url = ENVIRONMENT.apiurl('/accept');
 
       var payload = {
         quote       : quote,
         signature   : signature, 
         destination : address,
-        token       : token
+        token       : token,
+        extra_data  : extra_data
       }
 
       return self.apiCall(url, payload);
     }
+    
+    // *************************************************** //
+    // Assets Operations Api Calls *********************** //
     
     self.getBalance = function(address) {
       var url = ENVIRONMENT.apiurl('/addrs/'+address+'/balance');
@@ -320,10 +335,40 @@ bitwallet_services
     }
 
     self.getBalanceForAsset = function(address, asset_id) {
-      var url = ENVIRONMENT.apiurl('/addrs/'+address+'/balance/' + asset_id);
+      //var url = ENVIRONMENT.apiurl('/addrs/'+address+'/balance/' + asset_id);
+      var url = ENVIRONMENT.apiurl('/addrs/'+address+'/history');
       return self.apiCall(url);
     }
+    
+    self.prepareSendAsset = function(asset, from, to, amount) {
+      var url = ENVIRONMENT.apiurl('/txs/new');
 
+      var payload = {
+        "asset" : asset, 
+        "from"  : from,
+        "to"    : [{
+            "address" : to, 
+            "amount"  : amount
+        }]
+      }
+
+      return self.apiCall(url, payload);
+    }
+    
+    self.sendAsset = function(tx, secret) {
+      var url = ENVIRONMENT.apiurl('/txs/send');
+
+      var payload = {
+        'tx'      : tx, 
+        'secret'  : secret
+      }
+      
+      return self.apiCall(url, payload);
+    }
+    
+    // *************************************************** //
+    // Account Api Calls ********************************* //
+    
     self.getSignupInfo = function() {
       var url = ENVIRONMENT.apiurl('/signup');
       return self.apiCall(url);
@@ -391,7 +436,7 @@ bitwallet_services
 
         self.getSignupInfo().then(function(res) {
           self.recoverPubkey(res.msg, res.signature).then(function(pubkey) {
-            console.log(pubkey);
+            //console.log(pubkey);
             if( pubkey != ENVIRONMENT.apiPubkey ) {
               deferred.reject('invalid pub key');
               return;
@@ -409,7 +454,7 @@ bitwallet_services
                   deferred.reject('invalid token');
                   return;
                 }
-
+                console.log(' Current TOKEN:'+res.token);
                 Setting.set(Setting.BSW_TOKEN, res.token).then(function() {
                   deferred.resolve(res.token);
                 }, function(err) {

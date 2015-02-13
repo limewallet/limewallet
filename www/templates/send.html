@@ -16,7 +16,7 @@
           <span class="instant_quote2" >{{'g.instant_quote'|translate|uppercase}}: <span style="font-size:18px;font-weight:bold;">0.51 BTC = 165 bitUSD</span>
         </div>
       </div>
-      <form novalidate name="sendForm" class="send_form" >
+      <form novalidate name="sendForm" class="send_form" id="quote_ttl">
         <div class="list">
           <div class="item item-input-inset">
             <label class="item-input-wrapper wrapper_clean">
@@ -70,7 +70,7 @@
     <ion-modal-view>
       <ion-header-bar align-title="middle" class="bar-energized nav-title-slide-ios7">
         <div class="title">{{'send.address_book'|translate}}</div>
-        <button ng-click="address_book_modal.hide()" class="button button-icon icon ion-ios7-close-empty"></button>
+        <button ng-click="address_book_modal.hide()" class="button button-icon icon ion-ios-close-empty"></button>
       </ion-header-bar>
       
       <ion-content class="has-header">

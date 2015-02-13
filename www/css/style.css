@@ -123,21 +123,21 @@ line-height: 38px;}
 /*.transactions .received .sent_text{display:none;}*/
 /*.transactions .sent .received_text{display:none;}*/
 .transactions h2 {font-size:14px!important;}
-.transactions .received .icon.ion-ios7-upload-outline{display:none;}
-.transactions .received .icon.ion-ios7-refresh-outline{display:none;}
+.transactions .received .icon.ion-ios-upload-outline{display:none;}
+.transactions .received .icon.ion-ios-refresh-outline{display:none;}
 /*.transactions .received .icon.ion-loading-c{display:none;}*/
 
-.transactions .sent .icon.ion-ios7-download-outline{display:none;}
-.transactions .sent .icon.ion-ios7-refresh-outline{display:none;}
+.transactions .sent .icon.ion-ios-download-outline{display:none;}
+.transactions .sent .icon.ion-ios-refresh-outline{display:none;}
 /*.transactions .sent .icon.ion-loading-c{display:none;}*/
 
-.transactions .self .icon.ion-ios7-upload-outline{display:none;}
-.transactions .self .icon.ion-ios7-download-outline{display:none;}
+.transactions .self .icon.ion-ios-upload-outline{display:none;}
+.transactions .self .icon.ion-ios-download-outline{display:none;}
 /*.transactions .self .icon.ion-loading-c{display:none;}*/
 
-.transactions .pending .icon.ion-ios7-upload-outline{display:none;}
-.transactions .pending .icon.ion-ios7-download-outline{display:none;}
-.transactions .pending .icon.ion-ios7-refresh-outline{display:none;}
+.transactions .pending .icon.ion-ios-upload-outline{display:none;}
+.transactions .pending .icon.ion-ios-download-outline{display:none;}
+.transactions .pending .icon.ion-ios-refresh-outline{display:none;}
 
 .transactions .received .sent_text{display:none;}
 .transactions .received .self_text{display:none;}
@@ -629,7 +629,7 @@ color: #aaa;}
  
 p.bitcoin_uri {
   padding: 16px;
-  background-color: #eeeeee;
+  /*background-color: #eeeeee;*/
   font-size:18px!important;
   } 
 

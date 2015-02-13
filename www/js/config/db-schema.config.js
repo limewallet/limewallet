@@ -48,6 +48,46 @@ bitwallet_config
                 {name : 'name',               type   : 'text primary key'},
                 {name : 'value',              type   : 'text'}
             ]
+        },
+        {
+            name: 'operation',
+            columns: [
+                {name : 'id',                 type   : 'integer primary key'},
+                {name : 'asset_id',           type   : 'integer'},
+                {name : 'amount',             type   : 'text'},
+                {name : 'other',              type   : 'text'},
+                {name : 'date',               type   : 'integer'},
+                {name : 'op_type',            type   : 'text'},
+                {name : 'sign',               type   : 'integer'},
+                {name : 'address',            type   : 'text'},
+                {name : 'block',              type   : 'integer'},
+                {name : 'block_id',           type   : 'text'},
+                {name : 'tx_id',              type   : 'text'},
+                {name : 'fee',                type   : 'text'},
+                {name : 'addr_name',          type   : 'text'}
+            ]
+        },
+        {
+            name: 'exchange_transaction',
+            columns: [
+                {name : 'id',                     type   : 'integer primary key'},          // 34,
+                {name : 'x_asset_id',             type   : 'text'}, 
+                {name : 'status',                 type   : 'text'}, 
+                {name : 'quoted_at',              type   : 'integer'},
+                {name : 'cl_pay_curr',            type   : 'text'},             // 'BTC',
+                {name : 'cl_pay_addr',            type   : 'text'},             // 'CEX53ETEcNhAbXsGr2sHYmNAHB5smBAtqT',
+                {name : 'cl_pay_tx',              type   : 'text unique'},      // 'bfcce6d3b9c126200c2a32c79d8b5a89d2bf2bd4',
+                {name : 'canceled',               type   : 'integer'},          // 0,
+                {name : 'rate',                   type   : 'text'},             // '224.18991218',
+                {name : 'cl_pay',                 type   : 'text'},             // '0.02230252',
+                {name : 'balance',                type   : 'text'},             // '0.03230252',
+                {name : 'expired',                type   : 'integer'},          // 0,
+                {name : 'cl_recv',                type   : 'text'},             // '5.00000000',
+                {name : 'cl_recv_tx',             type   : 'text unique'},      // 'bfcce6d3b9c126200c2a32c79d8b5a89d2bf2bd4',
+                {name : 'cl_recv_addr',           type   : 'text'},             // 'DVS6KBKUMcWXvgY7c9sYqHv4p47baAn6NBPR',
+                {name : 'cl_recv_curr',           type   : 'text'},              // 'USD'
+                {name : 'tx_type',                type   : 'text'},
+          ]
         }
     ],
 });

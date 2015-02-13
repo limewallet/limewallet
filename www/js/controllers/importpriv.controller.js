@@ -50,7 +50,7 @@ bitwallet_controllers
       }
       else
       {
-        $location.path('/home');
+        $scope.goHome();
         window.plugins.toast.show( T.i('err.unable_pw_balance'), 'long', 'bottom');
         return;
       }
@@ -62,7 +62,7 @@ bitwallet_controllers
          template : T.i('import_priv.switch_currency', {'symbols':other_symbols.join(',')}),
        }).then(function(res) {
         if(res) {
-          $location.path('/home');
+          $scope.goHome();
         }
        });
 
@@ -73,7 +73,7 @@ bitwallet_controllers
     })
     .error(function(data, status, headers, config) {
       $timeout(function () {
-          $location.path('/home');
+          $scope.goHome();
           window.plugins.toast.show( T.i('err.unable_pw_balance'), 'long', 'bottom');
         }, 500);
     })
@@ -169,7 +169,7 @@ bitwallet_controllers
           $http.post(url, r.tx)
           .success(function(r) {
             $scope.sweeping_modal.hide();
-            $location.path('/home');
+            $scope.goHome();
             window.plugins.toast.show( T.i('import_priv.transaction_sent'), 'long', 'bottom')
             $rootScope.transactions.unshift({sign:1, address:$scope.imported_pk.address, addr_name:$scope.imported_pk.address, amount:amount/$scope.wallet.asset.precision, state:'P', date: new Date().getTime()});
           })

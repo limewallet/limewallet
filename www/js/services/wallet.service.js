@@ -1,5 +1,5 @@
 bitwallet_services
-.service('Wallet', function($translate, $rootScope, $q, ENVIRONMENT, BitShares, ReconnectingWebSocket, MasterKey, Address, Setting, AddressBook, Account) {
+.service('Wallet', function($translate, $rootScope, $q, ENVIRONMENT, BitShares, ReconnectingWebSocket, MasterKey, Address, Setting, AddressBook, Account, Operation, ExchangeTransaction) {
     var self = this;
 
     self.data = {
@@ -44,7 +44,7 @@ bitwallet_services
       Setting.get(Setting.UI_ALLOW_HIDE_BALANCE, false).then(function(hide_balance){
         self.data.ui.balance.allow_hide = hide_balance.value;
         self.data.ui.balance.hidden     = hide_balance.value;
-        console.log('load UI_ALLOW_HIDE_BALANCE:' + hide_balance.value);  
+        //console.log('load UI_ALLOW_HIDE_BALANCE:' + hide_balance.value);  
         deferred.resolve();
       }, function(error){
         deferred.resolve();
@@ -215,7 +215,7 @@ bitwallet_services
     self.onNotification = function (event) {
       clearTimeout(self.timeout.ping);
       self.timeout.ping = setTimeout( function() { self.ws.send('ping'); }, 10000);
-
+      console.log(JSON.stringify(event.data));
       if(event.data.indexOf('nb') == 2) {
         //Refresh balance in 100ms, if we get two notifications (Withdraw from two addresses) just refresh once.
         clearTimeout(self.timeout.refresh);
@@ -250,7 +250,7 @@ bitwallet_services
         //Get default asset
         Setting.get(Setting.DEFAULT_ASSET, ENVIRONMENT.default_asset)
         .then(function(default_asset){
-          console.log('Seting::DEFAULT_ASSET ' + JSON.stringify(default_asset));
+          //console.log('Seting::DEFAULT_ASSET ' + JSON.stringify(default_asset));
           self.data.asset = self.data.assets[default_asset.value];
           
           // Load ui config
@@ -272,6 +272,7 @@ bitwallet_services
                     deferred.resolve();
                     self.data.initialized = true;
                     self.emit(self.DATA_INITIALIZED);
+                    
                   }, function(){
                     deferred.resolve();
                     self.data.initialized = true;
@@ -310,7 +311,7 @@ bitwallet_services
       MasterKey.get().then(function(masterPrivateKey) {
 
         if(masterPrivateKey !== undefined) {
-          console.log('Wallet::createMasterKey master key present');
+          //console.log('Wallet::createMasterKey master key present');
           deferred.resolve(masterPrivateKey);
           return;
         }
@@ -398,10 +399,28 @@ bitwallet_services
           });
 
           //Generate tx list
-          self.buildTxList(res, self.data.asset.id);
-
-          deferred.resolve();
-          self.emit(self.REFRESH_DONE);
+          var prom = self.buildTxList(res, self.data.asset.id);
+          
+          //Get Exchange Transactions
+          var prom2 = self.getExchangeTransactions();
+          
+          $q.all([prom, prom2]).then(function(){
+            Operation.allWithXTxForAsset(self.data.asset.id).then(function(res){
+              self.data.transactions=res; 
+              deferred.resolve();
+              self.emit(self.REFRESH_DONE);
+            },
+            function(error){
+              console.log(error);
+              deferred.reject(error);
+              self.emit(self.REFRESH_ERROR);
+            })
+          }, function(error){
+            console.log(error);
+            deferred.reject(error);
+            self.emit(self.REFRESH_ERROR);
+          })
+          
         }, function(err) {
           deferred.reject(err);
           self.emit(self.REFRESH_ERROR);
@@ -410,15 +429,49 @@ bitwallet_services
         deferred.reject(err); 
         self.emit(self.REFRESH_ERROR);
       });
-
       return deferred.promise;
     };
 
+    self.getExchangeTransactions = function(){
+      var deferred = $q.defer();
+      var address = self.getMainAddress();
+      BitShares.getBackendToken(address).then(function(token){
+        BitShares.listExchangeTxs(token).then(function(res){
+          var proms = [];
+          res.txs.forEach(function(o){
+            o['tx_type']      = o.extra_data;
+            o['x_asset_id']   = 24;
+            o['quoted_at']    = o.quoted_at*1000;
+            if(o.tx_type==BitShares.X_DEPOSIT)
+            {
+              // My symbol es cl_recv_curr
+            }
+            else{
+              // My symbol es cl_pay_curr
+            }
+            var p = ExchangeTransaction.addObj(o);
+            proms.push(p);
+          });
+          $q.all(proms).then(function(){
+            deferred.resolve();
+          },function(error){
+            deferred.reject(error); 
+          })
+        }, function(error){
+          deferred.reject(error); 
+        })
+      }, function(error){
+        deferred.reject(error); 
+      })
+      
+      return deferred.promise;
+    }
     self.buildTxList = function(res, asset_id) {
-
        var tx  = {};
        var txs = [];
 
+       var db_proms = [];
+       
        var close_tx = function() {
 
         var precision = self.data.asset.precision;
@@ -450,16 +503,24 @@ bitwallet_services
              else
               p['addr_name'] = p['address'];
            }
-           p['tx_id'] = tx['txid'];
+           p['tx_id']     = tx['txid'];
+           p['asset_id']  = assets[i];
+           p['block']     = tx['block'];    //tx['assets'][assets[i]]['block'];
+           p['block_id']  = tx['block_id']; //tx['assets'][assets[i]]['block_id'];
+           p['other']     = tx['other'];    //tx['assets'][assets[i]]['other'];
+           p['id']        = tx['assets'][assets[i]]['id'];
            txs.push(p);
+           var db_prom = Operation.addObj(p);
+           db_proms.push(db_prom);
          }
+         
          tx = {};
        }
 
        //console.log(JSON.stringify(res));
 
        res.operations.forEach(function(o){
-
+          
          if(o.asset_id != asset_id)
          {
            //console.log('me voy xq ' + o.asset_id + '!=' + asset_id);
@@ -471,7 +532,7 @@ bitwallet_services
          if(!(o.txid in self.data.raw_txs) )
            self.data.raw_txs[o.txid] = [];
          self.data.raw_txs[o.txid].push(o);
-
+          
          
          if( tx['txid'] !== undefined && tx['txid'] != o.txid ) {
             //console.log('mando a cerrar');
@@ -483,6 +544,9 @@ bitwallet_services
             //console.log('abro');
             
             tx['txid']        = o.txid;
+            tx['other']       = o.other,
+            tx['block']       = o.block,
+            tx['block_id']    = o.block_id
             tx['assets']      = {};
             tx['assets'][o.asset_id] = {
               'id'          : o.id,
@@ -494,7 +558,7 @@ bitwallet_services
               'my_d_amount' : 0,
               'timestamp'   : o.timestamp,
               'i_w'         : false,
-              'i_d'         : false,
+              'i_d'         : false
             }
          } 
 
@@ -528,7 +592,8 @@ bitwallet_services
          close_tx();
        }
 
-       self.data.transactions=txs;
+       //self.data.transactions=txs; 
+       return $q.all(db_proms);
     };
 
     self.loadAccount = function() {
@@ -539,7 +604,7 @@ bitwallet_services
                             
       var deferred = $q.defer();
       Account.get().then(function(result){
-        console.log('loadAccount::' + JSON.stringify(result));
+        //console.log('loadAccount::' + JSON.stringify(result));
         if(result!==undefined)
           self.data.account = { name          : result.name, 
                                 gravatar_id   : result.gravatar_id,

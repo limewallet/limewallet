@@ -1,5 +1,11 @@
 {
   "g" : {
+    "accept_tx_process"   : "Accept transaction process...",
+    "deposit_paragraph"   : "You can load your wallet by converting bitcoin into your preferred bitasset.<br/>Type the amount of <b>bit{{asset.symbol}}</b> you want to load and get a quote for each bitcoin, and vice versa.",  
+    "deposit_title"       : "Deposit BITCOIN and get <b>bit{{asset.symbol}}</b>",
+    "please_send_btc_to"  : "Please send <b>{{amount}}</b> BTC to <b>{{addy}}</b>",
+    "tap_copy_btc_uri"    : "Tap to copy Bitcoin payment URI",
+    "already_paid"        : "Already paid",
     "instant_quote"       : "Instant quote",
     "withdraw_address"    : "Withdraw address",
     "requote"             : "Requote",
@@ -49,7 +55,7 @@
   },
 
   "err" : {
-    "quote_expired_requote" :        "Ups...quote expired. Please requote!",
+    "quote_expired_requote" : "Ups...quote expired. Please requote!",
     "btc_addr_error"        : "Bitcoin address missing or invalid",
     "btc_addr_error_input"  : "Please type or paste a valid bitcoin address",
     "unable_to_paste_btc_addr": "Unable to paste bitcoin address",
@@ -100,7 +106,8 @@
     "invalid_asset"       : "Invalid asset",
     "invalid_asset_desc"  : "The selected asset is not currently supported",
     "scan_valid_asset"    : "Please require and scan a valid asset",
-    "occurred"            : "An error has occurred"
+    "occurred"            : "An error has occurred",
+    "please_retry"        : "Please retry."       
   },
 
   "home" : {
@@ -232,8 +239,9 @@
   
   "withdraw":{
     "no_withdraws"            : "No withdraws done yet",
-    "new_withdraw"            : "New withdraw",
-    "withdraw_succesful"      : "Successfull withdraw! Wait for transaction updates."
+    "new"                     : "New withdraw",
+    "succesful"               : "Successfull withdraw! Wait for transaction updates.",
+    "in_progress"             : "Withdraw in progress"
   },
   
   "xchg":{

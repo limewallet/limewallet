@@ -1,5 +1,5 @@
 bitwallet_controllers
-.controller('WithdrawCtrl', function($translate, T, Address, MasterKey, Wallet, BitShares, $scope, $rootScope, $http, $timeout, $ionicActionSheet, $ionicPopup, $cordovaClipboard, $ionicLoading, $timeout, BitShares) {
+.controller('WithdrawCtrl', function($translate, T, Address, MasterKey, Wallet, BitShares, $scope, $rootScope, $http, $timeout, $ionicActionSheet, $ionicPopup, $cordovaClipboard, $ionicLoading, $timeout, BitShares, $state, $ionicModal, $q, Setting) {
 
 // Bitcoin Address:
 // msmmBfcvrdG2yZiUQQ21phPkbw966f8nbb
@@ -33,6 +33,8 @@ bitwallet_controllers
   $scope.default_data = {};
   angular.copy($scope.data, $scope.default_data);
   
+  $scope.transaction = {message:'send.generating_transaction'};
+  
   var usd_timeout = undefined;
   $scope.$watch('data.amount_usd', function(newValue, oldValue, scope) {
     if(newValue===oldValue)
@@ -57,11 +59,11 @@ bitwallet_controllers
         $scope.data.signature   = res.signature;
         $timeout(function () {
           $scope.data.quoting_btc = false;
-          $scope.doStartTimer();
+          $scope.startTimer();
         } , 200);
         //console.log(res);
       }, function(error){
-        $scope.doStopTimer();
+        $scope.stopTimer();
         $scope.data.quoting_btc       = false;
         $scope.setMessageErr('BTC', error);
         //console.log(error);
@@ -95,11 +97,11 @@ bitwallet_controllers
         $scope.data.signature   = res.signature;
         $timeout(function () {
           $scope.data.quoting_usd = false;
-          $scope.doStartTimer();
+          $scope.startTimer();
         } , 200);
         //console.log(res);
       }, function(error){
-        $scope.doStopTimer();
+        $scope.stopTimer();
         $scope.data.quoting_usd       = false;
         $scope.setMessageErr('USD', error);
         $scope.data.quote             = undefined;
@@ -157,55 +159,19 @@ bitwallet_controllers
      });
   }
   
-  $scope.doStopTimer = function(){
-    $scope.data.timer.start=0;
-    $scope.data.timer.stop=1;
-  }
-  $scope.doStartTimer = function(){
-    $scope.doStopTimer();
-    
-    $scope.data.timer.remaining = undefined;
-    $scope.data.timer.options   =  {
-        //barColor: '#ef1e25',
-        //trackColor: '#f9f9f9',
-        scaleColor: '#dfe0e0',
-        scaleLength: 5,
-        //lineCap: 'round',
-        //lineWidth: 3,
-        size: 50,
-        rotate: 0,
-        animate:{
-					duration:$scope.remainingTime()*1000,
-					enabled:true
-				},
-        trackColor:'#01bbf4', //'#66cc33', //#498f24
-				barColor:'#ffffff',
-				scaleColor:'#dfe0e0'  ,//'#dfe0e0','#E67E22',
-				lineWidth:18,
-				lineCap:'circle',
-        onStep: function(from, to, currentValue){
-          //console.log('onStep: '+from +'-'+ to +'-'+ currentValue);
-          //if(from!=to)
-          //  $scope.parcont = (100-parseInt(currentValue));
-        },
-        onStop: function(from, to){
-          console.log('onStop: '+from +'-'+ to);
-          $scope.data.timer.expired =1;
-        }
-			};
-      
-      $scope.data.timer.expired = 0;
-      $scope.data.timer.percent = 100;
-      $timeout(
-        function(){
-          $scope.data.timer.start=1;
-          $scope.data.timer.stop=0;
-        }
-        , 200);
+  // Load sending process modal view.
+  $ionicModal.fromTemplateUrl('sending-modal.html', function($ionicModal) {
+      $scope.sending_modal = $ionicModal;
+  }, {
+      // Use our scope for the scope of the modal to keep it simple
+      scope: $scope,
+      // The animation we want to use for the modal entrance
+      animation: 'slide-in-up',
+      backdropClickToClose: false,
+      hardwareBackButtonClose: false
+  });
   
-    }
-    
-    $scope.doWithdraw = function(){
+  $scope.doWithdraw = function(){
 
     if(!$scope.data.signature || !$scope.data.quote)
     {
@@ -226,74 +192,147 @@ bitwallet_controllers
     
     var addy = Wallet.getMainAddress();
     BitShares.getBackendToken(addy).then(function(token) {
-      BitShares.acceptQuote($scope.data.quote, $scope.data.signature, token, $scope.data.bitcoin_address).then(function(result){
+      BitShares.acceptQuote($scope.data.quote, $scope.data.signature, token, $scope.data.bitcoin_address, BitShares.X_WITHDRAW).then(function(result){
         
-        console.log('BitShares.acceptQuote:'+JSON.stringify(result));
-        $state.go('app.withdraw_list');
-        window.plugins.toast.show( T.i('g.withdraw_succesful'), 'short', 'bottom');
+        if(!result.tx || !result.tx.cl_pay_addr)
+        {
+          $scope.showAlert('err.occurred', 'err.please_retry');
+          return;
+        }
+        $scope.sending_modal.show();
+        var from  = [];
+        var addys = Object.keys($scope.wallet.addresses);
+          for(var i=0; i<addys.length; i++) {
+            from.push({"address":addys[i]});
+        }
         
-        return; 
-        $scope.data.tx                = result.tx;
-        // $scope.data.deposit_short_uri = 'bitcoin:'+$scope.data.tx.cl_pay_addr+'?amount='+$scope.data.tx.cl_pay;
-        // $scope.data.deposit_uri       = $scope.data.deposit_short_uri+'?label=bitwallet_deposit?message=convert_bts_to_bitUSD';
-        // $scope.data.deposit_qrcode    = 'http://chart.apis.google.com/chart?cht=qr&chs=300x300&chl='+encodeURIComponent($scope.data.deposit_uri)+'&chld=H|0'
-        //$scope.startTimer();
-        
-        
+        var pay_amount = parseInt(parseFloat(result.tx.cl_pay)*$scope.wallet.asset.precision);
+        BitShares.prepareSendAsset($scope.wallet.asset.id, from, result.tx.cl_pay_addr, pay_amount).then(function(r){
+          if(r.error !== undefined) {
+            console.log('There where errors ' + r.error);
+            var alertPopup = $ionicPopup.alert({
+               title: T.i('err.unable_to_create_tx') + ' <i class="fa fa-warning float_right"></i>',
+               template: r.error,
+               okType: 'button-assertive', 
+            })
+            .then(function() {
+              $scope.sending_modal.hide();
+            });
+            return;
+          }
+
+          $scope.transaction.message = 'send.signing_transaction';
+          
+          console.log(r.tx);
+          console.log(r.to_sign);
+          console.log(r.required_signatures);
+
+          r.tx.signatures = [];
+
+          var prom = [];
+          angular.forEach(r.required_signatures, function(req_addy) {
+            var p = Address.by_address(req_addy)
+              .then(function(addy) {
+                return BitShares.compactSignatureForHash(r.to_sign, addy.privkey)
+                  .then(function(compact){
+                    console.log(addy.address);
+                    r.tx.signatures.push(compact);
+                    console.log(compact);
+                  })
+              });
+            prom.push(p);
+          });
+
+          $q.all(prom).then(function() {
+            $scope.transaction.message = 'send.sending_transaction';
+
+            BitShares.sendAsset(r.tx, r.secret).then(function(r) {
+              $scope.sending_modal.hide();
+              $scope.goHome();
+              window.plugins.toast.show( T.i('withdraw.succesful'), 'short', 'bottom');
+              //$scope.wallet.transactions.unshift({sign:-1, address:sendForm.transactionAddress.value, addr_name:sendForm.transactionAddress.value, amount:amount/$scope.wallet.assets[$scope.wallet.asset.id].precision, state:'P', date: new Date().getTime()});
+              
+            }, function(){
+                var alertPopup = $ionicPopup.alert({
+                   title: T.i('err.unable_to_send_tx') + ' <i class="fa fa-warning float_right"></i>',
+                   template: T.i('err.server_error'),
+                   okType: 'button-assertive', 
+                })
+                .then(function() {
+                  $scope.sending_modal.hide();
+                });
+            });
+             
+          });
+
+        }, function(error){
+           var alertPopup = $ionicPopup.alert({
+                title: T.i('err.unable_to_send_tx') + ' <i class="fa fa-warning float_right"></i>',
+                template: T.i('err.server_error'),
+                okType: 'button-assertive', 
+             })
+            .then(function() {
+              $scope.sending_modal.hide();
+            });
+        });
+ 
       }, function(error){
+        console.log(error);
+        if(error=='auth_failed')
+          Setting.remove(Setting.BSW_TOKEN);
         $scope.showAlert('err.cant_accept', 'err.cant_accept_retry');
         return;
       });
     }, function(error){
+      console.log(error);
+      if(error=='auth_failed')
+        Setting.remove(Setting.BSW_TOKEN);
       $scope.showAlert('err.no_token', 'err.no_token_retry');
       return;
     });
     
   }
   
-  // var counter_timeout = undefined; // the current timeoutID
- 
-  // // actual timer method, counts down every second, stops on zero
-  // $scope.onTimeout = function() {
-      // var seconds = $scope.remainingTime(); 
-      // if(seconds<=0) {
-          // $scope.$broadcast('timer-stopped', 0);
-          // return;
-      // }
-      // $scope.data.timer = moment.duration(seconds, "seconds").format("mm:ss", { trim: false });
-      // counter_timeout = $timeout($scope.onTimeout, 1000);
-  // };
-
-  // $scope.startTimer = function() {
-      // counter_timeout = $timeout($scope.onTimeout, 1000);
-  // };
-
-  // // stops and resets the current timer
-  // $scope.stopTimer = function() {
-      // $scope.$broadcast('timer-stopped', 0);
-      // //$scope.counter = 30;
-      // $timeout.cancel(counter_timeout);
-  // };
-
-  // // triggered, when the timer stops, you can do something here, maybe show a visual indicator or vibrate the device
-  // $scope.$on('timer-stopped', function(event, remaining) {
-    // if(remaining === 0) {
-      // console.log('your time ran out!');
-    // }
-    // $scope.data.quote_expired = true;
-    // $timeout.cancel(counter_timeout);
-    
-    // $timeout(function(){
-      // var expiredPopup = $ionicPopup.alert({
-         // title    : T.i('err.quote_expired'),
-         // template : T.i('err.quote_expired_retry'),
-       // });
-       // expiredPopup.then(function(res) {
-          // $scope.restart();
-       // });
-    // }, 250);
-    
-  // });
+  $scope.nanobar  = undefined;
+  var ttl = 60;
+  var counter_timeout = ttl;
+  
+  $scope.onTimeout = function() {
+    counter_timeout = counter_timeout - 1;
+    if(counter_timeout==0)
+    {
+      $scope.stopTimer();
+      $scope.nanobar.go(100);
+      $scope.data.timer.expired = 1;
+      return;
+    }
+    $scope.nanobar.go((ttl-counter_timeout)*100/ttl);
+    quote_timeout = $timeout($scope.onTimeout, 1000);
+  }
+  
+  $scope.startTimer = function() {
+    ttl = $scope.remainingTime();
+    counter_timeout = ttl;
+    if($scope.nanobar===undefined)
+    {
+      var options = {
+        target: document.getElementById('quote_ttl'),
+        id: 'mynano'
+      };
+      $scope.nanobar = new Nanobar( options );
+    }
+    $scope.data.timer.expired = 0;
+    counter_timeout = ttl;
+    quote_timeout = $timeout($scope.onTimeout, 1000);
+  };
+  
+  $scope.stopTimer = function() {
+    counter_timeout = ttl;
+    if($scope.nanobar)
+      $timeout(function(){
+          $scope.nanobar.go(0);
+        }, 1000);
+  }
   
   $scope.copyUri = function(){
     $cordovaClipboard

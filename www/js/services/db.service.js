@@ -15,60 +15,63 @@ bitwallet_services
 
         proms = []
         //console.log('voy a entrar al forEach');
-        angular.forEach(DB_CONFIG.tables, function(table) {
-            var columns = [];
+        self.query('DROP TABLE IF EXISTS operation').then(function(){
+          self.query('DROP TABLE IF EXISTS exchange_transaction').then(function(){
+             angular.forEach(DB_CONFIG.tables, function(table) {
+                var columns = [];
 
-            //console.log('SOY EL FOREACH');
- 
-            angular.forEach(table.columns, function(column) {
-                columns.push(column.name + ' ' + column.type);
-            });
- 
-            var query = 'CREATE TABLE IF NOT EXISTS ' + table.name + ' (' + columns.join(',') + ')';
+                //console.log('SOY EL FOREACH');
+     
+                angular.forEach(table.columns, function(column) {
+                    columns.push(column.name + ' ' + column.type);
+                });
+     
+                var query = 'CREATE TABLE IF NOT EXISTS ' + table.name + ' (' + columns.join(',') + ')';
 
-            var p = self.query(query)
-            .then(function() {
-              //console.log('Table ' + table.name + ' initialized');
-              if(table.rows !== undefined && table.rows.length > 0 ) {
+                var p = self.query(query)
+                .then(function() {
+                  console.log('Table ' + table.name + ' initialized');
+                  if(table.rows !== undefined && table.rows.length > 0 ) {
 
-                var mproms = [];
+                    var mproms = [];
 
-                angular.forEach(table.rows, function(row) {
+                    angular.forEach(table.rows, function(row) {
 
-                    var col_names = Object.keys(row);
-                    var emarks    = [];
-                    var bindings  = [];
+                        var col_names = Object.keys(row);
+                        var emarks    = [];
+                        var bindings  = [];
 
-                    for(var i=0; i<col_names.length; i++) {
-                      emarks.push('?');
-                      bindings.push( row[col_names[i]] );
-                    }
+                        for(var i=0; i<col_names.length; i++) {
+                          emarks.push('?');
+                          bindings.push( row[col_names[i]] );
+                        }
 
-                    bindings.push(row['id']);
+                        bindings.push(row['id']);
 
-                    var query = '';
-                    query = query + 'INSERT INTO ' + table.name + '\n';
-                    query = query + ' (' + col_names.join(',') + ')\n';
-                    query = query + 'SELECT ' + emarks.join(',') + '\n';
-                    query = query + 'WHERE NOT EXISTS ( SELECT 1 FROM ' + table.name + '\n';
-                    query = query + 'WHERE id = ?)';
+                        var query = '';
+                        query = query + 'INSERT INTO ' + table.name + '\n';
+                        query = query + ' (' + col_names.join(',') + ')\n';
+                        query = query + 'SELECT ' + emarks.join(',') + '\n';
+                        query = query + 'WHERE NOT EXISTS ( SELECT 1 FROM ' + table.name + '\n';
+                        query = query + 'WHERE id = ?)';
 
-                    //console.log(query);
+                        //console.log(query);
 
-                    var mp = self.query(query, bindings);
-                    mproms.push(mp);
+                        var mp = self.query(query, bindings);
+                        mproms.push(mp);
+                    });
+
+                    return $q.all(mproms);
+                  }
+                }, function(err) {
+                  console.log('ERROR forEach ' + err);
                 });
 
-                return $q.all(mproms);
-              }
-            }, function(err) {
-              console.log('ERROR forEach ' + err);
+                proms.push(p);
             });
-
-            proms.push(p);
-        });
-
-        //console.log('me voy con todas las proms juntas');
+          })
+        })
+               //console.log('me voy con todas las proms juntas');
         return $q.all(proms);
     };
  
@@ -343,5 +346,92 @@ bitwallet_services
       return deferred.promise;
     }
     
+    return self;
+})
+
+// Operation Service
+.service('Operation', function(DB) {
+    var self = this;
+    
+    self.all = function(limit) {
+        var my_limit = 30;
+        if (limit!==undefined)
+          my_limit = limit;
+        return DB.query('SELECT * FROM operation order by id desc limit ' + my_limit)
+        .then(function(result){
+            return DB.fetchAll(result);
+        });
+    };
+    
+    self.allForAsset = function(asset_id, limit) {
+        var my_limit = 30;
+        if (limit!==undefined)
+          my_limit = limit;
+        return DB.query('SELECT * FROM operation WHERE asset_id = ? order by id desc limit ' + my_limit, [asset_id])
+        .then(function(result){
+            return DB.fetchAll(result);
+        });
+    };
+
+    self.addObj = function(obj) {
+        var d = new Date(); var updated_at = d.getTime();
+        return DB.query('INSERT or REPLACE into operation (id, asset_id, amount, other, date, op_type, sign, address, block, tx_id, fee, addr_name) values (?,?,?,?,?,?,?,?,?,?,?,?)', [obj.id, obj.asset_id, obj.amount, obj.other, obj.date, obj.op_type, obj.sign, obj.address, obj.block, obj.tx_id, obj.fee, obj.addr_name]);
+    };
+    
+    self.allWithXTxForAsset = function(asset_id, limit) {
+        var my_limit = 30;
+        if (limit!==undefined)
+          my_limit = limit;
+        return DB.query('SELECT * FROM ( \
+            SELECT o.date as TS, * FROM operation o \
+              LEFT JOIN  exchange_transaction et \
+                ON o.tx_id = et.cl_pay_tx OR o.tx_id = et.cl_recv_tx \
+              WHERE o.asset_id = ?  \
+            UNION \
+              SELECT et.quoted_at as TS, * FROM exchange_transaction et  \
+                LEFT JOIN operation o \
+                ON o.tx_id = et.cl_pay_tx OR o.tx_id = et.cl_recv_tx \
+              WHERE et.x_asset_id = ? and et.cl_pay_tx IS NULL and et.cl_recv_tx IS NULL) \
+            AS peto ORDER BY TS DESC LIMIT ' + my_limit, [asset_id, asset_id])
+        .then(function(result){
+            return DB.fetchAll(result);
+        });
+    };
+    
+    self.deleteFromBlock = function(block_num) {
+        return DB.query('DELETE from operation WHERE block > ?', [block_num]);
+    };
+    
+    return self;
+})
+
+// ExchangeTransaction Service
+.service('ExchangeTransaction', function(DB) {
+    var self = this;
+    
+    self.all = function(limit) {
+        var my_limit = 30;
+        if (limit!==undefined)
+          my_limit = 30;
+        return DB.query('SELECT * FROM exchange_transaction order by id desc limit ' + my_limit)
+        .then(function(result){
+            return DB.fetchAll(result);
+        });
+    };
+    
+    self.allForAsset = function(asset_id, limit) {
+        var my_limit = 30;
+        if (limit!==undefined)
+          my_limit = 30;
+        return DB.query('SELECT * FROM exchange_transaction WHERE asset_id = ? order by id desc limit ' + my_limit, [asset_id])
+        .then(function(result){
+            return DB.fetchAll(result);
+        });
+    };
+
+    self.addObj = function(obj) {
+        return DB.query('INSERT or REPLACE into exchange_transaction (x_asset_id, status, quoted_at, cl_pay_curr, cl_pay_addr, cl_pay_tx, canceled, rate, cl_pay, id, balance, expired, cl_recv, cl_recv_tx, cl_recv_addr, cl_recv_curr, tx_type) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', [obj.x_asset_id, obj.status, obj.quoted_at, obj.cl_pay_curr, obj.cl_pay_addr, obj.cl_pay_tx, obj.canceled, obj.rate, obj.cl_pay, obj.id, obj.balance, obj.expired, obj.cl_recv, obj.cl_recv_tx, obj.cl_recv_addr, obj.cl_recv_curr, obj.tx_type]);
+    }
+
     return self;
 });

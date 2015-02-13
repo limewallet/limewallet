@@ -10,7 +10,7 @@ bitwallet_controllers
         quoting_usd_error:  undefined,
 
         step:               1,
-        timer:              {options:{}, remaining:undefined, percent:undefined, start:0, stop:0, expired:0},
+        timer:              {options:{}, remaining:undefined, percent:undefined, start:0, stop:0, expired:0, waiting:0},
         //quote_expired:      false,
         
         deposit_uri:        undefined,
@@ -121,27 +121,27 @@ bitwallet_controllers
     $scope.data.quoting_btc_error = undefined;
     $scope.data.quoting_usd_error = undefined;
   };
-  // $scope.showLoading = function(){
-    // $ionicLoading.show({
-      // template     : '<i class="icon ion-looping"></i> ' + T.i('g.loading'),
-      // animation    : 'fade-in',
-      // showBackdrop : true,
-      // maxWidth     : 200,
-      // showDelay    : 10
-    // }); 
-  // }
+  
+  $scope.showLoading = function(message){
+    $ionicLoading.show({
+      template     : '<i class="icon ion-looping"></i> ' + T.i(message),
+      animation    : 'fade-in',
+      showBackdrop : true,
+      maxWidth     : 200,
+      showDelay    : 10
+    }); 
+  }
 
-  // $scope.hideLoading = function(){
-    // $ionicLoading.hide();
-  // }
+  $scope.hideLoading = function(){
+    $ionicLoading.hide();
+  }
   
   $scope.remainingTime = function(){
     var d = new Date();
     var n = parseInt(d.getTime()/1000);
     if(!$scope.data.quote.timestamp)
       return 0;
-    //return parseInt($scope.data.quote.timestamp)+$scope.data.quote_ttl-n;
-    return 100;
+    return parseInt($scope.data.quote.timestamp)+$scope.data.quote_ttl-n;
   }
   
   $scope.showAlert = function(title, message){
@@ -166,9 +166,10 @@ bitwallet_controllers
       return;
     }
     
+    $scope.showLoading('g.accept_tx_process');
     var addy = Wallet.getMainAddress();
     BitShares.getBackendToken(addy).then(function(token) {
-      BitShares.acceptQuote($scope.data.quote, $scope.data.signature, token, addy.address).then(function(result){
+      BitShares.acceptQuote($scope.data.quote, $scope.data.signature, token, addy.address, BitShares.X_DEPOSIT).then(function(result){
         
         console.log('BitShares.acceptQuote:'+JSON.stringify(result));
         
@@ -178,7 +179,7 @@ bitwallet_controllers
         $scope.data.deposit_qrcode    = 'http://chart.apis.google.com/chart?cht=qr&chs=300x300&chl='+encodeURIComponent($scope.data.deposit_uri)+'&chld=H|0'
         $scope.data.step = 2;
         
-        
+        $scope.hideLoading();
       }, function(error){
         if(error=='auth_failed')
           Setting.remove(Setting.BSW_TOKEN);
@@ -186,100 +187,14 @@ bitwallet_controllers
         return;
       });
     }, function(error){
+      $scope.hideLoading();
+      console.log(error);
       $scope.showAlert('err.no_token', 'err.no_token_retry');
       return;
     });
     
   }
   
-  // var counter_timeout = undefined; // the current timeoutID
-  // // actual timer method, counts down every second, stops on zero
-  // $scope.onTimeout = function() {
-      // var seconds = $scope.remainingTime(); 
-      // if(seconds<=0) {
-          // $scope.$broadcast('timer-stopped', 0);
-          // return;
-      // }
-      // $scope.data.timer = moment.duration(seconds, "seconds").format("mm:ss", { trim: false });
-      // counter_timeout = $timeout($scope.onTimeout, 1000);
-  // };
-  // $scope.startTimer = function() {
-      // counter_timeout = $timeout($scope.onTimeout, 1000);
-  // };
-  // // stops and resets the current timer
-  // $scope.stopTimer = function() {
-      // $scope.$broadcast('timer-stopped', 0);
-      // //$scope.counter = 30;
-      // $timeout.cancel(counter_timeout);
-  // };
-  // // triggered, when the timer stops, you can do something here, maybe show a visual indicator or vibrate the device
-  // $scope.$on('timer-stopped', function(event, remaining) {
-    // if(remaining === 0) {
-      // console.log('your time ran out!');
-    // }
-    // $scope.data.quote_expired = true;
-    // $timeout.cancel(counter_timeout);
-    
-    // $timeout(function(){
-      // var expiredPopup = $ionicPopup.alert({
-         // title    : T.i('err.quote_expired'),
-         // template : T.i('err.quote_expired_retry'),
-       // });
-       // expiredPopup.then(function(res) {
-          // $scope.requote();
-       // });
-    // }, 250);
-    
-  // });
-  
-  // $scope.doStopTimer = function(){
-    // $scope.data.timer.start=0;
-    // $scope.data.timer.stop=1;
-  // }
-  
-  // $scope.doStartTimer = function(){
-    // $scope.doStopTimer();
-    
-    // $scope.data.timer.remaining = undefined;
-    // $scope.data.timer.options   =  {
-        // //barColor: '#ef1e25',
-        // //trackColor: '#f9f9f9',
-        // scaleColor: '#dfe0e0',
-        // scaleLength: 5,
-        // //lineCap: 'round',
-        // //lineWidth: 3,
-        // size: 50,
-        // rotate: 0,
-        // animate:{
-					// duration:$scope.remainingTime()*1000,
-					// enabled:true
-				// },
-        // trackColor:'#01bbf4', //'#66cc33', //#498f24
-				// barColor:'#ffffff',
-				// scaleColor:'#dfe0e0'  ,//'#dfe0e0','#E67E22',
-				// lineWidth:18,
-				// lineCap:'circle',
-        // onStep: function(from, to, currentValue){
-          // //console.log('onStep: '+from +'-'+ to +'-'+ currentValue);
-          // //if(from!=to)
-          // //  $scope.parcont = (100-parseInt(currentValue));
-        // },
-        // onStop: function(from, to){
-          // console.log('onStop: '+from +'-'+ to);
-          // $scope.data.timer.expired =1;
-        // }
-			// };
-      
-      // $scope.data.timer.expired = 0;
-      // $scope.data.timer.percent = 100;
-      // $timeout(
-        // function(){
-          // $scope.data.timer.start=1;
-          // $scope.data.timer.stop=0;
-        // }
-        // , 200);
-  // }
-
   $scope.nanobar  = undefined;
   $scope.nanobar2 = undefined;
   var ttl = 60;
@@ -297,26 +212,28 @@ bitwallet_controllers
     }
     $scope.nanobar.go((ttl-counter_timeout)*100/ttl);
     $scope.nanobar2.go((ttl-counter_timeout)*100/ttl);
-    quote_timeout = $timeout($scope.onTimeout, 1000);
+    $timeout($scope.onTimeout, 1000);
   }
   
   $scope.startTimer = function() {
     ttl = $scope.remainingTime();
     counter_timeout = ttl;
-    var options = {
-      target: document.getElementById('quote_ttl'),
-      id: 'mynano'
-    };
-    $scope.nanobar = new Nanobar( options );
-    var options2 = {
-      target: document.getElementById('quote_ttl2'),
-      id: 'mynano2'
-    };
-    $scope.nanobar2 = new Nanobar( options2 );
-    
+    if($scope.nanobar===undefined)
+    {
+      var options = {
+        target: document.getElementById('quote_ttl'),
+        id: 'mynano'
+      };
+      $scope.nanobar = new Nanobar( options );
+      var options2 = {
+        target: document.getElementById('quote_ttl2'),
+        id: 'mynano2'
+      };
+      $scope.nanobar2 = new Nanobar( options2 );
+    }
     $scope.data.timer.expired = 0;
-    counter_timeout = ttl;
-    quote_timeout = $timeout($scope.onTimeout, 1000);
+    $scope.data.timer.waiting = 0;
+    $timeout($scope.onTimeout, 1000);
   };
   
   $scope.stopTimer = function() {
@@ -342,6 +259,54 @@ bitwallet_controllers
   
   $scope.requote = function(){
     angular.copy($scope.default_data, $scope.data);
+  }
+  
+  $scope.alreadyPaid = function(){
+    $scope.startWaiting();
+    
+    // 1.- Lanza un timer de 5 minutos para espera.
+    // 2.- Se pone a esperar la txid.
+    // 3.- Si llega, redirect a home + toast
+    // 4.- Si no llega, toast e indicamos que si luego llega se vera en home.
+  }
+  
+  $scope.nanobar3 = undefined;
+  var w_ttl = 600;
+  var w_counter_timeout = w_ttl;
+  
+  $scope.startWaiting = function() {
+    if($scope.nanobar3===undefined)
+    {
+      var options3 = {
+        target: document.getElementById('quote_ttl2'),
+        id: 'mynano3',
+        bg: '#5abb5c'
+      };
+      $scope.nanobar3 = new Nanobar( options3 );
+    }
+    $scope.data.timer.waiting = 1;
+    $timeout($scope.onWaiting, 1000);
+  };
+  
+  $scope.stopWaiting = function() {
+    w_counter_timeout = w_ttl;
+    if($scope.nanobar3)
+      $timeout(function(){
+          $scope.nanobar3.go(0);
+        }, 1000);
+  }
+  
+  $scope.onWaiting = function() {
+    w_counter_timeout = w_counter_timeout - 1;
+    if(w_counter_timeout==0)
+    {
+      $scope.stopWaiting();
+      $scope.nanobar3.go(100);
+      $scope.data.timer.waiting = 0;
+      return;
+    }
+    $scope.nanobar3.go((w_ttl-w_counter_timeout)*100/w_ttl);
+    $timeout($scope.onWaiting, 1000);
   }
 })
 
