@@ -60,7 +60,7 @@
           </div>
         </ion-scroll>
       
-        <button ng-disabled="!data.can_update" ng-click="updateOrRegisterAccount()" class="button button-block button-energized no-margin hide-on-keyboard-open" style="position:absolute;bottom:0px;">
+        <button ng-disabled="!data.can_update" ng-click="updateOrRegisterAccount()" class="button button-block button-energized no-margin hide-on-keyboard-open button_taller dock_bottom">
           {{(wallet.account.registered!=0)?('g.update'|translate|uppercase):('g.register'|translate|uppercase)}}
         </button>
     </ion-content>

@@ -125,6 +125,7 @@ bitwallet_module
             //Refresh Balance
             //****************
             .then(function() {
+              console.log(' -- app.js call Wallet.refreshBalance()');
               Wallet.refreshBalance().then(function() {
                 window.plugins.toast.show( T.i('g.updated'), 'short', 'bottom');
               }, function(err) {

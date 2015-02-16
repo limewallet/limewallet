@@ -1,5 +1,5 @@
 bitwallet_services
-.service('Wallet', function($translate, $rootScope, $q, ENVIRONMENT, BitShares, ReconnectingWebSocket, MasterKey, Address, Setting, AddressBook, Account, Operation, ExchangeTransaction) {
+.service('Wallet', function($translate, $rootScope, $q, ENVIRONMENT, BitShares, ReconnectingWebSocket, MasterKey, Address, Setting, AddressBook, Account, Operation, ExchangeTransaction, Balance) {
     var self = this;
 
     self.data = {
@@ -26,7 +26,8 @@ bitwallet_services
     self.switchAsset = function(asset_id) {
       self.data.transactions = [],
       self.setDefaultAsset(asset_id);
-      return self.refreshBalance(true);
+      return self.loadBalance();
+      //return self.refreshBalance();
     }
 
     self.setDefaultAsset = function(asset_id) {
@@ -269,9 +270,16 @@ bitwallet_services
                 
                   //Remove last WS TOKEN
                   Setting.remove(Setting.BSW_TOKEN).then(function(){
-                    deferred.resolve();
-                    self.data.initialized = true;
-                    self.emit(self.DATA_INITIALIZED);
+                    
+                    self.loadBalance().then(function(){
+                      deferred.resolve();
+                      self.data.initialized = true;
+                      self.emit(self.DATA_INITIALIZED);
+                    }, function(error){
+                      deferred.resolve();
+                      self.data.initialized = true;
+                      self.emit(self.DATA_INITIALIZED);
+                    })
                     
                   }, function(){
                     deferred.resolve();
@@ -373,75 +381,119 @@ bitwallet_services
       return deferred.promise;
     } 
     
+    self.loadBalance = function(){
+      var deferred = $q.defer();
+      Balance.all().then(function(balances){
+        angular.forEach(balances, function(balance) {
+          self.data.assets[balance.asset_id].amount = balance.amount;
+        });
+      })
+      Operation.allWithXTxForAsset(self.data.asset.id).then(function(res){
+        self.data.transactions=res; 
+        deferred.resolve();
+        self.emit(self.REFRESH_DONE);
+      },
+      function(error){
+        console.log(' -- Erro Wallet 1'); console.log(error);
+        deferred.reject(error);
+        self.emit(self.REFRESH_ERROR);
+      });
+      return deferred.promise;
+    }
+    
     self.refreshBalance = function() {
       var deferred = $q.defer();
-
+      console.log('Wallet : self.refreshBalance IN');
       self.emit(self.REFRESH_START);
-
       self.getMasterPubkey().then(function(res) {
-        BitShares.getBalanceForAsset(res.masterPubkey+':'+res.deriv, self.data.asset.id).then(function(res) {
+        console.log('Wallet : self.refreshBalance 1');
+        // Load last BTS Transaction BlockHash, and last Exchamge Operation updated_at;
+        var last_block_id = undefined;
+        var last_updated_at = undefined;
+        var prom1 = Operation.lastUpdate().then(function(res){
+          console.log('Wallet : self.refreshBalance 2');
+          if(res!==undefined)
+            last_block_id = res.block_id;
+        }, function(error){
+          console.log('Wallet : Error Operation.lastUpdate()');
+        });
+        var prom2 = ExchangeTransaction.lastUpdate().then(function(res){
+          console.log('Wallet : self.refreshBalance 3');
+          if(res!==undefined) 
+            last_updated_at = res.updated_at;
+        }, function(error){
+          console.log('Wallet : Error ExchangeTransaction.lastUpdate()');
+        });
+        $q.all([prom1, prom2]).then(function(){
+          console.log('Wallet : self.refreshBalance 4');
+          console.log('Wallet : calling BitShares.getBalance last_block_id:['+last_block_id+']');
+          BitShares.getBalance(res.masterPubkey+':'+res.deriv, last_block_id).then(function(res) {
+            console.log('Wallet : self.refreshBalance 5');
+            var date = new Date();
+            //Update assets balance
+            res.balances.forEach(function(bal){
+              Balance.addObj({asset_id:bal.asset_id, amount:bal.amount/self.data.assets[bal.asset_id].precision, raw_amount:bal.amount, updated_at:date.getTime()});
+            });
 
-          //Update assets balance
-          res.balances.forEach(function(bal){
-            self.data.assets[bal.asset_id].amount = bal.amount/self.data.assets[bal.asset_id].precision;
-          });
+            self.data.asset = self.data.assets[self.data.asset.id];
 
-          self.data.asset = self.data.assets[self.data.asset.id];
-
-          //Update address balance
-          angular.forEach(Object.keys(self.data.addresses), function(addy) {
-            if (addy in res.address_balance) {
-              self.data.addresses[addy].balances = res.address_balance[addy];
-              angular.forEach( Object.keys(self.data.addresses[addy].balances), function(asset_id) {
-                self.data.addresses[addy].balances[asset_id] /= self.data.assets[asset_id].precision;
-              });
-            }
-          });
-
-          //Generate tx list
-          var prom = self.buildTxList(res, self.data.asset.id);
-          
-          //Get Exchange Transactions
-          var prom2 = self.getExchangeTransactions();
-          
-          $q.all([prom, prom2]).then(function(){
-            Operation.allWithXTxForAsset(self.data.asset.id).then(function(res){
-              self.data.transactions=res; 
-              deferred.resolve();
-              self.emit(self.REFRESH_DONE);
-            },
-            function(error){
-              console.log(error);
+            //Update address balance
+            angular.forEach(Object.keys(self.data.addresses), function(addy) {
+              if (addy in res.address_balance) {
+                self.data.addresses[addy].balances = res.address_balance[addy];
+                angular.forEach( Object.keys(self.data.addresses[addy].balances), function(asset_id) {
+                  self.data.addresses[addy].balances[asset_id] /= self.data.assets[asset_id].precision;
+                });
+              }
+            });
+            console.log('Wallet : self.refreshBalance 6');
+            //Generate tx list
+            var prom = self.buildTxList(res, self.data.asset.id);
+            
+            console.log('Wallet : self.refreshBalance 7');
+            console.log('Wallet : calling BitShares.listExchangeTxs last_updated_at:['+last_updated_at+']');
+            //Get Exchange Transactions
+            var prom2 = self.getExchangeTransactions(last_updated_at);
+            
+            $q.all([prom, prom2]).then(function(){
+              console.log('Wallet : self.refreshBalance 2');
+              self.loadBalance();
+            }, function(error){
+              console.log(' -- Erro Wallet 2'); console.log(error);
               deferred.reject(error);
               self.emit(self.REFRESH_ERROR);
             })
-          }, function(error){
-            console.log(error);
-            deferred.reject(error);
+            
+          }, function(err) {
+            console.log(' -- Erro Wallet 3'); console.log(err);
+            deferred.reject(err);
             self.emit(self.REFRESH_ERROR);
           })
-          
-        }, function(err) {
-          deferred.reject(err);
+       }, function(error){
+          console.log(' -- Erro Wallet 4');  console.log(error);
+          deferred.reject(error); 
           self.emit(self.REFRESH_ERROR);
-        })
+       })
       }, function(err) {
+        console.log(' -- Erro Wallet 5');  console.log(err);
         deferred.reject(err); 
         self.emit(self.REFRESH_ERROR);
       });
       return deferred.promise;
     };
-
-    self.getExchangeTransactions = function(){
+    
+    self.getExchangeTransactions = function(last_updated_at){
       var deferred = $q.defer();
       var address = self.getMainAddress();
       BitShares.getBackendToken(address).then(function(token){
-        BitShares.listExchangeTxs(token).then(function(res){
+        BitShares.listExchangeTxs(token, last_updated_at).then(function(res){
           var proms = [];
           res.txs.forEach(function(o){
-            o['tx_type']      = o.extra_data;
+            o['tx_type']      = o.extra_data=='marty'?'deposit':o.extra_data;
             o['x_asset_id']   = 24;
-            o['quoted_at']    = o.quoted_at*1000;
+            o['x_id']         = o.id;
+            o.quoted_at       = o.quoted_at*1000;
+            o.updated_at      = o.updated_at*1000;
             if(o.tx_type==BitShares.X_DEPOSIT)
             {
               // My symbol es cl_recv_curr
@@ -455,12 +507,15 @@ bitwallet_services
           $q.all(proms).then(function(){
             deferred.resolve();
           },function(error){
+            console.log(' -- Error Wallet getXTx 1'); console.log(error);
             deferred.reject(error); 
           })
         }, function(error){
+          console.log(' -- Error Wallet getXTx 2'); console.log(error);
           deferred.reject(error); 
         })
       }, function(error){
+        console.log(' -- Error Wallet getXTx 3'); console.log(error);
         deferred.reject(error); 
       })
       

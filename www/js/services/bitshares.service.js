@@ -288,8 +288,15 @@ bitwallet_services
 
     // *************************************************** //
     // Exchange Service Api Calls ************************ //
-    self.listExchangeTxs = function(token) {
+    self.listExchangeTxs = function(token, last_id) {
+      if(last_id!==undefined)
+        return self.updateExchangeTxs(token, last_id);
       var url = ENVIRONMENT.apiurl('/xtxs/'+token+'/list');
+      return self.apiCall(url);
+    }
+    
+    self.updateExchangeTxs = function(token, last_id) {
+      var url = ENVIRONMENT.apiurl('/xtxs/'+token+'/list/newer/'+last_id);
       return self.apiCall(url);
     }
     
@@ -297,7 +304,7 @@ bitwallet_services
       var url = ENVIRONMENT.apiurl('/xtxs/'+token+'/'+txid);
       return self.apiCall(url);
     }
-
+    
     self.getSellQuote = function(asset, amount) {
       var url = ENVIRONMENT.apiurl('/sell/'+asset+'/'+amount);
       return self.apiCall(url);
@@ -329,14 +336,18 @@ bitwallet_services
     // *************************************************** //
     // Assets Operations Api Calls *********************** //
     
-    self.getBalance = function(address) {
-      var url = ENVIRONMENT.apiurl('/addrs/'+address+'/balance');
+    self.getBalance = function(address, last_block_id) {
+      // var url = ENVIRONMENT.apiurl('/addrs/'+address+'/balance');
+      // return self.apiCall(url);
+      if(last_block_id!==undefined)
+        return self.updateBalance(address, last_block_id);
+      var url = ENVIRONMENT.apiurl('/addrs/'+address+'/history');
       return self.apiCall(url);
     }
 
-    self.getBalanceForAsset = function(address, asset_id) {
+    self.updateBalance = function(address, last_block_id) {
       //var url = ENVIRONMENT.apiurl('/addrs/'+address+'/balance/' + asset_id);
-      var url = ENVIRONMENT.apiurl('/addrs/'+address+'/history');
+      var url = ENVIRONMENT.apiurl('/addrs/'+address+'/history/newer/'+last_block_id);
       return self.apiCall(url);
     }
     
@@ -430,6 +441,7 @@ bitwallet_services
       Setting.get(Setting.BSW_TOKEN).then(function(res) {
 
         if(res !== undefined) {
+          console.log('BitShares.getBackendToken:'+res.value);
           deferred.resolve(res.value);
           return;
         }
@@ -454,8 +466,8 @@ bitwallet_services
                   deferred.reject('invalid token');
                   return;
                 }
-                console.log(' Current TOKEN:'+res.token);
                 Setting.set(Setting.BSW_TOKEN, res.token).then(function() {
+                  console.log('BitShares.getBackendToken:'+res.token);
                   deferred.resolve(res.token);
                 }, function(err) {
                   deferred.reject(err);

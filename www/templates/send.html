@@ -8,15 +8,19 @@
     </ion-nav-buttons>
   
     <ion-content class="has-header">
-      <div id="bitcoin_payment_info" class="register_container energized_bg register_color">
-        <p style="margin-top:13px;">
-          PAY IN BITCOINS
-        </p>
-        <div class="row">
-          <span class="instant_quote2" >{{'g.instant_quote'|translate|uppercase}}: <span style="font-size:18px;font-weight:bold;">0.51 BTC = 165 bitUSD</span>
+      <div id="bitcoin_payment_info" class="register_container energized_bg register_color padding" ng-show="data.is_btc">
+        <div style="display:block;position:relative;" id="quote_ttl">
+          <p style="padding-top:25px;">
+            PAY IN BITCOINS
+          </p>
+          <div>TO:&nbsp;<span style="font-size:16px;font-weight:bold;" class="wrap_text">BweMQsJqRdmncwagPiYtANrNbApcRvEV77</span>
+          </div>
+          <div>INSTANT QUOTE: 
+            <span style="font-size:15px;font-weight:bold;" >0.2</span>&nbsp;BTC&nbsp;=&nbsp;<span style="font-size:16px;font-weight:bold;">45.3</span>&nbsp;USD
+          </div>
         </div>
       </div>
-      <form novalidate name="sendForm" class="send_form" id="quote_ttl">
+      <form novalidate name="sendForm" class="send_form" ng-show="!data.is_btc">
         <div class="list">
           <div class="item item-input-inset">
             <label class="item-input-wrapper wrapper_clean">
@@ -36,13 +40,8 @@
           <span class="error input" ng-show="sendForm.transactionAmount.$error.number">{{'err.enter_valid_amount'|translate}}</span>
           <input type="hidden" name="transactionAssetId" ng-model="transaction.asset_id" />
         </div>
-        <!-- div class="action_container hide-on-keyboard-open padding">
-          <button class="button button-assertive  button-block" ng-click="validateSend(transaction)">
-            {{'g.send'|translate}} 
-          </button>
-        </div -->
       </form>
-      <button ng-click="validateSend(transaction)" class="button button-block button-assertive no-margin hide-on-keyboard-open button_taller" style="position:absolute;bottom:0px;">
+      <button ng-click="doSend(transaction)" class="button button-block button-assertive no-margin hide-on-keyboard-open button_taller dock_bottom">
           {{'g.send'|translate|uppercase}} 
       </button>
     </ion-content>

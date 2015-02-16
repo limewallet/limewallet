@@ -7,7 +7,7 @@ bitwallet_controllers
 // 92UK2S47eLEMPrstMfqD44UCLraQ99VSchwhj5VRCMe5X9zUJWe
   
   $scope.data = {
-        bitcoin_address:    'BweMQsJqRdmncwagPiYtANrNbApcRvEV77', //'msmmBfcvrdG2yZiUQQ21phPkbw966f8nbb',
+        bitcoin_address:    '', //'BweMQsJqRdmncwagPiYtANrNbApcRvEV77', //'msmmBfcvrdG2yZiUQQ21phPkbw966f8nbb',
         
         amount_usd:         undefined,
         amount_btc:         undefined,
@@ -207,7 +207,7 @@ bitwallet_controllers
         }
         
         var pay_amount = parseInt(parseFloat(result.tx.cl_pay)*$scope.wallet.asset.precision);
-        BitShares.prepareSendAsset($scope.wallet.asset.id, from, result.tx.cl_pay_addr, pay_amount).then(function(r){
+        BitShares.prepareSendAsset($scope.wallet.asset.symbol, from, result.tx.cl_pay_addr, pay_amount).then(function(r){
           if(r.error !== undefined) {
             console.log('There where errors ' + r.error);
             var alertPopup = $ionicPopup.alert({

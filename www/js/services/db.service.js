@@ -15,9 +15,10 @@ bitwallet_services
 
         proms = []
         //console.log('voy a entrar al forEach');
-        self.query('DROP TABLE IF EXISTS operation').then(function(){
-          self.query('DROP TABLE IF EXISTS exchange_transaction').then(function(){
-             angular.forEach(DB_CONFIG.tables, function(table) {
+        // self.query('DROP TABLE IF EXISTS operation').then(function(){
+          // self.query('DROP TABLE IF EXISTS exchange_transaction').then(function(){
+          
+            angular.forEach(DB_CONFIG.tables, function(table) {
                 var columns = [];
 
                 //console.log('SOY EL FOREACH');
@@ -69,9 +70,10 @@ bitwallet_services
 
                 proms.push(p);
             });
-          })
-        })
-               //console.log('me voy con todas las proms juntas');
+          
+          // })
+        // })
+
         return $q.all(proms);
     };
  
@@ -350,7 +352,7 @@ bitwallet_services
 })
 
 // Operation Service
-.service('Operation', function(DB) {
+.service('Operation', function(DB, $q) {
     var self = this;
     
     self.all = function(limit) {
@@ -375,24 +377,36 @@ bitwallet_services
 
     self.addObj = function(obj) {
         var d = new Date(); var updated_at = d.getTime();
-        return DB.query('INSERT or REPLACE into operation (id, asset_id, amount, other, date, op_type, sign, address, block, tx_id, fee, addr_name) values (?,?,?,?,?,?,?,?,?,?,?,?)', [obj.id, obj.asset_id, obj.amount, obj.other, obj.date, obj.op_type, obj.sign, obj.address, obj.block, obj.tx_id, obj.fee, obj.addr_name]);
+        return DB.query('INSERT or REPLACE into operation (id, asset_id, amount, other, date, op_type, sign, address, block, block_id, tx_id, fee, addr_name) values (?,?,?,?,?,?,?,?,?,?,?,?,?)', [obj.id, obj.asset_id, obj.amount, obj.other, obj.date, obj.op_type, obj.sign, obj.address, obj.block, obj.block_id, obj.tx_id, obj.fee, obj.addr_name]);
     };
     
     self.allWithXTxForAsset = function(asset_id, limit) {
         var my_limit = 30;
         if (limit!==undefined)
           my_limit = limit;
-        return DB.query('SELECT * FROM ( \
-            SELECT o.date as TS, * FROM operation o \
-              LEFT JOIN  exchange_transaction et \
+        return DB.query(" \
+          SELECT * FROM ( \
+            SELECT o.date as TS, \
+              CASE \
+                   WHEN o.sign>0 and et.tx_type IS NULL             THEN 'received' \
+                   WHEN o.sign<0 and et.tx_type IS NULL             THEN 'sent' \
+                   WHEN o.sign==0 and et.tx_type IS NULL            THEN 'self' \
+                   WHEN o.sign>0 and et.tx_type=='deposit' IS NULL  THEN 'deposit' \
+                   WHEN o.sign<0 and et.tx_type=='withdraw' IS NULL THEN 'withdraw' \
+                   WHEN o.sign<0 and et.tx_type=='btc_pay' IS NULL  THEN 'btc_pay' \
+                END as ui_type, \
+                o.*, et.* FROM operation o \
+              LEFT JOIN exchange_transaction et \
                 ON o.tx_id = et.cl_pay_tx OR o.tx_id = et.cl_recv_tx \
               WHERE o.asset_id = ?  \
             UNION \
-              SELECT et.quoted_at as TS, * FROM exchange_transaction et  \
+              SELECT IFNULL(et.updated_at, et.quoted_at) as TS, \
+                et.tx_type as ui_type, \
+                o.*, et.* FROM exchange_transaction et  \
                 LEFT JOIN operation o \
                 ON o.tx_id = et.cl_pay_tx OR o.tx_id = et.cl_recv_tx \
               WHERE et.x_asset_id = ? and et.cl_pay_tx IS NULL and et.cl_recv_tx IS NULL) \
-            AS peto ORDER BY TS DESC LIMIT ' + my_limit, [asset_id, asset_id])
+            AS peto ORDER BY TS DESC LIMIT " + my_limit, [asset_id, asset_id])
         .then(function(result){
             return DB.fetchAll(result);
         });
@@ -402,18 +416,36 @@ bitwallet_services
         return DB.query('DELETE from operation WHERE block > ?', [block_num]);
     };
     
+    self.cleanMarty = function(){
+      return DB.query("UPDATE exchange_transaction set tx_type='deposit' where tx_type='marty'", []);
+    }
+
+    self.lastUpdate = function(){
+      var deferred = $q.defer();
+      DB.query('SELECT block_id FROM operation where block_id is not null order by block desc limit 1', [])
+        .then(function(result){
+            if( result.rows.length == 0 ) {
+              deferred.resolve(undefined);
+              return;
+            }
+            deferred.resolve(DB.fetch(result));
+            return;
+        });
+      return deferred.promise;
+    }
+    
     return self;
 })
 
 // ExchangeTransaction Service
-.service('ExchangeTransaction', function(DB) {
+.service('ExchangeTransaction', function(DB, $q) {
     var self = this;
     
     self.all = function(limit) {
         var my_limit = 30;
         if (limit!==undefined)
           my_limit = 30;
-        return DB.query('SELECT * FROM exchange_transaction order by id desc limit ' + my_limit)
+        return DB.query('SELECT * FROM exchange_transaction order by x_id desc limit ' + my_limit)
         .then(function(result){
             return DB.fetchAll(result);
         });
@@ -423,14 +455,52 @@ bitwallet_services
         var my_limit = 30;
         if (limit!==undefined)
           my_limit = 30;
-        return DB.query('SELECT * FROM exchange_transaction WHERE asset_id = ? order by id desc limit ' + my_limit, [asset_id])
+        return DB.query('SELECT * FROM exchange_transaction WHERE asset_id = ? order by updated_at desc limit ' + my_limit, [asset_id])
         .then(function(result){
             return DB.fetchAll(result);
         });
     };
 
     self.addObj = function(obj) {
-        return DB.query('INSERT or REPLACE into exchange_transaction (x_asset_id, status, quoted_at, cl_pay_curr, cl_pay_addr, cl_pay_tx, canceled, rate, cl_pay, id, balance, expired, cl_recv, cl_recv_tx, cl_recv_addr, cl_recv_curr, tx_type) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', [obj.x_asset_id, obj.status, obj.quoted_at, obj.cl_pay_curr, obj.cl_pay_addr, obj.cl_pay_tx, obj.canceled, obj.rate, obj.cl_pay, obj.id, obj.balance, obj.expired, obj.cl_recv, obj.cl_recv_tx, obj.cl_recv_addr, obj.cl_recv_curr, obj.tx_type]);
+        return DB.query('INSERT or REPLACE into exchange_transaction (x_asset_id, status, quoted_at, cl_pay_curr, cl_pay_addr, cl_pay_tx, canceled, rate, cl_pay, x_id, balance, expired, cl_recv, cl_recv_tx, cl_recv_addr, cl_recv_curr, tx_type, updated_at) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', [obj.x_asset_id, obj.status, obj.quoted_at, obj.cl_pay_curr, obj.cl_pay_addr, obj.cl_pay_tx, obj.canceled, obj.rate, obj.cl_pay, obj.x_id, obj.balance, obj.expired, obj.cl_recv, obj.cl_recv_tx, obj.cl_recv_addr, obj.cl_recv_curr, obj.tx_type, obj.updated_at]);
+    }
+
+    self.lastUpdate = function(){
+      var deferred = $q.defer();
+      DB.query('SELECT updated_at FROM exchange_transaction where updated_at is not null order by updated_at desc limit 1 ', [])
+        .then(function(result){
+            if( result.rows.length == 0 ) {
+              deferred.resolve(undefined);
+              return;
+            }
+            deferred.resolve(DB.fetch(result));
+            return;
+        });
+      return deferred.promise;
+    }
+    return self;
+})
+
+// Balance Service
+.service('Balance', function(DB) {
+    var self = this;
+    
+    self.all = function(limit) {
+        return DB.query('SELECT * FROM balance order by asset_id desc ')
+        .then(function(result){
+            return DB.fetchAll(result);
+        });
+    };
+    
+    self.forAsset = function(asset_id) {
+        return DB.query('SELECT * FROM balance where asset_id = ? limit 1 ', [asset_id])
+        .then(function(result){
+            return DB.fetch(result);
+        });
+    };
+
+    self.addObj = function(obj) {
+        return DB.query('INSERT or REPLACE into balance (asset_id, amount, raw_amount, updated_at) values (?,?,?,?)', [obj.asset_id, obj.amount, obj.raw_amount, obj.updated_at]);
     }
 
     return self;

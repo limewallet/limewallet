@@ -56,21 +56,18 @@
           </div>
         </ion-scroll>
       
-        <button ng-click="next()" ng-show="data.step==1" class="button button-block button-energized no-margin hide-on-keyboard-open button_taller" style="position:absolute;bottom:0px;">
+        <button ng-click="next()" ng-show="data.step==1" class="button button-block button-energized no-margin hide-on-keyboard-open button_taller dock_bottom">
           {{'g.next'|translate|uppercase}}
         </button>
         
-        <div style="position:absolute;bottom:0px;height:67px;width:100%;" class="hide-on-keyboard-open" ng-show="data.step==2">
+        <div style="height:67px;" class="dock_bottom hide-on-keyboard-open" ng-show="data.step==2">
           <div ng-show="data.timer.expired==true">
-            <!-- button ng-click="requote()" class="button button-block button-stable no-margin button_taller" >
-              {{'g.requote'|translate|uppercase}}
-            </button -->
             <button ng-click="alreadyPaid()" class="button button-block button-stable no-margin button_taller" >
               {{'g.already_paid'|translate|uppercase}}
             </button>
           </div>
           <div ng-show="data.timer.expired==false" style="display:block;">
-            <a class="button button-block button-energized no-margin button_taller" style="line-height:67px;" href="{{data.deposit_short_uri}}" target="_system">
+            <a class="button button-block button-energized no-margin button_taller" href="{{data.deposit_short_uri}}" target="_system">
               PAY
             </a>
           </div>

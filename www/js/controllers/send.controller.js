@@ -1,6 +1,34 @@
-bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T, BitShares, AddressBook, Scanner, Address, $http, $ionicLoading, $ionicNavBarDelegate, $ionicModal, $ionicPopup, $location, $timeout, $rootScope, $stateParams) {
+bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T, BitShares, AddressBook, Scanner, Address, $http, $ionicLoading, $ionicNavBarDelegate, $ionicModal, $ionicPopup, $location, $timeout, $rootScope, $stateParams, Wallet) {
   
-  $scope.data = {address_book:[], is_btc:false};
+  $scope.data = {address_book:[], is_btc:true};
+  
+  $scope.data_btc = {
+        bitcoin_address:    'BweMQsJqRdmncwagPiYtANrNbApcRvEV77', //'msmmBfcvrdG2yZiUQQ21phPkbw966f8nbb',
+        
+        amount_usd:         undefined,
+        amount_btc:         0.2,
+        quoting_usd:        false,
+        quoting_btc:        false,
+        quoting_btc_error:  undefined,
+        quoting_usd_error:  undefined,
+        
+        timer:              {options:{}, remaining:undefined, percent:undefined, start:0, stop:0, expired:0},
+        quote_expired:      false,
+        
+        deposit_uri:        undefined,
+        deposit_qrcode:     undefined,
+        deposit_short_uri:  undefined,  
+        
+        quote:              undefined,
+        signature:          undefined,
+        tx:                 undefined,
+        
+        quote_ttl:          60
+  };
+  
+  $scope.default_data_btc = {};
+  angular.copy($scope.data_btc, $scope.default_data_btc);
+  
   
   var amount = 0;
   if (!angular.isUndefined($stateParams.amount))
@@ -68,60 +96,15 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
     });
   }
   
-  /*********************************************************/
-  /* BITCOINS payment handlers *****************************/
-  $scope.nanobar = undefined;
-  var ttl = 60;
-  var counter_timeout = ttl;
-  
-  $scope.onTimeout = function() {
-    counter_timeout = counter_timeout - 1;
-    if(counter_timeout==0)
-    {
-      $scope.stopTimer();
-      return;
-    }
-    $scope.nanobar.go((ttl-counter_timeout)*100/ttl);
-    quote_timeout = $timeout($scope.onTimeout, 1000);
-  }
-  
-  $scope.startTimer = function() {
-    counter_timeout = ttl;
-    quote_timeout = $timeout($scope.onTimeout, 1000);
-  };
-  
-  $scope.stopTimer = function() {
-    $timeout.cancel(counter_timeout);
-    counter_timeout = ttl;
-    $scope.startTimer();
-  }
-  
-  $scope.$on( '$ionicView.enter', function(){
-    $scope.isBTC();
-  });
-  
-  $scope.isBTC = function(){
-    // 1.- Quotear
-    // 2.- Mostrar quote amounts
-    // 3.- Init timer
-    // 4.- En cada tic ajustar -> $scope.nanobar.go( 30 ); // size bar 30%
-    // 5.- On expired, ir a 1
-    
-    if($scope.nanobar===undefined)
-    {
-      var options = {
-        bg: '#acf',
-        target: document.getElementById('quote_ttl'), //bitcoin_payment_info
-        id: 'mynano'
-      };
-      $scope.nanobar = new Nanobar( options );
-    }
-    $scope.startTimer();
-
+  $scope.doSend = function(transaction) {
+    if($scope.data.is_btc)
+      $scope.doSendBTC();
+    else
+      $scope.validateSend();
   }
   
   $scope.validateSend = function(transaction) {
-    //$scope.transaction.amount = sendForm.transactionAmount.value;
+    
     console.log(' Amount: ['+$scope.transaction.amount+'] Precision: ['+$scope.wallet.asset.precision+']');
     var amount = parseInt(parseFloat($scope.transaction.amount)*$scope.wallet.asset.precision);
     console.log($scope.transaction.amount + ' => ' + amount);
@@ -225,7 +208,7 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
           }
           
           prom_addy.then(function() {
-            BitShares.prepareSendAsset($scope.wallet.asset.id, from, dst_addr, amount).then(function(r){
+            BitShares.prepareSendAsset($scope.wallet.asset.symbol, from, dst_addr, amount).then(function(r){
               if(r.error !== undefined) {
                 console.log('There where errors ' + r.error);
                 var alertPopup = $ionicPopup.alert({
@@ -307,6 +290,219 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
     })
     
   };
+  
+   /*********************************************************/
+  /* BITCOINS payment handlers *****************************/
+  var btc_timeout = undefined;
+  $scope.doQuoteAndStartTimer = function(){
+    
+    btc_timeout = $timeout(function () {
+      $scope.data_btc.quoting_usd = true;
+      $scope.data_btc.amount_usd = undefined;
+      // llamo a quotear
+      BitShares.getBuyQuote('BTC_USD', $scope.data_btc.amount_btc).then(function(res){
+        $scope.data_btc.amount_usd  = Number(res.quote.client_pay.replace(' USD', ''));
+        $scope.data_btc.quote       = res.quote;
+        $scope.data_btc.signature   = res.signature;
+        $timeout(function () {
+          $scope.data_btc.quoting_usd = false;
+          $scope.startTimer();
+        } , 200);
+        //console.log(res);
+      }, function(error){
+        $scope.stopTimer();
+        $scope.data_btc.quoting_usd       = false;
+        $scope.setMessageErr(error);
+        $scope.data_btc.quote             = undefined;
+        $scope.data_btc.signature         = undefined;
+        //console.log(error);
+      });
+    }, 750);
+    
+  }
+  
+  $scope.setMessageErr = function(error){
+    var message = error;
+    var errors = ['max_op', 'min_op'];
+    if(errors.indexOf(error)>=0)
+      message = T.i('err.'+error, {amount:(error=='max_op'?'50.0 USD':'0.50 USD')});
+    $scope.data_btc.quoting_usd_error = message;
+  };
+  
+  $scope.nanobar = undefined;
+  var ttl = 60;
+  var counter_timeout = ttl;
+  
+  $scope.onTimeout = function() {
+    counter_timeout = counter_timeout - 1;
+    if(counter_timeout==0)
+    {
+      $scope.stopTimer();
+      return;
+    }
+    $scope.nanobar.go((ttl-counter_timeout)*100/ttl);
+    quote_timeout = $timeout($scope.onTimeout, 1000);
+  }
+  
+  $scope.startTimer = function() {
+    counter_timeout = ttl;
+    quote_timeout = $timeout($scope.onTimeout, 1000);
+  };
+  
+  $scope.stopTimer = function() {
+    $timeout.cancel(counter_timeout);
+    counter_timeout = ttl;
+    $scope.doQuoteAndStartTimer();
+  }
+  
+  $scope.$on( '$ionicView.enter', function(){
+    $scope.isBTC();
+  });
+  
+  $scope.isBTC = function(){
+    // 1.- Quotear
+    // 2.- Mostrar quote amounts
+    // 3.- Init timer
+    // 4.- En cada tic ajustar -> $scope.nanobar.go( 30 ); // size bar 30%
+    // 5.- On expired, ir a 1
+    
+    if($scope.nanobar===undefined)
+    {
+      var options = {
+        bg: '#acf',
+        target: document.getElementById('quote_ttl'), //bitcoin_payment_info
+        id: 'mynano'
+      };
+      $scope.nanobar = new Nanobar( options );
+    }
+    
+    $scope.doQuoteAndStartTimer();
+    
+  }
+  
+  $scope.doSendBTC = function(){
+    
+    if(!$scope.data_btc.signature || !$scope.data_btc.quote)
+    {
+      $scope.showAlert('err.no_quote', 'err.no_quote_input_val');
+      return;
+    }
+    
+    // if($scope.remainingTime()<=0)
+    // {
+      // $scope.showAlert('err.quote_expired', 'err.quote_expired_retry');
+      // return;
+    // }
+    if(!$scope.data_btc.bitcoin_address || $scope.data_btc.bitcoin_address.length<1)
+    {
+      $scope.showAlert('err.btc_addr_error', 'err.btc_addr_error_input');
+      return;
+    }
+    
+    var addy = Wallet.getMainAddress();
+    BitShares.getBackendToken(addy).then(function(token) {
+      BitShares.acceptQuote($scope.data_btc.quote, $scope.data_btc.signature, token, $scope.data_btc.bitcoin_address, BitShares.X_BTC_PAY).then(function(result){
+        
+        if(!result.tx || !result.tx.cl_pay_addr)
+        {
+          $scope.showAlert('err.occurred', 'err.please_retry');
+          return;
+        }
+        $scope.sending_modal.show();
+        var from  = [];
+        var addys = Object.keys($scope.wallet.addresses);
+          for(var i=0; i<addys.length; i++) {
+            from.push({"address":addys[i]});
+        }
+        
+        var pay_amount = parseInt(parseFloat(result.tx.cl_pay)*$scope.wallet.asset.precision);
+        BitShares.prepareSendAsset($scope.wallet.asset.id, from, result.tx.cl_pay_addr, pay_amount).then(function(r){
+          if(r.error !== undefined) {
+            console.log('There where errors ' + r.error);
+            var alertPopup = $ionicPopup.alert({
+               title: T.i('err.unable_to_create_tx') + ' <i class="fa fa-warning float_right"></i>',
+               template: r.error,
+               okType: 'button-assertive', 
+            })
+            .then(function() {
+              $scope.sending_modal.hide();
+            });
+            return;
+          }
+
+          $scope.transaction.message = 'send.signing_transaction';
+          
+          console.log(r.tx);
+          console.log(r.to_sign);
+          console.log(r.required_signatures);
+
+          r.tx.signatures = [];
+
+          var prom = [];
+          angular.forEach(r.required_signatures, function(req_addy) {
+            var p = Address.by_address(req_addy)
+              .then(function(addy) {
+                return BitShares.compactSignatureForHash(r.to_sign, addy.privkey)
+                  .then(function(compact){
+                    console.log(addy.address);
+                    r.tx.signatures.push(compact);
+                    console.log(compact);
+                  })
+              });
+            prom.push(p);
+          });
+
+          $q.all(prom).then(function() {
+            $scope.transaction.message = 'send.sending_transaction';
+
+            BitShares.sendAsset(r.tx, r.secret).then(function(r) {
+              $scope.sending_modal.hide();
+              $scope.goHome();
+              //window.plugins.toast.show( T.i('withdraw.succesful'), 'short', 'bottom');
+              window.plugins.toast.show( T.i('send.transaction_sent'), 'long', 'bottom')
+              //$scope.wallet.transactions.unshift({sign:-1, address:sendForm.transactionAddress.value, addr_name:sendForm.transactionAddress.value, amount:amount/$scope.wallet.assets[$scope.wallet.asset.id].precision, state:'P', date: new Date().getTime()});
+              
+            }, function(){
+                var alertPopup = $ionicPopup.alert({
+                   title: T.i('err.unable_to_send_tx') + ' <i class="fa fa-warning float_right"></i>',
+                   template: T.i('err.server_error'),
+                   okType: 'button-assertive', 
+                })
+                .then(function() {
+                  $scope.sending_modal.hide();
+                });
+            });
+             
+          });
+
+        }, function(error){
+           var alertPopup = $ionicPopup.alert({
+                title: T.i('err.unable_to_send_tx') + ' <i class="fa fa-warning float_right"></i>',
+                template: T.i('err.server_error'),
+                okType: 'button-assertive', 
+             })
+            .then(function() {
+              $scope.sending_modal.hide();
+            });
+        });
+ 
+      }, function(error){
+        console.log(error);
+        if(error=='auth_failed')
+          Setting.remove(Setting.BSW_TOKEN);
+        $scope.showAlert('err.cant_accept', 'err.cant_accept_retry');
+        return;
+      });
+    }, function(error){
+      console.log(error);
+      if(error=='auth_failed')
+        Setting.remove(Setting.BSW_TOKEN);
+      $scope.showAlert('err.no_token', 'err.no_token_retry');
+      return;
+    });
+    
+  }
+  
   
   // Load Address book modal
   $ionicModal.fromTemplateUrl('address-book-modal.html', function($ionicModal) {

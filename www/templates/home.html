@@ -49,12 +49,15 @@
       <ion-list style="height: 100%;">
         <ion-item ng-repeat="tx in wallet.transactions" class="item item-icon-left"> <!-- item-thumbnail-left -->
           <a ng-click="showActionSheet(tx)">
-            <div ng-class="{'sent':tx.sign<0, 'received':tx.sign>0, 'self':tx.sign==0}">
+            <div class="{{tx.ui_type}}">
               <div ng-class="{true:'pending', false:''}[tx.state=='P']">
                 <i class="icon ion-ios-upload-outline" ></i> 
                 <i class="icon ion-ios-download-outline"></i>
                 <i class="icon ion-ios-refresh-outline"></i>
-                <i ng-show="tx.state=='P'" class="icon ion-loading-c"></i>
+                <i class="icon ion-ios-plus-outline"></i>
+                <i class="icon ion-ios-minus-outline"></i>
+                <i class="icon ion-social-bitcoin-outline"></i>
+                <i ng-show="tx.state=='P'" ng-class="{true:'icon ion-loading-c'}[tx.state=='P']"></i>
                 <h2>
                   <span class="tx_amount"><i class="{{wallet.asset.symbol_ui_class}}">{{wallet.asset.symbol_ui_text}}</i>&nbsp;{{tx.amount| number : 2}}</span> 
                   <span class="self_text">{{'g.received' | translate}}</span>
@@ -64,7 +67,7 @@
                 <p>
                 <span class="sent_text">{{'g.to'|translate}}</span> <span class="received_text">{{'g.from'|translate}}</span>
                 <span class="self_text">{{'g.from'|translate}}</span>: <span class="tx_address">{{tx.addr_name | translate}}</span>
-                <br/>{{'home.on'|translate}} {{ tx.TS|date:'medium'}} / {{tx.cl_recv_curr}} {{tx.cl_pay_curr}}</p>
+                <br/>{{'home.on'|translate}} {{ tx.TS|date:'medium'}} / {{tx.cl_recv_curr}} / {{tx.cl_pay_curr}}</p>
               </div>
             </div>
           </a>

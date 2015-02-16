@@ -70,7 +70,7 @@ bitwallet_config
         {
             name: 'exchange_transaction',
             columns: [
-                {name : 'id',                     type   : 'integer primary key'},          // 34,
+                {name : 'x_id',                     type   : 'integer primary key'},          // 34,
                 {name : 'x_asset_id',             type   : 'text'}, 
                 {name : 'status',                 type   : 'text'}, 
                 {name : 'quoted_at',              type   : 'integer'},
@@ -87,6 +87,16 @@ bitwallet_config
                 {name : 'cl_recv_addr',           type   : 'text'},             // 'DVS6KBKUMcWXvgY7c9sYqHv4p47baAn6NBPR',
                 {name : 'cl_recv_curr',           type   : 'text'},              // 'USD'
                 {name : 'tx_type',                type   : 'text'},
+                {name : 'updated_at',             type   : 'integer'}
+          ]
+        },
+        {
+            name: 'balance',
+            columns: [
+                {name : 'asset_id',               type   : 'integer primary key'},
+                {name : 'amount',                 type   : 'float'},
+                {name : 'updated_at',             type   : 'integer'},
+                {name : 'raw_amount',             type   : 'integer'}
           ]
         }
     ],
