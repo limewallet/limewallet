@@ -10,7 +10,7 @@ bitwallet_config
     {id: 25,  symbol: 'BTC',  fullname: 'Bitcoin' ,             precision: 100000000, symbol_ui_class : 'fa fa-btc', symbol_ui_text : ''}
   ],
   apiurl : function(path) {
-    var url = 'https://bsw-test.latincoin.com/api/v1';
+    var url = 'https://bsw-test.latincoin.com/api/v2';
     return url + path;
   },
   wsurl : 'ws://bswws-test.latincoin.com/events',

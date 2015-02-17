@@ -25,9 +25,9 @@ bitwallet_controllers
     
     var url;
     if(ENVIRONMENT.test) {
-      url = 'https://bsw-test.latincoin.com/api/v1/addrs/' + addr + '/balance';
+      url = 'https://bsw-test.latincoin.com/api/v2/addrs/' + addr + '/balance';
     } else {
-      url = 'https://bsw.latincoin.com/api/v1/addrs/' + addr + '/balance';
+      url = 'https://bsw.latincoin.com/api/v2/addrs/' + addr + '/balance';
     }
 
 
@@ -116,9 +116,9 @@ bitwallet_controllers
 
       var url;
       if(ENVIRONMENT.test) {
-        url = 'https://bsw-test.latincoin.com/api/v1/txs/new';
+        url = 'https://bsw-test.latincoin.com/api/v2/txs/new';
       } else {
-        url = 'https://bsw.latincoin.com/api/v1/txs/new';
+        url = 'https://bsw.latincoin.com/api/v2/txs/new';
       }
 
       $http.post(url, tx_req)
@@ -161,9 +161,9 @@ bitwallet_controllers
           $scope.sweeping.message = 'send.sending_transaction';
 
           if(ENVIRONMENT.test) {
-            url = 'https://bsw-test.latincoin.com/api/v1/txs/send';
+            url = 'https://bsw-test.latincoin.com/api/v2/txs/send';
           } else {
-            url = 'https://bsw.latincoin.com/api/v1/txs/send';
+            url = 'https://bsw.latincoin.com/api/v2/txs/send';
           }
 
           $http.post(url, r.tx)
