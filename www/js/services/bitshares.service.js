@@ -288,15 +288,15 @@ bitwallet_services
 
     // *************************************************** //
     // Exchange Service Api Calls ************************ //
-    self.listExchangeTxs = function(token, last_id) {
-      if(last_id!==undefined)
-        return self.updateExchangeTxs(token, last_id);
+    self.listExchangeTxs = function(token, last_updated_at) {
+      if(last_updated_at!==undefined)
+        return self.updateExchangeTxs(token, last_updated_at);
       var url = ENVIRONMENT.apiurl('/xtxs/'+token+'/list');
       return self.apiCall(url);
     }
     
-    self.updateExchangeTxs = function(token, last_id) {
-      var url = ENVIRONMENT.apiurl('/xtxs/'+token+'/list/'+last_id/1000);
+    self.updateExchangeTxs = function(token, last_updated_at) {
+      var url = ENVIRONMENT.apiurl('/xtxs/'+token+'/list/'+last_updated_at/1000);
       return self.apiCall(url);
     }
     

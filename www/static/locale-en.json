@@ -1,5 +1,6 @@
 {
   "g" : {
+    "pay"                 : "Pay",
     "dest_address"        : "To",
     "accept_tx_process"   : "Accept transaction process...",
     "deposit_paragraph"   : "You can load your wallet by converting bitcoin into your preferred bitasset.<br/>Type the amount of <b>bit{{asset.symbol}}</b> you want to load and get a quote for each bitcoin, and vice versa.",  

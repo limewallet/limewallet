@@ -500,12 +500,12 @@ bitwallet_services
           var proms = [];
           res.txs.forEach(function(o){
             o['tx_type']      = o.extra_data=='marty'?'deposit':o.extra_data;
-            o['x_asset_id']   = 24;
             o['x_id']         = o.id;
             o.quoted_at       = o.quoted_at*1000;
             o.updated_at      = o.updated_at*1000;
             if(o.tx_type==BitShares.X_DEPOSIT)
             {
+              o['x_asset_id']   = 24;
               // My symbol es cl_recv_curr
             }
             else{
@@ -539,9 +539,9 @@ bitwallet_services
        
        var close_tx = function() {
 
-        var precision = self.data.asset.precision;
         var assets = Object.keys(tx['assets']);
         for(var i=0; i<assets.length; i++) {
+           var precision = self.data.assets[assets[i]].precision;
            p = {}; 
            p['fee']  = (tx['assets'][assets[i]]['w_amount'] - tx['assets'][assets[i]]['d_amount'])/precision;
            p['sign'] = 0;

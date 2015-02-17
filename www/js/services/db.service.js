@@ -406,7 +406,7 @@ bitwallet_services
                 LEFT JOIN operation o \
                 ON o.tx_id = et.cl_pay_tx OR o.tx_id = et.cl_recv_tx \
               WHERE et.x_asset_id = ? and et.cl_pay_tx IS NULL and et.cl_recv_tx IS NULL) \
-            AS peto ORDER BY TS DESC LIMIT " + my_limit, [asset_id, asset_id])
+            AS peto WHERE ui_type IS NOT NULL ORDER BY TS DESC LIMIT " + my_limit, [asset_id, asset_id])
         .then(function(result){
             return DB.fetchAll(result);
         });
