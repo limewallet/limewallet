@@ -229,18 +229,18 @@ bitwallet_services
           if( result.rows.length == 0 ) {
             if( _default !== undefined )
             {
-              console.log('ROW 0 RESOLVE');
+              //console.log('ROW 0 RESOLVE');
               deferred.resolve({name:name, value:_default});
             }
             else
             {
-              console.log('ROW 0 REJECT');
+              //console.log('ROW 0 REJECT');
               deferred.resolve();
             }
             return;
           }
 
-          console.log('ROW !=0 RESOLVE');
+          //console.log('ROW !=0 RESOLVE');
           deferred.resolve(DB.fetch(result));
         }, function(err) {
           console.log('rompo ' + err);

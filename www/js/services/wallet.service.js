@@ -217,7 +217,7 @@ bitwallet_services
       clearTimeout(self.timeout.ping);
       self.timeout.ping = setTimeout( function() { self.ws.send('ping'); }, 10000);
       console.log(JSON.stringify(event.data));
-      if(event.data.indexOf('nb') == 2) {
+      if(event.data.indexOf('bc') == 0) {
         //Refresh balance in 100ms, if we get two notifications (Withdraw from two addresses) just refresh once.
         clearTimeout(self.timeout.refresh);
         self.timeout.refresh = setTimeout( function() { self.refreshBalance(); }, 100);
@@ -226,8 +226,18 @@ bitwallet_services
 
     self.subscribeToNotifications = function() {
       self.getMasterPubkey().then(function(res) {
-        var sub = res.masterPubkey + ':' + res.deriv;
-        self.ws.send('sub ' + sub);
+        Setting.get(Setting.BSW_TOKEN, false).then(function(bsw_token){
+          var sub = res.masterPubkey + ':' + res.deriv;
+          if( bsw_token === false )
+            self.ws.send('sub ' + sub);
+          else
+          {
+            console.log('mando : ' + bsw_token.value + ' ' + sub);
+            self.ws.send('sub2 ' + bsw_token.value + ' ' + sub);
+          }
+        }, function(error){
+          console.log('Unable to subscribe to events 2:' + err);   
+        });
       }, function(err) {
         console.log('Unable to subscribe to events:' + err);   
       });
@@ -269,7 +279,7 @@ bitwallet_services
                 self.loadAccount().then(function(account) {
                 
                   //Remove last WS TOKEN
-                  Setting.remove(Setting.BSW_TOKEN).then(function(){
+                  //Setting.remove(Setting.BSW_TOKEN).then(function(){
                     
                     self.loadBalance().then(function(){
                       deferred.resolve();
@@ -281,11 +291,11 @@ bitwallet_services
                       self.emit(self.DATA_INITIALIZED);
                     })
                     
-                  }, function(){
-                    deferred.resolve();
-                    self.data.initialized = true;
-                    self.emit(self.DATA_INITIALIZED);
-                  });
+                  //}, function(){
+                    //deferred.resolve();
+                    //self.data.initialized = true;
+                    //self.emit(self.DATA_INITIALIZED);
+                  //});
                 }, function(err) {
                   deferred.reject(err); 
                 });
@@ -455,7 +465,7 @@ bitwallet_services
             //Get Exchange Transactions
             var prom2 = self.getExchangeTransactions(last_updated_at);
             
-            $q.all([prom, prom2]).then(function(){
+            return $q.all([prom, prom2]).then(function(){
               console.log('Wallet : self.refreshBalance 2');
               self.loadBalance();
             }, function(error){

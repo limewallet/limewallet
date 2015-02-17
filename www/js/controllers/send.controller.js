@@ -416,7 +416,7 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
         }
         
         var pay_amount = parseInt(parseFloat(result.tx.cl_pay)*$scope.wallet.asset.precision);
-        BitShares.prepareSendAsset($scope.wallet.asset.id, from, result.tx.cl_pay_addr, pay_amount).then(function(r){
+        BitShares.prepareSendAsset($scope.wallet.asset.symbol, from, result.tx.cl_pay_addr, pay_amount).then(function(r){
           if(r.error !== undefined) {
             console.log('There where errors ' + r.error);
             var alertPopup = $ionicPopup.alert({

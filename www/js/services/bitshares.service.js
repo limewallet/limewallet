@@ -296,7 +296,7 @@ bitwallet_services
     }
     
     self.updateExchangeTxs = function(token, last_id) {
-      var url = ENVIRONMENT.apiurl('/xtxs/'+token+'/list/newer/'+last_id);
+      var url = ENVIRONMENT.apiurl('/xtxs/'+token+'/list/'+last_id/1000);
       return self.apiCall(url);
     }
     
@@ -362,6 +362,8 @@ bitwallet_services
             "amount"  : amount
         }]
       }
+
+      console.log('VOY CON PREPARE ' + JSON.stringify(payload));
 
       return self.apiCall(url, payload);
     }
