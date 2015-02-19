@@ -117,42 +117,43 @@ line-height: 38px;}
 
 .transactions div.list {height:100%;}
 .transactions h2 {font-size:14px!important;}
+/* ***************************************** */
 /* received */
-.transactions .received .icon.ion-ios-upload-outline{display:none;}
-.transactions .received .icon.ion-ios-refresh-outline{display:none;}
-.transactions .received .icon.ion-ios-minus-outline{display:none;}
-.transactions .received .icon.ion-ios-plus-outline{display:none;}
-.transactions .received .icon.ion-social-bitcoin-outline{display:none;}
-/* received */
-.transactions .sent .icon.ion-ios-download-outline{display:none;}
-.transactions .sent .icon.ion-ios-refresh-outline{display:none;}
-.transactions .sent .icon.ion-ios-minus-outline{display:none;}
-.transactions .sent .icon.ion-ios-plus-outline{display:none;}
-.transactions .sent .icon.ion-social-bitcoin-outline{display:none;}
+.transactions .received .sent_ex{display:none;}
+.transactions .received .self_ex{display:none;}
+.transactions .received .deposit_ex{display:none;}
+.transactions .received .withdraw_ex{display:none;}
+.transactions .received .btc_pay_ex{display:none;}
+/* sent */
+.transactions .sent .received_ex{display:none;}
+.transactions .sent .self_ex{display:none;}
+.transactions .sent .deposit_ex{display:none;}
+.transactions .sent .withdraw_ex{display:none;}
+.transactions .sent .btc_pay_ex{display:none;}
 /* self */
-.transactions .self .icon.ion-ios-upload-outline{display:none;}
-.transactions .self .icon.ion-ios-download-outline{display:none;}
-.transactions .self .icon.ion-ios-minus-outline{display:none;}
-.transactions .self .icon.ion-ios-plus-outline{display:none;}
-.transactions .self .icon.ion-social-bitcoin-outline{display:none;}
+.transactions .self .received_ex{display:none;}
+.transactions .self .sent_ex{display:none;}
+.transactions .self .deposit_ex{display:none;}
+.transactions .self .withdraw_ex{display:none;}
+.transactions .self .btc_pay_ex{display:none;}
 /* deposit */
-.transactions .deposit .icon.ion-ios-upload-outline{display:none;}
-.transactions .deposit .icon.ion-ios-download-outline{display:none;}
-.transactions .deposit .icon.ion-ios-refresh-outline{display:none;}
-.transactions .deposit .icon.ion-ios-minus-outline{display:none;}
-.transactions .deposit .icon.ion-social-bitcoin-outline{display:none;}
+.transactions .deposit .received_ex{display:none;}
+.transactions .deposit .sent_ex{display:none;}
+.transactions .deposit .self_Ex{display:none;}
+.transactions .deposit .withdraw_ex{display:none;}
+.transactions .deposit .btc_ay_ex{display:none;}
 /* withdraw */
-.transactions .withdraw .icon.ion-ios-upload-outline{display:none;}
-.transactions .withdraw .icon.ion-ios-download-outline{display:none;}
-.transactions .withdraw .icon.ion-ios-refresh-outline{display:none;}
-.transactions .withdraw .icon.ion-ios-plus-outline{display:none;}
-.transactions .withdraw .icon.ion-social-bitcoin-outline{display:none;}
+.transactions .withdraw .received_ex{display:none;}
+.transactions .withdraw .sent_ex{display:none;}
+.transactions .withdraw .self_ex{display:none;}
+.transactions .withdraw .deposit_ex{display:none;}
+.transactions .withdraw .btc_pay_ex{display:none;}
 /* btc_pay */
-.transactions .btc_pay .icon.ion-ios-upload-outline{display:none;}
-.transactions .btc_pay .icon.ion-ios-download-outline{display:none;}
-.transactions .btc_pay .icon.ion-ios-refresh-outline{display:none;}
-.transactions .btc_pay .icon.ion-ios-plus-outline{display:none;}
-.transactions .btc_pay .icon.ion-ios-minus-outline{display:none;}
+.transactions .btc_pay .received_ex{display:none;}
+.transactions .btc_pay .sent_ex{display:none;}
+.transactions .btc_pay .self_ex{display:none;}
+.transactions .btc_pay .deposit_ex{display:none;}
+.transactions .btc_pay .withdraw_ex{display:none;}
 /* pending */
 .transactions .pending .icon.ion-ios-upload-outline{display:none;}
 .transactions .pending .icon.ion-ios-download-outline{display:none;}
@@ -160,15 +161,6 @@ line-height: 38px;}
 .transactions .pending .icon.ion-ios-minus-outline{display:none;}
 .transactions .pending .icon.ion-ios-plus-outline{display:none;}
 .transactions .pending .icon.ion-social-bitcoin-outline{display:none;}
-/* received, deposit*/
-.transactions .received .sent_text, .transactions .deposit .sent_text{display:none;}
-.transactions .received .self_text, .transactions .deposit .self_text{display:none;}
-/* sent, withdraw*/
-.transactions .sent .received_text, .transactions .withdraw .received_text{display:none;}
-.transactions .sent .self_text, .transactions .withdraw .self_text{display:none;}
-/* self , withdraw, deposit */
-.transactions .self .received_text, .transactions .received .received_text, .transactions .withdraw .received_text{display:none;}
-.transactions .self .sent_text, .transactions .received.sent_text, .transactions .withdraw .sent_text{display:none;}
 
 .pending_text {
   float:right;font-size:0.7em;

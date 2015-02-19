@@ -1,6 +1,6 @@
 bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T, BitShares, AddressBook, Scanner, Address, $http, $ionicLoading, $ionicNavBarDelegate, $ionicModal, $ionicPopup, $location, $timeout, $rootScope, $stateParams, Wallet) {
   
-  $scope.data = {address_book:[], is_btc:true};
+  $scope.data = {address_book:[], is_btc:false};
   
   $scope.data_btc = {
         bitcoin_address:    'BweMQsJqRdmncwagPiYtANrNbApcRvEV77', //'msmmBfcvrdG2yZiUQQ21phPkbw966f8nbb',
@@ -97,8 +97,9 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
   }
   
   $scope.doSend = function(transaction) {
-    if($scope.data.is_btc)
-      $scope.doSendBTC();
+    if($scope.data.is_btc==true)
+      //$scope.doSendBTC();
+      console.log('doSendBTC()??');
     else
       $scope.validateSend();
   }

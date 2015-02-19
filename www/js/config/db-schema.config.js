@@ -70,8 +70,8 @@ bitwallet_config
         {
             name: 'exchange_transaction',
             columns: [
-                {name : 'x_id',                     type   : 'integer primary key'},          // 34,
-                {name : 'x_asset_id',             type   : 'text'}, 
+                {name : 'x_id',                   type   : 'integer primary key'},          // 34,
+                {name : 'x_asset_id',             type   : 'integer'}, 
                 {name : 'status',                 type   : 'text'}, 
                 {name : 'quoted_at',              type   : 'integer'},
                 {name : 'cl_pay_curr',            type   : 'text'},             // 'BTC',

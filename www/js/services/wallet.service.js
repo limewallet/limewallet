@@ -4,6 +4,7 @@ bitwallet_services
 
     self.data = {
       assets            : {},
+      assets_symbol     : {},
       asset             : {},
       address_book      : {},
       addresses         : {},
@@ -251,7 +252,8 @@ bitwallet_services
       //Load Assets
       angular.forEach( ENVIRONMENT.assets , function(asset) {
         asset.amount = 0;
-        self.data.assets[asset.id] = asset;
+        self.data.assets[asset.id]            = asset;
+        self.data.assets_symbol[asset.symbol] = asset;
       });
 
       //Create master key
@@ -397,6 +399,9 @@ bitwallet_services
         angular.forEach(balances, function(balance) {
           self.data.assets[balance.asset_id].amount = balance.amount;
         });
+      },
+      function(error){
+        console.log(' -- Erro Wallet loadBalance 1'); console.log(error);
       })
       Operation.allWithXTxForAsset(self.data.asset.id).then(function(res){
         self.data.transactions=res; 
@@ -404,7 +409,7 @@ bitwallet_services
         self.emit(self.REFRESH_DONE);
       },
       function(error){
-        console.log(' -- Erro Wallet 1'); console.log(error);
+        console.log(' -- Erro Wallet loadBalance 2'); console.log(error);
         deferred.reject(error);
         self.emit(self.REFRESH_ERROR);
       });
@@ -466,8 +471,14 @@ bitwallet_services
             var prom2 = self.getExchangeTransactions(last_updated_at);
             
             return $q.all([prom, prom2]).then(function(){
-              console.log('Wallet : self.refreshBalance 2');
-              self.loadBalance();
+              console.log('Wallet : self.refreshBalance 8');
+              self.loadBalance().then(function(){
+                deferred.resolve();
+              }, function(error){
+                console.log(' -- Erro Wallet 66'); console.log(error);
+                deferred.reject(error);
+                self.emit(self.REFRESH_ERROR);
+              });
             }, function(error){
               console.log(' -- Erro Wallet 2'); console.log(error);
               deferred.reject(error);
@@ -505,11 +516,14 @@ bitwallet_services
             o.updated_at      = o.updated_at*1000;
             if(o.tx_type==BitShares.X_DEPOSIT)
             {
-              o['x_asset_id']   = 24;
+              // cl_pay_tx  -> bitcoin
+              // cl_recv_tx -> bitshares
+              o['x_asset_id']   = parseInt(self.data.assets_symbol[o.cl_recv_curr].id);
               // My symbol es cl_recv_curr
             }
             else{
               // My symbol es cl_pay_curr
+              o['x_asset_id']   = parseInt(self.data.assets_symbol[o.cl_pay_curr].id);
             }
             var p = ExchangeTransaction.addObj(o);
             proms.push(p);

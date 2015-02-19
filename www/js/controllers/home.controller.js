@@ -4,7 +4,7 @@ bitwallet_controllers
   $scope.$watch('master_key_new', function(newValue, oldValue, scope) {
     if(newValue===oldValue)
       return;
-    if($scope && $scope.master_key_new)
+    if($scope && $scope.master_key_new !== undefined && $scope.master_key_new==true)
     {
       $scope.master_key_new = false;
       $state.go('app.account', {first_time:'1'});
