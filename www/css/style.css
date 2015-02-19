@@ -162,6 +162,8 @@ line-height: 38px;}
 .transactions .pending .icon.ion-ios-plus-outline{display:none;}
 .transactions .pending .icon.ion-social-bitcoin-outline{display:none;}
 
+.transactions .withdraw .tx_address, .transactions .deposit .tx_address, .transactions .btc_pay .tx_address { display:none;}
+
 .pending_text {
   float:right;font-size:0.7em;
   position: absolute;

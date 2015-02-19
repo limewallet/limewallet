@@ -66,8 +66,9 @@
                   <!-- span class="received_text">{{'g.received' | translate}}</span -->
                   <span ng-if="tx.state=='P'" class="pending_text">{{'home.pending' | translate}}</span></h2>
                 <p>
+                <span class="withdraw_ex wrap_text">{{tx.cl_recv}}&nbsp;{{tx.cl_recv_curr}}&nbsp;{{'g.to'|translate}}&nbsp;{{tx.cl_recv_addr}}</span>
                 <span class="sent_ex">{{'g.to'|translate}}</span> <span class="received_ex">{{'g.from'|translate}}</span>
-                <span class="self_ex">{{'g.from'|translate}}</span>: <span class="tx_address">{{tx.addr_name | translate}}</span>
+                <span class="self_ex">{{'g.from'|translate}}</span><span class="tx_address">:&nbsp;{{tx.addr_name | translate}}</span>
                 <br/>{{'home.on'|translate}} {{ tx.TS|date:'medium'}}</p>
               </div>
             </div>
