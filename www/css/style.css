@@ -139,9 +139,9 @@ line-height: 38px;}
 /* deposit */
 .transactions .deposit .received_ex{display:none;}
 .transactions .deposit .sent_ex{display:none;}
-.transactions .deposit .self_Ex{display:none;}
+.transactions .deposit .self_ex{display:none;}
 .transactions .deposit .withdraw_ex{display:none;}
-.transactions .deposit .btc_ay_ex{display:none;}
+.transactions .deposit .btc_pay_ex{display:none;}
 /* withdraw */
 .transactions .withdraw .received_ex{display:none;}
 .transactions .withdraw .sent_ex{display:none;}
@@ -155,12 +155,12 @@ line-height: 38px;}
 .transactions .btc_pay .deposit_ex{display:none;}
 .transactions .btc_pay .withdraw_ex{display:none;}
 /* pending */
-.transactions .pending .icon.ion-ios-upload-outline{display:none;}
-.transactions .pending .icon.ion-ios-download-outline{display:none;}
-.transactions .pending .icon.ion-ios-refresh-outline{display:none;}
-.transactions .pending .icon.ion-ios-minus-outline{display:none;}
-.transactions .pending .icon.ion-ios-plus-outline{display:none;}
-.transactions .pending .icon.ion-social-bitcoin-outline{display:none;}
+.transactions .pending .sent_ex{display:none;}
+.transactions .pending .received_ex{display:none;}
+.transactions .pending .self_ex{display:none;}
+.transactions .pending .deposit_ex{display:none;}
+.transactions .pending .withdraw_ex{display:none;}
+.transactions .pending .btc_pay_ex{display:none;}
 
 .transactions .withdraw .tx_address, .transactions .deposit .tx_address, .transactions .btc_pay .tx_address { display:none;}
 

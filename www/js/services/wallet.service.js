@@ -217,8 +217,8 @@ bitwallet_services
     self.onNotification = function (event) {
       clearTimeout(self.timeout.ping);
       self.timeout.ping = setTimeout( function() { self.ws.send('ping'); }, 10000);
-      console.log(JSON.stringify(event.data));
-      if(event.data.indexOf('bc') == 0) {
+      //console.log(JSON.stringify(event.data));
+      if(event.data.indexOf('bc') == 0 || event.data.indexOf('xu') == 0) {
         //Refresh balance in 100ms, if we get two notifications (Withdraw from two addresses) just refresh once.
         clearTimeout(self.timeout.refresh);
         self.timeout.refresh = setTimeout( function() { self.refreshBalance(); }, 100);

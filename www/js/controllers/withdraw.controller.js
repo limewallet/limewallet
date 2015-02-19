@@ -33,6 +33,11 @@ bitwallet_controllers
   $scope.default_data = {};
   angular.copy($scope.data, $scope.default_data);
   
+  $scope.quote_data = {'quote_curr'     : $scope.wallet.asset.symbol+'_BTC'
+                       , 'quote_btc'    : 'BTC_'+$scope.wallet.asset.symbol
+                       , 'curr_replace' : ' '+$scope.wallet.asset.symbol };
+  
+  
   $scope.transaction = {message:'send.generating_transaction'};
   
   var usd_timeout = undefined;
@@ -53,7 +58,7 @@ bitwallet_controllers
       $scope.data.quoting_btc = true;
       $scope.data.amount_btc = undefined;
       // llamo a quotear
-      BitShares.getSellQuote('USD_BTC', $scope.data.amount_usd).then(function(res){
+      BitShares.getSellQuote($scope.quote_data.quote_curr, $scope.data.amount_usd).then(function(res){
         $scope.data.amount_btc = Number(res.quote.client_recv.replace(' BTC', ''));
         $scope.data.quote       = res.quote;
         $scope.data.signature   = res.signature;
@@ -91,8 +96,9 @@ bitwallet_controllers
       $scope.data.quoting_usd = true;
       $scope.data.amount_usd = undefined;
       // llamo a quotear
-      BitShares.getBuyQuote('BTC_USD', $scope.data.amount_btc).then(function(res){
-        $scope.data.amount_usd  = Number(res.quote.client_pay.replace(' USD', ''));
+      //BitShares.getBuyQuote('BTC_USD', $scope.data.amount_btc).then(function(res){
+      BitShares.getBuyQuote($scope.quote_data.quote_btc, $scope.data.amount_btc).then(function(res){
+        $scope.data.amount_usd  = Number(res.quote.client_pay.replace($scope.quote_data.curr_replace, ''));
         $scope.data.quote       = res.quote;
         $scope.data.signature   = res.signature;
         $timeout(function () {

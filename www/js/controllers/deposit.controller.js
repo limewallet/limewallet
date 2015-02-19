@@ -29,6 +29,10 @@ bitwallet_controllers
   $scope.default_data = {};
   angular.copy($scope.data, $scope.default_data);
   
+  $scope.quote_data = {'quote_curr'     : $scope.wallet.asset.symbol+'_BTC'
+                       , 'quote_btc'    : 'BTC_'+$scope.wallet.asset.symbol
+                       , 'curr_replace' : ' '+$scope.wallet.asset.symbol };
+  
   var usd_timeout = undefined;
   $scope.$watch('data.amount_usd', function(newValue, oldValue, scope) {
     if(newValue===oldValue)
@@ -47,7 +51,8 @@ bitwallet_controllers
       $scope.data.quoting_btc = true;
       $scope.data.amount_btc = undefined;
       // llamo a quotear
-      BitShares.getBuyQuote('USD_BTC', $scope.data.amount_usd).then(function(res){
+      //BitShares.getBuyQuote('USD_BTC', $scope.data.amount_usd).then(function(res){
+      BitShares.getBuyQuote($scope.quote_data.quote_curr, $scope.data.amount_usd).then(function(res){
         $scope.data.amount_btc = Number(res.quote.client_pay.replace(' BTC', ''));
         $scope.data.quote       = res.quote;
         $scope.data.signature   = res.signature;
@@ -85,8 +90,9 @@ bitwallet_controllers
       $scope.data.quoting_usd = true;
       $scope.data.amount_usd = undefined;
       // llamo a quotear
-      BitShares.getSellQuote('BTC_USD', $scope.data.amount_btc).then(function(res){
-        $scope.data.amount_usd  = Number(res.quote.client_recv.replace(' USD', ''));
+      //BitShares.getSellQuote('BTC_USD', $scope.data.amount_btc).then(function(res){
+      BitShares.getSellQuote($scope.quote_data.quote_btc, $scope.data.amount_btc).then(function(res){
+        $scope.data.amount_usd  = Number(res.quote.client_recv.replace($scope.quote_data.curr_replace, ''));
         $scope.data.quote       = res.quote;
         $scope.data.signature   = res.signature;
         $timeout(function () {
@@ -141,7 +147,10 @@ bitwallet_controllers
     var n = parseInt(d.getTime()/1000);
     if(!$scope.data.quote.timestamp)
       return 0;
-    return parseInt($scope.data.quote.timestamp)+$scope.data.quote_ttl-n;
+    var rem = parseInt($scope.data.quote.timestamp)+$scope.data.quote_ttl-n;
+    
+    console.log('DepositCtrl.remainingTime():'+rem);
+    return rem;
   }
   
   $scope.showAlert = function(title, message){
@@ -160,11 +169,11 @@ bitwallet_controllers
       return;
     }
     
-    if($scope.remainingTime()<=0)
-    {
-      $scope.showAlert('err.quote_expired', 'err.quote_expired_retry');
-      return;
-    }
+    // if($scope.remainingTime()<=0)
+    // {
+      // $scope.showAlert('err.quote_expired', 'err.quote_expired_retry');
+      // return;
+    // }
     
     $scope.showLoading('g.accept_tx_process');
     var addy = Wallet.getMainAddress();
@@ -175,7 +184,7 @@ bitwallet_controllers
         
         $scope.data.tx                = result.tx;
         $scope.data.deposit_short_uri = 'bitcoin://'+$scope.data.tx.cl_pay_addr+'?amount='+$scope.data.tx.cl_pay;
-        $scope.data.deposit_uri       = $scope.data.deposit_short_uri+'?label=bitwallet_deposit?message=convert_bts_to_bitUSD';
+        $scope.data.deposit_uri       = $scope.data.deposit_short_uri+'?label=bitwallet_deposit?message=convert_btc_to_bitasset';
         $scope.data.deposit_qrcode    = 'http://chart.apis.google.com/chart?cht=qr&chs=300x300&chl='+encodeURIComponent($scope.data.deposit_uri)+'&chld=H|0'
         $scope.data.step = 2;
         

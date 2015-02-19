@@ -3,7 +3,7 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
   $scope.data = {address_book:[], is_btc:false};
   
   $scope.data_btc = {
-        bitcoin_address:    'BweMQsJqRdmncwagPiYtANrNbApcRvEV77', //'msmmBfcvrdG2yZiUQQ21phPkbw966f8nbb',
+        bitcoin_address:    '', //BweMQsJqRdmncwagPiYtANrNbApcRvEV77 'msmmBfcvrdG2yZiUQQ21phPkbw966f8nbb',
         
         amount_usd:         undefined,
         amount_btc:         0.2,
