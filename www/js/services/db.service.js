@@ -391,9 +391,9 @@ bitwallet_services
                    WHEN o.sign>0 and et.tx_type IS NULL             THEN 'received' \
                    WHEN o.sign<0 and et.tx_type IS NULL             THEN 'sent' \
                    WHEN o.sign==0 and et.tx_type IS NULL            THEN 'self' \
-                   WHEN o.sign>0 and et.tx_type=='deposit' IS NULL  THEN 'deposit' \
-                   WHEN o.sign<0 and et.tx_type=='withdraw' IS NULL THEN 'withdraw' \
-                   WHEN o.sign<0 and et.tx_type=='btc_pay' IS NULL  THEN 'btc_pay' \
+                   WHEN o.sign>0 and et.tx_type=='deposit'          THEN 'deposit' \
+                   WHEN o.sign<0 and et.tx_type=='withdraw'         THEN 'withdraw' \
+                   WHEN o.sign<0 and et.tx_type=='btc_pay'          THEN 'btc_pay' \
                 END as ui_type, \
                 o.*, et.* FROM operation o \
               LEFT JOIN exchange_transaction et \
