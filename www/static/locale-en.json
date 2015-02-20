@@ -1,5 +1,6 @@
 {
   "g" : {
+    "dismiss"             : "Dismiss",
     "close"               : "Close",
     "deposited"           : "Deposited",
     "pay"                 : "Pay",
@@ -256,14 +257,17 @@
   },
   
   "xchg":{
-    "WP": "WAITING_CLIENT_PAYMENT",
-    "PC": "PAID_BY_CLIENT",
-    "CC": "CLIENT_TX_CONFIRMED",
-    "SC": "SENT_TO_CLIENT",
-    "OK": "COMPLETED",
-    "EX": "EXPIRED",
-    "CA": "CANCELED",
-    "FW": "FORWARDED"
+    "WP"    : "WAITING_PAYMENT",
+    "PP"    : "PARTIALY_PAID",
+    "XC"    : "WAITING_CONFIRMATION",
+    "PC"    : "PAYMENT_CONFIRMED",
+    "TG"    : "TRANSACTION_GENERATED",
+    "SC"    : "SENT_TO_CLIENT",
+    "OK"    : "COMPLETED",
+    "EX"    : "EXPIRED",
+    "XX"    : "CANCELED",
+    "RI"    : "REFUNDING",
+    "RF"    : "REFUNDED"
   }
-    
+  
 }

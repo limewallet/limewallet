@@ -222,8 +222,18 @@ bitwallet_module
       url: "/transaction/:tx_id",
       views: {
         'menuContent' :{
-          templateUrl: "templates/transaction.html",
+          templateUrl: "templates/tx.html",
           controller: 'TxCtrl'
+        }
+      }
+    })
+    
+    .state('app.xtransaction_details', {
+      url: "/xtransaction/:x_id",
+      views: {
+        'menuContent' :{
+          templateUrl: "templates/xtx.html",
+          controller: 'XTxCtrl'
         }
       }
     })

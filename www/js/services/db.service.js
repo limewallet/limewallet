@@ -524,6 +524,20 @@ bitwallet_services
         });
       return deferred.promise;
     }
+    
+    self.byXId = function(x_id){
+      var deferred = $q.defer();
+      DB.query('SELECT * FROM exchange_transaction et LEFT JOIN operation o ON o.tx_id = et.cl_pay_tx OR o.tx_id = et.cl_recv_tx where x_id = ? limit 1', [x_id])
+        .then(function(result){
+            if( result.rows.length == 0 ) {
+              deferred.resolve(undefined);
+              return;
+            }
+            deferred.resolve(DB.fetch(result));
+            return;
+        });
+      return deferred.promise;
+    }
     return self;
 })
 

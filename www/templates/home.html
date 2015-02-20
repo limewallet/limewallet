@@ -51,15 +51,9 @@
           <a ng-click="showActionSheet(tx)">
             <div class="{{tx.ui_type}}">
               <div ng-class="{true:'pending', false:''}[tx.state=='P' || tx.status=='WP']">
-                <!--i class="icon ion-ios-upload-outline sent_ex" ></i> 
-                <i class="icon ion-ios-download-outline received_ex"></i>
-                <i class="icon ion-ios-refresh-outline self_ex"></i>
-                <i class="icon ion-ios-plus-outline deposit_ex"></i>
-                <i class="icon ion-ios-minus-outline withdraw_ex"></i>
-                <i class="icon ion-social-bitcoin-outline btc_pay_ex"></i -->
                 <i class="{{tx|tx_icon}} {{tx.ui_type}}_ex"></i>
-                <i ng-show="tx.state=='P'" ng-class="{true:'icon ion-loading-c'}[tx.state=='P']"></i>
-                <i class="{{tx|tx_icon}}" ng-show="tx.status=='WP'"></i>
+                <i ng-show="tx.state=='P'" ng-class="{true:'icon ion-loading-c'}[tx.state=='P']"></i> <!-- Send creada a manopla-->
+                <i class="{{tx|tx_icon}}" ng-show="tx.status=='WP'"></i> <!-- pending Xtx -->
                 <h2>
                   <span class="tx_amount"><i class="{{wallet.asset.symbol_ui_class}}">{{wallet.asset.symbol_ui_text}}</i>{{tx|draw_tx_amount}}</span> 
                   <span class="self_text">{{('g.'+tx.ui_type) | translate}}</span>

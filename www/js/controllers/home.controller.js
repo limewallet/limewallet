@@ -90,7 +90,7 @@ bitwallet_controllers
     var hideSheet = $ionicActionSheet.show({
      buttons: opt_buttons,
      titleText: T.i('home.transaction_options'),
-     cancelText: T.i('g.close'),
+     cancelText: T.i('g.dismiss'),
      cancel: function() {
           // add cancel code..
      },
@@ -132,7 +132,7 @@ bitwallet_controllers
       
       else if(index==2) {
         if(is_xtx){
-          $state.go('app.transaction_details', {tx_id:tx['tx_id']});
+          $state.go('app.xtransaction_details', {x_id:tx['x_id']});
         }
         else{
           // NONE
