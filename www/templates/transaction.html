@@ -6,7 +6,11 @@
     </ion-nav-buttons>
     
     <ion-content class="has-header" has-bouncing="false">
-      
+      <div class="register_container energized_bg register_color padding">
+        <div class="padding wrap_text">
+          <b>{{data.tx.amount|number:2}}</b> {{wallet.assets[data.tx.asset_id].symbol}} {{(data.tx.sign>0?'g.received':'g.sent')|translate|lowercase}} {{'g.to'|translate|lowercase}}&nbsp;<b>{{data.tx.addr_name}}</b>
+        </div>
+      </div>
       <div class="list tx_details settings">
         <div class="item item-divider">
           {{'detail.info'|translate}}
@@ -14,108 +18,54 @@
         <div class="item">
           <div class="row">
             <div class="col col-25">{{'g.id'|translate}}</div>
-            <div class="col col-75 ta_right">{{ ops[0].txid}}</div>
+            <div class="col col-75 ta_right">{{ data.ops[0].txid}}</div>
           </div>
           <div class="row">
             <div class="col col-25">{{'g.block'|translate}}</div>
-            <div class="col col-75 ta_right">{{ ops[0].block }}</div>
+            <div class="col col-75 ta_right">{{ data.ops[0].block }}</div>
           </div>
           <div class="row">
             <div class="col col-25">{{'g.timestamp'|translate}}</div>
-            <div class="col col-75 ta_right">{{ops[0].timestamp|date:'medium'}}</div>
+            <div class="col col-75 ta_right">{{data.ops[0].timestamp*1000|date:'medium'}}</div>
           </div>
           <div class="row">
             <div class="col col-25">{{'g.asset'|translate}}</div>
-            <div class="col col-75 ta_right">{{$scope.assets[ops[0].asset_id].symbol}} ({{ops[0].asset_id}})</div>
+            <div class="col col-75 ta_right">{{wallet.assets[data.ops[0].asset_id].symbol}} ({{data.ops[0].asset_id}})</div>
           </div>
           <div class="row">
             <div class="col col-25">{{'g.fee'|translate}}</div>
-            <div class="col col-75 ta_right">{{$scope.assets[ops[0].asset_id].symbol}} {{getFee() | number : 5}}</div>
+            <div class="col col-75 ta_right">{{wallet.assets[data.ops[0].asset_id].symbol}} {{data.tx.fee | number : 5}}</div>
           </div>
         </div>
         
         <div class="item item-divider">
          {{'detail.withdraws'|translate}}
         </div>
-        <ion-item ng-repeat="op in getWithdraws()">
+        <ion-item ng-repeat="op in data.tx_withdraws">
           <div class="row">
             <div class="col col-25">{{'g.address'|translate}}</div>
-            <div class="col col-75 ta_right">{{op.address}}</div>
+            <div class="col col-75 ta_right">{{op.other}}</div>
           </div>
           <div class="row">
             <div class="col col-25">{{'g.amount'|translate}}</div>
-            <div class="col col-75 ta_right">{{$scope.assets[op.asset_id].symbol}} {{op.amount/$scope.assets[op.asset_id].precision | number : 4}}</div>
+            <div class="col col-75 ta_right">{{wallet.assets[op.asset_id].symbol}} {{op|draw_op_amount:wallet.assets[op.asset_id].precision}}</div>
           </div>
         </ion-item>
         <div class="item item-divider">
         {{'detail.deposits'|translate}}
         </div>
-        <ion-item ng-repeat="op in getDeposits()">
+        <ion-item ng-repeat="op in data.tx_deposits">
           <div class="row">
             <div class="col col-25">{{'g.address'|translate}}</div>
-            <div class="col col-75 ta_right">{{op.address}}</div>
+            <div class="col col-75 ta_right">{{op.other}}</div>
           </div>
           <div class="row">
-            <div class="col col-25">{{'g.amount'|translate}}</div>
-            <div class="col col-75 ta_right">{{$scope.assets[op.asset_id].symbol}} {{op.amount/$scope.assets[op.asset_id].precision | number : 4}}</div>
+            <div class="col col-25">{{'g.amount'|translate}} {{wallet.assets[op.asset_id].precision}}</div>
+            <div class="col col-75 ta_right">{{wallet.assets[op.asset_id].symbol}} {{op|draw_op_amount:wallet.assets[op.asset_id].precision}}</div>
           </div>
         </ion-item>
         
       </div>
-      
-      <!--ion-list class="tx_details settings">
-        <ion-item class="item-divider">
-          {{'detail.info'|translate}}
-        </ion-item>
-        <ion-item>
-          <div class="row">
-            <div class="col col-25">{{'g.id'|translate}}</div>
-            <div class="col col-75 ta_right">{{ ops[0].txid}}</div>
-          </div>
-          <div class="row">
-            <div class="col col-25">{{'g.block'|translate}}</div>
-            <div class="col col-75 ta_right">{{ ops[0].block }}</div>
-          </div>
-          <div class="row">
-            <div class="col col-25">{{'g.timestamp'|translate}}</div>
-            <div class="col col-75 ta_right">{{ops[0].timestamp|date:'medium'}}</div>
-          </div>
-          <div class="row">
-            <div class="col col-25">{{'g.asset'|translate}}</div>
-            <div class="col col-75 ta_right">{{$scope.assets[ops[0].asset_id].symbol}} ({{ops[0].asset_id}})</div>
-          </div>
-          <div class="row">
-            <div class="col col-25">{{'g.fee'|translate}}</div>
-            <div class="col col-75 ta_right">{{$scope.assets[ops[0].asset_id].symbol}} {{getFee() | number : 5}}</div>
-          </div>
-        </ion-item>
-        <ion-item class="item-divider">
-         {{'detail.withdraws'|translate}}
-        </ion-item>
-        <ion-item ng-repeat="op in getWithdraws()">
-          <div class="row">
-            <div class="col col-25">{{'g.address'|translate}}</div>
-            <div class="col col-75 ta_right">{{op.address}}</div>
-          </div>
-          <div class="row">
-            <div class="col col-25">{{'g.amount'|translate}}</div>
-            <div class="col col-75 ta_right">{{$scope.assets[op.asset_id].symbol}} {{op.amount/$scope.assets[op.asset_id].precision | number : 4}}</div>
-          </div>
-        </ion-item>
-        <ion-item class="item-divider">
-        {{'detail.deposits'|translate}}
-        </ion-item>
-        <ion-item ng-repeat="op in getDeposits()">
-          <div class="row">
-            <div class="col col-25">{{'g.address'|translate}}</div>
-            <div class="col col-75 ta_right">{{op.address}}</div>
-          </div>
-          <div class="row">
-            <div class="col col-25">{{'g.amount'|translate}}</div>
-            <div class="col col-75 ta_right">{{$scope.assets[op.asset_id].symbol}} {{op.amount/$scope.assets[op.asset_id].precision | number : 4}}</div>
-          </div>
-        </ion-item>
-      </ion-list -->
     </ion-content>
   </ion-view>
   

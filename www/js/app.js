@@ -1,6 +1,6 @@
 // BitWallet
 
-var bitwallet_module = angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'reconnectingWebSocket', 'bit_wallet.controllers','bit_wallet.services', 'bit_wallet.config']);
+var bitwallet_module = angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'reconnectingWebSocket', 'bit_wallet.controllers','bit_wallet.services', 'bit_wallet.filters', 'bit_wallet.config']);
 
 bitwallet_module
 .run(function(DB, $state, $ionicHistory, $rootScope, $ionicPlatform, Wallet) {

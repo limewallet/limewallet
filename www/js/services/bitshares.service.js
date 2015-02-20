@@ -321,6 +321,11 @@ bitwallet_services
     self.X_WITHDRAW   = 'withdraw';
     self.X_BTC_PAY    = 'btc_pay';
     
+    self.isDeposit  = function(ui_type){return ui_type==self.X_DEPOSIT;}
+    self.isWithdraw = function(ui_type){return ui_type==self.X_WITHDRAW;}
+    self.isBtcPay   = function(ui_type){return ui_type==self.X_BTC_PAY;}
+    self.isXtx      = function(tx){return [self.X_DEPOSIT, self.X_WITHDRAW, self.X_BTC_PAY].indexOf(tx.ui_type)>=0;}
+    
     self.acceptQuote = function(quote, signature, token, address, extra_data) {
       var url = ENVIRONMENT.apiurl('/accept');
 

@@ -1,5 +1,6 @@
 {
   "g" : {
+    "close"               : "Close",
     "deposited"           : "Deposited",
     "pay"                 : "Pay",
     "dest_address"        : "To",
@@ -118,20 +119,23 @@
   },
 
   "home" : {
-    "tap_to_refresh"  : "Tap to refresh",
-    "show_balance"    : "Show balance",
-    "balance"         : "{{asset}} BALANCE",
-    "no_txs"          : "No transactions yet",
-    "pull_to_refresh" : "Pull to refresh...",
-    "pending"         : "PENDING",
-    "on"              : "On",
-    "just_now"        : "Just now",
-    "Me"              : "Me",
-    "qr_cancel"       : "QR code scan cancelled",
-    "add_to_book"     : "Add to address book",
-    "view_details"    : "View details",
-    "address_name"     : "address name",
-    "save_successfull" : "Address saved successfully"
+    "cancel_operation"    : "Cancel operation",
+    "refund"              : "Refund",
+    "transaction_options" : "Transaction options",
+    "tap_to_refresh"      : "Tap to refresh",
+    "show_balance"        : "Show balance",
+    "balance"             : "{{asset}} BALANCE",
+    "no_txs"              : "No transactions yet",
+    "pull_to_refresh"     : "Pull to refresh...",
+    "pending"             : "PENDING",
+    "on"                  : "On",
+    "just_now"            : "Just now",
+    "Me"                  : "Me",
+    "qr_cancel"           : "QR code scan cancelled",
+    "add_to_book"         : "Add to address book",
+    "view_details"        : "View details",
+    "address_name"        : "address name",
+    "save_successfull"    : "Address saved successfully"
   },
 
   "menu" : {

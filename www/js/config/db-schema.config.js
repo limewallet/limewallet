@@ -68,6 +68,19 @@ bitwallet_config
             ]
         },
         {
+            name: 'raw_operation',
+            columns: [
+                {name : 'id',                 type   : 'integer primary key'},
+                {name : 'asset_id',           type   : 'integer'},
+                {name : 'amount',             type   : 'text'},
+                {name : 'other',              type   : 'text'},
+                {name : 'timestamp',          type   : 'integer'},
+                {name : 'op_type',            type   : 'text'},
+                {name : 'block',              type   : 'integer'},
+                {name : 'txid',               type   : 'text'}
+            ]
+        },
+        {
             name: 'exchange_transaction',
             columns: [
                 {name : 'x_id',                   type   : 'integer primary key'},          // 34,

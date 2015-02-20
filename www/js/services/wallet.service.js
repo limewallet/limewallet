@@ -1,5 +1,5 @@
 bitwallet_services
-.service('Wallet', function($translate, $rootScope, $q, ENVIRONMENT, BitShares, ReconnectingWebSocket, MasterKey, Address, Setting, AddressBook, Account, Operation, ExchangeTransaction, Balance) {
+.service('Wallet', function($translate, $rootScope, $q, ENVIRONMENT, BitShares, ReconnectingWebSocket, MasterKey, Address, Setting, AddressBook, Account, Operation, ExchangeTransaction, Balance, RawOperation) {
     var self = this;
 
     self.data = {
@@ -449,6 +449,8 @@ bitwallet_services
             {  
               var p = Operation.clear();
               proms.push(p);
+              var pr = RawOperation.clear();
+              proms.push(pr);
             }
             
             $q.all(proms).then(function(){
@@ -559,6 +561,7 @@ bitwallet_services
       return deferred.promise;
     }
     self.buildTxList = function(res, asset_id) {
+       self.data.raw_txs = [];
        var tx  = {};
        var txs = [];
 
@@ -604,6 +607,8 @@ bitwallet_services
            txs.push(p);
            var db_prom = Operation.addObj(p);
            db_proms.push(db_prom);
+           var r_proms = RawOperation.addTXs(self.data.raw_txs[tx['txid']]);
+           db_proms.push(r_proms);
          }
          
          tx = {};

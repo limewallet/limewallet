@@ -75,42 +75,68 @@ bitwallet_controllers
   });
 
   $scope.showActionSheet = function(tx) {
+    var opt_buttons = [
+          { text: '<b>'+T.i('home.add_to_book')+'</b>' },
+          { text: T.i('home.view_details') }
+      ];
+    var is_xtx = BitShares.isXtx(tx);
+    if(is_xtx){
+      opt_buttons = [
+          { text: '<span class="assertive">'+T.i('home.cancel_operation')+'</span>' },
+          { text: T.i('home.refund') },
+          { text: T.i('home.view_details') }
+        ];
+    }
     var hideSheet = $ionicActionSheet.show({
-     buttons: [
-       { text: '<b>'+T.i('home.add_to_book')+'</b>' },
-       { text: T.i('home.view_details') },
-     ],
-     cancelText: T.i('g.cancel'),
+     buttons: opt_buttons,
+     titleText: T.i('home.transaction_options'),
+     cancelText: T.i('g.close'),
      cancel: function() {
           // add cancel code..
      },
      buttonClicked: function(index) {
-       // Add to addressbook
-       if(index==0) {
-         // load current label
-         $ionicPopup.prompt({
-           title: T.i('home.add_to_book'),
-           inputType: 'text',
-           inputPlaceholder: T.i('home.address_name'),
-           cancelText: T.i('g.cancel'),
-           okText: T.i('g.save')
-         }).then(function(name) {
-
-           if(name === undefined)
+      if(index==0) {
+        if(is_xtx){
+          // CANCEL XTx
+        }
+        else{
+          // Add to addressbook
+          $ionicPopup.prompt({
+            title: T.i('home.add_to_book'),
+            inputType: 'text',
+            inputPlaceholder: T.i('home.address_name'),
+            cancelText: T.i('g.cancel'),
+            okText: T.i('g.save')
+          }).then(function(name) {
+            if(name === undefined)
               return;
-
-           AddressBook.add(tx.address, name).then(function() {
-             Wallet.loadAddressBook().then(function(){
-               $rootScope.$emit('address-book-changed');
-             });
-             window.plugins.toast.show( T.i('home.save_successfull'), 'short', 'bottom');
-           });
-
-         });
+            AddressBook.add(tx.address, name).then(function() {
+              Wallet.loadAddressBook().then(function(){
+                $rootScope.$emit('address-book-changed');
+              });
+              window.plugins.toast.show( T.i('home.save_successfull'), 'short', 'bottom');
+            });
+          });
+        }
       }
-      // View transaction details
+      
       else if(index==1) {
-        $state.go('app.transaction_details', {tx_id:tx['tx_id']});
+        if(is_xtx){
+          // REFUND XTx
+        }
+        else{
+          // View transaction details
+          $state.go('app.transaction_details', {tx_id:tx['tx_id']});
+        } 
+      }
+      
+      else if(index==2) {
+        if(is_xtx){
+          $state.go('app.transaction_details', {tx_id:tx['tx_id']});
+        }
+        else{
+          // NONE
+        } 
       }
       return true;
      }

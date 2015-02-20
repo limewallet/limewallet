@@ -351,6 +351,35 @@ bitwallet_services
     return self;
 })
 
+// Raw Operation Service (bitshres txs)
+.service('RawOperation', function(DB, $q) {
+    var self = this;
+    
+    self.allForTx = function(tx_id) {
+        return DB.query('SELECT * FROM raw_operation WHERE txid = ? order by id desc ' , [tx_id])
+        .then(function(result){
+            return DB.fetchAll(result);
+        });
+    };
+
+    self.addTXs = function(txs) {
+        var proms = [];
+        angular.forEach(txs, function(tx){
+          var p = self.addTx(tx);
+          proms.push(p);
+        });
+        return $q.all(proms);
+    };
+    
+    self.addTx = function(obj){
+      return DB.query('INSERT or REPLACE into raw_operation (id, asset_id, amount, other, timestamp, op_type, block, txid) values (?,?,?,?,?,?,?,?)', [obj.id, obj.asset_id, obj.amount, obj.other, obj.timestamp, obj.op_type, obj.block, obj.txid]);
+    }
+    self.clear = function() {
+        return DB.query('DELETE from raw_operation ', []);
+    };
+    
+    return self;
+})
 // Operation Service
 .service('Operation', function(DB, $q) {
     var self = this;
@@ -376,7 +405,6 @@ bitwallet_services
     };
 
     self.addObj = function(obj) {
-        var d = new Date(); var updated_at = d.getTime();
         return DB.query('INSERT or REPLACE into operation (id, asset_id, amount, other, date, op_type, sign, address, block, block_id, tx_id, fee, addr_name) values (?,?,?,?,?,?,?,?,?,?,?,?,?)', [obj.id, obj.asset_id, obj.amount, obj.other, obj.date, obj.op_type, obj.sign, obj.address, obj.block, obj.block_id, obj.tx_id, obj.fee, obj.addr_name]);
     };
     
@@ -427,6 +455,20 @@ bitwallet_services
     self.lastUpdate = function(){
       var deferred = $q.defer();
       DB.query('SELECT block_id FROM operation where block_id is not null order by block desc limit 1', [])
+        .then(function(result){
+            if( result.rows.length == 0 ) {
+              deferred.resolve(undefined);
+              return;
+            }
+            deferred.resolve(DB.fetch(result));
+            return;
+        });
+      return deferred.promise;
+    }
+    
+    self.byTxId = function(tx_id){
+      var deferred = $q.defer();
+      DB.query('SELECT * FROM operation where tx_id = ? limit 1', [tx_id])
         .then(function(result){
             if( result.rows.length == 0 ) {
               deferred.resolve(undefined);
