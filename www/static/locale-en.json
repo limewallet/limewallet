@@ -1,5 +1,6 @@
 {
   "g" : {
+    "deposited"           : "Deposited",
     "pay"                 : "Pay",
     "dest_address"        : "To",
     "accept_tx_process"   : "Accept transaction process...",

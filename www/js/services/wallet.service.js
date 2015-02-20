@@ -443,46 +443,57 @@ bitwallet_services
           console.log('Wallet : self.refreshBalance 4');
           console.log('Wallet : calling BitShares.getBalance last_block_id:['+last_block_id+']');
           BitShares.getBalance(res.masterPubkey+':'+res.deriv, last_block_id).then(function(res) {
-            console.log('Wallet : self.refreshBalance 5');
-            var date = new Date();
-            //Update assets balance
-            res.balances.forEach(function(bal){
-              Balance.addObj({asset_id:bal.asset_id, amount:bal.amount/self.data.assets[bal.asset_id].precision, raw_amount:bal.amount, updated_at:date.getTime()});
-            });
+            
+            var proms = [];
+            if(res.resync !== undefined && res.resync == true)
+            {  
+              var p = Operation.clear();
+              proms.push(p);
+            }
+            
+            $q.all(proms).then(function(){
+              console.log('Wallet : self.refreshBalance 5');
+              var date = new Date();
+              //Update assets balance
+              res.balances.forEach(function(bal){
+                Balance.addObj({asset_id:bal.asset_id, amount:bal.amount/self.data.assets[bal.asset_id].precision, raw_amount:bal.amount, updated_at:date.getTime()});
+              });
 
-            self.data.asset = self.data.assets[self.data.asset.id];
+              self.data.asset = self.data.assets[self.data.asset.id];
 
-            //Update address balance
-            angular.forEach(Object.keys(self.data.addresses), function(addy) {
-              if (addy in res.address_balance) {
-                self.data.addresses[addy].balances = res.address_balance[addy];
-                angular.forEach( Object.keys(self.data.addresses[addy].balances), function(asset_id) {
-                  self.data.addresses[addy].balances[asset_id] /= self.data.assets[asset_id].precision;
+              //Update address balance
+              angular.forEach(Object.keys(self.data.addresses), function(addy) {
+                if (addy in res.address_balance) {
+                  self.data.addresses[addy].balances = res.address_balance[addy];
+                  angular.forEach( Object.keys(self.data.addresses[addy].balances), function(asset_id) {
+                    self.data.addresses[addy].balances[asset_id] /= self.data.assets[asset_id].precision;
+                  });
+                }
+              });
+              console.log('Wallet : self.refreshBalance 6');
+              //Generate tx list
+              var prom = self.buildTxList(res, self.data.asset.id);
+              
+              console.log('Wallet : self.refreshBalance 7');
+              console.log('Wallet : calling BitShares.listExchangeTxs last_updated_at:['+last_updated_at+']');
+              //Get Exchange Transactions
+              var prom2 = self.getExchangeTransactions(last_updated_at);
+              
+              return $q.all([prom, prom2]).then(function(){
+                console.log('Wallet : self.refreshBalance 8');
+                self.loadBalance().then(function(){
+                  deferred.resolve();
+                }, function(error){
+                  console.log(' -- Erro Wallet 66'); console.log(error);
+                  deferred.reject(error);
+                  self.emit(self.REFRESH_ERROR);
                 });
-              }
-            });
-            console.log('Wallet : self.refreshBalance 6');
-            //Generate tx list
-            var prom = self.buildTxList(res, self.data.asset.id);
-            
-            console.log('Wallet : self.refreshBalance 7');
-            console.log('Wallet : calling BitShares.listExchangeTxs last_updated_at:['+last_updated_at+']');
-            //Get Exchange Transactions
-            var prom2 = self.getExchangeTransactions(last_updated_at);
-            
-            return $q.all([prom, prom2]).then(function(){
-              console.log('Wallet : self.refreshBalance 8');
-              self.loadBalance().then(function(){
-                deferred.resolve();
               }, function(error){
-                console.log(' -- Erro Wallet 66'); console.log(error);
+                console.log(' -- Erro Wallet 2'); console.log(error);
                 deferred.reject(error);
                 self.emit(self.REFRESH_ERROR);
-              });
-            }, function(error){
-              console.log(' -- Erro Wallet 2'); console.log(error);
-              deferred.reject(error);
-              self.emit(self.REFRESH_ERROR);
+              })
+            
             })
             
           }, function(err) {
@@ -535,6 +546,8 @@ bitwallet_services
             deferred.reject(error); 
           })
         }, function(error){
+          if(error=='auth_failed')
+            Setting.remove(Setting.BSW_TOKEN);
           console.log(' -- Error Wallet getXTx 2'); console.log(error);
           deferred.reject(error); 
         })

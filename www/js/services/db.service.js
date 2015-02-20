@@ -416,6 +416,10 @@ bitwallet_services
         return DB.query('DELETE from operation WHERE block > ?', [block_num]);
     };
     
+    self.clear = function() {
+        return DB.query('DELETE from operation ', []);
+    };
+    
     self.cleanMarty = function(){
       return DB.query("UPDATE exchange_transaction set tx_type='deposit' where tx_type='marty'", []);
     }
