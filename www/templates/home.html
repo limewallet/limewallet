@@ -53,13 +53,16 @@
               <div ng-class="{true:'pending', false:''}[tx.state=='P' || tx.status=='WP']">
                 <i class="{{tx|tx_icon}} {{tx.ui_type}}_ex"></i>
                 <i ng-show="tx.state=='P'" ng-class="{true:'icon ion-loading-c'}[tx.state=='P']"></i> <!-- Send creada a manopla-->
-                <i class="{{tx|tx_icon}}" ng-show="tx.status=='WP'"></i> <!-- pending Xtx -->
+                <i class="{{tx|tx_icon}}" ng-show="tx.status=='WP'"></i> <!-- pending Xtx ; es HACK -->
                 <h2>
                   <span class="tx_amount"><i class="{{wallet.asset.symbol_ui_class}}">{{wallet.asset.symbol_ui_text}}</i>{{tx|draw_tx_amount}}</span> 
                   <span class="self_text">{{('g.'+tx.ui_type) | translate}}</span>
-                  <span ng-if="tx.state=='P'||tx.status=='WP'" class="pending_text">{{'home.pending' | translate}}</span></h2>
+                  
+                  <span ng-if="tx.state=='P'" class="pending_text">{{'home.pending' | translate}}</span>
+                  <span ng-if="tx|is_uncompleted_xtx" class="pending_text {{tx.status}}">{{('xchg.'+tx.status) | translate}}</span>
+                </h2>
                 <p>
-                <span class="wrap_text" ng-if="tx.state=='P'||tx.status=='WP'" ng-bind-html="tx|draw_pending_tx"></span> <!-- &nbsp;{{'g.from'|translate}}&nbsp;{{tx.cl_pay_addr}} -->
+                <span class="wrap_text" ng-if="tx.state=='P'|| tx.status=='WP'" ng-bind-html="tx|draw_pending_tx"></span> <!-- &nbsp;{{'g.from'|translate}}&nbsp;{{tx.cl_pay_addr}} -->
                 <span class="deposit_ex wrap_text">{{tx.cl_pay|number:4}}&nbsp;{{tx.cl_pay_curr}}</span> <!-- &nbsp;{{'g.from'|translate}}&nbsp;{{tx.cl_pay_addr}} -->
                 <span class="withdraw_ex wrap_text">{{tx.cl_recv|number:4}}&nbsp;{{tx.cl_recv_curr}}</span> <!-- &nbsp;{{'g.to'|translate}}&nbsp;{{tx.cl_recv_addr}} -->
                 <span class="sent_ex">{{'g.to'|translate}}</span> <span class="received_ex">{{'g.from'|translate}}</span>

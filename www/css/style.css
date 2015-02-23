@@ -173,6 +173,19 @@ line-height: 38px;}
   background-color: #4fbaed!important;
 }
 
+.pending_text.WP_NOT_USED{background-color: #d23f31;}/*WAITING PAYMENT*/
+.pending_text.PP{background-color: #f0b840!important;}/*PARTIALY PAID*/
+.pending_text.XC{background-color: #f0b840!important;}/*WAITING CONFIRMATION*/
+.pending_text.PC_NOT_USED{background-color: #d23f31;}/*PAYMENT CONFIRMED*/
+.pending_text.TG_NOT_USED{background-color: #d23f31;}/*TRANSACTION GENERATED*/
+.pending_text.SC_NOT_USED{background-color: #d23f31;}/*SENT TO CLIENT*/
+.pending_text.OK{background-color: #66cc33!important;}/*COMPLETED*/
+.pending_text.EX{background-color: #ef4e3a!important;}/*EXPIRED*/
+.pending_text.XX{background-color: #ef4e3a!important;}/*CANCELED*/
+.pending_text.RI_NOT_USED{background-color: #d23f31;}/*REFUNDING*/
+.pending_text.RF_NOT_USED{background-color: #d23f31;}/*REFUNDED*/
+
+
 .transactions .pending h2, .transactions .pending .icon , .transactions .pending span, .transactions .pending p
 {color:#4fbaed;} /*c1c1c1 4fbaed*/
 
@@ -565,14 +578,6 @@ color: #aaa;}
   display:block;
   margin: 13px 20px 21px 12px !important;
 }
-.fab.WP {background-color: #d23f31;}/*WAITING_CLIENT_PAYMENT*/
-.fab.PC {background-color: #d23f31;}/*PAID_BY_CLIENT*/
-.fab.CC {background-color: #d23f31;}/*CLIENT_TX_CONFIRMED*/
-.fab.SC {background-color: #d23f31;}/*SENT_TO_CLIENT*/
-.fab.OK {background-color: #d23f31;}/*COMPLETED*/
-.fab.EX {background-color: #d23f31;}/*EXPIRED*/
-.fab.CA {background-color: #d23f31;}/*CANCELED*/
-.fab.FW {background-color: #d23f31;}/*FORWARDED*/
 
 .list.balances .item.active .fab.blue{
   background-color: #fff!important;

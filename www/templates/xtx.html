@@ -8,64 +8,20 @@
     <ion-content class="has-header" has-bouncing="false">
       <div class="register_container energized_bg register_color padding">
         <div class="padding wrap_text">
-          <b>{{data.xtx.amount|number:2}}</b> {{wallet.assets[data.xtx.asset_id].symbol}} {{(data.xtx.sign>0?'g.received':'g.sent')|translate|lowercase}} {{'g.to'|translate|lowercase}}&nbsp;<b>{{data.xtx.addr_name}}</b>
+          You have {{data.xtx|xtx_action|lowercase}} <b>{{data.xtx.cl_recv|number:4}}&nbsp;{{data.xtx.cl_recv_curr}}</b> 
+          <br/>
+          Transaction status: {{('xchg.'+data.xtx.status)|translate}}
         </div>
       </div>
-      <div class="list tx_details settings">
-        <div class="item item-divider">
-          {{'detail.info'|translate}}
-        </div>
-        <div class="item">
-          <div class="row">
-            <div class="col col-25">{{'g.id'|translate}}</div>
-            <div class="col col-75 ta_right"></div>
-          </div>
-          <div class="row">
-            <div class="col col-25">{{'g.block'|translate}}</div>
-            <div class="col col-75 ta_right"></div>
-          </div>
-          <div class="row">
-            <div class="col col-25">{{'g.timestamp'|translate}}</div>
-            <div class="col col-75 ta_right"></div>
-          </div>
-          <div class="row">
-            <div class="col col-25">{{'g.asset'|translate}}</div>
-            <div class="col col-75 ta_right"></div>
-          </div>
-          <div class="row">
-            <div class="col col-25">{{'g.fee'|translate}}</div>
-            <div class="col col-75 ta_right"></div>
-          </div>
-        </div>
-        
-        <div class="item item-divider">
-         {{'detail.withdraws'|translate}}
-        </div>
-        <ion-item> <!-- ng-repeat="op in data.xtx_withdraws" -->
-          <div class="row">
-            <div class="col col-25">{{'g.address'|translate}}</div>
-            <div class="col col-75 ta_right"></div>
-          </div>
-          <div class="row">
-            <div class="col col-25">{{'g.amount'|translate}}</div>
-            <div class="col col-75 ta_right"></div>
-          </div>
-        </ion-item>
-        <div class="item item-divider">
-        {{'detail.deposits'|translate}}
-        </div>
-        <ion-item> <!--  ng-repeat="op in data.xtx_deposits" -->
-          <div class="row">
-            <div class="col col-25">{{'g.address'|translate}}</div>
-            <div class="col col-75 ta_right"></div>
-          </div>
-          <div class="row">
-            <div class="col col-25"></div>
-            <div class="col col-75 ta_right"></div>
-          </div>
-        </ion-item>
-        
+      <div class="energized_bg register_color padding">
+        {{'g.exchange_details'|translate}}
       </div>
+      <div ng-include src="'templates/xtx.include.html'"></div>
+      <!--div class="energized_bg register_color padding">
+        {{data.xtx|xtx_action|capitalize}} transaction details
+      </div -->
+      <!-- div ng-include src="'templates/tx.include.html'"></div -->
+      
     </ion-content>
   </ion-view>
   

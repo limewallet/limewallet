@@ -1,5 +1,5 @@
 bitwallet_controllers
-.controller('HomeCtrl', function(T, Wallet, Scanner, AddressBook, $ionicActionSheet, $scope, $state, $http, $ionicModal, $rootScope, $ionicPopup, $timeout, $location, BitShares, $q) {
+.controller('HomeCtrl', function(T, Wallet, Scanner, AddressBook, $ionicActionSheet, $scope, $state, $http, $ionicModal, $rootScope, $ionicPopup, $timeout, $location, BitShares, $q, $ionicLoading) {
   
   $scope.$watch('master_key_new', function(newValue, oldValue, scope) {
     if(newValue===oldValue)
@@ -74,6 +74,16 @@ bitwallet_controllers
     Wallet.onAddressBookChanged();
   });
 
+  $scope.showLoading = function(text){
+    $ionicLoading.show({
+      template     : '<i class="icon ion-looping"></i> ' + text,
+      animation    : 'fade-in',
+      showBackdrop : true,
+      maxWidth     : 200,
+      showDelay    : 10
+    }); 
+  }
+  
   $scope.showActionSheet = function(tx) {
     var opt_buttons = [
           { text: '<b>'+T.i('home.add_to_book')+'</b>' },
@@ -81,11 +91,17 @@ bitwallet_controllers
       ];
     var is_xtx = BitShares.isXtx(tx);
     if(is_xtx){
-      opt_buttons = [
-          { text: '<span class="assertive">'+T.i('home.cancel_operation')+'</span>' },
+      if(BitShares.isXtxCompleted(tx))
+        opt_buttons = [
+          { text: T.i('home.view_details') }];
+      else {
+        opt_buttons = [
+          { text: T.i('home.view_details') },
+          { text: T.i('home.requote') },
           { text: T.i('home.refund') },
-          { text: T.i('home.view_details') }
+          { text: '<span class="assertive">'+T.i('home.cancel_operation')+'</span>' },
         ];
+      }
     }
     var hideSheet = $ionicActionSheet.show({
      buttons: opt_buttons,
@@ -97,7 +113,8 @@ bitwallet_controllers
      buttonClicked: function(index) {
       if(index==0) {
         if(is_xtx){
-          // CANCEL XTx
+          // VIEW DETAILS XTx
+          $state.go('app.xtransaction_details', {x_id:tx['x_id']});
         }
         else{
           // Add to addressbook
@@ -122,7 +139,43 @@ bitwallet_controllers
       
       else if(index==1) {
         if(is_xtx){
-          // REFUND XTx
+          if(BitShares.isBtcPay(tx.tx_type))
+          {
+            $ionicPopup.alert({
+              title    : T.i('err.cant_requote'),
+              template : T.i('err.cant_requote_type'),
+              okType   : 'button-assertive', 
+            });
+            return;
+          }
+          if(!BitShares.isXtxPending(tx))
+          {
+            $ionicPopup.alert({
+              title    : T.i('err.cant_requote'),
+              template : T.i('err.cant_requote_status'),
+              okType   : 'button-assertive', 
+            });
+            return;
+          }
+          // REQUOTE XTx
+          $scope.showLoading(T.i('g.cancel_progress'));
+          var addy = Wallet.getMainAddress();
+          BitShares.getBackendToken(addy).then(function(token) {
+            BitShares.cancelXTx(token, tx.x_id).then(function(res){
+              $ionicLoading.hide();
+              $state.go('app.deposit');
+              Wallet.refreshBalance();
+              
+            }, function(error){
+              $ionicLoading.hide();
+              console.log('cancel xtx error 1'); console.log(error);
+              window.plugins.toast.show( T.i('err.requote_failed'), 'long', 'bottom');
+            })
+          }, function(error){
+            $ionicLoading.hide();
+            console.log('cancel xtx error 2'); console.log(error);
+            window.plugins.toast.show( T.i('err.requote_failed'), 'long', 'bottom');
+          });
         }
         else{
           // View transaction details
@@ -132,7 +185,53 @@ bitwallet_controllers
       
       else if(index==2) {
         if(is_xtx){
-          $state.go('app.xtransaction_details', {x_id:tx['x_id']});
+          // REFUND XTx
+          $scope.showLoading(T.i('g.refund_progress'));
+          var addy = Wallet.getMainAddress();
+          BitShares.getBackendToken(addy).then(function(token) {
+            BitShares.refundXTx(token, tx.x_id).then(function(res){
+              $ionicLoading.hide();
+              console.log('refund ret 1'); console.log(res);
+              window.plugins.toast.show( T.i('g.refund_ok'), 'long', 'bottom');
+              Wallet.refreshBalance();
+            }, function(error){
+              $ionicLoading.hide();
+              console.log('refund error 1'); console.log(error);
+              window.plugins.toast.show( T.i('err.refund_failed'), 'long', 'bottom');
+            })
+          }, function(error){
+            $ionicLoading.hide();
+            console.log('refund error 2'); console.log(error);
+            window.plugins.toast.show( T.i('err.refund_failed'), 'long', 'bottom');
+          });
+          
+        }
+        else{
+          // NONE
+        } 
+      }
+      
+      else if(index==3) {
+        if(is_xtx){
+          // CANCEL XTx
+          $scope.showLoading(T.i('g.cancel_progress'));
+          var addy = Wallet.getMainAddress();
+          BitShares.getBackendToken(addy).then(function(token) {
+            BitShares.cancelXTx(token, tx.x_id).then(function(res){
+              $ionicLoading.hide();
+              console.log('cancel xtx ret 1'); console.log(res);
+              window.plugins.toast.show( T.i('g.cancel_ok'), 'long', 'bottom');
+              Wallet.refreshBalance();
+            }, function(error){
+              $ionicLoading.hide();
+              console.log('cancel xtx error 1'); console.log(error);
+              window.plugins.toast.show( T.i('err.cancel_failed'), 'long', 'bottom');
+            })
+          }, function(error){
+            $ionicLoading.hide();
+            console.log('cancel xtx error 2'); console.log(error);
+            window.plugins.toast.show( T.i('err.cancel_failed'), 'long', 'bottom');
+          });
         }
         else{
           // NONE

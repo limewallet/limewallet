@@ -133,9 +133,15 @@ bitwallet_controllers.controller('RestoreCtrl', function($q, T, Setting, $rootSc
 
           return $q.all(prom);
         })
+        .then(function(){
+          var p1 = Operation.clear();
+          var p2 = ExchangeTransaction.clear();
+          var p3 = RawOperation.clear();
+          return $q.all([p1, p2, p3]);
+        })
         .then(function() {
-          // Check registered account
           
+          // Check registered account
           setTimeout(function() { $rootScope.global_init(); },0);
           setTimeout(function() {
             var addy = Wallet.getMainAddress();

@@ -1,5 +1,16 @@
 {
   "g" : {
+    "cancel_ok"           : "Cancel completed successfully.",
+    "cancel_progress"     : "Cancel in progress",
+    "refund_ok"           : "Refund completed successfully.",
+    "refund_progress"     : "Refund in progress",
+    "quoted_at"           : "Quoted at",
+    "exchange_rate"       : "Exchange rate",
+    "exchange_details"    : "Exchange details",
+    "paid"                : "Paid",
+    "exchange"            : "Exchange",
+    "exchanged"           : "Exchanged",
+    "status"              : "Status",
     "dismiss"             : "Dismiss",
     "close"               : "Close",
     "deposited"           : "Deposited",
@@ -19,7 +30,9 @@
     "save"                : "Save",
     "cancel"              : "Cancel",
     "self"                : "Received",
-    "withdraw"            : "Withdrawal",
+    "btc_pay"             : "Paid in BTC",
+    "withdrew"            : "Withdrew",
+    "withdraw"            : "Withdraw",
     "deposit"             : "Deposit",
     "btc_pay"             : "Pay in bitcoin",
     "send"                : "Send",
@@ -64,6 +77,12 @@
   },
 
   "err" : {
+    "cant_requote"          : "Invalid option",
+    "cant_requote_type"     : "Can not requote this type of transaction",
+    "cant_requote_status"   : "Can not requote transactions in this state",
+    "requote_failed"        : "Requote failed",
+    "cancel_failed"         : "Cancel failed.",
+    "refund_failed"         : "Refund failed.",
     "quote_expired_requote" : "Ups...quote expired. Please requote!",
     "btc_addr_error"        : "Bitcoin address missing or invalid",
     "btc_addr_error_input"  : "Please type or paste a valid bitcoin address",
@@ -122,6 +141,7 @@
   "home" : {
     "cancel_operation"    : "Cancel operation",
     "refund"              : "Refund",
+    "requote"             : "Requote",
     "transaction_options" : "Transaction options",
     "tap_to_refresh"      : "Tap to refresh",
     "show_balance"        : "Show balance",
@@ -188,7 +208,9 @@
     "transaction_details" : "Transaction details",
     "info"                : "Info",
     "withdraws"           : "Withdraws",
-    "deposits"            : "Deposits"
+    "deposits"            : "Deposits",
+    "bitshares_info"      : "Bitshares info",
+    "bitcoin_info"        : "Bitcoin info"
   },
 
   "addys" : {
@@ -257,12 +279,12 @@
   },
   
   "xchg":{
-    "WP"    : "WAITING_PAYMENT",
-    "PP"    : "PARTIALY_PAID",
-    "XC"    : "WAITING_CONFIRMATION",
-    "PC"    : "PAYMENT_CONFIRMED",
-    "TG"    : "TRANSACTION_GENERATED",
-    "SC"    : "SENT_TO_CLIENT",
+    "WP"    : "WAITING PAYMENT",
+    "PP"    : "PARTIALY PAID",
+    "XC"    : "WAITING CONFIRMATION",
+    "PC"    : "PAYMENT CONFIRMED",
+    "TG"    : "TRANSACTION GENERATED",
+    "SC"    : "SENT TO CLIENT",
     "OK"    : "COMPLETED",
     "EX"    : "EXPIRED",
     "XX"    : "CANCELED",

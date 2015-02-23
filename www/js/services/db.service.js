@@ -538,6 +538,11 @@ bitwallet_services
         });
       return deferred.promise;
     }
+    
+    self.clear = function() {
+        return DB.query('DELETE from exchange_transaction ', []);
+    };
+    
     return self;
 })
 

@@ -1,0 +1,55 @@
+      <div class="list tx_details settings">
+        <div class="item item-divider">
+          {{'detail.info'|translate}}
+        </div>
+        <div class="item">
+          <div class="row">
+            <div class="col col-25">{{'g.id'|translate}}</div>
+            <div class="col col-75 ta_right">{{ data.ops[0].txid}}</div>
+          </div>
+          <div class="row">
+            <div class="col col-25">{{'g.block'|translate}}</div>
+            <div class="col col-75 ta_right">{{ data.ops[0].block }}</div>
+          </div>
+          <div class="row">
+            <div class="col col-25">{{'g.timestamp'|translate}}</div>
+            <div class="col col-75 ta_right">{{data.ops[0].timestamp*1000|date:'medium'}}</div>
+          </div>
+          <div class="row">
+            <div class="col col-25">{{'g.asset'|translate}}</div>
+            <div class="col col-75 ta_right">{{wallet.assets[data.ops[0].asset_id].symbol}} ({{data.ops[0].asset_id}})</div>
+          </div>
+          <div class="row">
+            <div class="col col-25">{{'g.fee'|translate}}</div>
+            <div class="col col-75 ta_right">{{wallet.assets[data.ops[0].asset_id].symbol}} {{data.fee | number : 5}}</div>
+          </div>
+        </div>
+        
+        <div class="item item-divider">
+         {{'detail.withdraws'|translate}}
+        </div>
+        <ion-item ng-repeat="op in data.tx_withdraws">
+          <div class="row">
+            <div class="col col-25">{{'g.address'|translate}}</div>
+            <div class="col col-75 ta_right">{{op.other}}</div>
+          </div>
+          <div class="row">
+            <div class="col col-25">{{'g.amount'|translate}}</div>
+            <div class="col col-75 ta_right">{{wallet.assets[op.asset_id].symbol}} {{op|draw_op_amount:wallet.assets[op.asset_id].precision}}</div>
+          </div>
+        </ion-item>
+        <div class="item item-divider">
+        {{'detail.deposits'|translate}}
+        </div>
+        <ion-item ng-repeat="op in data.tx_deposits">
+          <div class="row">
+            <div class="col col-25">{{'g.address'|translate}}</div>
+            <div class="col col-75 ta_right">{{op.other}}</div>
+          </div>
+          <div class="row">
+            <div class="col col-25">{{'g.amount'|translate}} {{wallet.assets[op.asset_id].precision}}</div>
+            <div class="col col-75 ta_right">{{wallet.assets[op.asset_id].symbol}} {{op|draw_op_amount:wallet.assets[op.asset_id].precision}}</div>
+          </div>
+        </ion-item>
+        
+      </div>
