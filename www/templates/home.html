@@ -28,10 +28,10 @@
     <div class="punta2"></div>
     <div class="index_buttons">
       <div class="button_send">
-        <a class="button button-assertive button-block" href="#/app/send///">{{'g.send' | translate | uppercase}}</a>
+        <a class="button button-assertive2 button-block" href="#/app/send///">{{'g.send' | translate | uppercase}}</a>
       </div>
       <div class="button_receive">
-        <a class="button button-balanced button-block" href="#/app/receive">{{'g.receive' | translate | uppercase}}</a>
+        <a class="button button-balanced2 button-block" href="#/app/receive">{{'g.receive' | translate | uppercase}}</a>
       </div>
     </div>
     <div ng-show="!wallet.transactions.length" class="index_transactions">
@@ -46,8 +46,12 @@
       pulling-text="{{'home.pull_to_refresh' | translate}}"
         on-refresh="doRefresh()">
       </ion-refresher>
-      <ion-list style="height: 100%;">
-        <ion-item ng-repeat="tx in wallet.transactions" class="item item-icon-left"> <!-- item-thumbnail-left -->
+      <ion-list style="height: 100%;" class="main_transactions">
+        <div class="item item-divider {{box}}"
+          ng-repeat-start="(box, transactions) in wallet.ord_transactions">
+                {{('home.'+box)|translate}}
+        </div>
+        <div ng-repeat="tx in transactions" class="item item-icon-left"> <!-- item-thumbnail-left -->
           <a ng-click="showActionSheet(tx)">
             <div class="{{tx.ui_type}}">
               <div ng-class="{true:'pending', false:''}[tx.state=='P' || tx.status=='WP']">
@@ -67,11 +71,13 @@
                 <span class="withdraw_ex wrap_text">{{tx.cl_recv|number:4}}&nbsp;{{tx.cl_recv_curr}}</span> <!-- &nbsp;{{'g.to'|translate}}&nbsp;{{tx.cl_recv_addr}} -->
                 <span class="sent_ex">{{'g.to'|translate}}</span> <span class="received_ex">{{'g.from'|translate}}</span>
                 <span class="self_ex">{{'g.from'|translate}}</span><span class="tx_address">:&nbsp;{{tx.addr_name | translate}}</span>
-                <br/>{{'home.on'|translate}} {{ tx.TS|date:'medium'}}</p>
+                <!-- br/>{{'home.on'|translate}} {{ tx.TS|date:'medium'}} --></p>
               </div>
             </div>
           </a>
-        </ion-item>
+          <div class="line-divider" ng-class="{true:'last'}[$last]"></div>
+        </div>
+        <div ng-repeat-end></div>
       </ion-list>
       <ion-infinite-scroll
         ng-if="moreDataCanBeLoaded()"

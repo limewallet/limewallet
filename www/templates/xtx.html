@@ -9,8 +9,8 @@
       <div class="register_container energized_bg register_color padding">
         <div class="padding wrap_text">
           You have {{data.xtx|xtx_action|lowercase}} <b>{{data.xtx.cl_recv|number:4}}&nbsp;{{data.xtx.cl_recv_curr}}</b> 
-          <br/>
-          Transaction status: {{('xchg.'+data.xtx.status)|translate}}
+          <br/>{{'home.on'|translate}} {{ data.xtx.quoted_at|date:'medium'}}
+          <br/>Transaction status: {{('xchg.'+data.xtx.status)|translate}}
         </div>
       </div>
       <div class="energized_bg register_color padding">

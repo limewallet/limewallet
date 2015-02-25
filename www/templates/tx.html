@@ -9,6 +9,7 @@
       <div class="register_container energized_bg register_color padding">
         <div class="padding wrap_text">
           <b>{{data.tx.amount|number:2}}</b> {{wallet.assets[data.tx.asset_id].symbol}} {{(data.tx.sign>0?'g.received':'g.sent')|translate|lowercase}} {{'g.to'|translate|lowercase}}&nbsp;<b>{{data.tx.addr_name}}</b>
+          <br/>{{'home.on'|translate}} {{ data.tx.date|date:'medium'}}
         </div>
       </div>
       <div ng-include src="'templates/tx.include.html'"></div>

@@ -68,6 +68,39 @@ bitwallet_services
             return;
 
           } 
+          if( res.indexOf('bitcoin:') == 0 ) {
+
+            var parts = res.substr(8).split('?');
+            
+            //bitcoin:<address>[?amount=<amount>][?label=<label>][?message=<message>]
+            BitShares.btcIsValidAddress(parts[0]).then(
+              function(is_valid){
+                if( parts.length >= 2 && parts.indexOf('amount') != -1 ) {
+
+                   var amount = undefined;
+                   var amount_inx = parts.indexOf('amount');
+                   if( amount_inx != -1 ) {
+                     var amount_obj = parts[amount_inx].split('=')[1];
+                     if( parseFloat(amount_obj) >= 0 ) {
+                       amount = amount_obj;
+                     }
+                   }
+                   console.log('Metiste bitcoin: => ' + parts[0] + '=>' + amount );
+                   deferred.resolve({cancelled:false, address:parts[0], amount:amount, asset_id:undefined, is_bitcoin:true}); 
+                   return;
+                }
+                //window.plugins.toast.show( 'Invalid url', 'long', 'bottom');
+                resolve.reject('Invalid url');
+                return;
+              },
+              function(error){
+                resolve.reject('Invalid address');
+                return;
+              }
+            );
+            return;
+
+          } 
           BitShares.btsIsValidAddress(res).then(
             function(is_valid){
               console.log(' barcodescanner dijo es valid address : ' + res);

@@ -9,6 +9,7 @@ bitwallet_services
       address_book      : {},
       addresses         : {},
       transactions      : [],
+      ord_transactions  : {},
       raw_txs           : {},
       account           : {},
       ui                : { balance:  { hidden:false, allow_hide:false  } },
@@ -393,6 +394,64 @@ bitwallet_services
       return deferred.promise;
     } 
     
+    self.configMoment = function(){
+      moment.locale('en', {
+      calendar : {
+          sameDay : '[Today]',
+          lastDay : '[Yesterday]',
+          lastWeek : '[last week]',
+          nextWeek : 'dddd [at] LT',
+          sameElse : 'L'
+          }
+      });
+      var moment = require('moment');
+      moment.locale('en', {
+        relativeTime : {
+            future: "in %s",
+            past:   "%s",
+            s:  "seconds",
+            m:  "a minute",
+            mm: "%d minutes",
+            h:  "an hour",
+            hh: "%d hours",
+            d:  "a day",
+            dd: "%d days",
+            M:  "a month",
+            MM: "%d months",
+            y:  "a year",
+            yy: "%d years"
+        }
+      });
+    }
+    self.truncateDate = function(timestamp, now, now_m_y, now_week, now_year){
+      var my_moment = moment(timestamp);
+      if(my_moment.fromNow()=='today')
+        return '0_today';
+      if(my_moment.week()==now_week && my_moment.year()==now_year)
+        return '1_this_week';
+      if(my_moment.format('YYYY-MM')==now_m_y)
+        return '2_this_month';
+      return my_moment.year()==now_year ? my_moment.format('MMMM') : my_moment.format('MMMM YYYY');
+    }
+    self.orderTransactions = function(data){
+      //self.configMoment();
+      // Boxes: TODAY, (yesterday?), THIS WEEK, LAST WEEK, THIS MONTH, LAST MONTH, MONTH
+      var now       = moment();
+      var now_m_y   = now.format('YYYY-MM');
+      var now_week  = now.week();
+      var now_year  = now.year();
+      var orderedTxs = {};
+      angular.forEach(data, function(tx) {
+        var box = self.truncateDate(tx.TS, now, now_m_y, now_week, now_year);
+        if(!orderedTxs[box]) 
+        {
+          orderedTxs[box] = [];
+        }
+        orderedTxs[box].push(tx);
+      });
+      return orderedTxs;
+    }
+    
     self.loadBalance = function(){
       var deferred = $q.defer();
       Balance.all().then(function(balances){
@@ -404,7 +463,8 @@ bitwallet_services
         console.log(' -- Erro Wallet loadBalance 1'); console.log(error);
       })
       Operation.allWithXTxForAsset(self.data.asset.id).then(function(res){
-        self.data.transactions=res; 
+        self.data.ord_transactions  = self.orderTransactions(res);
+        self.data.transactions      = res; 
         deferred.resolve();
         self.emit(self.REFRESH_DONE);
       },

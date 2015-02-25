@@ -40,6 +40,8 @@ bitwallet_config
                 {name : 'name',               type   : 'text unique'},
                 {name : 'gravatar_id',        type   : 'text'},
                 {name : 'registered',         type   : 'integer'},
+                // {name : 'key',                type   : 'text'},
+                // {name : 'deriv',              type   : 'integer'}
             ]
         },
         {

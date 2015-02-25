@@ -139,6 +139,9 @@
   },
 
   "home" : {
+    "0_today"             : "Today",
+    "1_this_week"         : "This week",
+    "2_this_month"        : "This month",
     "cancel_operation"    : "Cancel operation",
     "refund"              : "Refund",
     "requote"             : "Requote",
