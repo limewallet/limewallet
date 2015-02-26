@@ -5,6 +5,7 @@ bitwallet_controllers
 // msmmBfcvrdG2yZiUQQ21phPkbw966f8nbb
 // Private Key (Wallet Import Format):
 // 92UK2S47eLEMPrstMfqD44UCLraQ99VSchwhj5VRCMe5X9zUJWe
+// bitcoin:BweMQsJqRdmncwagPiYtANrNbApcRvEV77?amount=1.1
   
   $scope.data = {
         bitcoin_address:    '', //'BweMQsJqRdmncwagPiYtANrNbApcRvEV77', //'msmmBfcvrdG2yZiUQQ21phPkbw966f8nbb',
