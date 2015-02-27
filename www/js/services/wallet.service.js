@@ -1,5 +1,5 @@
 bitwallet_services
-.service('Wallet', function($translate, $rootScope, $q, ENVIRONMENT, BitShares, ReconnectingWebSocket, MasterKey, Address, Setting, AddressBook, Account, Operation, ExchangeTransaction, Balance, RawOperation) {
+.service('Wallet', function($translate, $rootScope, $q, ENVIRONMENT, BitShares, ReconnectingWebSocket, Address, Setting, AddressBook, Account, Operation, ExchangeTransaction, Balance, RawOperation) {
     var self = this;
 
     self.data = {
@@ -100,7 +100,7 @@ bitwallet_services
     self.deriveNewAddress = function() {
       var deferred = $q.defer();
       
-      MasterKey.get().then(function(master_key) {
+      Account.get().then(function(master_key) {
         master_key.deriv = parseInt(master_key.deriv)+1;
 
         BitShares.derivePrivate(master_key.key, master_key.deriv)
@@ -109,7 +109,7 @@ bitwallet_services
             BitShares.extractDataFromKey(extendedPrivateKey)
             .then(
               function(keyData){
-                MasterKey.store(master_key.key, master_key.deriv).then(function() {
+                Account.storeKey(master_key.key, master_key.deriv).then(function() {
                   Address.create(master_key.deriv, 
                                 keyData.address, 
                                 keyData.pubkey, 
@@ -329,17 +329,17 @@ bitwallet_services
 
       var deferred = $q.defer();
 
-      MasterKey.get().then(function(masterPrivateKey) {
+      Account.get().then(function(account) {
 
-        if(masterPrivateKey !== undefined) {
+        if(account !== undefined) {
           //console.log('Wallet::createMasterKey master key present');
-          deferred.resolve(masterPrivateKey);
+          deferred.resolve(account);
           return;
         }
 
         BitShares.createMasterKey().then(function(masterPrivateKey){
           BitShares.extractDataFromKey(masterPrivateKey).then(function(keyData){
-            MasterKey.store(masterPrivateKey, -1).then(function() {
+            Account.storeKey(masterPrivateKey, -1).then(function() {
               Address.create(
                 -1, 
                 keyData.address, 

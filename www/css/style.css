@@ -503,7 +503,7 @@ img.i_centered {margin-left: auto;
 .index_transactions .item-divider.0_today {display:none;}
 
 .list.settings .input-label, .input-label, .list.settings .item.item-toggle{
-  color: #999!important;
+  /*color: #999!important;*/
 }
 
 .list.settings img.avatar_rounded{
@@ -798,3 +798,7 @@ span.quote_error{padding-left: 16px;}
 .button-bar.tabbed > .button:before, .button-bar.tabbed > .button .icon:before {
   line-height: 30px!important;
 }
+
+/**/
+.transaction_steps{padding:10px;}
+.step_doing{padding:25px;}

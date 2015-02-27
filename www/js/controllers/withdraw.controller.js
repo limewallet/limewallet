@@ -1,5 +1,5 @@
 bitwallet_controllers
-.controller('WithdrawCtrl', function($translate, T, Address, MasterKey, Wallet, BitShares, $scope, $rootScope, $http, $timeout, $ionicActionSheet, $ionicPopup, $cordovaClipboard, $ionicLoading, $timeout, BitShares, $state, $ionicModal, $q, Setting) {
+.controller('WithdrawCtrl', function($translate, T, Address, Account, Wallet, BitShares, $scope, $rootScope, $http, $timeout, $ionicActionSheet, $ionicPopup, $cordovaClipboard, $ionicLoading, $timeout, BitShares, $state, $ionicModal, $q, Setting) {
 
 // Bitcoin Address:
 // msmmBfcvrdG2yZiUQQ21phPkbw966f8nbb

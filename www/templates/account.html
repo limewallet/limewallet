@@ -15,15 +15,9 @@
           
           </div>
           <div class="register_container energized_bg register_color">
-            <p ng-show="wallet.account.registered==0">
-              Please enter the name for your account.<br/>
-              This global unique name will be your identity in the network. You can later share it in order to receive payments.
-              <!-- Choose a name and a photo for your account.<br/> It simplifies sending and receiving money while staying anonymous in blockchain. -->
+            <p ng-show="wallet.account.registered!=1" ng-bind-html="'account.type_name'|translate">
             </p>
-            <p ng-show="wallet.account.registered!=0">
-              You can change your photo.<br/>
-              Options are robohash (default) and gravatar.<br/>
-              You will be charged for this transaction.
+            <p ng-show="wallet.account.registered==1" ng-bind-html="'account.edit_photo'|translate">
             </p>
           </div>
           <div class="list settings">
@@ -33,13 +27,11 @@
               <div class="line-divider"></div>
             </label>
             <div class="item item-image">
-              <span class="input-label" style="padding-left:16px;text-align:left;"><!--{{'g.photo'|translate}}--></span>
+              <span class="input-label" style="padding-left:16px;text-align:left;"></span>
               <div style="width:100%;height:150px;">
                 <div style="width:150px;text-align:center;margin:0 auto;">
                   <img class="avatar_rounded" src="http://robohash.org/{{data.watch_name}}?size=150x150" ng-show="data.name && !data.use_gravatar" />
                   <img class="avatar_rounded" src="http://www.gravatar.com/avatar/{{data.gravatar_id}}?s=150" ng-show="data.use_gravatar" />
-                  <!-- &d=http%3A%2F%2Fwww.gravatar.com%2Favatar%2F283b8a1ba9e2fe4bcc24e1810e4d335f.png -->
-                  
                   <img class="avatar_rounded" src="img/user_empty.png" ng-show="!data.use_gravatar && !data.name" />
                 </div>
               </div>

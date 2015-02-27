@@ -112,23 +112,23 @@ bitwallet_services
     return self;
 })
 
-//MasterKey service 
-.service('MasterKey', function(DB) {
-    var self = this;
+// //MasterKey service 
+// .service('MasterKey', function(DB) {
+//     var self = this;
     
-    self.get = function() {
-        return DB.query('SELECT * FROM master_key limit 1', [])
-        .then(function(result){
-            return DB.fetch(result);
-        });
-    };
+//     self.get = function() {
+//         return DB.query('SELECT * FROM master_key limit 1', [])
+//         .then(function(result){
+//             return DB.fetch(result);
+//         });
+//     };
 
-    self.store = function(key, deriv) {
-        return DB.query('INSERT or REPLACE into master_key (id, key, deriv) values (0,?,?)', [key, deriv]);
-    }
+//     self.store = function(key, deriv) {
+//         return DB.query('INSERT or REPLACE into master_key (id, key, deriv) values (0,?,?)', [key, deriv]);
+//     }
     
-    return self;
-})
+//     return self;
+// })
 
 //Address service 
 .service('Address', function(DB) {
@@ -276,6 +276,10 @@ bitwallet_services
       return DB.query('INSERT or REPLACE into account (id, name, gravatar_id, registered) values (0,?,?,?)', [name, gravatar_id, 0]);
     }
     
+    self.storeKey = function(key, deriv) {
+        return DB.query('INSERT or REPLACE into account (id, key, deriv) values (0,?,?)', [key, deriv]);
+    }
+
     self.clear = function() {
       return DB.query('DELETE from account');
     }

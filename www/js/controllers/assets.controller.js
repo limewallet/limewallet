@@ -1,5 +1,5 @@
 bitwallet_controllers
-.controller('AssetsCtrl', function($translate, T, Address, MasterKey, Wallet, BitShares, $scope, $rootScope, $http, $timeout, $ionicActionSheet, $ionicPopup, $cordovaClipboard, $ionicLoading) {
+.controller('AssetsCtrl', function($translate, T, Address, Wallet, BitShares, $scope, $rootScope, $http, $timeout, $ionicActionSheet, $ionicPopup, $cordovaClipboard, $ionicLoading) {
   
   $scope.showLoading = function(){
     $ionicLoading.show({

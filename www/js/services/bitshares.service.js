@@ -1,5 +1,5 @@
 bitwallet_services
-.service('BitShares', function($translate, $q, $http, MasterKey, $rootScope, Setting, ENVIRONMENT) {
+.service('BitShares', function($translate, $q, $http, $rootScope, Setting, ENVIRONMENT) {
     var self = this;
 
     self.compactSignatureForMessage = function(msg, wif) {

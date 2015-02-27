@@ -278,7 +278,9 @@
     "no_withdraws"            : "No withdraws done yet",
     "new"                     : "New withdraw",
     "succesful"               : "Successfull withdraw! Wait for transaction updates.",
-    "in_progress"             : "Withdraw in progress"
+    "in_progress"             : "Withdraw in progress",
+    "headline"                : "Withdraw BITCOIN exchanging your <b>bit{{asset.symbol}}</b>",
+    "headline2"               : "You can withdraw bitcoins from your wallet by converting your preferred bitasset into bitcoins.<br/>Type the destination bitcoin address and the amount you want to withdraw."
   },
   
   "xchg":{
@@ -293,6 +295,9 @@
     "XX"    : "CANCELED",
     "RI"    : "REFUNDING",
     "RF"    : "REFUNDED"
-  }
-  
+  },
+  "account":{
+    "type_name"     : "Please type the name for your account.<br/>This global unique name will be your identity in the network. You can later share it in order to receive payments.",
+    "edit_photo"    : "You can change your photo.<br/>Options are robohash (default) and gravatar.<br/>You will be charged for this transaction."
+   }      
 }

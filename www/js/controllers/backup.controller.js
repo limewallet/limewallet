@@ -1,5 +1,5 @@
 bitwallet_controllers
-.controller('BackupCtrl', function(DB_CONFIG, T, $translate, MasterKey, Address, AddressBook, $scope, $http, $timeout, $location, $state, $ionicPopup, $ionicModal, $cordovaSocialSharing, $cordovaClipboard, BitShares, $q, $ionicNavBarDelegate) {
+.controller('BackupCtrl', function(DB_CONFIG, T, $translate, Account, Address, AddressBook, $scope, $http, $timeout, $location, $state, $ionicPopup, $ionicModal, $cordovaSocialSharing, $cordovaClipboard, BitShares, $q, $ionicNavBarDelegate) {
   
   $scope.backup = {};
   
@@ -54,15 +54,16 @@ bitwallet_controllers
 
       var ewallet = {version:DB_CONFIG.version}
       
-      var my_master_key = [];
-      var p = MasterKey.get()
-      .then(function(master_key) {
+      var my_master_key = {key:'', deriv:0};
+      var p = Account.get()
+      .then(function(account) {
         //CryptoJS.AES.encrypt(master_key.key, backupForm.backupPassword.value).toString();
-        my_master_key = master_key;
-        return master_key;
+        my_master_key.key = account.key;
+        my_master_key.deriv = account.deriv;
+        return account;
       })
-      .then(function(master_key){
-        return BitShares.encryptString(master_key.key, backupForm.backupPassword.value);
+      .then(function(account){
+        return BitShares.encryptString(account.key, backupForm.backupPassword.value);
       })
       .then(function(encryptedData){
           my_master_key.key = encryptedData; 

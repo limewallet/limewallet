@@ -55,7 +55,7 @@ bitwallet_module
 .config(function($ionicConfigProvider, $stateProvider, $urlRouterProvider, $translateProvider, ENVIRONMENT) {
   
   $ionicConfigProvider.views.maxCache(0);
-  $ionicConfigProvider.navBar.alignTitle('left');
+  //$ionicConfigProvider.navBar.alignTitle('left');
   $translateProvider.useStaticFilesLoader({ prefix: 'static/locale-', suffix: '.json'});
 
   $stateProvider

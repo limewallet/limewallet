@@ -3,14 +3,14 @@ bitwallet_config
     name: 'wallet.db',
     version : 1.2,
     tables: [
-        {
-            name: 'master_key',
-            columns: [
-                {name : 'id',     type   : 'integer primary key'},
-                {name : 'key',    type   : 'text'},
-                {name : 'deriv',  type   : 'integer'}
-            ]
-        },
+        // {
+        //     name: 'master_key',
+        //     columns: [
+        //         {name : 'id',     type   : 'integer primary key'},
+        //         {name : 'key',    type   : 'text'},
+        //         {name : 'deriv',  type   : 'integer'}
+        //     ]
+        // },
         {
             name: 'address',
             columns: [
@@ -40,8 +40,8 @@ bitwallet_config
                 {name : 'name',               type   : 'text unique'},
                 {name : 'gravatar_id',        type   : 'text'},
                 {name : 'registered',         type   : 'integer'},
-                // {name : 'key',                type   : 'text'},
-                // {name : 'deriv',              type   : 'integer'}
+                {name : 'key',                type   : 'text'},
+                {name : 'deriv',              type   : 'integer'}
             ]
         },
         {

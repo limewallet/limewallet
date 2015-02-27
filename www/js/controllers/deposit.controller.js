@@ -1,5 +1,5 @@
 bitwallet_controllers
-.controller('DepositCtrl', function($translate, T, Address, MasterKey, Wallet, BitShares, $scope, $rootScope, $http, $timeout, $ionicActionSheet, $ionicPopup, $cordovaClipboard, $ionicLoading, $timeout, BitShares, Setting) {
+.controller('DepositCtrl', function($translate, T, Address, Wallet, BitShares, $scope, $rootScope, $http, $timeout, $ionicActionSheet, $ionicPopup, $cordovaClipboard, $ionicLoading, $timeout, BitShares, Setting) {
   
   // python send_btc.py BzxyUCprnJWYXmQ6gGwREFPboTxhU1JB3E CCDVYmCptt5b3HnxPwHgdKZ8zXEywMB1Rb 0.05 yes
   // bitcoin://CCDVYmCptt5b3HnxPwHgdKZ8zXEywMB1Rb?amount=0.10000000?label=bitwallet_deposit?message=convert_btc_to_bitasset

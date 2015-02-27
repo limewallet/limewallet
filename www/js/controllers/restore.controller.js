@@ -1,4 +1,4 @@
-bitwallet_controllers.controller('RestoreCtrl', function($q, T, Setting, $rootScope, $translate, $scope, MasterKey, Address, AddressBook, $http, $timeout, $location, $state, $ionicPopup, $ionicModal, $cordovaClipboard, BitShares, $ionicNavBarDelegate, Wallet) {
+bitwallet_controllers.controller('RestoreCtrl', function($q, T, Setting, $rootScope, $translate, $scope, Account, Address, AddressBook, $http, $timeout, $location, $state, $ionicPopup, $ionicModal, $cordovaClipboard, BitShares, $ionicNavBarDelegate, Wallet) {
   $scope.restore = {};
 
   $scope.pasteWallet = function(element) {
@@ -75,7 +75,7 @@ bitwallet_controllers.controller('RestoreCtrl', function($q, T, Setting, $rootSc
           return BitShares.isValidKey(master_key_value)
         })
         .then(function(is_valid_key){
-          return MasterKey.store(master_key.key, master_key.deriv);
+          return Account.storeKey(master_key.key, master_key.deriv);
           }
           ,function(error){
             alertPopup.close();

@@ -97,45 +97,6 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
   }
   
   $scope.doSend = function(transaction) {
-    console.log($scope.transaction.address);
-    var parts = $scope.transaction.address.substr(8).split('?');
-    BitShares.btcIsValidAddress(parts[0]).then(
-      function(is_valid){
-        if( parts.length >= 2 && parts.indexOf('amount') != -1 ) {
-
-           var amount = undefined;
-           var amount_inx = parts.indexOf('amount');
-           if( amount_inx != -1 ) {
-             var amount_obj = parts[amount_inx].split('=')[1];
-             if( parseFloat(amount_obj) >= 0 ) {
-               amount = amount_obj;
-             }
-           }
-           console.log('Metiste bitcoin: => ' + parts[0] + '=>' + amount );
-           $ionicPopup.alert({
-             title    : 'OK',
-             template : 'Metiste bitcoin: => ' + parts[0] + '=>' + amount ,
-             okType   : 'button-assertive', 
-           });
-           return;
-        }
-        $ionicPopup.alert({
-             title    : 'OK 2',
-             template : 'Metiste bitcoin: => ' + parts[0] ,
-             okType   : 'button-assertive', 
-           });
-        return;
-      },
-      function(error){
-        $ionicPopup.alert({
-             title    : 'ERROR',
-             template : error ,
-             okType   : 'button-assertive', 
-           });
-        return;
-      }
-    );
-return;
     if($scope.data.is_btc==true)
       //$scope.doSendBTC();
       console.log('doSendBTC()??');
@@ -400,6 +361,8 @@ return;
   });
   
   $scope.isBTC = function(){
+    if (!$scope.data.is_btc)
+      return;
     // 1.- Quotear
     // 2.- Mostrar quote amounts
     // 3.- Init timer
