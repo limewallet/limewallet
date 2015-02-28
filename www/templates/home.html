@@ -25,13 +25,23 @@
         </div>
       </div>
     </div>
-    <div class="punta2"></div>
-    <div class="index_buttons">
-      <div class="button_send">
+    <!--div class="punta2"></div -->
+    <div class="index_buttons index_buttons2 energized_bg">
+      <!--div class="button_send">
         <a class="button button-assertive button-block" href="#/app/send///">{{'g.send' | translate | uppercase}}</a>
       </div>
       <div class="button_receive">
         <a class="button button-balanced2 button-block" href="#/app/receive">{{'g.receive' | translate | uppercase}}</a>
+      </div -->
+      <div style="width:300px;margin:0 auto;display:block;">
+        <div style="padding-top:15px;" class="button-bar tabbed">
+          <a class="button button-small button-send" href="#/app/send///">
+            {{'g.send' | translate | uppercase}}
+          </a>
+          <a class="button button-small button-receive" href="#/app/receive">
+            {{'g.receive' | translate | uppercase}}
+          </a>
+        </div>
       </div>
     </div>
     <div ng-show="!wallet.transactions.length" class="index_transactions">

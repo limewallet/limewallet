@@ -285,7 +285,7 @@
   
   "xchg":{
     "WP"    : "WAITING PAYMENT",
-    "PP"    : "PARTIALY PAID",
+    "PP"    : "PARTIALLY PAID",
     "XC"    : "WAITING CONFIRMATION",
     "PC"    : "PAYMENT CONFIRMED",
     "TG"    : "TRANSACTION GENERATED",

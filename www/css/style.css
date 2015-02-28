@@ -70,6 +70,7 @@ line-height: 38px;}
 .index_buttons{
   overflow:hidden;padding:5px 0 10px 0;height:87px;
 }
+.index_buttons2{height:67px;}
 .index_buttons .button_send{
   padding-left:8px;
   padding-right:4px;
@@ -107,8 +108,8 @@ line-height: 38px;}
   display:block;
   overflow: hidden;
   width:100%;
-  /*top:257px;*/
-  top:192px;
+  /*top:192px;*/ /* -25 punta -20 buttons*/
+  top:147px;
   position:absolute!important; bottom:0;
   }
 .addys_empty{top:0px!important;}
@@ -499,7 +500,14 @@ img.i_centered {margin-left: auto;
   border:none;
   border-width: 0px; 
 }
-
+.index_transactions .item-divider{
+  /*color: #fff!important;*/
+  font-size:10px;
+  padding-top: 5px!important;
+  padding-bottom: 4px!important;
+  height: 28px!important;
+  min-height: 28px!important;
+}
 .index_transactions .item-divider.0_today {display:none;}
 
 .list.settings .input-label, .input-label, .list.settings .item.item-toggle{
@@ -793,6 +801,18 @@ span.quote_error{padding-left: 16px;}
 .button-bar.tabbed > .button-energized.active{
   background-color:#01bbf4;
   color:#fff;
+}
+
+.button-bar.tabbed > .button-send{
+  background-color:#fff;
+  color:#01bbf4;
+  border-color:#fff;
+}
+
+.button-bar.tabbed > .button-receive{
+  background-color:#01bbf4;
+  color:#fff;
+  border-color:#fff;
 }
 
 .button-bar.tabbed > .button:before, .button-bar.tabbed > .button .icon:before {

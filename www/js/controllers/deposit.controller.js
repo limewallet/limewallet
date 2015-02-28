@@ -187,7 +187,7 @@ bitwallet_controllers
         
         $scope.data.tx                = result.tx;
         $scope.data.deposit_short_uri = 'bitcoin://'+$scope.data.tx.cl_pay_addr+'?amount='+$scope.data.tx.cl_pay;
-        $scope.data.deposit_uri       = $scope.data.deposit_short_uri+'?label=bitwallet_deposit?message=convert_btc_to_bitasset';
+        $scope.data.deposit_uri       = $scope.data.deposit_short_uri+'&label=bitwallet_deposit&message=convert_btc_to_bitasset';
         $scope.data.deposit_qrcode    = 'http://chart.apis.google.com/chart?cht=qr&chs=300x300&chl='+encodeURIComponent($scope.data.deposit_uri)+'&chld=H|0'
         $scope.data.step = 2;
         
