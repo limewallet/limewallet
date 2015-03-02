@@ -67,7 +67,7 @@
             </button>
           </div>
           <div ng-show="data.timer.expired==false" style="display:block;">
-            <a class="button button-block button-energized no-margin button_taller" href="{{data.deposit_short_uri}}" target="_system">
+            <a class="button button-block button-energized no-margin button_taller" onclick="window.open('{{data.deposit_short_uri}}', '_system', 'location=yes');" hrefNOT="{{data.deposit_short_uri}}" target="_system">
               {{'g.pay'|translate|uppercase}}
             </a>
           </div>

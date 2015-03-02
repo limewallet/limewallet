@@ -1,5 +1,9 @@
 // BitWallet
 
+function handleOpenURL(url) {
+  console.log("received url: " + url);
+}
+
 var bitwallet_module = angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'reconnectingWebSocket', 'bit_wallet.controllers','bit_wallet.services', 'bit_wallet.filters', 'bit_wallet.config']);
 
 bitwallet_module

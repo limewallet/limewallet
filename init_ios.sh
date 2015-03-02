@@ -12,6 +12,7 @@ cordova plugin add org.apache.cordova.splashscreen
 cordova plugin add https://github.com/EddyVerbruggen/Toast-PhoneGap-Plugin.git
 cordova plugin add org.apache.cordova.globalization
 cordova plugin add https://github.com/latincoin-com/cordova-plugin-bitwallet.git
+cordova plugin add https://github.com/EddyVerbruggen/LaunchMyApp-PhoneGap-Plugin.git --variable URL_SCHEME=bts
 cp resources/ios/icons/icon-small@2x.png platforms/ios/Bitwallet/Resources/icons/
 cp resources/ios/icons/icon-small.png platforms/ios/Bitwallet/Resources/icons/
 cp resources/ios/icons/icon-76@2x.png platforms/ios/Bitwallet/Resources/icons/
