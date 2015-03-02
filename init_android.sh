@@ -12,6 +12,7 @@ cordova plugin add org.apache.cordova.splashscreen
 cordova plugin add https://github.com/EddyVerbruggen/Toast-PhoneGap-Plugin.git
 cordova plugin add org.apache.cordova.globalization
 cordova plugin add https://github.com/latincoin-com/cordova-plugin-bitwallet.git
+cordova plugin add https://github.com/EddyVerbruggen/LaunchMyApp-PhoneGap-Plugin.git --variable URL_SCHEME=bts
 cp resources/android/res/drawable/icon.png platforms/android/res/drawable/
 cp resources/android/res/drawable-hdpi/icon.png platforms/android/res/drawable-hdpi/
 cp resources/android/res/drawable-land-hdpi/screen.png platforms/android/res/drawable-land-hdpi/

@@ -6,7 +6,7 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
         bitcoin_address:    '', //BweMQsJqRdmncwagPiYtANrNbApcRvEV77 'msmmBfcvrdG2yZiUQQ21phPkbw966f8nbb',
         
         amount_usd:         undefined,
-        amount_btc:         0.2,
+        amount_btc:         undefined,
         quoting_usd:        false,
         quoting_btc:        false,
         quoting_btc_error:  undefined,
@@ -14,10 +14,6 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
         
         timer:              {options:{}, remaining:undefined, percent:undefined, start:0, stop:0, expired:0},
         quote_expired:      false,
-        
-        deposit_uri:        undefined,
-        deposit_qrcode:     undefined,
-        deposit_short_uri:  undefined,  
         
         quote:              undefined,
         signature:          undefined,
@@ -29,7 +25,7 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
   $scope.default_data_btc = {};
   angular.copy($scope.data_btc, $scope.default_data_btc);
   
-  
+  // Check if bts or btc payment request
   var amount = 0;
   if (!angular.isUndefined($stateParams.amount))
   {
@@ -38,12 +34,25 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
   
   var address = '';
   if (!angular.isUndefined($stateParams.address))
-  address = $stateParams.address;
+    address = $stateParams.address;
 
-  $scope.transaction = {message:'send.generating_transaction', amount:amount, address:address};
-  sendForm.transactionAmount.value = $scope.transaction.amount;
-  sendForm.transactionAddress.value = $scope.transaction.address;
-  
+  var is_btc = false;
+  if (!angular.isUndefined($stateParams.is_btc))
+    is_btc = $stateParams.is_btc;
+
+  // Hack! Let's think a better way to initialize controller!!
+  if(is_btc){
+    $scope.data.is_btc              = is_btc;
+    $scope.data_btc.bitcoin_address = address;
+    $scope.data_btc.amount_btc      = amount;
+    $scope.isBTC();
+  }
+  else{
+    $scope.transaction = {message:'send.generating_transaction', amount:amount, address:address};
+    sendForm.transactionAmount.value = $scope.transaction.amount;
+    sendForm.transactionAddress.value = $scope.transaction.address;
+  }
+
   $scope.showAddressBook = function(){
     $scope.address_book_modal.show();
   }
@@ -85,10 +94,15 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
           sendForm.transactionAmount.value = result.amount;
         }
         
-        if(result.asset_id !== undefined && result.asset_id != $scope.wallet.asset.symbol)
+        if(result.asset_id !== undefined && result.asset_id != $scope.wallet.asset.symbol && !result.is_btc)
         {
           window.plugins.toast.show(T.i('err.invalid_asset'), 'long', 'bottom');
           return;
+        }
+
+        if(result.is_btc)
+        {
+
         }
       }
     }, function(error) {
@@ -357,17 +371,17 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
   }
   
   $scope.$on( '$ionicView.enter', function(){
-    $scope.isBTC();
+    //$scope.isBTC();
   });
   
   $scope.isBTC = function(){
     if (!$scope.data.is_btc)
       return;
-    // 1.- Quotear
-    // 2.- Mostrar quote amounts
+    // 1.- Quote
+    // 2.- Show quote rate
     // 3.- Init timer
-    // 4.- En cada tic ajustar -> $scope.nanobar.go( 30 ); // size bar 30%
-    // 5.- On expired, ir a 1
+    // 4.- Ontimer Tic adjust $scope.nanobar.go( XX );
+    // 5.- On expired, goto: 1
     
     if($scope.nanobar===undefined)
     {

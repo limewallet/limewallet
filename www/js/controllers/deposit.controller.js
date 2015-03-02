@@ -21,6 +21,7 @@ bitwallet_controllers
         deposit_short_uri:  undefined,  
         
         quote:              undefined,
+        quote_timestamp:    0, 
         signature:          undefined,
         tx:                 undefined,
         
@@ -53,12 +54,13 @@ bitwallet_controllers
     usd_timeout = $timeout(function () {
       $scope.data.quoting_btc = true;
       $scope.data.amount_btc = undefined;
-      // llamo a quotear
-      //BitShares.getBuyQuote('USD_BTC', $scope.data.amount_usd).then(function(res){
+      // Quote current request
       BitShares.getBuyQuote($scope.quote_data.quote_curr, $scope.data.amount_usd).then(function(res){
         $scope.data.amount_btc = Number(res.quote.client_pay.replace(' BTC', ''));
-        $scope.data.quote       = res.quote;
-        $scope.data.signature   = res.signature;
+        $scope.data.quote           = res.quote;
+        // Set quote timestamp locally. It's not estrict.
+        $scope.data.quote_timestamp = parseInt((new Date()).getTime()); 
+        $scope.data.signature       = res.signature;
         $timeout(function () {
           $scope.data.quoting_btc = false;
           $scope.startTimer();
@@ -146,13 +148,11 @@ bitwallet_controllers
   }
   
   $scope.remainingTime = function(){
-    var d = new Date();
-    var n = parseInt(d.getTime()/1000);
-    if(!$scope.data.quote.timestamp)
+    var n = parseInt((new Date()).getTime());
+    //var n = parseInt(d.getTime()/1000);
+    if(!$scope.data.quote_timestamp)
       return 0;
-    var rem = parseInt($scope.data.quote.timestamp)+$scope.data.quote_ttl-n;
-    
-    console.log('DepositCtrl.remainingTime():'+rem);
+    var rem = parseInt($scope.data.quote_timestamp)+($scope.data.quote_ttl*1000)-n;
     return rem;
   }
   
@@ -172,11 +172,11 @@ bitwallet_controllers
       return;
     }
     
-    // if($scope.remainingTime()<=0)
-    // {
-      // $scope.showAlert('err.quote_expired', 'err.quote_expired_retry');
-      // return;
-    // }
+    if($scope.remainingTime()<=0)
+    {
+      $scope.showAlert('err.quote_expired', 'err.quote_expired_retry');
+      return;
+    }
     
     $scope.showLoading('g.accept_tx_process');
     var addy = Wallet.getMainAddress();

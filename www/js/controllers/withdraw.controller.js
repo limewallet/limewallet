@@ -25,6 +25,7 @@ bitwallet_controllers
         deposit_short_uri:  undefined,  
         
         quote:              undefined,
+        quote_timestamp:    0, 
         signature:          undefined,
         tx:                 undefined,
         
@@ -58,11 +59,12 @@ bitwallet_controllers
     usd_timeout = $timeout(function () {
       $scope.data.quoting_btc = true;
       $scope.data.amount_btc = undefined;
-      // llamo a quotear
+      // Quote current request
       BitShares.getSellQuote($scope.quote_data.quote_curr, $scope.data.amount_usd).then(function(res){
         $scope.data.amount_btc = Number(res.quote.client_recv.replace(' BTC', ''));
-        $scope.data.quote       = res.quote;
-        $scope.data.signature   = res.signature;
+        $scope.data.quote           = res.quote;
+        $scope.data.quote_timestamp = parseInt((new Date()).getTime()); 
+        $scope.data.signature       = res.signature;
         $timeout(function () {
           $scope.data.quoting_btc = false;
           $scope.startTimer();
@@ -134,28 +136,14 @@ bitwallet_controllers
     $scope.data.quoting_btc_error = undefined;
     $scope.data.quoting_usd_error = undefined;
   };
-  // $scope.showLoading = function(){
-    // $ionicLoading.show({
-      // template     : '<i class="icon ion-looping"></i> ' + T.i('g.loading'),
-      // animation    : 'fade-in',
-      // showBackdrop : true,
-      // maxWidth     : 200,
-      // showDelay    : 10
-    // }); 
-  // }
-
-  // $scope.hideLoading = function(){
-    // $ionicLoading.hide();
-  // }
   
   $scope.remainingTime = function(){
-    var d = new Date();
-    var n = parseInt(d.getTime()/1000);
-    if(!$scope.data.quote.timestamp)
+    var n = parseInt((new Date()).getTime());
+    //var n = parseInt(d.getTime()/1000);
+    if(!$scope.data.quote_timestamp)
       return 0;
-    //console.log('['+$scope.data.quote.timestamp+'] + ['+$scope.data.quote_ttl+'] - ['+n+'] = '+($scope.data.quote.timestamp+$scope.data.quote_ttl-n));
-    return parseInt($scope.data.quote.timestamp)+$scope.data.quote_ttl-n;
-    
+    var rem = parseInt($scope.data.quote_timestamp)+($scope.data.quote_ttl*1000)-n;
+    return rem;
   }
   
   $scope.showAlert = function(title, message){

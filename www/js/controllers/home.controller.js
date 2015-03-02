@@ -39,33 +39,19 @@ bitwallet_controllers
   }
   
   $scope.scanQR = function() {
-           
-    Scanner.scan()
-    .then(function(result) {
-      if( !result.cancelled ) {
-
-        if(result.privkey !== undefined)
-        {
-          $state.go('app.import_priv', {private_key:result.privkey});
-          return;
-        }
-        
-        var promises = [];
-        //Pubkey scanned
-        if(result.pubkey !== undefined) {
-          //result.address = bitcoin.bts.pub_to_address(bitcoin.bts.decode_pubkey(result.pubkey));
-          var p = BitShares.btsPubToAddress(result.pubkey)
-          .then(function(addy){
-            result.address = addy;
-          })
-          promises.push(p);
-        }
-        $q.all(promises).then(function() {
-          $state.go('app.send', {address:result.address, amount:result.amount, asset_id:result.asset_id});
-        })
-      }
+    
+    // var uri = 'bts:DVSNKLe7F5E7msNG5RnbdWZ7HDeHoxVrUMZo/transfer/amount/1.1/asset/USD';
+    // Scanner.parseUrl(uri).then(function(data){
+    //   console.log(JSON.stringify(data));
+    // }, function(error){
+    //     console.log(error);
+    // });
+    
+    // return;           
+    
+    Scanner.scan().then(function(result) {
+      $scope.resolveURI(result);
     }, function(error) {
-      
       window.plugins.toast.show(error, 'long', 'bottom')
     });
   }

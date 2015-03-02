@@ -1,13 +1,18 @@
 // BitWallet
 
 function handleOpenURL(url) {
-  console.log("received url: " + url);
+  var event = new CustomEvent('OnPaymentRequest', {detail: {'url': url}});
+  setTimeout( function() {
+      window.dispatchEvent(event);
+    },
+    0
+  );
 }
 
 var bitwallet_module = angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'reconnectingWebSocket', 'bit_wallet.controllers','bit_wallet.services', 'bit_wallet.filters', 'bit_wallet.config']);
 
 bitwallet_module
-.run(function(DB, $state, $ionicHistory, $rootScope, $ionicPlatform, Wallet) {
+.run(function(DB, $state, $ionicHistory, $rootScope, $ionicPlatform, Wallet, Scanner, $q) {
 
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
@@ -54,6 +59,50 @@ bitwallet_module
     $state.go(param);
   }
 
+  /// transfer/amount/'+$scope.amount+'/asset/
+  //  window.open('bts:DVSNKLe7F5E7msNG5RnbdWZ7HDeHoxVrUMZo/transfer/amount/1.1/asset/USD', '_system', 'location=yes');
+  //  bitcoin:BweMQsJqRdmncwagPiYtANrNbApcRvEV77?amount=1.1  | bitcoin://BweMQsJqRdmncwagPiYtANrNbApcRvEV77?amount=1.1
+  //  bts:DVSNKLe7F5E7msNG5RnbdWZ7HDeHoxVrUMZo?amount=1.1    | bts://DVSNKLe7F5E7msNG5RnbdWZ7HDeHoxVrUMZo?amount=1.1
+  $rootScope.resolveURI = function(data){
+
+    if( !data.cancelled ) {
+
+        if(data.privkey !== undefined)
+        {
+          $state.go('app.import_priv', {private_key:data.privkey});
+          return;
+        }
+        
+        var promises = [];
+        //Pubkey scanned
+        if(data.pubkey !== undefined) {
+          var p = BitShares.btsPubToAddress(data.pubkey)
+          .then(function(addy){
+            data.address = addy;
+          })
+          promises.push(p);
+        }
+        
+        $q.all(promises).then(function() {
+          $state.go('app.send', {address:data.address, amount:data.amount, asset_id:data.asset_id, is_btc:data.is_btc});
+        })
+      }
+  }
+
+  window.addEventListener('OnPaymentRequest', function(e) {
+      if(!e.detail || !e.detail.url)
+      {
+        console.log('OnPaymentRequest null url.');
+        return;
+      }
+      Scanner.parseUrl(e.detail.url).then(function(data){
+        // address/:amount/:asset_id/:is_btc
+        // $state.go('app.send', {address:data.address, amount:data.amount, asset_id:data.asset_id, is_btc:data.is_btc});
+        $rootScope.resolveURI(data);
+      }, function(error){
+        console.log(error);
+      });
+    });
 })
 
 .config(function($ionicConfigProvider, $stateProvider, $urlRouterProvider, $translateProvider, ENVIRONMENT) {
@@ -213,7 +262,7 @@ bitwallet_module
     })
     
     .state('app.send', {
-      url: "/send/:address/:amount/:asset_id",
+      url: "/send/:address/:amount/:asset_id/:is_btc",
       views: {
         'menuContent' :{
           templateUrl: "templates/send.html",

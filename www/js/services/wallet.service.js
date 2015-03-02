@@ -331,8 +331,8 @@ bitwallet_services
 
       Account.get().then(function(account) {
 
-        if(account !== undefined) {
-          //console.log('Wallet::createMasterKey master key present');
+        if(account !== undefined && account.key!== undefined && account.key) {
+          console.log('Wallet::getMasterPrivKey OK'); //+JSON.stringify(account));
           deferred.resolve(account);
           return;
         }
@@ -350,22 +350,23 @@ bitwallet_services
                   $rootScope.master_key_new = true;
                   deferred.resolve({key:masterPrivateKey, deriv:-1});  
                 },function(err) {
-                  //DB Error (Address::create) 
+                  console.log('getMasterPrivKey err #1: '+JSON.stringify(err));
                   deferred.reject(err);
                 });
             },
             function(err){ 
-              //DB Error (MasterKey::store)
+              console.log('getMasterPrivKey err #2: '+JSON.stringify(err));
               deferred.reject(err);
             });
           },
           function(err) {
-            //Plugin error (BitShares.extractDataFromKey);
+            console.log('getMasterPrivKey err #3: '+JSON.stringify(err));
             deferred.reject(err); 
           });
         },
         function(err) {
           //Plugin error (BitShares.createMasterKey);
+          console.log('getMasterPrivKey err #4: '+JSON.stringify(err));
           deferred.reject(err); 
         });
 
@@ -382,12 +383,15 @@ bitwallet_services
 
       var deferred = $q.defer();
       self.getMasterPrivKey().then(function(masterPrivateKey) {
+        //console.log(' -- getMasterPubkey : ' + masterPrivateKey.key);
         BitShares.extendedPublicFromPrivate(masterPrivateKey.key).then(function(extendedPublicKey){
           deferred.resolve({masterPubkey:extendedPublicKey, deriv:masterPrivateKey.deriv});
         }, function(err) {
+          console.log('getMasterPubkey err #1: '+JSON.stringify(err));
           deferred.reject(err);  
         })
       }, function(err) {
+        console.log('getMasterPubkey err #2: '+JSON.stringify(err));
         deferred.reject(err);    
       });
 
