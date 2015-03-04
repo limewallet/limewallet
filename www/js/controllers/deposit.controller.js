@@ -56,23 +56,23 @@ bitwallet_controllers
       $scope.data.amount_btc = undefined;
       // Quote current request
       BitShares.getBuyQuote($scope.quote_data.quote_curr, $scope.data.amount_usd).then(function(res){
-        $scope.data.amount_btc = Number(res.quote.client_pay.replace(' BTC', ''));
+        $scope.data.amount_btc      = Number(res.quote.client_pay.replace(' BTC', ''));
         $scope.data.quote           = res.quote;
         // Set quote timestamp locally. It's not estrict.
         $scope.data.quote_timestamp = parseInt((new Date()).getTime()); 
         $scope.data.signature       = res.signature;
         $timeout(function () {
-          $scope.data.quoting_btc = false;
+          $scope.data.quoting_btc   = false;
           $scope.startTimer();
         } , 200);
         //console.log(res);
       }, function(error){
         $scope.stopTimer();
-        $scope.data.quoting_btc       = false;
+        $scope.data.quoting_btc     = false;
         $scope.setMessageErr('BTC', error);
         //console.log(error);
-        $scope.data.quote             = undefined;
-        $scope.data.signature         = undefined;
+        $scope.data.quote           = undefined;
+        $scope.data.signature       = undefined;
       });
     }, 750);
   });

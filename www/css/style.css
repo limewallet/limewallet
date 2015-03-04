@@ -762,6 +762,7 @@ span.quote_error{padding-left: 16px;}
   -webkit-box-shadow: 0px 1px 4px 0px rgba(0,0,0,0.50);
   -moz-box-shadow: 0px 1px 4px 0px rgba(0,0,0,0.50);
   box-shadow: 0px 1px 4px 0px rgba(0,0,0,0.50);
+  background-color:#fff; /*#2C3E50*/ /*#01bbf4*/ /* #acf */
 }
 
 .button-bar.tabbed {
@@ -822,3 +823,5 @@ span.quote_error{padding-left: 16px;}
 /**/
 .transaction_steps{padding:10px;}
 .step_doing{padding:25px;}
+
+.energized_bg h4{color:#fff!important;}

@@ -8,8 +8,6 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
         amount_usd:         undefined,
         amount_btc:         undefined,
         quoting_usd:        false,
-        quoting_btc:        false,
-        quoting_btc_error:  undefined,
         quoting_usd_error:  undefined,
         
         timer:              {options:{}, remaining:undefined, percent:undefined, start:0, stop:0, expired:0},
@@ -19,9 +17,14 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
         signature:          undefined,
         tx:                 undefined,
         
-        quote_ttl:          60
+        quote_ttl:          60,
+        
+        quote_btc:          'BTC_'+$scope.wallet.asset.symbol,
+        curr_replace:       ' '+$scope.wallet.asset.symbol 
   };
   
+                       
+
   $scope.default_data_btc = {};
   angular.copy($scope.data_btc, $scope.default_data_btc);
   
@@ -41,15 +44,19 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
     is_btc = $stateParams.is_btc;
 
   // Hack! Let's think a better way to initialize controller!!
-  if(is_btc){
-    $scope.data.is_btc              = is_btc;
+  if(is_btc==='true'){
+    $scope.data.is_btc              = true;
     $scope.data_btc.bitcoin_address = address;
     $scope.data_btc.amount_btc      = amount;
-    $scope.isBTC();
+    $timeout(function () {
+      $scope.isBTC();
+    }, 250);
+    $scope.transaction                = {message:'send.generating_transaction'};
   }
   else{
-    $scope.transaction = {message:'send.generating_transaction', amount:amount, address:address};
-    sendForm.transactionAmount.value = $scope.transaction.amount;
+    $scope.data.is_btc                = false;
+    $scope.transaction                = {message:'send.generating_transaction', amount:amount, address:address};
+    sendForm.transactionAmount.value  = $scope.transaction.amount;
     sendForm.transactionAddress.value = $scope.transaction.address;
   }
 
@@ -112,10 +119,14 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
   
   $scope.doSend = function(transaction) {
     if($scope.data.is_btc==true)
-      //$scope.doSendBTC();
+    {  
+      $scope.doSendBTC();
       console.log('doSendBTC()??');
+    }
     else
+    {  
       $scope.validateSend();
+    }
   }
   
   $scope.validateSend = function(transaction) {
@@ -306,17 +317,23 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
     
   };
   
-   /*********************************************************/
+  $scope.$on( '$ionicView.beforeLeave', function(){
+    // Destroy timers
+    console.log('SendCtrl.ionicView.beforeLeave killing timers.');
+    $scope.stopTimer(false);
+  });
+
+  /*********************************************************/
   /* BITCOINS payment handlers *****************************/
-  var btc_timeout = undefined;
+  var quote_timeout = undefined;
   $scope.doQuoteAndStartTimer = function(){
     
-    btc_timeout = $timeout(function () {
+    quote_timeout = $timeout(function () {
       $scope.data_btc.quoting_usd = true;
       $scope.data_btc.amount_usd = undefined;
       // llamo a quotear
-      BitShares.getBuyQuote('BTC_USD', $scope.data_btc.amount_btc).then(function(res){
-        $scope.data_btc.amount_usd  = Number(res.quote.client_pay.replace(' USD', ''));
+      BitShares.getBuyQuote($scope.data_btc.quote_btc, $scope.data_btc.amount_btc).then(function(res){
+        $scope.data_btc.amount_usd  = Number(res.quote.client_pay.replace($scope.data_btc.curr_replace, ''));
         $scope.data_btc.quote       = res.quote;
         $scope.data_btc.signature   = res.signature;
         $timeout(function () {
@@ -325,7 +342,7 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
         } , 200);
         //console.log(res);
       }, function(error){
-        $scope.stopTimer();
+        $scope.stopTimer(false);
         $scope.data_btc.quoting_usd       = false;
         $scope.setMessageErr(error);
         $scope.data_btc.quote             = undefined;
@@ -352,7 +369,7 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
     counter_timeout = counter_timeout - 1;
     if(counter_timeout==0)
     {
-      $scope.stopTimer();
+      $scope.stopTimer(true);
       return;
     }
     $scope.nanobar.go((ttl-counter_timeout)*100/ttl);
@@ -364,10 +381,12 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
     quote_timeout = $timeout($scope.onTimeout, 1000);
   };
   
-  $scope.stopTimer = function() {
-    $timeout.cancel(counter_timeout);
+  $scope.stopTimer = function(requote) {
+    if(quote_timeout!==undefined)
+      $timeout.cancel(quote_timeout);
     counter_timeout = ttl;
-    $scope.doQuoteAndStartTimer();
+    if(requote!==undefined && requote==true)
+      $scope.doQuoteAndStartTimer();
   }
   
   $scope.$on( '$ionicView.enter', function(){
@@ -386,7 +405,7 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
     if($scope.nanobar===undefined)
     {
       var options = {
-        bg: '#acf',
+        //bg: '#acf',
         target: document.getElementById('quote_ttl'), //bitcoin_payment_info
         id: 'mynano'
       };

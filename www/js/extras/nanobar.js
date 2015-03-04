@@ -65,7 +65,7 @@ var Nanobar = (function () {
 	Bar = function ( cont ) {
 		// create progress element
 		this.el = document.createElement( 'div' );
-		this.el.style.backgroundColor = cont.opts.bg;
+		//this.el.style.backgroundColor = cont.opts.bg;
 		this.width = 0;
 		this.here = 0;
 		this.moving = false;
@@ -93,7 +93,7 @@ var Nanobar = (function () {
 			el;
 
 		// set options
-		opts.bg = opts.bg || '#01bbf4';
+		//opts.bg = opts.bg || '#01bbf4';
 		this.bars = [];
 
 

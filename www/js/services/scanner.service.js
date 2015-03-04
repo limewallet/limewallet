@@ -52,29 +52,29 @@ bitwallet_services
         BitShares.btcIsValidAddress(parts[0]).then(
           function(is_valid){
             if( parts.length >= 2) {
-              var query_string = parts[1].split('&');
+              var query_string_parts = parts[1].split('&');
               var data    = {'amount':undefined, 'label':'', 'message':''};
               var items   = ['amount','label','message'];
               for (var i = 0; i < query_string_parts.length; i++) {
-                if(query_string[i].indexOf('=')==-1)
+                if(query_string_parts[i].indexOf('=')==-1)
                   continue;
                 var item = undefined;
                 for (var j = 0; j < items.length; j++) {
-                  if(query_string[i].indexOf(items[j])==-1)
+                  if(query_string_parts[i].indexOf(items[j])==-1)
                     continue;
                   item = items[j];
                   break;
                 };
                 if(item===undefined)
                   continue;
-                data[item] = query_string[i].split('=')[1]; 
+                data[item] = query_string_parts[i].split('=')[1]; 
               };
               
               if(data['amount']!=undefined && isNaN(parseFloat(data['amount'])))
                 data['amount'] = undefined;
               
               console.log('Metiste bitcoin: => ' + parts[0] + '=>' + data['amount'] );
-              deferred.resolve({cancelled:false, address:parts[0], amount:data['amount'], asset_id:undefined, is_bitcoin:true, label:data['label'], message:data['message']}); 
+              deferred.resolve({cancelled:false, address:parts[0], amount:data['amount'], asset_id:undefined, is_btc:true, label:data['label'], message:data['message']}); 
               return;
             }
             //window.plugins.toast.show( 'Invalid url', 'long', 'bottom');

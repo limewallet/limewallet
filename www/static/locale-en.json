@@ -192,7 +192,12 @@
     "sending_transaction"    : "Sending Transaction",
     "transaction_sent"       : "Transaction Sent",
     "address_book"           : "Address Book",
-    "searching_account"      : "Searching account..."
+    "searching_account"      : "Searching account...",
+    "pay_in_bitcoins"        : "Pay in bitcoins",
+    "dest_address"           : "Destination address",
+    "instant_quote"          : "Instant quote",
+    "btc_amount"             : "BTC amount"
+
   },
 
   "backup" : {

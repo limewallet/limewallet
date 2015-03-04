@@ -252,6 +252,23 @@ bitwallet_services
       return deferred.promise;
     };
     
+    self.btcIsValidAddress = function(addy) {
+      var deferred = $q.defer();
+
+      deferred.resolve(true);
+      // window.plugins.BitsharesPlugin.btcIsValidAddress(
+      //   function(data){
+      //     deferred.resolve(true);
+      //   },
+      //   function(error){
+      //     deferred.reject(error);
+      //   },
+      //   addy
+      // );
+
+      return deferred.promise;
+    };
+
     self.setTest = function(value) {
       
       if (typeof window.plugins.BitsharesPlugin.setTest === "function") { 

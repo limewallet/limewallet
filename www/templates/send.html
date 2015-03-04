@@ -8,16 +8,26 @@
     </ion-nav-buttons>
   
     <ion-content class="has-header">
-      <div id="bitcoin_payment_info" class="register_container energized_bg register_color padding" ng-show="data.is_btc">
-        <div style="display:block;position:relative;" id="quote_ttl">
-          <p style="padding-top:25px;">
-            PAY IN BITCOINS
-          </p>
-          <div>TO:&nbsp;<span style="font-size:16px;font-weight:bold;" class="wrap_text">BweMQsJqRdmncwagPiYtANrNbApcRvEV77</span>
+      
+      <div id="bitcoin_payment_info" ng-show="data.is_btc">
+        <div class="register_container energized_bg register_color">
+          <h4 style="padding-top:0px;">{{ 'send.pay_in_bitcoins'|translate|uppercase}}</h4>
+          <div style="display:block;position:relative;" class="padding">
+            <div style="font-size:12px;">{{ 'send.btc_amount'|translate}}</div>
+            <div style="font-size:16px;font-weight:bold;" class="wrap_text">{{data_btc.amount_btc|number:8}}</div>
+            <div style="font-size:12px;">{{ 'send.dest_address'|translate}}</div>
+            <div style="font-size:16px;font-weight:bold;" class="wrap_text">{{data_btc.bitcoin_address}}</div>
+            <div style="font-size:12px;">{{ 'send.instant_quote'|translate}}
+            </div>
+            <div style="font-size:12px;">
+                <span style="font-size:16px;font-weight:bold;" >{{data_btc.amount_btc|number:4}}</span>&nbsp;BTC&nbsp;=&nbsp;<span style="font-size:16px;font-weight:bold;">{{data_btc.amount_usd|number:4}}</span>&nbsp;{{wallet.asset.symbol}}
+            </div>
           </div>
-          <div>INSTANT QUOTE: 
-            <span style="font-size:15px;font-weight:bold;" >0.2</span>&nbsp;BTC&nbsp;=&nbsp;<span style="font-size:16px;font-weight:bold;">45.3</span>&nbsp;USD
-          </div>
+          <div class="row" id="quote_ttl">
+          </div>  
+        </div>
+        <div class="row" ng-cloak>
+          <span class="quote_error assertive" ng-show="data.quoting_usd_error!==undefined">{{data.quoting_usd_error}}</span>
         </div>
       </div>
       <form novalidate name="sendForm" class="send_form" ng-show="!data.is_btc">
