@@ -57,11 +57,11 @@
         on-refresh="doRefresh()">
       </ion-refresher>
       <ion-list style="height: 100%;" class="main_transactions">
-        <div class="item item-divider {{box}}"
-          ng-repeat-start="(box, transactions) in wallet.ord_transactions">
-                {{('home.'+box)|translate}}
+        <div class="item item-divider _{{box}}"
+          ng-repeat-start="box in wallet.ord_transactions.orderedKeys "> <!-- ng-repeat-start="(box, transactions) in wallet.ord_transactions " -->
+                {{box|moment_separator}}
         </div>
-        <div ng-repeat="tx in transactions" class="item item-icon-left"> <!-- item-thumbnail-left -->
+        <div ng-repeat="tx in wallet.ord_transactions[box]" class="item item-icon-left"> <!-- item-thumbnail-left -->
           <a ng-click="showActionSheet(tx)">
             <div class="{{tx.ui_type}}">
               <div ng-class="{true:'pending', false:''}[tx.state=='P' || tx.status=='WP']">
@@ -81,7 +81,7 @@
                 <span class="withdraw_ex wrap_text">{{tx.cl_recv|number:4}}&nbsp;{{tx.cl_recv_curr}}</span> <!-- &nbsp;{{'g.to'|translate}}&nbsp;{{tx.cl_recv_addr}} -->
                 <span class="sent_ex">{{'g.to'|translate}}</span> <span class="received_ex">{{'g.from'|translate}}</span>
                 <span class="self_ex">{{'g.from'|translate}}</span><span class="tx_address">:&nbsp;{{tx.addr_name | translate}}</span>
-                <!-- br/>{{'home.on'|translate}} {{ tx.TS|date:'medium'}} --></p>
+                <br/><!-- {{'home.on'|translate}} {{ tx.TS|date:'medium'}} -->
               </div>
             </div>
           </a>

@@ -1,9 +1,19 @@
 var bitwallet_filters = angular.module('bit_wallet.filters', ['bit_wallet.config']);
 
+var moments       = ['0_today', '1_this_week', '2_this_month'];
+var current_year  = moment().year().toString();
+bitwallet_filters.filter('moment_separator', function(T) {
+  return function(box_label) {
+  //console.log(box_label);
+    var m_box_label = box_label.toString();
+    if(moments.indexOf(m_box_label)>-1)
+      return T.i('home.'+m_box_label);
+    var my_moment = moment(m_box_label, 'YYYY-MM');
+    return ((m_box_label.indexOf(current_year)>-1)?my_moment.format('MMMM'):my_moment.format('MMMM YYYY'));
+  }
+});
+
 bitwallet_filters.filter('capitalize', function() {
-  // return function(input, all) {
-    // return (!!input) ? input.replace(/([^\W_]+[^\s-]*) */g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();}) : '';
-  // }
   return function (input, format) {
       if (!input) {
         return input;
@@ -26,7 +36,7 @@ bitwallet_filters.filter('capitalize', function() {
         return result.join(' ');
       }
     };
-})
+});
   
 bitwallet_filters.filter('xtx_action', function(BitShares, $filter, T) {
   return function(xtx) {

@@ -333,6 +333,7 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
       $scope.data_btc.amount_usd = undefined;
       // llamo a quotear
       BitShares.getBuyQuote($scope.data_btc.quote_btc, $scope.data_btc.amount_btc).then(function(res){
+        $scope.clearQuoteError();
         $scope.data_btc.amount_usd  = Number(res.quote.client_pay.replace($scope.data_btc.curr_replace, ''));
         $scope.data_btc.quote       = res.quote;
         $scope.data_btc.signature   = res.signature;
@@ -361,6 +362,10 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
     $scope.data_btc.quoting_usd_error = message;
   };
   
+  $scope.clearQuoteError = function(){
+    $scope.data_btc.quoting_usd_error = undefined;
+  };
+
   $scope.nanobar = undefined;
   var ttl = 60;
   var counter_timeout = ttl;

@@ -398,61 +398,35 @@ bitwallet_services
       return deferred.promise;
     } 
     
-    self.configMoment = function(){
-      moment.locale('en', {
-      calendar : {
-          sameDay : '[Today]',
-          lastDay : '[Yesterday]',
-          lastWeek : '[last week]',
-          nextWeek : 'dddd [at] LT',
-          sameElse : 'L'
-          }
-      });
-      var moment = require('moment');
-      moment.locale('en', {
-        relativeTime : {
-            future: "in %s",
-            past:   "%s",
-            s:  "seconds",
-            m:  "a minute",
-            mm: "%d minutes",
-            h:  "an hour",
-            hh: "%d hours",
-            d:  "a day",
-            dd: "%d days",
-            M:  "a month",
-            MM: "%d months",
-            y:  "a year",
-            yy: "%d years"
-        }
-      });
-    }
-    self.truncateDate = function(timestamp, now, now_m_y, now_week, now_year){
+    self.truncateDate = function(timestamp, now, now_y_m_d, now_y_m, now_week, now_year){
       var my_moment = moment(timestamp);
-      if(my_moment.fromNow()=='today')
+      if(my_moment.format('YYYY-MM-DD')==now_y_m_d)
         return '0_today';
       if(my_moment.week()==now_week && my_moment.year()==now_year)
         return '1_this_week';
-      if(my_moment.format('YYYY-MM')==now_m_y)
+      if(my_moment.format('YYYY-MM')==now_y_m)
         return '2_this_month';
-      return my_moment.year()==now_year ? my_moment.format('MMMM') : my_moment.format('MMMM YYYY');
+      return my_moment.format('YYYY-MM');
+      //return my_moment.year()==now_year ? my_moment.format('MMMM') : my_moment.format('MMMM YYYY');
     }
     self.orderTransactions = function(data){
-      //self.configMoment();
-      // Boxes: TODAY, (yesterday?), THIS WEEK, LAST WEEK, THIS MONTH, LAST MONTH, MONTH
-      var now       = moment();
-      var now_m_y   = now.format('YYYY-MM');
-      var now_week  = now.week();
-      var now_year  = now.year();
-      var orderedTxs = {};
+      var now             = moment();
+      var now_y_m_d       = now.format('YYYY-MM-DD');
+      var now_y_m         = now.format('YYYY-MM');
+      var now_week        = now.week();
+      var now_year        = now.year();
+      var orderedTxs      = {};
+      var orderedKeys     = [];
       angular.forEach(data, function(tx) {
-        var box = self.truncateDate(tx.TS, now, now_m_y, now_week, now_year);
+        var box = self.truncateDate(tx.TS, now, now_y_m_d, now_y_m, now_week, now_year);
         if(!orderedTxs[box]) 
         {
           orderedTxs[box] = [];
+          orderedKeys.push(box);
         }
         orderedTxs[box].push(tx);
       });
+      orderedTxs['orderedKeys'] = orderedKeys;
       return orderedTxs;
     }
     
@@ -486,7 +460,7 @@ bitwallet_services
       self.emit(self.REFRESH_START);
       self.getMasterPubkey().then(function(res) {
         console.log('Wallet : self.refreshBalance 1');
-        // Load last BTS Transaction BlockHash, and last Exchamge Operation updated_at;
+        // Load last BTS Transaction BlockHash, and last Exchange Operation updated_at;
         var last_block_id = undefined;
         var last_updated_at = undefined;
         var prom1 = Operation.lastUpdate().then(function(res){

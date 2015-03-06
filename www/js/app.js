@@ -141,11 +141,15 @@ bitwallet_module
             $cordovaGlobalization.getPreferredLanguage()
             .then(function(lang) {
                 console.log('Preferred language => ' + lang.value);
+                // $translate.use('es');
+                // moment.lang('es');
                 $translate.use(lang.value.slice(0,2));
+                moment.lang(lang.value.slice(0,2));
               },
               function(error) {
                 console.log('Unable to get preferred language');
                 $translate.use('en');
+                moment.lang('en');
             })
             
             //*****************

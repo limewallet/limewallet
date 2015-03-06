@@ -40,16 +40,16 @@ bitwallet_controllers
   
   $scope.scanQR = function() {
     
-    // //var uri = 'bts:DVSNKLe7F5E7msNG5RnbdWZ7HDeHoxVrUMZo/transfer/amount/1.1/asset/USD';
-    // var uri = 'bitcoin://BweMQsJqRdmncwagPiYtANrNbApcRvEV77?amount=0.1';
-    // Scanner.parseUrl(uri).then(function(data){
-    //   console.log(JSON.stringify(data));
-    //   $scope.resolveURI(data);
-    // }, function(error){
-    //     console.log(error);
-    // });
+    //var uri = 'bts:DVSNKLe7F5E7msNG5RnbdWZ7HDeHoxVrUMZo/transfer/amount/1.1/asset/USD';
+    var uri = 'bitcoin://BweMQsJqRdmncwagPiYtANrNbApcRvEV77?amount=0.11';
+    Scanner.parseUrl(uri).then(function(data){
+      console.log(JSON.stringify(data));
+      $scope.resolveURI(data);
+    }, function(error){
+        console.log(error);
+    });
     
-    // return;           
+    return;           
     
     Scanner.scan().then(function(result) {
       $scope.resolveURI(result);

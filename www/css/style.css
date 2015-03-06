@@ -508,7 +508,8 @@ img.i_centered {margin-left: auto;
   height: 28px!important;
   min-height: 28px!important;
 }
-.index_transactions .item-divider.0_today {display:none;}
+
+.index_transactions ._0_today {display:none!important;}
 
 .list.settings .input-label, .input-label, .list.settings .item.item-toggle{
   /*color: #999!important;*/
