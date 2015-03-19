@@ -17,10 +17,9 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
         signature:          undefined,
         tx:                 undefined,
         
-        quote_ttl:          60,
+        quote_ttl:          30,
         
-        quote_btc:          'BTC_'+$scope.wallet.asset.symbol,
-        curr_replace:       ' '+$scope.wallet.asset.symbol 
+        quote_btc:          'BTC_'+$scope.wallet.asset.x_symbol
   };
   
                        
@@ -334,7 +333,7 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
       // llamo a quotear
       BitShares.getBuyQuote($scope.data_btc.quote_btc, $scope.data_btc.amount_btc).then(function(res){
         $scope.clearQuoteError();
-        $scope.data_btc.amount_usd  = Number(res.quote.client_pay.replace($scope.data_btc.curr_replace, ''));
+        $scope.data_btc.amount_usd  = Number(res.quote.cl_pay);
         $scope.data_btc.quote       = res.quote;
         $scope.data_btc.signature   = res.signature;
         $timeout(function () {
@@ -443,12 +442,13 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
     var addy = Wallet.getMainAddress();
     BitShares.getBackendToken(addy).then(function(token) {
       BitShares.acceptQuote($scope.data_btc.quote, $scope.data_btc.signature, token, $scope.data_btc.bitcoin_address, BitShares.X_BTC_PAY).then(function(result){
-        
+        var xtx = result.tx;
         if(!result.tx || !result.tx.cl_pay_addr)
         {
           $scope.showAlert('err.occurred', 'err.please_retry');
           return;
         }
+        
         $scope.sending_modal.show();
         var from  = [];
         var addys = Object.keys($scope.wallet.addresses);
@@ -496,12 +496,22 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
           $q.all(prom).then(function() {
             $scope.transaction.message = 'send.sending_transaction';
 
-            BitShares.sendAsset(r.tx, r.secret).then(function(r) {
+            BitShares.sendAsset(r.tx, r.secret).then(function(res) {
               $scope.sending_modal.hide();
+              
+              // Wallet.buildTxList(r, $scope.wallet.data.asset.id).then(function(res){
+                // console.log('Insertando xtx con oper_id = ' + res.insertId.toString());
+                // xtx['operation_id'] = res.insertId;
+                // Wallet.onNewXTx(xtx);
+              // });
+              xtx['operation_tx_id'] = res.tx_id;
+              Wallet.onNewXTx(xtx);
               $scope.goHome();
               //window.plugins.toast.show( T.i('withdraw.succesful'), 'short', 'bottom');
-              window.plugins.toast.show( T.i('send.transaction_sent'), 'long', 'bottom')
-              //$scope.wallet.transactions.unshift({sign:-1, address:sendForm.transactionAddress.value, addr_name:sendForm.transactionAddress.value, amount:amount/$scope.wallet.assets[$scope.wallet.asset.id].precision, state:'P', date: new Date().getTime()});
+              window.plugins.toast.show( T.i('send.transaction_sent'), 'long', 'bottom');
+              
+              
+              
               
             }, function(){
                 var alertPopup = $ionicPopup.alert({

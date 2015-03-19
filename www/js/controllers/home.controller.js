@@ -79,15 +79,22 @@ bitwallet_controllers
       ];
     var is_xtx = BitShares.isXtx(tx);
     if(is_xtx){
-      if(BitShares.isXtxCompleted(tx))
-        opt_buttons = [
-          { text: T.i('home.view_details') }];
-      else {
-        opt_buttons = [
+      
+      opt_buttons = [
           { text: T.i('home.view_details') },
-          { text: T.i('home.requote') },
-          { text: T.i('home.refund') },
-          { text: '<span class="assertive">'+T.i('home.cancel_operation')+'</span>' },
+          { text: T.i('home.refresh') }];
+      // if(BitShares.isXtxCompleted(tx))
+      //   opt_buttons = [
+      //     { text: T.i('home.view_details') },
+      //     { text: T.i('home.refresh') }];
+      // else 
+      if(BitShares.hasXtxRateChanged(tx)){
+        opt_buttons = [
+          { text: T.i('home.view_details') }
+          , { text: T.i('home.refresh') }
+          , { text: T.i('home.requote') }
+          , { text: T.i('home.refund') }
+          /*, { text: '<span class="assertive">'+T.i('home.cancel_operation')+'</span>' }*/
         ];
       }
     }
@@ -127,6 +134,34 @@ bitwallet_controllers
       
       else if(index==1) {
         if(is_xtx){
+          // WAKEUP XTx
+          $scope.showLoading(T.i('home.refresh_in_progress'));
+          var addy = Wallet.getMainAddress();
+          BitShares.getBackendToken(addy).then(function(token) {
+            BitShares.wakeupXTx(token, tx.x_id).then(function(res){
+              $ionicLoading.hide();
+              window.plugins.toast.show( T.i('home.refresh_ok_wait'), 'long', 'bottom');
+              Wallet.onNewXTx(res);
+              Wallet.loadBalance();
+            }, function(error){
+              $ionicLoading.hide();
+              console.log('wakeup xtx error 1'); console.log(error);
+              //window.plugins.toast.show( T.i('err.cancel_failed'), 'long', 'bottom');
+            })
+          }, function(error){
+            $ionicLoading.hide();
+            console.log('wakeup xtx error 2'); console.log(error);
+            //window.plugins.toast.show( T.i('err.cancel_failed'), 'long', 'bottom');
+          });
+        }
+        else{
+          // View transaction details
+          $state.go('app.transaction_details', {tx_id:tx['tx_id']});
+        } 
+      }
+      
+      else if(index==2) {
+        if(is_xtx){
           if(BitShares.isBtcPay(tx.tx_type))
           {
             $ionicPopup.alert({
@@ -156,7 +191,7 @@ bitwallet_controllers
               
             }, function(error){
               $ionicLoading.hide();
-              console.log('cancel xtx error 1'); console.log(error);
+              console.log('cancel xtx error 1'); console.log(JSON.stringify(error)); //console.log(error);
               window.plugins.toast.show( T.i('err.requote_failed'), 'long', 'bottom');
             })
           }, function(error){
@@ -166,12 +201,11 @@ bitwallet_controllers
           });
         }
         else{
-          // View transaction details
-          $state.go('app.transaction_details', {tx_id:tx['tx_id']});
+          // NONE
         } 
       }
       
-      else if(index==2) {
+      else if(index==3) {
         if(is_xtx){
           // REFUND XTx
           $scope.showLoading(T.i('g.refund_progress'));
@@ -179,7 +213,7 @@ bitwallet_controllers
           BitShares.getBackendToken(addy).then(function(token) {
             BitShares.refundXTx(token, tx.x_id).then(function(res){
               $ionicLoading.hide();
-              console.log('refund ret 1'); console.log(res);
+              console.log('refund ret 1'); console.log(JSON.stringify(res)); //console.log(res);
               window.plugins.toast.show( T.i('g.refund_ok'), 'long', 'bottom');
               Wallet.refreshBalance();
             }, function(error){
@@ -193,33 +227,25 @@ bitwallet_controllers
             window.plugins.toast.show( T.i('err.refund_failed'), 'long', 'bottom');
           });
           
-        }
-        else{
-          // NONE
-        } 
-      }
-      
-      else if(index==3) {
-        if(is_xtx){
-          // CANCEL XTx
-          $scope.showLoading(T.i('g.cancel_progress'));
-          var addy = Wallet.getMainAddress();
-          BitShares.getBackendToken(addy).then(function(token) {
-            BitShares.cancelXTx(token, tx.x_id).then(function(res){
-              $ionicLoading.hide();
-              console.log('cancel xtx ret 1'); console.log(res);
-              window.plugins.toast.show( T.i('g.cancel_ok'), 'long', 'bottom');
-              Wallet.refreshBalance();
-            }, function(error){
-              $ionicLoading.hide();
-              console.log('cancel xtx error 1'); console.log(error);
-              window.plugins.toast.show( T.i('err.cancel_failed'), 'long', 'bottom');
-            })
-          }, function(error){
-            $ionicLoading.hide();
-            console.log('cancel xtx error 2'); console.log(error);
-            window.plugins.toast.show( T.i('err.cancel_failed'), 'long', 'bottom');
-          });
+          // // CANCEL XTx
+          // $scope.showLoading(T.i('g.cancel_progress'));
+          // var addy = Wallet.getMainAddress();
+          // BitShares.getBackendToken(addy).then(function(token) {
+          //   BitShares.cancelXTx(token, tx.x_id).then(function(res){
+          //     $ionicLoading.hide();
+          //     console.log('cancel xtx ret 1'); console.log(JSON.stringify(res)); //consoleconsole.log(res);
+          //     window.plugins.toast.show( T.i('g.cancel_ok'), 'long', 'bottom');
+          //     Wallet.refreshBalance();
+          //   }, function(error){
+          //     $ionicLoading.hide();
+          //     console.log('cancel xtx error 1'); console.log(error);
+          //     window.plugins.toast.show( T.i('err.cancel_failed'), 'long', 'bottom');
+          //   })
+          // }, function(error){
+          //   $ionicLoading.hide();
+          //   console.log('cancel xtx error 2'); console.log(error);
+          //   window.plugins.toast.show( T.i('err.cancel_failed'), 'long', 'bottom');
+          // });
         }
         else{
           // NONE

@@ -139,10 +139,13 @@
   },
 
   "home" : {
-    "0_today"            : "Today",
-    "1_this_week"        : "This week",
-    "2_this_month"       : "This month",
+    "0_today"             : "Today",
+    "1_this_week"         : "This week",
+    "2_this_month"        : "This month",
     "cancel_operation"    : "Cancel operation",
+    "refresh"             : "Refresh",
+    "refresh_in_progress" : "Refresh in progress",
+    "refresh_ok_wait"     : "Transaction refreshed. Wait for updates.",
     "refund"              : "Refund",
     "requote"             : "Requote",
     "transaction_options" : "Transaction options",
@@ -290,15 +293,18 @@
   
   "xchg":{
     "WP"    : "WAITING PAYMENT",
-    "PP"    : "PARTIALLY PAID",
-    "XC"    : "WAITING CONFIRMATION",
+    "PP"    : "PROCESSING", /*PARTIALLY PAID",*/
+    "FP"    : "PROCESSING", /*"FULLY PAID",*/
+    "WT"    : "PROCESSING", /*"WAITING TRADES",*/
+    "RC"    : "RATE CHANGED",
+    "WC"    : "WAITING CONFIRMATION",
     "PC"    : "PAYMENT CONFIRMED",
     "TG"    : "TRANSACTION GENERATED",
     "SC"    : "SENT TO CLIENT",
     "OK"    : "COMPLETED",
     "EX"    : "EXPIRED",
     "XX"    : "CANCELED",
-    "RI"    : "REFUNDING",
+    "RR"    : "REFUNDING",
     "RF"    : "REFUNDED"
   },
   "account":{

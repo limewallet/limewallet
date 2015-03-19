@@ -21,7 +21,8 @@ bitwallet_config
                 {name : 'pubkey',     type   : 'text'},
                 {name : 'privkey',    type   : 'text'},
                 {name : 'created_at', type   : 'integer'},
-                {name : 'is_default', type   : 'integer'}
+                {name : 'is_default', type   : 'integer'},
+                {name: 'UNIQUE (deriv, label) ', type   : 'ON CONFLICT ABORT'}
             ]
         },
         {
@@ -30,7 +31,7 @@ bitwallet_config
                 {name : 'id',          type   : 'integer primary key'},
                 {name : 'address',     type   : 'text unique'},
                 {name : 'name',        type   : 'text'},
-                {name : 'is_favorite', type   : 'integer'},
+                {name : 'is_favorite', type   : 'integer'}
             ]
         },
         {
@@ -102,7 +103,8 @@ bitwallet_config
                 {name : 'cl_recv_addr',           type   : 'text'},             // 'DVS6KBKUMcWXvgY7c9sYqHv4p47baAn6NBPR',
                 {name : 'cl_recv_curr',           type   : 'text'},              // 'USD'
                 {name : 'tx_type',                type   : 'text'},
-                {name : 'updated_at',             type   : 'integer'}
+                {name : 'updated_at',             type   : 'integer'},
+                {name : 'operation_tx_id',        type   : 'text'}
           ]
         },
         {

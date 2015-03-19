@@ -79,9 +79,10 @@
                 <span class="wrap_text" ng-if="tx.state=='P'|| tx.status=='WP'" ng-bind-html="tx|draw_pending_tx"></span> <!-- &nbsp;{{'g.from'|translate}}&nbsp;{{tx.cl_pay_addr}} -->
                 <span class="deposit_ex wrap_text">{{tx.cl_pay|number:4}}&nbsp;{{tx.cl_pay_curr}}</span> <!-- &nbsp;{{'g.from'|translate}}&nbsp;{{tx.cl_pay_addr}} -->
                 <span class="withdraw_ex wrap_text">{{tx.cl_recv|number:4}}&nbsp;{{tx.cl_recv_curr}}</span> <!-- &nbsp;{{'g.to'|translate}}&nbsp;{{tx.cl_recv_addr}} -->
+                <span class="btc_pay_ex wrap_text">{{tx.cl_recv|number:4}}&nbsp;{{tx.cl_recv_curr}}</span> <!-- &nbsp;{{'g.to'|translate}}&nbsp;{{tx.cl_recv_addr}} -->
                 <span class="sent_ex">{{'g.to'|translate}}</span> <span class="received_ex">{{'g.from'|translate}}</span>
-                <span class="self_ex">{{'g.from'|translate}}</span><span class="tx_address">:&nbsp;{{tx.addr_name | translate}}</span>
-                <br/><!-- {{'home.on'|translate}} {{ tx.TS|date:'medium'}} -->
+                <span class="self_ex">{{'g.from'|translate}}</span><span class="tx_address">:&nbsp;{{tx.other | translate}}</span>
+                <br/><!--{{'home.on'|translate}}--> {{ tx.TS|date:'medium'}}
               </div>
             </div>
           </a>

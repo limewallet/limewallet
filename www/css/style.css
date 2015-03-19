@@ -186,18 +186,36 @@ line-height: 38px;}
 
 /* semaforo verde amarillo rojo(gris) */
 .pending_text.WP_NOT_USED{background-color: #d23f31;}/*WAITING PAYMENT celeste*/
-.pending_text.PP{background-color: #F1C40F!important;}/*PARTIALY PAID*/ /* amarillo */
-.pending_text.WC{background-color: #F1C40F!important;}/*WAITING CONFIRMATION*/ /* amarillo */
-.pending_text.PC{background-color: #2ECC71;}/*PAYMENT CONFIRMED*/ /* verde */
-.pending_text.TG{background-color: #2ECC71;}/*TRANSACTION GENERATED*/ /* verde */
-.pending_text.SC{background-color: #2ECC71;}/*SENT TO CLIENT*/ /* verde */
-.pending_text.OK{background-color: #66cc33!important;}/*COMPLETED*/ /* verde */
-.pending_text.EX{background-color: #ECF0F1!important;color:#666666!important;}/*EXPIRED*/ /* rojo (gris) */
+.pending_text.PP{background-color: #F1C40F!important;}/*PARTIALY PAID*/         /* amarillo */
+.pending_text.FP{background-color: #F1C40F!important;}/*FULLY PAID*/            /* amarillo */
+.pending_text.WT{background-color: #F1C40F!important;}/*WAITING TRADES*/        /* amarillo */
+.pending_text.RC{background-color: #E67E22!important;}/*RATE CHANGED*/          /* rojo */
+.pending_text.WC{background-color: #F1C40F!important;}/*WAITING CONFIRMATION*/  /* amarillo */
+.pending_text.PC{background-color: #2ECC71;}/*PAYMENT CONFIRMED*/               /* verde */
+.pending_text.TG{background-color: #2ECC71;}/*TRANSACTION GENERATED*/           /* verde */
+.pending_text.SC{background-color: #2ECC71;}/*SENT TO CLIENT*/                  /* verde */
+.pending_text.OK{background-color: #66cc33!important;}/*COMPLETED*/             /* verde */
 .pending_text.XX{background-color: #ECF0F1!important;color:#666666!important;}/*CANCELED*/ /* rojo (gris) */
-.pending_text.RI{background-color: #ECF0F1!important;color:#666666!important;}/*REFUNDING*/ /* rojo (gris) */
+.pending_text.RR{background-color: #ECF0F1!important;color:#666666!important;}/*REFUNDING*/ /* rojo (gris) */
 .pending_text.RF{background-color: #ECF0F1!important;color:#666666!important;}/*REFUNDED*/ /* rojo (gris) */
 
+.pending_text.EX{background-color: #ECF0F1!important;color:#666666!important;}/*EXPIRED*/ /* rojo (gris) */
+/*WAITING_PAYMENT         = 'WP'
+PARTIALY PAID           = 'PP'
+FULLY PAID              = 'FP'
+WAITING_TRADES          = 'WT'
+RATE_CHANGED            = 'RC'
+WAITING_CONFIRMATION    = 'WC'
+PAYMENT_CONFIRMED       = 'PC'
+TRANSACTION_GENERATED   = 'TG'
+SENT_TO_CLIENT          = 'SC'
+COMPLETED               = 'OK'
+CANCELED                = 'XX'
+REFUND_REQUESTED        = 'RR'
+REFUNDED                = 'RF'
 
+EXPIRED                 = 'EX'
+*/
 .transactions .pending h2, .transactions .pending .icon , .transactions .pending span, .transactions .pending p
 {color:#4fbaed;} /*c1c1c1 4fbaed*/
 
@@ -763,7 +781,7 @@ span.quote_error{padding-left: 16px;}
   -webkit-box-shadow: 0px 1px 4px 0px rgba(0,0,0,0.50);
   -moz-box-shadow: 0px 1px 4px 0px rgba(0,0,0,0.50);
   box-shadow: 0px 1px 4px 0px rgba(0,0,0,0.50);
-  background-color:#fff; /*#2C3E50*/ /*#01bbf4*/ /* #acf */
+  background-color:#01bbf4; /*#2C3E50*/ /*#01bbf4*/ /* #acf */
 }
 
 .button-bar.tabbed {

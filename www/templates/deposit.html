@@ -42,7 +42,7 @@
           
           <div class="step2" ng-show="data.step==2">
             <div class="register_container energized_bg register_color">
-              <p ng-bind-html="'g.please_send_btc_to'|translate:{amount:(data.tx.cl_pay|number:2), addy:data.tx.cl_pay_addr}">
+              <p ng-bind-html="'g.please_send_btc_to'|translate:{amount:(data.tx.cl_pay|number:8), addy:data.tx.cl_pay_addr}">
               </p>
             </div>
             <div class="list settings" id="quote_ttl2">
@@ -67,7 +67,7 @@
             </button>
           </div>
           <div ng-show="data.timer.expired==false" style="display:block;">
-            <a class="button button-block button-energized no-margin button_taller" onclick="window.open('{{data.deposit_short_uri}}', '_system', 'location=yes');" hrefNOT="{{data.deposit_short_uri}}" target="_system">
+            <a class="button button-block button-energized no-margin button_taller" ng-click="window.open('{{data.deposit_short_uri}}', '_system', 'location=yes');" hrefNOT="{{data.deposit_short_uri}}" target="_system">
               {{'g.pay'|translate|uppercase}}
             </a>
           </div>

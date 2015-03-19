@@ -4,7 +4,7 @@ bitwallet_services
 
     self.data = {
       assets            : {},
-      assets_symbol     : {},
+      assets_x_symbol   : {},
       asset             : {},
       address_book      : {},
       addresses         : {},
@@ -99,7 +99,8 @@ bitwallet_services
     
     self.deriveNewAddress = function() {
       var deferred = $q.defer();
-      
+      deferred.reject('Sorry! Derive address is not available.');
+      return;
       Account.get().then(function(master_key) {
         master_key.deriv = parseInt(master_key.deriv)+1;
 
@@ -219,11 +220,20 @@ bitwallet_services
       clearTimeout(self.timeout.ping);
       self.timeout.ping = setTimeout( function() { self.ws.send('ping'); }, 10000);
       //console.log(JSON.stringify(event.data));
-      if(event.data.indexOf('bc') == 0 || event.data.indexOf('xu') == 0) {
+      //if(event.data.indexOf('bc') == 0){
+      if(event.data.event=='bc'){
         //Refresh balance in 100ms, if we get two notifications (Withdraw from two addresses) just refresh once.
         clearTimeout(self.timeout.refresh);
         self.timeout.refresh = setTimeout( function() { self.refreshBalance(); }, 100);
+        // self.buildTxList = function(event.data, self.data.asset.id) {
       } 
+      if( event.data.event=='xu')
+      {
+        //  agarro la xtx y update or insert, luego llamo a loadBalance
+        console.log('- wallet notification: new xtx?: '+JSON.stringify(event.data));
+        self.onNewXTx(event.data.data);
+        self.loadBalance();
+      }
     }
 
     self.subscribeToNotifications = function() {
@@ -253,8 +263,8 @@ bitwallet_services
       //Load Assets
       angular.forEach( ENVIRONMENT.assets , function(asset) {
         asset.amount = 0;
-        self.data.assets[asset.id]            = asset;
-        self.data.assets_symbol[asset.symbol] = asset;
+        self.data.assets[asset.id]                = asset;
+        self.data.assets_x_symbol[asset.x_symbol] = asset;
       });
 
       //Create master key
@@ -331,13 +341,13 @@ bitwallet_services
 
       Account.get().then(function(account) {
 
-        if(account !== undefined && account.key!== undefined && account.key) {
-          console.log('Wallet::getMasterPrivKey OK'); //+JSON.stringify(account));
+        if(account !== undefined && account.key !== undefined) {
           deferred.resolve(account);
           return;
         }
 
         BitShares.createMasterKey().then(function(masterPrivateKey){
+
           BitShares.extractDataFromKey(masterPrivateKey).then(function(keyData){
             Account.storeKey(masterPrivateKey, -1).then(function() {
               Address.create(
@@ -350,7 +360,7 @@ bitwallet_services
                   $rootScope.master_key_new = true;
                   deferred.resolve({key:masterPrivateKey, deriv:-1});  
                 },function(err) {
-                  console.log('getMasterPrivKey err #1: '+JSON.stringify(err));
+                  console.log('getMasterPrivKey address.create error #1: '+JSON.stringify(err));
                   deferred.reject(err);
                 });
             },
@@ -403,7 +413,12 @@ bitwallet_services
       if(my_moment.format('YYYY-MM-DD')==now_y_m_d)
         return '0_today';
       if(my_moment.week()==now_week && my_moment.year()==now_year)
+      { 
+        // console.log('1:-'+moment((new Date()).getTime()).format('YYYY-MM-DD'));
+        // console.log('2:-'+(new Date(timestamp)));
+        // console.log(my_moment.format('YYYY-MM-DD') + ' -> ' + now_y_m_d);
         return '1_this_week';
+      }
       if(my_moment.format('YYYY-MM')==now_y_m)
         return '2_this_month';
       return my_moment.format('YYYY-MM');
@@ -554,6 +569,26 @@ bitwallet_services
       return deferred.promise;
     };
     
+    self.processXTx = function(xtx){
+      xtx['tx_type']      = xtx.extra_data=='marty'?'deposit':xtx.extra_data;
+      xtx['x_id']         = xtx.id;
+      xtx.quoted_at       = xtx.quoted_at*1000;
+      xtx.updated_at      = xtx.updated_at*1000;
+      if(BitShares.isDeposit(xtx.tx_type))
+      {
+        xtx['x_asset_id']   = parseInt(self.data.assets_x_symbol[xtx.cl_recv_curr].id);
+      }
+      else if(BitShares.isWithdraw(xtx.tx_type) || BitShares.isBtcPay(xtx.tx_type)){
+        xtx['x_asset_id']   = parseInt(self.data.assets_x_symbol[xtx.cl_pay_curr].id);
+      }
+      return xtx;
+    }
+    
+    self.onNewXTx = function(xtx){
+      var xtx = self.processXTx(xtx);
+      return ExchangeTransaction.addObj(xtx);
+    }
+    
     self.getExchangeTransactions = function(last_updated_at){
       var deferred = $q.defer();
       var address = self.getMainAddress();
@@ -561,22 +596,9 @@ bitwallet_services
         BitShares.listExchangeTxs(token, last_updated_at).then(function(res){
           var proms = [];
           res.txs.forEach(function(o){
-            o['tx_type']      = o.extra_data=='marty'?'deposit':o.extra_data;
-            o['x_id']         = o.id;
-            o.quoted_at       = o.quoted_at*1000;
-            o.updated_at      = o.updated_at*1000;
-            if(o.tx_type==BitShares.X_DEPOSIT)
-            {
-              // cl_pay_tx  -> bitcoin
-              // cl_recv_tx -> bitshares
-              o['x_asset_id']   = parseInt(self.data.assets_symbol[o.cl_recv_curr].id);
-              // My symbol es cl_recv_curr
-            }
-            else{
-              // My symbol es cl_pay_curr
-              o['x_asset_id']   = parseInt(self.data.assets_symbol[o.cl_pay_curr].id);
-            }
-            var p = ExchangeTransaction.addObj(o);
+            // var xtx = self.processXTx(o);
+            // var p = ExchangeTransaction.addObj(xtx);
+            var p = self.onNewXTx(o);
             proms.push(p);
           });
           $q.all(proms).then(function(){
@@ -598,133 +620,132 @@ bitwallet_services
       
       return deferred.promise;
     }
-    self.buildTxList = function(res, asset_id) {
-       self.data.raw_txs = [];
-       var tx  = {};
-       var txs = [];
-
-       var db_proms = [];
-       
-       var close_tx = function() {
-
-        var assets = Object.keys(tx['assets']);
-        for(var i=0; i<assets.length; i++) {
-           var precision = self.data.assets[assets[i]].precision;
-           p = {}; 
-           p['fee']  = (tx['assets'][assets[i]]['w_amount'] - tx['assets'][assets[i]]['d_amount'])/precision;
-           p['sign'] = 0;
-           p['date'] = tx['assets'][assets[i]]['timestamp']*1000;
-           if(tx['assets'][assets[i]]['i_w']) { 
-             p['sign']--;
-             p['address'] = tx['assets'][assets[i]]['to'][0];
-             p['amount'] = tx['assets'][assets[i]]['my_w_amount']/precision - p['fee'];
-           }
-           if(tx['assets'][assets[i]]['i_d']) { 
-             p['sign']++;
-             p['address'] = tx['assets'][assets[i]]['from'][0];
-             p['amount'] = tx['assets'][assets[i]]['my_d_amount']/precision;
-           }
-           if(p['sign'] == 0)
-           {
-             p['addr_name'] = 'Me';
-           }
-
-           if(p['addr_name'] != 'Me')
-           {
-             if( p['address'] in self.data.address_book )
-              p['addr_name'] = self.data.address_book[p['address']].name;
-             else
-              p['addr_name'] = p['address'];
-           }
-           p['tx_id']     = tx['txid'];
-           p['asset_id']  = assets[i];
-           p['block']     = tx['block'];    //tx['assets'][assets[i]]['block'];
-           p['block_id']  = tx['block_id']; //tx['assets'][assets[i]]['block_id'];
-           p['other']     = tx['other'];    //tx['assets'][assets[i]]['other'];
-           p['id']        = tx['assets'][assets[i]]['id'];
-           txs.push(p);
-           var db_prom = Operation.addObj(p);
-           db_proms.push(db_prom);
-           var r_proms = RawOperation.addTXs(self.data.raw_txs[tx['txid']]);
-           db_proms.push(r_proms);
-         }
-         
-         tx = {};
+    
+    self.close_tx = function(tx) {
+      var my_txs = [];
+      var ret_proms = [];
+      var assets = Object.keys(tx['assets']);
+      for(var i=0; i<assets.length; i++) {
+       var precision = self.data.assets[assets[i]].precision;
+       p = {}; 
+       p['fee']  = 0.0; //(tx['assets'][assets[i]]['w_amount'] - tx['assets'][assets[i]]['d_amount'])/precision;
+       p['sign'] = 0;
+       p['date'] = tx['assets'][assets[i]]['timestamp']*1000;
+       if(tx['assets'][assets[i]]['i_w']) { 
+         p['sign']--;
+         p['address'] = tx['assets'][assets[i]]['to'][0];
+         p['amount'] = tx['assets'][assets[i]]['my_w_amount']/precision - p['fee'];
+       }
+       if(tx['assets'][assets[i]]['i_d']) { 
+         p['sign']++;
+         p['address'] = tx['assets'][assets[i]]['from'][0];
+         p['amount'] = tx['assets'][assets[i]]['my_d_amount']/precision;
+       }
+       if(p['sign'] == 0)
+       {
+         p['addr_name'] = 'Me';
        }
 
-       //console.log(JSON.stringify(res));
+       if(p['addr_name'] != 'Me')
+       {
+         if( p['address'] in self.data.address_book )
+          p['addr_name'] = self.data.address_book[p['address']].name;
+         else
+          p['addr_name'] = p['address'];
+       }
+       p['tx_id']     = tx['txid'];
+       p['asset_id']  = assets[i];
+       p['block']     = tx['block'];    //tx['assets'][assets[i]]['block'];
+       p['block_id']  = tx['block_id']; //tx['assets'][assets[i]]['block_id'];
+       p['other']     = tx['other'];    //tx['assets'][assets[i]]['other'];
+       p['id']        = tx['assets'][assets[i]]['id'];
+       my_txs.push(p);
+       var db_prom = Operation.addObj(p);
+       ret_proms.push(db_prom);
+       var r_proms = RawOperation.addTXs(self.data.raw_txs[tx['txid']]);
+       ret_proms.push(r_proms);
+      }
+      return {'proms':ret_proms, 'txs':my_txs};
+      //tx = {};
+    }
+    
+    self.buildTxList = function(res, asset_id) {
+      self.data.raw_txs = [];
+      var tx  = {};
+      var txs = [];
+      var db_proms = [];
+       
+      res.operations.forEach(function(o){
+        if(o.asset_id != asset_id)
+        {
+          //console.log('me voy xq ' + o.asset_id + '!=' + asset_id);
+          return;
+        }
 
-       res.operations.forEach(function(o){
-          
-         if(o.asset_id != asset_id)
-         {
-           //console.log('me voy xq ' + o.asset_id + '!=' + asset_id);
-           return;
-         }
-
-         //Esto es para mostrar en el detalle de "renglon"
-         //TODO: Pedir por API
-         if(!(o.txid in self.data.raw_txs) )
-           self.data.raw_txs[o.txid] = [];
-         self.data.raw_txs[o.txid].push(o);
-          
+        //Esto es para mostrar en el detalle de "renglon"
+        if(!(o.txid in self.data.raw_txs) )
+          self.data.raw_txs[o.txid] = [];
+        self.data.raw_txs[o.txid].push(o);
          
-         if( tx['txid'] !== undefined && tx['txid'] != o.txid ) {
-            //console.log('mando a cerrar');
-            close_tx();
-         }
+        if( tx['txid'] !== undefined && tx['txid'] != o.txid ) {
+          //console.log('mando a cerrar');
+          var ret = self.close_tx(tx);
+          db_proms.push(ret.ret_proms);
+          txs.push(ret.my_txs)
+          tx = {};
+        }
 
-         if( tx['txid'] === undefined || ( tx['assets'] !== undefined && !(o.asset_id in tx['assets']) )  ) {
-
-            //console.log('abro');
-            
-            tx['txid']        = o.txid;
-            tx['other']       = o.other,
-            tx['block']       = o.block,
-            tx['block_id']    = o.block_id
-            tx['assets']      = {};
-            tx['assets'][o.asset_id] = {
-              'id'          : o.id,
-              'from'        : [],
-              'to'          : [],
-              'w_amount'    : 0,
-              'my_w_amount' : 0,
-              'd_amount'    : 0,
-              'my_d_amount' : 0,
-              'timestamp'   : o.timestamp,
-              'i_w'         : false,
-              'i_d'         : false
-            }
-         } 
-
-         if(o.op_type == 'w') { 
-            tx['assets'][o.asset_id]['w_amount'] += o.amount
-            if(o.address in self.data.addresses) {
-              tx['assets'][o.asset_id]['my_w_amount'] += o.amount;
-              tx['assets'][o.asset_id]['i_w']          = true;
-            } else {
-              //TODO: lookup in the address book
-              tx['assets'][o.asset_id]['from'].push(o.address);
-            }
-            
+        if( tx['txid'] === undefined || ( tx['assets'] !== undefined && !(o.asset_id in tx['assets']) )  ) {
+          //console.log('abro');
+          tx['txid']        = o.txid;
+          tx['other']       = o.other,
+          tx['block']       = o.block,
+          tx['block_id']    = o.block_id
+          tx['assets']      = {};
+          tx['assets'][o.asset_id] = {
+            'id'          : o.id,
+            'from'        : [],
+            'to'          : [],
+            'w_amount'    : 0,
+            'my_w_amount' : 0,
+            'd_amount'    : 0,
+            'my_d_amount' : 0,
+            'timestamp'   : o.timestamp,
+            'i_w'         : false,
+            'i_d'         : false,
+            'other'       : o.other
+          }
+        } 
+        tx['assets'][o.asset_id]['other'] = o.other;
+        if(o.op_type == 'w') { 
+          tx['assets'][o.asset_id]['w_amount'] += o.amount
+          if(o.address in self.data.addresses) {
+            tx['assets'][o.asset_id]['my_w_amount'] += o.amount;
+            tx['assets'][o.asset_id]['i_w']          = true;
+          } else {
+            //TODO: lookup in the address book
+            tx['assets'][o.asset_id]['from'].push(o.address);
+          }
          } else {
-            tx['assets'][o.asset_id]['d_amount'] += o.amount
-            if(o.address in self.data.addresses) {
-              tx['assets'][o.asset_id]['my_d_amount'] += o.amount
-              tx['assets'][o.asset_id]['i_d']          = true;
-            } else {
-              //TODO: lookup in the address book
-              tx['assets'][o.asset_id]['to'].push(o.address)
-            }
-         }
+          tx['assets'][o.asset_id]['d_amount'] += o.amount
+          if(o.address in self.data.addresses) {
+            tx['assets'][o.asset_id]['my_d_amount'] += o.amount
+            tx['assets'][o.asset_id]['i_d']          = true;
+          } else {
+            //TODO: lookup in the address book
+            tx['assets'][o.asset_id]['to'].push(o.address)
+          }
+       }
          
-       });
+      });
 
        //console.log('salgo del loop con ' + tx['txid']);
 
        if( tx['txid'] !== undefined) {
-         //console.log('mando a cerrar');
-         close_tx();
+        var ret = self.close_tx(tx);
+        db_proms.push(ret.ret_proms);
+        txs.push(ret.my_txs)
+        tx = {};
        }
 
        //self.data.transactions=txs; 
@@ -732,21 +753,23 @@ bitwallet_services
     };
 
     self.loadAccount = function() {
-      self.data.account = { name          : 'unregistered', 
+      self.data.account = { name          : 'unregistered :(', 
                             gravatar_id   : undefined,
                             registered    : 0,
-                            photo         :'img/user_empty.png'};
+                            photo         :'img/user_empty.png',
+                            is_default    : 1};
                             
       var deferred = $q.defer();
       Account.get().then(function(result){
         //console.log('loadAccount::' + JSON.stringify(result));
-        if(result!==undefined)
+        if(result!==undefined && result.name && result.name.length>0)
           self.data.account = { name          : result.name, 
                                 gravatar_id   : result.gravatar_id,
                                 registered    : result.registered,
                                 photo         :(result.gravatar_id===undefined || result.gravatar_id===null || result.gravatar_id.length==0)
                                                 ?'http://robohash.org/'+result.name+'?size=56x56'
-                                                :'http://www.gravatar.com/avatar/'+result.gravatar_id+'?s=150'};
+                                                :'http://www.gravatar.com/avatar/'+result.gravatar_id+'?s=150',
+                                is_default    : 0};
         deferred.resolve(self.data.account);
       });
       return deferred.promise;
@@ -758,7 +781,7 @@ bitwallet_services
           var gravatar_id = undefined;
           if(data.public_data && data.public_data.gravatarId)
             gravatar_id=data.public_data.gravatarId;
-          Account.store(data.name, gravatar_id).then(function(){
+          Account.storeProfile(data.name, gravatar_id).then(function(){
             Account.registeredOk().then(function(){
               self.loadAccount();
             });

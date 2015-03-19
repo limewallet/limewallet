@@ -7,11 +7,11 @@ bitwallet_controllers.controller('AccountCtrl', function($translate, T, BitShare
     },100);
   }
 
-  $scope.data = { name            : $scope.wallet.account.name, 
+  $scope.data = { name            : $scope.wallet.account.is_default==0?$scope.wallet.account.name:'', //$scope.wallet.account.name 
                   gravatar_id     : $scope.wallet.account.gravatar_id, 
                   use_gravatar    : !($scope.wallet.account.gravatar_id===undefined || $scope.wallet.account.gravatar_id==null || $scope.wallet.account.gravatar_id.length==0), 
-                  initial_name    : $scope.wallet.account.name, 
-                  watch_name      : $scope.wallet.account.name,  
+                  initial_name    : $scope.wallet.account.is_default==0?$scope.wallet.account.name:'', 
+                  watch_name      : $scope.wallet.account.is_default==0?$scope.wallet.account.name:'',  
                   gravatar_mail   : '', 
                   can_update      : false,
                   first_time      : 0};
@@ -248,7 +248,6 @@ bitwallet_controllers.controller('AccountCtrl', function($translate, T, BitShare
     
     var deferred = $q.defer();
     
-    //console.log('name:'+$scope.data.name + ' / ' + $scope.data.name.length);
     // Check name is not null or empty;
     if(!$scope.data.name || $scope.data.name.length<1)
     {
@@ -270,14 +269,14 @@ bitwallet_controllers.controller('AccountCtrl', function($translate, T, BitShare
     // validate name
     $scope.isNameAvailable($scope.data.name).then(
       function(){
-        Account.store($scope.data.name, $scope.data.gravatar_id).then(function(){
+        Account.storeProfile($scope.data.name, $scope.data.gravatar_id).then(function(){
           var addy = Wallet.getMainAddress();
           Account.register(addy).then(function(result){
             console.log('register.controller.js::register [Account.register OK]');
             if(result===undefined || !result.txid || result.txid===undefined || result.txid.length==0 )
             {
               console.log('register.controller.js::register [Account.register result is NULL]');
-              Account.clear().then(function(){
+              Account.clearProfile().then(function(){
                 deferred.reject({title:'err.occurred', message:'err.account_registration'});
               });
               return;

@@ -42,10 +42,17 @@ bitwallet_services
 
       window.plugins.BitsharesPlugin.createMasterKey(
         function(data){
-          //deferred.resolve('xprv9s21ZrQH143K3ijyttwKLLMY5TXj9QxrGoEg8EbLpsSyNabQ4QrbMzFj5j5FPkc8m58AZrVo8TMH5XEYuL2bdWaD2yhgiF68f9vsMkSTkkS'); // nisman
+          // deferred.resolve('xprv9s21ZrQH143K3ijyttwKLLMY5TXj9QxrGoEg8EbLpsSyNabQ4QrbMzFj5j5FPkc8m58AZrVo8TMH5XEYuL2bdWaD2yhgiF68f9vsMkSTkkS'); // nisman
           // NISMAN: addy:"DVSNKLe7F5E7msNG5RnbdWZ7HDeHoxVrUMZo", pubkey:"DVS5YYZsZ7g1fSpPxmZcJifWJ2rmiXbUyJpEYSdNsVw738C88yvoy", 
-          deferred.resolve('xprv9s21ZrQH143K28Eo8MEiEbchHxrSFDFMtb73UEh5htu9vzrqpReaeS5vmJHi7aipUb9ck3FTfoj3AQJhdWJ7HL6ywwsuYdMupmPv13osE5c'); // daniel-hadad
-          //deferred.resolve('xprv9s21ZrQH143K3PgEC8y59PEEkFN4mHz4tTo9uYCJQbAuLLfxLHLt9HegarddLEP9iGXKpcc2a6c9j8jPtHNZsKXKQpjdg1nuXqAsoQqv7E6');// matu
+          // deferred.resolve('xprv9s21ZrQH143K3PgEC8y59PEEkFN4mHz4tTo9uYCJQbAuLLfxLHLt9HegarddLEP9iGXKpcc2a6c9j8jPtHNZsKXKQpjdg1nuXqAsoQqv7E6');// matu
+          
+          //deferred.resolve('xprv9s21ZrQH143K28Eo8MEiEbchHxrSFDFMtb73UEh5htu9vzrqpReaeS5vmJHi7aipUb9ck3FTfoj3AQJhdWJ7HL6ywwsuYdMupmPv13osE5c'); // daniel-hadad
+          
+          deferred.resolve('xprv9s21ZrQH143K4TFHxN8wCgnPUTyaJb7QwVFtvXz8zeyaXZYtmLGamLekc9hQAKZCCh3MW5HrxsjN5rHuLcpqrohVS1YDz1ZZN1nocEm8383'); 
+          // xprv9s21ZrQH143K4TFHxN8wCgnPUTyaJb7QwVFtvXz8zeyaXZYtmLGamLekc9hQAKZCCh3MW5HrxsjN5rHuLcpqrohVS1YDz1ZZN1nocEm8383 -> DVSM5HFFtCbhuv3xPfRPauAeQ5GgW7y4UueL
+          
+          // DVS3NGm7x7NNXLSTLpqGioTZx3e2gfjJG2Rq ??
+          
           //deferred.resolve(data.masterPrivateKey);
         },
         function(error){
@@ -277,13 +284,13 @@ bitwallet_services
       return;
     };
 
-    self.apiCall = function(url, payload) {
+    self.apiCall = function(url, payload, post) {
       var deferred = $q.defer();
       console.log('Bitshares::apiCall ' + url);
 
       var req;
       
-      if(payload !== undefined)
+      if(payload !== undefined || post !==undefined && post==true )
       {
         //console.log('ApiCall POST ' + JSON.stringify(payload));
         req = $http.post(url, payload ,{timeout:ENVIRONMENT.timeout});
@@ -325,12 +332,16 @@ bitwallet_services
     }
     
     self.getSellQuote = function(asset, amount) {
-      var url = ENVIRONMENT.apiurl('/sell/'+asset+'/'+amount);
-      return self.apiCall(url);
+      return self.getQuote('sell', asset, amount);
     }
     
     self.getBuyQuote = function(asset, amount) {
-      var url = ENVIRONMENT.apiurl('/buy/'+asset+'/'+amount);
+      return self.getQuote('buy', asset, amount);
+    }
+    
+    self.getQuote = function(buy_sell, asset, amount) {
+      var assets = asset.split('_');
+      var url = ENVIRONMENT.apiurl('/'+buy_sell+'/'+amount+'/'+assets[0]+'/'+assets[1]);
       return self.apiCall(url);
     }
     
@@ -342,11 +353,26 @@ bitwallet_services
     self.isWithdraw     = function(ui_type){return ui_type==self.X_WITHDRAW;}
     self.isBtcPay       = function(ui_type){return ui_type==self.X_BTC_PAY;}
     self.isXtx          = function(tx){return [self.X_DEPOSIT, self.X_WITHDRAW, self.X_BTC_PAY].indexOf(tx.ui_type)>=0;}
+    
     self.isXtxCompleted = function(tx){
       if(!self.isXtx(tx))
         return false;
       return tx.status == 'OK';
     }
+    
+    self.hasXtxRateChanged = function(tx){
+      if(!self.isXtx(tx))
+        return false;
+      return tx.status == 'RC';
+    }
+    
+    self.isXtxPartiallyOrFullyPaid = function(tx){
+      // if(!self.isXtx(tx))
+      //   return false;
+      var valid_status = ['FP', 'WT', 'RC', 'WC', 'PC', 'TG', 'SC', 'OK', 'XX', 'RR', 'RF'];
+      return valid_status.indexOf(tx.status)>=0;
+    }
+    
     self.isXtxPending = function(tx){
       if(!self.isXtx(tx))
         return false;
@@ -367,9 +393,14 @@ bitwallet_services
       return self.apiCall(url, payload);
     }
     
+    self.wakeupXTx = function(token, txid) {
+      var url = ENVIRONMENT.apiurl('/xtxs/'+token+'/'+txid+'/wakeup');
+      return self.apiCall(url, undefined, true);
+    }
+
     self.cancelXTx = function(token, txid) {
       var url = ENVIRONMENT.apiurl('/xtxs/'+token+'/'+txid+'/cancel');
-      return self.apiCall(url);
+      return self.apiCall(url, undefined, true);
     }
     
     self.refundXTx = function(token, txid) {
@@ -397,9 +428,11 @@ bitwallet_services
     
     self.prepareSendAsset = function(asset, from, to, amount) {
       var url = ENVIRONMENT.apiurl('/txs/new');
-
+      var my_asset = asset;
+      if (asset.indexOf('bit')!=0)
+        my_asset = 'bit'+asset;
       var payload = {
-        "asset" : asset, 
+        "asset" : my_asset, 
         "from"  : from,
         "to"    : [{
             "address" : to, 

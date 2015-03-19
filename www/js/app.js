@@ -316,7 +316,7 @@ bitwallet_module
       }
     })
     
-    .state('app.register', {
+    /*.state('app.register', {
       cache:  false,
       url:    "/register",
       views: {
@@ -327,6 +327,7 @@ bitwallet_module
             }
       }
     })
+    */
     
     .state('app.account', {
       cache:  false,
