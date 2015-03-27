@@ -252,7 +252,7 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
               console.log(r.tx);
               console.log(r.to_sign);
               console.log(r.required_signatures);
-
+              console.log(r.fee);
               r.tx.signatures = [];
 
               //HACK: expose Buffer
@@ -507,7 +507,6 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
               xtx['operation_tx_id'] = res.tx_id;
               Wallet.onNewXTx(xtx);
               $scope.goHome();
-              //window.plugins.toast.show( T.i('withdraw.succesful'), 'short', 'bottom');
               window.plugins.toast.show( T.i('send.transaction_sent'), 'long', 'bottom');
               
               

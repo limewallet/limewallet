@@ -13,6 +13,30 @@ bitwallet_filters.filter('moment_separator', function(T) {
   }
 });
 
+
+bitwallet_filters.filter('from_now', function(T) {
+  return function(tx) {
+    if(tx===undefined)
+      return '';
+    return moment(tx.TS).fromNow();
+  }
+});
+
+bitwallet_filters.filter('xtx_status', function(T) {
+  return function(xtx) {
+    if(xtx===undefined)
+      return '';
+    var simple_translation  = T.i('xchg.'+xtx.status);
+    var full_t              = 'xchg.'+xtx.status+'_full';
+    var full_translation    = T.i(full_t);
+    if(simple_translation!=full_translation && full_translation!=full_t)
+    {
+      return simple_translation + ' (' + full_translation + ')';
+    }
+    return simple_translation;
+  }
+});
+
 bitwallet_filters.filter('capitalize', function() {
   return function (input, format) {
       if (!input) {

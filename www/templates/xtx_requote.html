@@ -1,0 +1,35 @@
+<ion-view class="dark" title="{{'menu.rate_changed'|translate}}">
+    <ion-nav-buttons side="left">
+      <button ng-click="goHome()" class="button button-icon icon ion-ios-arrow-back"></button>
+    </ion-nav-buttons>
+    
+    <ion-content class="has-header register rate_changed energized_bgNOT" has-bouncing="false" scroll="false" overflow-scroll="false">
+        <ion-scroll zooming="false" direction="y" class="register_details">
+          <div class="energized_bg register_container">
+            <h4 class="register_color" ng-bind-html="'rate_changed.headline'|translate:{action:data.xtx.tx_type}"></h4>
+          </div>
+          <div id="quote_ttl" style="height:5px;width:100%;"></div>
+          <div class="row new_rate">
+            <div class="col-33">{{'rate_changed.instant_rate'|translate}}</div>
+            <div class="col-47 ta_right">{{data.rate|number:5}}</div>
+            <div class="col-20">&nbsp;{{wallet.asset.symbol}}/BTC</div>
+          </div>
+          <div class="row new_rate">
+            <div class="col-33">{{'rate_changed.you_deposited'|translate}}</div><div class="col-47 ta_right">{{data.amount_btc|number:5}}</div><div class="col-20">&nbsp;BTC</div>
+          </div>
+          <div class="row new_rate">
+            <div class="col-33">{{'rate_changed.you_receive'|translate}}</div><div class="col-47 ta_right">{{data.amount_asset|number:5}} </div><div class="col-20">&nbsp;{{wallet.asset.symbol}}</div>
+          </div>
+        </ion-scroll>
+        <button ng-click="refund()" class="button button-block button-stable no-margin hide-on-keyboard-open " style="position:absolute;bottom:0px;">
+          {{'g.refund'|translate|uppercase}}
+        </button>
+        <button ng-click="acceptReQuote()" class="button button-block button-energized no-margin hide-on-keyboard-open button_taller" style="position:absolute;bottom:114px;">
+          {{'rate_changed.accept_requote'|translate|uppercase}}
+        </button>
+        <button ng-click="doReQuote()" class="button button-block button-light no-margin hide-on-keyboard-open" style="position:absolute;bottom:57px;">
+          {{'g.requote'|translate|uppercase}}
+        </button>
+    </ion-content>
+
+  </ion-view>

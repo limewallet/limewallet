@@ -189,11 +189,11 @@ line-height: 38px;}
 .pending_text.PP{background-color: #F1C40F!important;}/*PARTIALY PAID*/         /* amarillo */
 .pending_text.FP{background-color: #F1C40F!important;}/*FULLY PAID*/            /* amarillo */
 .pending_text.WT{background-color: #F1C40F!important;}/*WAITING TRADES*/        /* amarillo */
-.pending_text.RC{background-color: #E67E22!important;}/*RATE CHANGED*/          /* rojo */
+.pending_text.RC{background-color: #E74C3C!important;}/*RATE CHANGED*/          /* rojo */
 .pending_text.WC{background-color: #F1C40F!important;}/*WAITING CONFIRMATION*/  /* amarillo */
-.pending_text.PC{background-color: #2ECC71;}/*PAYMENT CONFIRMED*/               /* verde */
-.pending_text.TG{background-color: #2ECC71;}/*TRANSACTION GENERATED*/           /* verde */
-.pending_text.SC{background-color: #2ECC71;}/*SENT TO CLIENT*/                  /* verde */
+.pending_text.PC{background-color: #2ECC71!important;}/*PAYMENT CONFIRMED*/               /* verde */
+.pending_text.TG{background-color: #2ECC71!important;}/*TRANSACTION GENERATED*/           /* verde */
+.pending_text.SC{background-color: #2ECC71!important;}/*SENT TO CLIENT*/                  /* verde */
 .pending_text.OK{background-color: #66cc33!important;}/*COMPLETED*/             /* verde */
 .pending_text.XX{background-color: #ECF0F1!important;color:#666666!important;}/*CANCELED*/ /* rojo (gris) */
 .pending_text.RR{background-color: #ECF0F1!important;color:#666666!important;}/*REFUNDING*/ /* rojo (gris) */
@@ -844,3 +844,19 @@ span.quote_error{padding-left: 16px;}
 .step_doing{padding:25px;}
 
 .energized_bg h4{color:#fff!important;}
+
+.col-20 {
+  width: 20%; }
+.col-47 {
+  -webkit-box-flex: 0;
+  -webkit-flex: 0 0 47%;
+  -moz-box-flex: 0;
+  -moz-flex: 0 0 47%;
+  -ms-flex: 0 0 47%;
+  flex: 0 0 47%;
+  width: 47%; }
+
+.rate_changed .new_rate.row {display:table!important; margin-top:15px;}
+.rate_changed .new_rate .col-33 {display:table-cell!important;line-height:20px;vertical-align: text-bottom;padding-left:15px;}
+.rate_changed .new_rate .col-47 {display:table-cell!important;line-height:20px;font-size:20px;vertical-align: text-bottom}
+.rate_changed .new_rate .col-20 {display:table-cell!important;line-height:20px;vertical-align: text-bottom;}

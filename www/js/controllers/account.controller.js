@@ -184,6 +184,7 @@ bitwallet_controllers.controller('AccountCtrl', function($translate, T, BitShare
           return;
         }
         var prom = [];
+        console.log(result.fee);
         result.tx.signatures = [];
         angular.forEach(result.required_signatures, function(req_addy) {
           var p = Address.by_address(req_addy)

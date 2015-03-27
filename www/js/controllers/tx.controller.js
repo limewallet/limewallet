@@ -25,7 +25,11 @@ bitwallet_controllers
       });
     });
   }
-  
+  else{
+    $scope.goHome();
+    window.plugins.toast.show( T.i('err.invalid_xtx_id'), 'long', 'bottom');
+  }
+
   $scope.getWithdraws = function(){
     var ops = [];
     angular.forEach($scope.data.ops, function(op){

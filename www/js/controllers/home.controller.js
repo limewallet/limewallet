@@ -1,6 +1,10 @@
 bitwallet_controllers
 .controller('HomeCtrl', function(T, Wallet, Scanner, AddressBook, $ionicActionSheet, $scope, $state, $http, $ionicModal, $rootScope, $ionicPopup, $timeout, $location, BitShares, $q, $ionicLoading) {
   
+  // $timeout(function(){
+  //   $state.go('app.xtx_requote', {xtx_id:6});
+  // }, 2500);
+
   $scope.$watch('master_key_new', function(newValue, oldValue, scope) {
     if(newValue===oldValue)
       return;
@@ -72,33 +76,50 @@ bitwallet_controllers
     }); 
   }
   
+  // on-hold
+  $scope.showComplainView = function(tx) {
+
+  }
+
   $scope.showActionSheet = function(tx) {
-    var opt_buttons = [
-          { text: '<b>'+T.i('home.add_to_book')+'</b>' },
-          { text: T.i('home.view_details') }
-      ];
+    
+    var opt_buttons = [];
     var is_xtx = BitShares.isXtx(tx);
     if(is_xtx){
       
+      if(BitShares.hasXtxRateChanged(tx))
+      {
+        $state.go('app.xtx_requote', {xtx_id:tx['x_id']});
+        return;
+      }
       opt_buttons = [
           { text: T.i('home.view_details') },
           { text: T.i('home.refresh') }];
-      // if(BitShares.isXtxCompleted(tx))
+      
+      // if(BitShares.hasXtxRateChanged(tx)){
       //   opt_buttons = [
-      //     { text: T.i('home.view_details') },
-      //     { text: T.i('home.refresh') }];
-      // else 
-      if(BitShares.hasXtxRateChanged(tx)){
-        opt_buttons = [
-          { text: T.i('home.view_details') }
-          , { text: T.i('home.refresh') }
-          , { text: T.i('home.requote') }
-          , { text: T.i('home.refund') }
-          /*, { text: '<span class="assertive">'+T.i('home.cancel_operation')+'</span>' }*/
-        ];
-      }
+      //     { text: T.i('home.view_details') }
+      //     , { text: T.i('home.refresh') }
+      //     , { text: T.i('home.requote') }
+      //     , { text: T.i('home.refund') }
+      //     /*, { text: '<span class="assertive">'+T.i('home.cancel_operation')+'</span>' }*/
+      //   ];
+      // }
     }
-    var hideSheet = $ionicActionSheet.show({
+    else{
+      opt_buttons = [
+          { text: '<b>'+T.i('home.add_to_book')+'</b>' },
+          { text: T.i('home.view_details') }
+      ];
+    }
+
+    if($scope.homeActionSheet!==undefined)
+    {
+      console.log('showActionSheet: HIDE sheet!');
+      $scope.homeActionSheet();
+    }
+    console.log('showActionSheet: SHOW sheet!');
+    $scope.homeActionSheet = $ionicActionSheet.show({
      buttons: opt_buttons,
      titleText: T.i('home.transaction_options'),
      cancelText: T.i('g.dismiss'),
@@ -126,7 +147,7 @@ bitwallet_controllers
               Wallet.loadAddressBook().then(function(){
                 $rootScope.$emit('address-book-changed');
               });
-              window.plugins.toast.show( T.i('home.save_successfull'), 'short', 'bottom');
+              window.plugins.toast.show( T.i('home.save_successful'), 'short', 'bottom');
             });
           });
         }

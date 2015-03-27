@@ -8,7 +8,7 @@ bitwallet_controllers
 // bitcoin:BweMQsJqRdmncwagPiYtANrNbApcRvEV77?amount=1.1
   
   $scope.data = {
-        bitcoin_address:    'C4hJYM1NYgjqszEnqA9qr6QSAQLQvywnfk', //'BweMQsJqRdmncwagPiYtANrNbApcRvEV77', //'msmmBfcvrdG2yZiUQQ21phPkbw966f8nbb',
+        bitcoin_address:    '', //C4hJYM1NYgjqszEnqA9qr6QSAQLQvywnfk', //'BweMQsJqRdmncwagPiYtANrNbApcRvEV77', //'msmmBfcvrdG2yZiUQQ21phPkbw966f8nbb',
         
         amount_usd:         undefined,
         amount_btc:         undefined,
@@ -246,13 +246,12 @@ bitwallet_controllers
             BitShares.sendAsset(r.tx, r.secret).then(function(res) {
               $scope.sending_modal.hide();
               $scope.goHome();
-              window.plugins.toast.show( T.i('withdraw.succesful'), 'short', 'bottom');
+              window.plugins.toast.show( T.i('withdraw.successful'), 'short', 'bottom');
               //$scope.wallet.transactions.unshift({sign:-1, address:sendForm.transactionAddress.value, addr_name:sendForm.transactionAddress.value, amount:amount/$scope.wallet.assets[$scope.wallet.asset.id].precision, state:'P', date: new Date().getTime()});
               console.log('withdraw::send_asset XTX: '+JSON.stringify(xtx));
               console.log('withdraw::send_asset OPER res: '+JSON.stringify(res));
               xtx['operation_tx_id'] = res.tx_id;
-              Wallet.onNewXTx(xtx);
-              
+              Wallet.onNewXTxAndLoad(xtx);
             }, function(){
                 var alertPopup = $ionicPopup.alert({
                    title: T.i('err.unable_to_send_tx') + ' <i class="fa fa-warning float_right"></i>',
@@ -362,5 +361,12 @@ bitwallet_controllers
   $scope.restart = function(){
     angular.copy($scope.default_data, $scope.data);
   }
+
+  $scope.$on( '$ionicView.beforeLeave', function(){
+    // Destroy timers
+    console.log('WithdrawCtrl.ionicView.beforeLeave killing timers.');
+    counter_timeout=0;
+    //$scope.stopTimer();
+  });
 })
 

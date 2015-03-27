@@ -335,7 +335,6 @@ bitwallet_module
       views: {
               'menuContent' :{
                 templateUrl: "templates/account.html",
-                //templateUrl: "index.html",
                 controller: 'AccountCtrl'
             }
       }
@@ -347,7 +346,6 @@ bitwallet_module
       views: {
               'menuContent' :{
                 templateUrl: "templates/deposit.html",
-                //templateUrl: "index.html",
                 controller: 'DepositCtrl'
             }
       }
@@ -359,7 +357,6 @@ bitwallet_module
       views: {
               'menuContent' :{
                 templateUrl: "templates/deposit_list.html",
-                //templateUrl: "index.html",
                 controller: 'DepositListCtrl'
             }
       }
@@ -371,7 +368,6 @@ bitwallet_module
       views: {
               'menuContent' :{
                 templateUrl: "templates/withdraw.html",
-                //templateUrl: "index.html",
                 controller: 'WithdrawCtrl'
             }
       }
@@ -383,19 +379,39 @@ bitwallet_module
       views: {
               'menuContent' :{
                 templateUrl: "templates/withdraw_list.html",
-                //templateUrl: "index.html",
                 controller: 'WithdrawListCtrl'
             }
       }
     })
     
+    .state('app.xtx_requote', {
+      cache:  false,
+      url:    "/xtx_requote/:xtx_id",
+      views: {
+              'menuContent' :{
+                templateUrl: "templates/xtx_requote.html",
+                controller: 'XtxRequoteCtrl'
+            }
+      }
+    })
+
+    .state('app.refund', {
+      cache:  false,
+      url:    "/refund/:xtx_id",
+      views: {
+              'menuContent' :{
+                templateUrl: "templates/refund.html",
+                controller: 'RefundCtrl'
+            }
+      }
+    })
+
     .state('app.home', {
       cache:  false,
       url:    "/home",
       views: {
               'menuContent' :{
                 templateUrl: "templates/home.html",
-                //templateUrl: "index.html",
                 controller: 'HomeCtrl'
             }
       }
@@ -403,4 +419,6 @@ bitwallet_module
 
   // if none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise('/app/home');
+  //$urlRouterProvider.otherwise('/app/xtx_requote/6');
+  
 });

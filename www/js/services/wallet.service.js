@@ -231,8 +231,8 @@ bitwallet_services
       {
         //  agarro la xtx y update or insert, luego llamo a loadBalance
         console.log('- wallet notification: new xtx?: '+JSON.stringify(event.data));
-        self.onNewXTx(event.data.data);
-        self.loadBalance();
+        self.onNewXTxAndLoad(event.data.data);
+        //self.loadBalance();
       }
     }
 
@@ -453,7 +453,7 @@ bitwallet_services
         });
       },
       function(error){
-        console.log(' -- Erro Wallet loadBalance 1'); console.log(error);
+        console.log(' -- Erro Wallet loadBalance 1'); console.log(JSON.stringify(error));
       })
       Operation.allWithXTxForAsset(self.data.asset.id).then(function(res){
         self.data.ord_transactions  = self.orderTransactions(res);
@@ -462,7 +462,7 @@ bitwallet_services
         self.emit(self.REFRESH_DONE);
       },
       function(error){
-        console.log(' -- Erro Wallet loadBalance 2'); console.log(error);
+        console.log(' -- Erro Wallet loadBalance 2'); console.log(JSON.stringify(error));
         deferred.reject(error);
         self.emit(self.REFRESH_ERROR);
       });
@@ -539,12 +539,12 @@ bitwallet_services
                 self.loadBalance().then(function(){
                   deferred.resolve();
                 }, function(error){
-                  console.log(' -- Erro Wallet 66'); console.log(error);
+                  console.log(' -- Erro Wallet 66'); console.log(JSON.stringify(error));
                   deferred.reject(error);
                   self.emit(self.REFRESH_ERROR);
                 });
               }, function(error){
-                console.log(' -- Erro Wallet 2'); console.log(error);
+                console.log(' -- Erro Wallet 2'); console.log(JSON.stringify(error));
                 deferred.reject(error);
                 self.emit(self.REFRESH_ERROR);
               })
@@ -552,17 +552,17 @@ bitwallet_services
             })
             
           }, function(err) {
-            console.log(' -- Erro Wallet 3'); console.log(err);
+            console.log(' -- Erro Wallet 3'); console.log(JSON.stringify(err));
             deferred.reject(err);
             self.emit(self.REFRESH_ERROR);
           })
        }, function(error){
-          console.log(' -- Erro Wallet 4');  console.log(error);
+          console.log(' -- Erro Wallet 4');  console.log(JSON.stringify(error));
           deferred.reject(error); 
           self.emit(self.REFRESH_ERROR);
        })
       }, function(err) {
-        console.log(' -- Erro Wallet 5');  console.log(err);
+        console.log(' -- Erro Wallet 5');  console.log(JSON.stringify(err));
         deferred.reject(err); 
         self.emit(self.REFRESH_ERROR);
       });
@@ -574,19 +574,28 @@ bitwallet_services
       xtx['x_id']         = xtx.id;
       xtx.quoted_at       = xtx.quoted_at*1000;
       xtx.updated_at      = xtx.updated_at*1000;
-      if(BitShares.isDeposit(xtx.tx_type))
-      {
-        xtx['x_asset_id']   = parseInt(self.data.assets_x_symbol[xtx.cl_recv_curr].id);
-      }
-      else if(BitShares.isWithdraw(xtx.tx_type) || BitShares.isBtcPay(xtx.tx_type)){
-        xtx['x_asset_id']   = parseInt(self.data.assets_x_symbol[xtx.cl_pay_curr].id);
-      }
+      xtx['x_asset_id'] = 24;
+      // if(BitShares.isDeposit(xtx.tx_type))
+      // {
+      //   xtx['x_asset_id']   = parseInt(self.data.assets_x_symbol[xtx.cl_recv_curr].id);
+      // }
+      // else if(BitShares.isWithdraw(xtx.tx_type) || BitShares.isBtcPay(xtx.tx_type)){
+      //   xtx['x_asset_id']   = parseInt(self.data.assets_x_symbol[xtx.cl_pay_curr].id);
+      // }
       return xtx;
     }
     
     self.onNewXTx = function(xtx){
       var xtx = self.processXTx(xtx);
       return ExchangeTransaction.addObj(xtx);
+    }
+
+    self.onNewXTxAndLoad = function(xtx){
+      self.onNewXTx(xtx).then(function(res){
+        self.loadBalance();
+      }, function(err){
+        console.log('Wallet.onNewXTxAndLoad err:'+JSON.stringify(err));
+      });
     }
     
     self.getExchangeTransactions = function(last_updated_at){
@@ -604,17 +613,17 @@ bitwallet_services
           $q.all(proms).then(function(){
             deferred.resolve();
           },function(error){
-            console.log(' -- Error Wallet getXTx 1'); console.log(error);
+            console.log(' -- Error Wallet getXTx 1'); console.log(JSON.stringify(error));
             deferred.reject(error); 
           })
         }, function(error){
           if(error=='auth_failed')
             Setting.remove(Setting.BSW_TOKEN);
-          console.log(' -- Error Wallet getXTx 2'); console.log(error);
+          console.log(' -- Error Wallet getXTx 2'); console.log(JSON.stringify(error));
           deferred.reject(error); 
         })
       }, function(error){
-        console.log(' -- Error Wallet getXTx 3'); console.log(error);
+        console.log(' -- Error Wallet getXTx 3'); console.log(JSON.stringify(error));
         deferred.reject(error); 
       })
       

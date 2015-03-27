@@ -25,6 +25,7 @@
     "instant_quote"       : "Instant quote",
     "withdraw_address"    : "Withdraw address",
     "requote"             : "Requote",
+    "refund"              : "Refund",
     "next"                : "Next",
     "later"               : "Later",
     "save"                : "Save",
@@ -77,6 +78,7 @@
   },
 
   "err" : {
+    "invalid_xtx_id"        : "Invalid transaction id",
     "cant_requote"          : "Invalid option",
     "cant_requote_type"     : "Can not requote this type of transaction",
     "cant_requote_status"   : "Can not requote transactions in this state",
@@ -146,8 +148,6 @@
     "refresh"             : "Refresh",
     "refresh_in_progress" : "Refresh in progress",
     "refresh_ok_wait"     : "Transaction refreshed. Wait for updates.",
-    "refund"              : "Refund",
-    "requote"             : "Requote",
     "transaction_options" : "Transaction options",
     "tap_to_refresh"      : "Tap to refresh",
     "show_balance"        : "Show balance",
@@ -162,7 +162,7 @@
     "add_to_book"         : "Add to address book",
     "view_details"        : "View details",
     "address_name"        : "address name",
-    "save_successfull"    : "Address saved successfully"
+    "save_successful"     : "Address saved successfully"
   },
 
   "menu" : {
@@ -177,7 +177,8 @@
     "withdraw"       : "Withdraw",
     "deposit"        : "Deposit",
     "withdraws"      : "Withdraws",
-    "deposits"       : "Deposits"
+    "deposits"       : "Deposits",
+    "rate_changed"   : "Rate changed"
   },
 
   "receive" : {
@@ -276,39 +277,69 @@
   },
   
   "deposit":{
-    "uri_copied"              : "Bitcoin payment URI copied succesfully",
+    "uri_copied"              : "Bitcoin payment URI copied successfully",
     "no_deposits"             : "No deposits done yet",
     "new_deposit"             : "New deposit",
-    "deposit_succesful"       : "Successfull deposit! Wait for transaction updates."
+    "deposit_successful"      : "Successful deposit! Wait for transaction updates."
   },
   
   "withdraw":{
     "no_withdraws"            : "No withdraws done yet",
     "new"                     : "New withdraw",
-    "succesful"               : "Successfull withdraw! Wait for transaction updates.",
+    "successful"              : "Successful withdraw! Wait for transaction updates.",
     "in_progress"             : "Withdraw in progress",
     "headline"                : "Withdraw BITCOIN exchanging your <b>bit{{asset.symbol}}</b>",
     "headline2"               : "You can withdraw bitcoins from your wallet by converting your preferred bitasset into bitcoins.<br/>Type the destination bitcoin address and the amount you want to withdraw."
   },
   
   "xchg":{
-    "WP"    : "WAITING PAYMENT",
-    "PP"    : "PROCESSING", /*PARTIALLY PAID",*/
-    "FP"    : "PROCESSING", /*"FULLY PAID",*/
-    "WT"    : "PROCESSING", /*"WAITING TRADES",*/
-    "RC"    : "RATE CHANGED",
-    "WC"    : "WAITING CONFIRMATION",
-    "PC"    : "PAYMENT CONFIRMED",
-    "TG"    : "TRANSACTION GENERATED",
-    "SC"    : "SENT TO CLIENT",
-    "OK"    : "COMPLETED",
-    "EX"    : "EXPIRED",
-    "XX"    : "CANCELED",
-    "RR"    : "REFUNDING",
-    "RF"    : "REFUNDED"
+    "WP"        : "WAITING PAYMENT",
+    "PP"        : "IN PROGRESS", 
+    "PP_full"   : "PARTIALLY PAID",
+    "FP"        : "IN PROGRESS", 
+    "FP_full"   : "FULLY PAID",
+    "WT"        : "IN PROGRESS", 
+    "WT_full"   : "WAITING TRADES",
+    "RC"        : "RATE CHANGED",
+    "WC"        : "IN PROGRESS",
+    "WC_full"   : "WAITING CONFIRMATION",
+    "PC"        : "IN PROGRESS",
+    "PC_full"   : "PAYMENT CONFIRMED",
+    "TG"        : "IN PROGRESS",
+    "TG_full"   : "TRANSACTION GENERATED",
+    "SC"        : "IN PROGRESS",
+    "SC_full"   : "SENT TO CLIENT",
+    "OK"        : "COMPLETED",
+    "EX"        : "EXPIRED",
+    "XX"        : "CANCELED",
+    "RR"        : "REFUNDING",
+    "RF"        : "REFUNDED"
   },
+  
   "account":{
     "type_name"     : "Please type the name for your account.<br/>This global unique name will be your identity in the network. You can later share it in order to receive payments.",
     "edit_photo"    : "You can change your photo.<br/>Options are robohash (default) and gravatar.<br/>You will be charged for this transaction."
-   }      
+   },
+
+  "rate_changed":{
+    "headline"              : "The exchange rate has changed. Please choose an option to continue processing the {{action}}",
+    "headline2"             : "You can withdraw bitcoins from your wallet by converting your preferred bitasset into bitcoins.<br/>Type the destination bitcoin address and the amount you want to withdraw.",
+    "accept_requote"        : "Accept quote",
+    "instant_rate"          : "Instant rate",
+    "you_deposited"         : "You deposited",
+    "you_receive"           : "You receive",
+    "getting_quote"         : "Getting new quote",
+    "accept_headline"       : "Accept confirmation",
+    "accept_content"        : "Are you sure to accept the rate?",
+    "refund_headline"       : "Refund confirmation",
+    "refund_content"        : "Are you sure you want to get your bitcoins back?",
+    "operation_completed"   : "Operation completed successfully"
+  },      
+
+  "refund":{
+    "headline"                : "Refund your {{symbol}}",
+    "headline2"               : "You can withdraw bitcoins from your wallet by converting your preferred bitasset into bitcoins.<br/>Type the destination bitcoin address and the amount you want to withdraw.",
+    "address"                 : "Refund address",
+    "successful"              : "Successful refund! Wait for transaction updates."
+  }
 }

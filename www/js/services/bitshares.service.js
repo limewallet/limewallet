@@ -331,17 +331,19 @@ bitwallet_services
       return self.apiCall(url);
     }
     
-    self.getSellQuote = function(asset, amount) {
-      return self.getQuote('sell', asset, amount);
+    self.getSellQuote = function(asset, amount, xtx_id) {
+      return self.getQuote('sell', asset, amount, xtx_id);
     }
     
-    self.getBuyQuote = function(asset, amount) {
-      return self.getQuote('buy', asset, amount);
+    self.getBuyQuote = function(asset, amount, xtx_id) {
+      return self.getQuote('buy', asset, amount, xtx_id);
     }
     
-    self.getQuote = function(buy_sell, asset, amount) {
-      var assets = asset.split('_');
-      var url = ENVIRONMENT.apiurl('/'+buy_sell+'/'+amount+'/'+assets[0]+'/'+assets[1]);
+    // If xtx_id is defined, the rest of the parameters are useless.
+    self.getQuote = function(buy_sell, asset, amount, xtx_id) {
+      var assets    = asset.split('_');
+      var my_xtx_id = (xtx_id===undefined?'':xtx_id) ;
+      var url       = ENVIRONMENT.apiurl('/'+buy_sell+'/'+amount+'/'+assets[0]+'/'+assets[1]+'/'+my_xtx_id);
       return self.apiCall(url);
     }
     
@@ -369,7 +371,14 @@ bitwallet_services
     self.isXtxPartiallyOrFullyPaid = function(tx){
       // if(!self.isXtx(tx))
       //   return false;
-      var valid_status = ['FP', 'WT', 'RC', 'WC', 'PC', 'TG', 'SC', 'OK', 'XX', 'RR', 'RF'];
+      var valid_status = ['FP', 'WT', 'RC', 'WC', 'PC', 'TG', 'SC', 'OK']; //, 'XX', 'RR', 'RF'];
+      return valid_status.indexOf(tx.status)>=0;
+    }
+
+    self.isWatingConfirmation = function(tx){
+      // if(!self.isXtx(tx))
+      //   return false;
+      var valid_status = ['SC', 'OK', 'RR', 'RF'];
       return valid_status.indexOf(tx.status)>=0;
     }
     
@@ -380,6 +389,9 @@ bitwallet_services
     }
     
     self.acceptQuote = function(quote, signature, token, address, extra_data) {
+      return self.acceptReQuote(quote, signature, token, address, extra_data, undefined)
+    }
+    self.acceptReQuote = function(quote, signature, token, address, extra_data, xtx_id) {
       var url = ENVIRONMENT.apiurl('/accept');
 
       var payload = {
@@ -387,9 +399,11 @@ bitwallet_services
         signature   : signature, 
         destination : address,
         token       : token,
-        extra_data  : extra_data
+        extra_data  : extra_data,
+        xtx_id      : (xtx_id === undefined ? '' : xtx_id)
       }
 
+      console.log(JSON.stringify(payload));
       return self.apiCall(url, payload);
     }
     
@@ -403,9 +417,12 @@ bitwallet_services
       return self.apiCall(url, undefined, true);
     }
     
-    self.refundXTx = function(token, txid) {
+    self.refundXTx = function(token, txid, refund_address) {
       var url = ENVIRONMENT.apiurl('/xtxs/'+token+'/'+txid+'/refund');
-      return self.apiCall(url);
+      var payload = {
+        refund_address       : refund_address
+      }
+      return self.apiCall(url, payload);
     }
     
     // *************************************************** //

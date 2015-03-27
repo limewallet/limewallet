@@ -82,7 +82,8 @@
                 <span class="btc_pay_ex wrap_text">{{tx.cl_recv|number:4}}&nbsp;{{tx.cl_recv_curr}}</span> <!-- &nbsp;{{'g.to'|translate}}&nbsp;{{tx.cl_recv_addr}} -->
                 <span class="sent_ex">{{'g.to'|translate}}</span> <span class="received_ex">{{'g.from'|translate}}</span>
                 <span class="self_ex">{{'g.from'|translate}}</span><span class="tx_address">:&nbsp;{{tx.other | translate}}</span>
-                <br/><!--{{'home.on'|translate}}--> {{ tx.TS|date:'medium'}}
+                <!--{{'home.on'|translate}} tx.TS|date:'medium'--> 
+                <span style="float:right;">{{tx|from_now}}</span>
               </div>
             </div>
           </a>
