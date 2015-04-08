@@ -839,7 +839,6 @@ span.quote_error{padding-left: 16px;}
   line-height: 30px!important;
 }
 
-/**/
 .transaction_steps{padding:10px;}
 .step_doing{padding:25px;}
 
@@ -856,7 +855,19 @@ span.quote_error{padding-left: 16px;}
   flex: 0 0 47%;
   width: 47%; }
 
-.rate_changed .new_rate.row {display:table!important; margin-top:15px;}
+.rate_changed .new_rate.row {display:table; margin-top:15px;}
 .rate_changed .new_rate .col-33 {display:table-cell!important;line-height:20px;vertical-align: text-bottom;padding-left:15px;}
 .rate_changed .new_rate .col-47 {display:table-cell!important;line-height:20px;font-size:20px;vertical-align: text-bottom}
 .rate_changed .new_rate .col-20 {display:table-cell!important;line-height:20px;vertical-align: text-bottom;}
+
+/* HACK css > Ionic, v1.0.0-rc.1 */
+
+.platform-android .action-sheet .action-sheet-title{
+  text-align: center !important; 
+}
+
+.platform-android .action-sheet .button {
+  text-align: center !important; 
+  border-color: #d1d3d6!important; 
+  /*color: #007aff!important; */
+}

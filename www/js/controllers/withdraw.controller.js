@@ -45,6 +45,11 @@ bitwallet_controllers
   $scope.$watch('data.amount_usd', function(newValue, oldValue, scope) {
     if(newValue===oldValue)
       return;
+    $scope.getUSDQuote();
+  });
+
+  $scope.getUSDQuote = function()
+  {
     $scope.clearErrors();
     if(usd_timeout)
     {
@@ -66,11 +71,11 @@ bitwallet_controllers
         $scope.data.signature       = res.signature;
         $timeout(function () {
           $scope.data.quoting_btc = false;
-          $scope.startTimer();
+          // $scope.startTimer();
         } , 200);
         //console.log(res);
       }, function(error){
-        $scope.stopTimer();
+        // $scope.stopTimer();
         $scope.data.quoting_btc       = false;
         $scope.setMessageErr('BTC', error);
         //console.log(error);
@@ -78,12 +83,16 @@ bitwallet_controllers
         $scope.data.signature         = undefined;
       });
     }, 750);
-  });
+  }
   
   var btc_timeout = undefined;
   $scope.$watch('data.amount_btc', function(newValue, oldValue, scope) {
     if(newValue===oldValue)
       return;
+    $scope.getBTCQuote();
+  });
+  
+  $scope.getBTCQuote = function(){
     $scope.clearErrors();
     if(btc_timeout)
     {
@@ -105,11 +114,11 @@ bitwallet_controllers
         $scope.data.signature   = res.signature;
         $timeout(function () {
           $scope.data.quoting_usd = false;
-          $scope.startTimer();
+          // $scope.startTimer();
         } , 200);
         //console.log(res);
       }, function(error){
-        $scope.stopTimer();
+        // $scope.stopTimer();
         $scope.data.quoting_usd       = false;
         $scope.setMessageErr('USD', error);
         $scope.data.quote             = undefined;
@@ -117,7 +126,7 @@ bitwallet_controllers
         //console.log(error);
       });
     }, 750);
-  });
+  }
   
   $scope.setMessageErr = function(asset, error){
     var message = error;
@@ -136,14 +145,14 @@ bitwallet_controllers
     $scope.data.quoting_usd_error = undefined;
   };
   
-  $scope.remainingTime = function(){
-    var n = parseInt((new Date()).getTime());
-    //var n = parseInt(d.getTime()/1000);
-    if(!$scope.data.quote_timestamp)
-      return 0;
-    var rem = parseInt($scope.data.quote_timestamp)+($scope.data.quote_ttl*1000)-n;
-    return rem;
-  }
+  // $scope.remainingTime = function(){
+  //   var n = parseInt((new Date()).getTime());
+  //   //var n = parseInt(d.getTime()/1000);
+  //   if(!$scope.data.quote_timestamp)
+  //     return 0;
+  //   var rem = parseInt($scope.data.quote_timestamp)+($scope.data.quote_ttl*1000)-n;
+  //   return rem;
+  // }
   
   $scope.showAlert = function(title, message){
     $ionicPopup.alert({
@@ -252,39 +261,65 @@ bitwallet_controllers
               console.log('withdraw::send_asset OPER res: '+JSON.stringify(res));
               xtx['operation_tx_id'] = res.tx_id;
               Wallet.onNewXTxAndLoad(xtx);
-            }, function(){
+            }, function(error){
+                console.log(' -- withdraw:sendAsset error #1 ');
+                console.log(JSON.stringify(error));
+                $scope.sending_modal.hide();
                 var alertPopup = $ionicPopup.alert({
                    title: T.i('err.unable_to_send_tx') + ' <i class="fa fa-warning float_right"></i>',
                    template: T.i('err.server_error'),
                    okType: 'button-assertive', 
                 })
                 .then(function() {
-                  $scope.sending_modal.hide();
+                  // Borramos la actual tx y mandamos a requotear?
+                  BitShares.cancelXTx(token, xtx['id']).then(function(res){
+                    console.log(' Cancelled tx because an error occurred: '+ xtx['id'].toString());
+                  });
+                  if(!$scope.quote)
+                    return;
+                  var cl_cmd = $scope.quote['cl_cmd'];
+                  if(cl_cmd.split(' ')[2]=='BTC')
+                  {
+                    //buy 0.0222 BTC bitUSD
+                    $scope.getBTCQuote();
+                  }
+                  else{
+                    //sell 15 bitUSD BTC
+                    $scope.getUSDQuote();
+                  }
                 });
             });
              
           });
 
         }, function(error){
-           var alertPopup = $ionicPopup.alert({
-                title: T.i('err.unable_to_send_tx') + ' <i class="fa fa-warning float_right"></i>',
-                template: T.i('err.server_error'),
-                okType: 'button-assertive', 
-             })
+            console.log(' -- withdraw:sendAsset error #2 ');
+            console.log(JSON.stringify(error));
+            $scope.sending_modal.hide();    
+            var alertPopup = $ionicPopup.alert({
+              title: T.i('err.unable_to_send_tx') + ' <i class="fa fa-warning float_right"></i>',
+              template: T.i('err.server_error'),
+              okType: 'button-assertive', 
+            })
             .then(function() {
-              $scope.sending_modal.hide();
+              
+            });
+            BitShares.cancelXTx(token, xtx['id']).then(function(res){
+              console.log(' Cancelled tx because an error occurred: '+ xtx['id'].toString());
             });
         });
  
       }, function(error){
-        console.log(error);
+        console.log(' -- withdraw:sendAsset error #3 ');
+        console.log(JSON.stringify(error));
         if(error=='auth_failed')
           Setting.remove(Setting.BSW_TOKEN);
         $scope.showAlert('err.cant_accept', 'err.cant_accept_retry');
         return;
       });
     }, function(error){
-      console.log(error);
+      console.log(' -- withdraw:sendAsset error #4 ');
+      console.log(JSON.stringify(error));
       if(error=='auth_failed')
         Setting.remove(Setting.BSW_TOKEN);
       $scope.showAlert('err.no_token', 'err.no_token_retry');
@@ -293,46 +328,46 @@ bitwallet_controllers
     
   }
   
-  $scope.nanobar  = undefined;
-  var ttl = 60;
-  var counter_timeout = ttl;
+  // $scope.nanobar  = undefined;
+  // var ttl = 60;
+  // var counter_timeout = ttl;
   
-  $scope.onTimeout = function() {
-    counter_timeout = counter_timeout - 1;
-    if(counter_timeout==0)
-    {
-      $scope.stopTimer();
-      $scope.nanobar.go(100);
-      $scope.data.timer.expired = 1;
-      return;
-    }
-    $scope.nanobar.go((ttl-counter_timeout)*100/ttl);
-    quote_timeout = $timeout($scope.onTimeout, 1000);
-  }
+  // $scope.onTimeout = function() {
+  //   counter_timeout = counter_timeout - 1;
+  //   if(counter_timeout==0)
+  //   {
+  //     $scope.stopTimer();
+  //     $scope.nanobar.go(100);
+  //     $scope.data.timer.expired = 1;
+  //     return;
+  //   }
+  //   $scope.nanobar.go((ttl-counter_timeout)*100/ttl);
+  //   quote_timeout = $timeout($scope.onTimeout, 1000);
+  // }
   
-  $scope.startTimer = function() {
-    ttl = $scope.remainingTime();
-    counter_timeout = ttl;
-    if($scope.nanobar===undefined)
-    {
-      var options = {
-        target: document.getElementById('quote_ttl'),
-        id: 'mynano'
-      };
-      $scope.nanobar = new Nanobar( options );
-    }
-    $scope.data.timer.expired = 0;
-    counter_timeout = ttl;
-    quote_timeout = $timeout($scope.onTimeout, 1000);
-  };
+  // $scope.startTimer = function() {
+  //   ttl = $scope.remainingTime();
+  //   counter_timeout = ttl;
+  //   if($scope.nanobar===undefined)
+  //   {
+  //     var options = {
+  //       target: document.getElementById('quote_ttl'),
+  //       id: 'mynano'
+  //     };
+  //     $scope.nanobar = new Nanobar( options );
+  //   }
+  //   $scope.data.timer.expired = 0;
+  //   counter_timeout = ttl;
+  //   quote_timeout = $timeout($scope.onTimeout, 1000);
+  // };
   
-  $scope.stopTimer = function() {
-    counter_timeout = ttl;
-    if($scope.nanobar)
-      $timeout(function(){
-          $scope.nanobar.go(0);
-        }, 1000);
-  }
+  // $scope.stopTimer = function() {
+  //   counter_timeout = ttl;
+  //   if($scope.nanobar)
+  //     $timeout(function(){
+  //         $scope.nanobar.go(0);
+  //       }, 1000);
+  // }
   
   $scope.copyUri = function(){
     $cordovaClipboard

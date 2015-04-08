@@ -12,6 +12,8 @@ $scope.data = {   xtx           : undefined,
     window.plugins.toast.show( T.i('err.invalid_xtx_id'), 'long', 'bottom');
   }
 
+  $scope.data.refund_address = Wallet.getMainAddress().address;
+
   $scope.data.xtx_id = $stateParams.xtx_id;
   console.log(' --- RefundCtrl for: ' + $scope.data.xtx_id.toString());
   ExchangeTransaction.byXId($scope.data.xtx_id).then(function(res){

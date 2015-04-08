@@ -464,11 +464,12 @@ bitwallet_services
                 ON o.tx_id = ifnull(et.cl_pay_tx, '-999') OR o.tx_id = ifnull(et.cl_recv_tx, '-999') OR o.tx_id = ifnull(et.operation_tx_id,'-999') \
               WHERE o.asset_id = ?  \
             UNION \
-              SELECT IFNULL(et.updated_at, et.quoted_at) as TS, \
+              SELECT IFNULL(et.created_at, et.quoted_at) as TS, \
                 et.tx_type as ui_type, \
                 o.*, et.* FROM exchange_transaction et  \
                 LEFT JOIN operation o on o.tx_id = '-999' \
               WHERE et.x_asset_id = ? \
+                    and et.status <> 'XX' \
                     and ifnull(et.cl_pay_tx, '-999') not in (select tx_id from operation) \
                     and ifnull(et.cl_recv_tx, '-999') not in (select tx_id from operation) \
                     and ifnull(et.operation_tx_id, '-999') not in (select tx_id from operation) \
@@ -554,11 +555,11 @@ bitwallet_services
           return self.addObjEx(obj);
         }
         console.log('db.service addXTX vino SIN operation_tx_id.');
-        return DB.query('INSERT or REPLACE into exchange_transaction (x_asset_id, status, quoted_at, cl_pay_curr, cl_pay_addr, cl_pay_tx, canceled, rate, cl_pay, x_id, balance, expired, cl_recv, cl_recv_tx, cl_recv_addr, cl_recv_curr, tx_type, updated_at, operation_tx_id) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?, (SELECT operation_tx_id FROM exchange_transaction WHERE x_id = ?) )', [obj.x_asset_id, obj.status, obj.quoted_at, obj.cl_pay_curr, obj.cl_pay_addr, obj.cl_pay_tx, obj.canceled, obj.rate, obj.cl_pay, obj.x_id, obj.balance, obj.expired, obj.cl_recv, obj.cl_recv_tx, obj.cl_recv_addr, obj.cl_recv_curr, obj.tx_type, obj.updated_at, obj.x_id]);
+        return DB.query('INSERT or REPLACE into exchange_transaction (x_asset_id, status, quoted_at, cl_pay_curr, cl_pay_addr, cl_pay_tx, canceled, rate, cl_pay, x_id, balance, expired, cl_recv, cl_recv_tx, cl_recv_addr, cl_recv_curr, tx_type, updated_at, created_at, operation_tx_id) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?, (SELECT operation_tx_id FROM exchange_transaction WHERE x_id = ?) )', [obj.x_asset_id, obj.status, obj.quoted_at, obj.cl_pay_curr, obj.cl_pay_addr, obj.cl_pay_tx, obj.canceled, obj.rate, obj.cl_pay, obj.x_id, obj.balance, obj.expired, obj.cl_recv, obj.cl_recv_tx, obj.cl_recv_addr, obj.cl_recv_curr, obj.tx_type, obj.updated_at, obj.created_at, obj.x_id]);
     }
     
     self.addObjEx = function(obj) {
-        return DB.query('INSERT or REPLACE into exchange_transaction (x_asset_id, status, quoted_at, cl_pay_curr, cl_pay_addr, cl_pay_tx, canceled, rate, cl_pay, x_id, balance, expired, cl_recv, cl_recv_tx, cl_recv_addr, cl_recv_curr, tx_type, updated_at, operation_tx_id) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', [obj.x_asset_id, obj.status, obj.quoted_at, obj.cl_pay_curr, obj.cl_pay_addr, obj.cl_pay_tx, obj.canceled, obj.rate, obj.cl_pay, obj.x_id, obj.balance, obj.expired, obj.cl_recv, obj.cl_recv_tx, obj.cl_recv_addr, obj.cl_recv_curr, obj.tx_type, obj.updated_at, obj.operation_tx_id]);
+        return DB.query('INSERT or REPLACE into exchange_transaction (x_asset_id, status, quoted_at, cl_pay_curr, cl_pay_addr, cl_pay_tx, canceled, rate, cl_pay, x_id, balance, expired, cl_recv, cl_recv_tx, cl_recv_addr, cl_recv_curr, tx_type, updated_at, created_at, operation_tx_id) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', [obj.x_asset_id, obj.status, obj.quoted_at, obj.cl_pay_curr, obj.cl_pay_addr, obj.cl_pay_tx, obj.canceled, obj.rate, obj.cl_pay, obj.x_id, obj.balance, obj.expired, obj.cl_recv, obj.cl_recv_tx, obj.cl_recv_addr, obj.cl_recv_curr, obj.tx_type, obj.updated_at, obj.created_at, obj.operation_tx_id]);
     }
 
     self.lastUpdate = function(){

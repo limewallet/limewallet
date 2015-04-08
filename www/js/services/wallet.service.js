@@ -18,7 +18,8 @@ bitwallet_services
 
     self.timeout = {
       ping    : 0,
-      refresh : 0
+      refresh : 0,
+      load    : 0
     };
 
     self.setRefreshing = function(param) {
@@ -217,21 +218,41 @@ bitwallet_services
     };
 
     self.onNotification = function (event) {
-      clearTimeout(self.timeout.ping);
-      self.timeout.ping = setTimeout( function() { self.ws.send('ping'); }, 10000);
-      //console.log(JSON.stringify(event.data));
-      //if(event.data.indexOf('bc') == 0){
-      if(event.data.event=='bc'){
+      //clearTimeout(self.timeout.ping);
+      //self.timeout.ping = setTimeout( function() { self.ws.send('ping'); }, 10000);
+      console.log(' ----------- onNotification Vino Evento ------ ')
+      console.log(' -- Event: '+JSON.stringify(event.data));
+      var json_event = undefined;
+      try {
+        json_event = JSON.parse(event.data);
+      }
+      catch(err) {
+        console.log('Error parsing json event :(');
+        return;
+      }
+      if(json_event === undefined)
+        return;
+      if(json_event.event=='bc'){
         //Refresh balance in 100ms, if we get two notifications (Withdraw from two addresses) just refresh once.
         clearTimeout(self.timeout.refresh);
-        self.timeout.refresh = setTimeout( function() { self.refreshBalance(); }, 100);
+        self.timeout.refresh = setTimeout( function() { self.refreshBalance(); }, 1000);
         // self.buildTxList = function(event.data, self.data.asset.id) {
-      } 
-      if( event.data.event=='xu')
+      }
+      else if( json_event.event=='xu')
       {
         //  agarro la xtx y update or insert, luego llamo a loadBalance
-        console.log('- wallet notification: new xtx?: '+JSON.stringify(event.data));
-        self.onNewXTxAndLoad(event.data.data);
+        if(json_event.data.id===undefined || !json_event.data.extra_data || json_event.data.extra_data.length<=0)
+        {
+          console.log(' evento de mierda!!!!!!!!!!!!');
+          return;
+        }
+        self.onNewXTx(json_event.data);
+        //self.loadBalance();
+        clearTimeout(self.timeout.load);
+        self.timeout.load = setTimeout( function() { 
+            console.log(' wallet changed -> loadBalance()');
+            self.loadBalance(); 
+          }, 1000);
         //self.loadBalance();
       }
     }
@@ -574,14 +595,19 @@ bitwallet_services
       xtx['x_id']         = xtx.id;
       xtx.quoted_at       = xtx.quoted_at*1000;
       xtx.updated_at      = xtx.updated_at*1000;
+      xtx.created_at      = xtx.created_at*1000;
       xtx['x_asset_id'] = 24;
-      // if(BitShares.isDeposit(xtx.tx_type))
-      // {
-      //   xtx['x_asset_id']   = parseInt(self.data.assets_x_symbol[xtx.cl_recv_curr].id);
-      // }
-      // else if(BitShares.isWithdraw(xtx.tx_type) || BitShares.isBtcPay(xtx.tx_type)){
-      //   xtx['x_asset_id']   = parseInt(self.data.assets_x_symbol[xtx.cl_pay_curr].id);
-      // }
+      if(BitShares.isDeposit(xtx.tx_type))
+      {
+        var assot = self.data.assets_x_symbol[xtx.cl_recv_curr];
+        if (assot!==undefined && assot)
+          xtx['x_asset_id']   = parseInt(assot.id);
+      }
+      else if(BitShares.isWithdraw(xtx.tx_type) || BitShares.isBtcPay(xtx.tx_type)){
+        var assot = self.data.assets_x_symbol[xtx.cl_pay_curr];
+        if (assot!==undefined && assot)
+        xtx['x_asset_id']   = parseInt(assot.id);
+      }
       return xtx;
     }
     

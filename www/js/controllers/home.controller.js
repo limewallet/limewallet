@@ -92,10 +92,17 @@ bitwallet_controllers
         $state.go('app.xtx_requote', {xtx_id:tx['x_id']});
         return;
       }
+
+      if(BitShares.canCancelXTx(tx)){
+        opt_buttons = [
+          { text: T.i('home.view_details')      },
+          { text: T.i('home.refresh')           },
+          { text: '<span class="assertive">'+T.i('home.cancel_operation')+'</span>'  }];
+      }
+      else
       opt_buttons = [
-          { text: T.i('home.view_details') },
-          { text: T.i('home.refresh') }];
-      
+        { text: T.i('home.view_details')  },
+        { text: T.i('home.refresh')       }];
       // if(BitShares.hasXtxRateChanged(tx)){
       //   opt_buttons = [
       //     { text: T.i('home.view_details') }
@@ -118,7 +125,12 @@ bitwallet_controllers
       console.log('showActionSheet: HIDE sheet!');
       $scope.homeActionSheet();
     }
+
+    // Hack porque si no no se ve el dismiss!!!!
+    //$scope.cancelText = T.i('g.dismiss');
+    
     console.log('showActionSheet: SHOW sheet!');
+    
     $scope.homeActionSheet = $ionicActionSheet.show({
      buttons: opt_buttons,
      titleText: T.i('home.transaction_options'),
@@ -126,6 +138,10 @@ bitwallet_controllers
      cancel: function() {
           // add cancel code..
      },
+     // destructiveText: (BitShares.canCancelXTx(tx))?T.i('home.cancel_operation'):undefined,
+     // destructiveButtonClicked: function() {
+     //      console.log('te hago mierdaaaaaaaaaaaaaaaaaaaaaaa');
+     // },
      buttonClicked: function(index) {
       if(index==0) {
         if(is_xtx){
@@ -183,42 +199,43 @@ bitwallet_controllers
       
       else if(index==2) {
         if(is_xtx){
-          if(BitShares.isBtcPay(tx.tx_type))
+          if(!BitShares.canCancelXTx(tx))
           {
             $ionicPopup.alert({
-              title    : T.i('err.cant_requote'),
-              template : T.i('err.cant_requote_type'),
+              title    : T.i('err.cant_cancel'),
+              template : T.i('err.cant_cancel_msg'),
               okType   : 'button-assertive', 
             });
             return;
           }
-          if(!BitShares.isXtxPending(tx))
+          var confirmPopup = $ionicPopup.confirm({
+            title    : T.i('g.sure_cancel_operation'),
+            template : T.i('g.sure_cancel_operation_msg'),
+          }).then(function(res) {
+          if(!res)
           {
-            $ionicPopup.alert({
-              title    : T.i('err.cant_requote'),
-              template : T.i('err.cant_requote_status'),
-              okType   : 'button-assertive', 
-            });
+            console.log('User didnt want to cancel :(');
             return;
           }
-          // REQUOTE XTx
-          $scope.showLoading(T.i('g.cancel_progress'));
-          var addy = Wallet.getMainAddress();
-          BitShares.getBackendToken(addy).then(function(token) {
-            BitShares.cancelXTx(token, tx.x_id).then(function(res){
-              $ionicLoading.hide();
-              $state.go('app.deposit');
-              Wallet.refreshBalance();
-              
+          console.log('User DID like quote :)');
+            // CANCEL XTx
+            $scope.showLoading(T.i('g.cancel_progress'));
+            var addy = Wallet.getMainAddress();
+            BitShares.getBackendToken(addy).then(function(token) {
+              BitShares.cancelXTx(token, tx.x_id).then(function(res){
+                $ionicLoading.hide();
+                Wallet.refreshBalance();
+                
+              }, function(error){
+                $ionicLoading.hide();
+                console.log('cancel xtx error 1'); console.log(JSON.stringify(error)); //console.log(error);
+                window.plugins.toast.show( T.i('err.requote_failed'), 'long', 'bottom');
+              })
             }, function(error){
               $ionicLoading.hide();
-              console.log('cancel xtx error 1'); console.log(JSON.stringify(error)); //console.log(error);
+              console.log('cancel xtx error 2'); console.log(error);
               window.plugins.toast.show( T.i('err.requote_failed'), 'long', 'bottom');
-            })
-          }, function(error){
-            $ionicLoading.hide();
-            console.log('cancel xtx error 2'); console.log(error);
-            window.plugins.toast.show( T.i('err.requote_failed'), 'long', 'bottom');
+            });
           });
         }
         else{

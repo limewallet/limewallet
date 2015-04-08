@@ -1,6 +1,8 @@
 {
   "g" : {
-    "cancel_ok"           : "Cancel completed successfully.",
+    "sure_cancel_operation"     : "Cancel operation",
+    "sure_cancel_operation_msg" :"Are you sure you want to cancel the opration?",
+    "cancel_ok"           : "Operation cancelled successfully.",
     "cancel_progress"     : "Cancel in progress",
     "refund_ok"           : "Refund completed successfully.",
     "refund_progress"     : "Refund in progress",
@@ -79,6 +81,8 @@
 
   "err" : {
     "invalid_xtx_id"        : "Invalid transaction id",
+    "cant_cancel"           : "Cancel failed",
+    "cant_cancel_msg"       : "Oops.. We were not able to cancel the transaction due to state change",
     "cant_requote"          : "Invalid option",
     "cant_requote_type"     : "Can not requote this type of transaction",
     "cant_requote_status"   : "Can not requote transactions in this state",
@@ -147,7 +151,7 @@
     "cancel_operation"    : "Cancel operation",
     "refresh"             : "Refresh",
     "refresh_in_progress" : "Refresh in progress",
-    "refresh_ok_wait"     : "Transaction refreshed. Wait for updates.",
+    "refresh_ok_wait"     : "Transaction refreshed. Please wait for notifications.",
     "transaction_options" : "Transaction options",
     "tap_to_refresh"      : "Tap to refresh",
     "show_balance"        : "Show balance",
@@ -280,13 +284,13 @@
     "uri_copied"              : "Bitcoin payment URI copied successfully",
     "no_deposits"             : "No deposits done yet",
     "new_deposit"             : "New deposit",
-    "deposit_successful"      : "Successful deposit! Wait for transaction updates."
+    "deposit_successful"      : "Successful deposit! Please wait for notifications."
   },
   
   "withdraw":{
     "no_withdraws"            : "No withdraws done yet",
     "new"                     : "New withdraw",
-    "successful"              : "Successful withdraw! Wait for transaction updates.",
+    "successful"              : "Successful withdraw! Please wait for notifications.",
     "in_progress"             : "Withdraw in progress",
     "headline"                : "Withdraw BITCOIN exchanging your <b>bit{{asset.symbol}}</b>",
     "headline2"               : "You can withdraw bitcoins from your wallet by converting your preferred bitasset into bitcoins.<br/>Type the destination bitcoin address and the amount you want to withdraw."
@@ -333,13 +337,13 @@
     "accept_content"        : "Are you sure to accept the rate?",
     "refund_headline"       : "Refund confirmation",
     "refund_content"        : "Are you sure you want to get your bitcoins back?",
-    "operation_completed"   : "Operation completed successfully"
+    "operation_completed"   : "Operation completed successfully! Please wait for notifications."
   },      
 
   "refund":{
     "headline"                : "Refund your {{symbol}}",
     "headline2"               : "You can withdraw bitcoins from your wallet by converting your preferred bitasset into bitcoins.<br/>Type the destination bitcoin address and the amount you want to withdraw.",
     "address"                 : "Refund address",
-    "successful"              : "Successful refund! Wait for transaction updates."
+    "successful"              : "Successful refund! Please wait for notifications"
   }
 }

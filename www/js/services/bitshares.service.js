@@ -49,6 +49,8 @@ bitwallet_services
           //deferred.resolve('xprv9s21ZrQH143K28Eo8MEiEbchHxrSFDFMtb73UEh5htu9vzrqpReaeS5vmJHi7aipUb9ck3FTfoj3AQJhdWJ7HL6ywwsuYdMupmPv13osE5c'); // daniel-hadad
           
           deferred.resolve('xprv9s21ZrQH143K4TFHxN8wCgnPUTyaJb7QwVFtvXz8zeyaXZYtmLGamLekc9hQAKZCCh3MW5HrxsjN5rHuLcpqrohVS1YDz1ZZN1nocEm8383'); 
+          // btc Bso7DduduMapkTDW7HNWXf5dMCcYcNdpXi
+          
           // xprv9s21ZrQH143K4TFHxN8wCgnPUTyaJb7QwVFtvXz8zeyaXZYtmLGamLekc9hQAKZCCh3MW5HrxsjN5rHuLcpqrohVS1YDz1ZZN1nocEm8383 -> DVSM5HFFtCbhuv3xPfRPauAeQ5GgW7y4UueL
           
           // DVS3NGm7x7NNXLSTLpqGioTZx3e2gfjJG2Rq ??
@@ -331,19 +333,23 @@ bitwallet_services
       return self.apiCall(url);
     }
     
-    self.getSellQuote = function(asset, amount, xtx_id) {
-      return self.getQuote('sell', asset, amount, xtx_id);
+    self.getSellQuote = function(asset, amount) {
+      return self.getQuote('sell', asset, amount);
     }
     
-    self.getBuyQuote = function(asset, amount, xtx_id) {
-      return self.getQuote('buy', asset, amount, xtx_id);
+    self.getBuyQuote = function(asset, amount) {
+      return self.getQuote('buy', asset, amount);
     }
     
     // If xtx_id is defined, the rest of the parameters are useless.
-    self.getQuote = function(buy_sell, asset, amount, xtx_id) {
+    self.getQuote = function(buy_sell, asset, amount) {
       var assets    = asset.split('_');
-      var my_xtx_id = (xtx_id===undefined?'':xtx_id) ;
-      var url       = ENVIRONMENT.apiurl('/'+buy_sell+'/'+amount+'/'+assets[0]+'/'+assets[1]+'/'+my_xtx_id);
+      var url       = ENVIRONMENT.apiurl('/'+buy_sell+'/'+amount+'/'+assets[0]+'/'+assets[1]);
+      return self.apiCall(url);
+    }
+
+    self.getReQuote = function(token, xtx_id) {
+      var url       = ENVIRONMENT.apiurl('/requote/'+token+'/'+xtx_id);
       return self.apiCall(url);
     }
     
@@ -362,6 +368,12 @@ bitwallet_services
       return tx.status == 'OK';
     }
     
+    self.canCancelXTx = function(tx){
+      if(!self.isXtx(tx))
+        return false;
+      return tx.status == 'WP';
+    }
+
     self.hasXtxRateChanged = function(tx){
       if(!self.isXtx(tx))
         return false;
@@ -375,18 +387,18 @@ bitwallet_services
       return valid_status.indexOf(tx.status)>=0;
     }
 
-    self.isWatingConfirmation = function(tx){
+    self.notRateChanged = function(tx){
       // if(!self.isXtx(tx))
       //   return false;
-      var valid_status = ['SC', 'OK', 'RR', 'RF'];
+      var valid_status = ['FP', 'WT', 'WC', 'PC', 'TG', 'SC', 'OK']; //, 'XX', 'RR', 'RF'];
       return valid_status.indexOf(tx.status)>=0;
     }
     
-    self.isXtxPending = function(tx){
-      if(!self.isXtx(tx))
-        return false;
-      return tx.status == 'WP';
-    }
+    // self.isXtxPending = function(tx){
+    //   if(!self.isXtx(tx))
+    //     return false;
+    //   return tx.status == 'WP';
+    // }
     
     self.acceptQuote = function(quote, signature, token, address, extra_data) {
       return self.acceptReQuote(quote, signature, token, address, extra_data, undefined)

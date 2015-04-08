@@ -7,7 +7,10 @@ $scope.data = {   xtx           : undefined,
                   amount_asset  : 0,
                   rate          : 0,
                   quote         : undefined,
-                  signature     : undefined }
+                  signature     : undefined,
+                  pay_curr      : '',
+                  recv_curr     : '',
+                  show_inverse_rate : false }
                   
   if (angular.isUndefined($stateParams.xtx_id))
   {
@@ -57,20 +60,41 @@ $scope.data = {   xtx           : undefined,
     
     $scope.showLoading('rate_changed.getting_quote');
     
-    BitShares.getQuote('buy', 'any_any', 'any', $scope.data.xtx_id).then(function(res){
-      $scope.hideLoading();
-      $scope.data.rate            = Number(res.quote.rate);
-      $scope.data.amount_asset    = (res.cl_pay_curr=='BTC')?Number(res.quote.cl_pay):Number(res.quote.cl_recv);
-      $scope.data.amount_btc      = (res.cl_pay_curr=='BTC')?Number(res.quote.cl_recv):Number(res.quote.cl_pay);
-      $scope.data.quote           = res.quote;
-      $scope.data.signature       = res.signature;
-      
+    var addy = Wallet.getMainAddress();
+    BitShares.getBackendToken(addy).then(function(token) {
+      BitShares.getReQuote(token, $scope.data.xtx_id).then(function(res){
+        $scope.hideLoading();
+        var cl_cmd                  = res.quote.cl_cmd.split(' ');
+        //sell 4.09200000 bitUSD BTC
+        if(cl_cmd[2]!='BTC')
+        {
+          $scope.data.rate            = Number(1/Number(res.quote.rate));
+          $scope.data.inverse_rate    = Number(res.quote.rate);
+        }
+        else
+        {  
+          $scope.data.rate            = Number(res.quote.rate);
+          $scope.data.inverse_rate    = Number(1/Number(res.quote.rate));
+        }
+        $scope.data.amount_asset    = (res.cl_pay_curr=='BTC')?Number(res.quote.cl_pay):Number(res.quote.cl_recv);
+        $scope.data.amount_btc      = (res.cl_pay_curr=='BTC')?Number(res.quote.cl_recv):Number(res.quote.cl_pay);
+        $scope.data.quote           = res.quote;
+        $scope.data.signature       = res.signature;
+        $scope.data.pay_curr        = (res.cl_pay_curr=='BTC')?'BTC':$scope.wallet.asset.symbol;
+        $scope.data.recv_curr       = (res.cl_pay_curr=='BTC')?$scope.wallet.asset.symbol:'BTC';
+      }, function(error){
+        console.log(' --- XtxRequoteCtrl error ' + JSON.stringify(error));
+        $scope.hideLoading();
+        $scope.data.quote           = undefined;
+        $scope.data.signature       = undefined;
+        window.plugins.toast.show( T.i(error.error), 'long', 'bottom');
+      })
     }, function(error){
-      console.log(' --- XtxRequoteCtrl error ' + JSON.stringify(error));
-      $scope.hideLoading();
-      $scope.data.quote           = undefined;
-      $scope.data.signature       = undefined;
-      window.plugins.toast.show( T.i(error.error), 'long', 'bottom');
+        console.log(' --- XtxRequoteCtrl cant get token ' + JSON.stringify(error));
+        $scope.hideLoading();
+        $scope.data.quote           = undefined;
+        $scope.data.signature       = undefined;
+        window.plugins.toast.show( T.i(error.error), 'long', 'bottom');
     })
   }
 
@@ -81,7 +105,11 @@ $scope.data = {   xtx           : undefined,
        template : T.i('rate_changed.accept_content'),
      }).then(function(res) {
       if(!res)
+      {
+        console.log('User didnt like quote :(');
         return;
+      }
+      console.log('User DID like quote :)');
       $scope.doAcceptReQuote();
      });
   }
@@ -158,14 +186,14 @@ $scope.data = {   xtx           : undefined,
       return;
     }
     $scope.nanobar.go((w_ttl-w_counter_timeout)*100/w_ttl);
-    $timeout($scope.onWaitingTx, 5000);
+    $timeout($scope.onWaitingTx, 1000);
     
     var addy = Wallet.getMainAddress();
     BitShares.getBackendToken(addy).then(function(token) {
       BitShares.getExchangeTx(token, $scope.data.xtx_id).then(function(xtx){
         //var my_xtx = Wallet.processXTx(xtx);
         //console.log('DepositCtrl::WatingTx: ui_type='+xtx.ui_type);
-        if(BitShares.isWatingConfirmation(xtx))
+        if(BitShares.notRateChanged(xtx))
         {
           $scope.stopWaitingTx();
           window.plugins.toast.show(T.i('rate_changed.operation_completed'), 'long', 'bottom');

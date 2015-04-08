@@ -90,6 +90,7 @@ bitwallet_config
                 {name : 'x_asset_id',             type   : 'integer'}, 
                 {name : 'status',                 type   : 'text'}, 
                 {name : 'quoted_at',              type   : 'integer'},
+                {name : 'created_at',             type   : 'integer'},
                 {name : 'cl_pay_curr',            type   : 'text'},             // 'BTC',
                 {name : 'cl_pay_addr',            type   : 'text'},             // 'CEX53ETEcNhAbXsGr2sHYmNAHB5smBAtqT',
                 {name : 'cl_pay_tx',              type   : 'text unique'},      // 'bfcce6d3b9c126200c2a32c79d8b5a89d2bf2bd4',
