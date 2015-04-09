@@ -1,9 +1,10 @@
 bitwallet_controllers
 .controller('HomeCtrl', function(T, Wallet, Scanner, AddressBook, $ionicActionSheet, $scope, $state, $http, $ionicModal, $rootScope, $ionicPopup, $timeout, $location, BitShares, $q, $ionicLoading) {
   
-  // $timeout(function(){
-  //   $state.go('app.xtx_requote', {xtx_id:6});
-  // }, 2500);
+  // For testing purposes, remove on prod.
+  $timeout(function(){
+    $state.go('app.settings');
+  }, 3000);
 
   $scope.$watch('master_key_new', function(newValue, oldValue, scope) {
     if(newValue===oldValue)

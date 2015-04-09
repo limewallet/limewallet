@@ -4,10 +4,10 @@ bitwallet_config
   timeout       : 10000,
   default_asset : 24,
   assets : [
-    {id: 24,  symbol: 'USD',  fullname: 'United States Dollar', precision: 10000 ,    symbol_ui_class : 'fa fa-dollar', symbol_ui_text : ''},
-    {id: 27,  symbol: 'GOLD', fullname: 'Gold' ,                precision: 1000000,   symbol_ui_class : '', symbol_ui_text : 'ozt'},
-    {id: 28,  symbol: 'CNY',  fullname: 'Chinese Yuan' ,        precision: 10000,     symbol_ui_class : 'fa fa-cny', symbol_ui_text : ''},
-    {id: 25,  symbol: 'BTC',  fullname: 'Bitcoin' ,             precision: 100000000, symbol_ui_class : 'fa fa-btc', symbol_ui_text : ''}
+    {id: 24,  symbol: 'USD',  unit: 'USD',  fullname: 'United States Dollar', precision: 10000 ,    symbol_ui_class : 'fa fa-dollar', symbol_ui_text : ''},
+    {id: 27,  symbol: 'GOLD', unit: 'OZT',  fullname: 'Gold' ,                precision: 1000000,   symbol_ui_class : '', symbol_ui_text : 'ozt'},
+    {id: 28,  symbol: 'CNY',  unit: 'CNY',  fullname: 'Chinese Yuan' ,        precision: 10000,     symbol_ui_class : 'fa fa-cny', symbol_ui_text : ''},
+    {id: 25,  symbol: 'BTC',  unit: 'BTC',  fullname: 'Bitcoin' ,             precision: 100000000, symbol_ui_class : 'fa fa-btc', symbol_ui_text : ''}
   ],
   apiurl : function(path) {
     var url = 'http://10.0.0.3:10000/api/v2';

@@ -476,6 +476,9 @@ img.i_centered {margin-left: auto;
 /*******************************/
 /* LISTS (Settings & balances) */
 /*******************************/
+.list.settings .item span.addy{
+  font-size:14px;
+}
 .list.settings .item, .list.balances .item, .list.addys_balances .item, .main_transactions .item{
   border-color:transparent!important;
   border:none;
@@ -583,17 +586,21 @@ img.i_centered {margin-left: auto;
 
 .list.balances .item{ height:78px;}
 .list.balances .item .asset_data{
-  margin-left: 72px;
+  /*margin-left: 72px;*/
   height: 56px;
   padding-top: 15px;
-  margin-left:72px;
 }
 .deposits .list.balances .item .asset_data{padding-top: 0px!important;}
-.list.balances .item .asset_balance, .list.balances .item .asset_data{
+.list.balances .item .asset_data{
 color: #aaa;}
 .list.balances .item .asset_balance{
   float: right;
   font-size: 16px;
+}
+
+.list.balances .item .asset_balance .balance_amount{
+  font-weight: bold;
+
 }
 
 .fab {

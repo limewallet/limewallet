@@ -1,8 +1,10 @@
-bitwallet_controllers.controller('SettingsCtrl', function($scope, Wallet, Setting, $rootScope, Account, $ionicModal, $timeout, T) {
+bitwallet_controllers.controller('SettingsCtrl', function($scope, Wallet, Setting, $rootScope, Account, $ionicModal, $timeout, T, $cordovaClipboard) {
   
-  $scope.data = {assets:[]
-    , selected_asset:{}
-    , hide_balance:$scope.wallet.ui.balance.allow_hide};
+  $scope.data = { assets            : []
+                , selected_asset    : {}
+                , hide_balance      : $scope.wallet.ui.balance.allow_hide
+                , addy              : '' 
+    };
   
   $scope.loadViewData = function() {
     var wallet = $scope.wallet;
@@ -15,6 +17,7 @@ bitwallet_controllers.controller('SettingsCtrl', function($scope, Wallet, Settin
     });
     $scope.data.hide_balance = $scope.wallet.ui.balance.allow_hide;
     console.log('$scope.data.hide_balance:'+$scope.data.hide_balance);
+    $scope.data.addy = Wallet.getMainAddress().address;
   }
 
   // On asset change reload wallet asset.
@@ -49,6 +52,18 @@ bitwallet_controllers.controller('SettingsCtrl', function($scope, Wallet, Settin
     }
   });
   
+  $scope.copyAddy = function(){
+    $cordovaClipboard
+      .copy($scope.data.addy)
+      .then(function () {
+        //success
+        window.plugins.toast.show(T.i('g.address_copy_ok'), 'long', 'bottom');
+      }, function () {
+        //error
+        window.plugins.toast.show(T.i('err.unable_to_copy_addy'), 'long', 'bottom');
+      });    
+  }
+
   $scope.loadViewData();
   
 });
