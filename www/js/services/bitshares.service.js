@@ -2,6 +2,35 @@ bitwallet_services
 .service('BitShares', function($translate, $q, $http, $rootScope, Setting, ENVIRONMENT) {
     var self = this;
 
+    self.requestSignature = function(keys, url, _body) {
+      var deferred = $q.defer();
+
+			var body  = _body || '';
+			var path  = self.urlPath(url);
+			var nonce = Math.floor(Date.now()/1000);
+
+      window.plugins.BitsharesPlugin.requestSignature(
+        function(data){
+			    var headers = {
+			    	ACCESS_KEY 		   : keys.akey,
+			    	ACCESS_NONCE     : nonce,
+			    	ACCESS_SIGNATURE : data.signature,
+			    };
+          deferred.resolve(headers);
+        },
+        function(error){
+          deferred.reject(error);
+        },
+        keys.skey, 
+        nonce,
+				path,
+				body
+      );
+    
+      return deferred.promise;
+    };
+
+
     self.compactSignatureForMessage = function(msg, wif) {
       var deferred = $q.defer();
 
@@ -286,19 +315,44 @@ bitwallet_services
       return;
     };
 
-    self.apiCall = function(url, payload, post) {
+    self.urlPath = function(url) {
+      return url.substr(url.indexOf('/', url.indexOf('://')+3));
+    }
+
+    self.apiCall = function(keys, url, payload) {
+
+      if (keys === undefined) {
+		    return self.apiCallStub(url, payload);
+      }
+
       var deferred = $q.defer();
-      console.log('Bitshares::apiCall ' + url);
+
+      self.requestSignature(keys, url, payload).then(function(res) {
+				  return self.apiCallStub(url, payload, res.headers);
+				}, function(res) {
+          deferred.reject('Unable to sign request');
+			});
+
+      return deferred.promise;
+    }
+
+    self.apiCallStub = function(url, payload, _headers) {
+
+      var deferred = $q.defer();
+      console.log('Bitshares::apiCallStub ' + url);
 
       var req;
+
+			var headers = _headers || {};
       
-      if(payload !== undefined || post !==undefined && post==true )
-      {
-        //console.log('ApiCall POST ' + JSON.stringify(payload));
-        req = $http.post(url, payload ,{timeout:ENVIRONMENT.timeout});
-      }
+      if(payload !== undefined)
+			{
+        req = $http.post(url, payload ,{timeout:ENVIRONMENT.timeout, headers:headers});
+			}
       else
-        req = $http.get(url, {timeout:ENVIRONMENT.timeout});
+			{
+        req = $http.get(url, {timeout:ENVIRONMENT.timeout, headers:headers});
+      }
 
       req.success(function(res) {
         console.log('vuelve APICALL ' + JSON.stringify(res));
@@ -316,21 +370,17 @@ bitwallet_services
 
     // *************************************************** //
     // Exchange Service Api Calls ************************ //
-    self.listExchangeTxs = function(token, last_updated_at) {
-      if(last_updated_at!==undefined)
-        return self.updateExchangeTxs(token, last_updated_at);
-      var url = ENVIRONMENT.apiurl('/xtxs/'+token+'/list');
-      return self.apiCall(url);
+    // *************************************************** //
+    self.listExchangeTxs = function(keys, before) {
+			var filter = '';
+      if( before !== undefined)
+        filter = '?before='+before;
+
+      return self.apiCall(keys, ENVIRONMENT.apiurl('/xtxs'+filter) );
     }
     
-    self.updateExchangeTxs = function(token, last_updated_at) {
-      var url = ENVIRONMENT.apiurl('/xtxs/'+token+'/list/'+last_updated_at/1000);
-      return self.apiCall(url);
-    }
-    
-    self.getExchangeTx = function(token, txid) {
-      var url = ENVIRONMENT.apiurl('/xtxs/'+token+'/'+txid);
-      return self.apiCall(url);
+    self.getExchangeTx = function(keys, txid) {
+      return self.apiCall(keys, ENVIRONMENT.apiurl('/xtxs/'+txid));
     }
     
     self.getSellQuote = function(asset, amount) {
@@ -348,9 +398,8 @@ bitwallet_services
       return self.apiCall(url);
     }
 
-    self.getReQuote = function(token, xtx_id) {
-      var url       = ENVIRONMENT.apiurl('/requote/'+token+'/'+xtx_id);
-      return self.apiCall(url);
+    self.getReQuote = function(keys, xtx_id) {
+      return self.apiCall(keys, ENVIRONMENT.apiurl('/xtxs/' + xtx_id + '/requote'));
     }
     
     self.X_DEPOSIT    = 'deposit';
@@ -400,89 +449,79 @@ bitwallet_services
     //   return tx.status == 'WP';
     // }
     
-    self.acceptQuote = function(quote, signature, token, address, extra_data) {
-      return self.acceptReQuote(quote, signature, token, address, extra_data, undefined)
+    self.acceptQuote = function(quote, signature, keys, address, extra_data) {
+      return self.acceptReQuote(quote, signature, keys, address, extra_data, undefined)
     }
-    self.acceptReQuote = function(quote, signature, token, address, extra_data, xtx_id) {
-      var url = ENVIRONMENT.apiurl('/accept');
 
-      var payload = {
+    self.acceptReQuote = function(quote, signature, keys, address, extra_data, xtx_id) {
+
+      var payload = JSON.stringify({
         quote       : quote,
         signature   : signature, 
         destination : address,
-        token       : token,
         extra_data  : extra_data,
         xtx_id      : (xtx_id === undefined ? '' : xtx_id)
-      }
+      });
 
-      console.log(JSON.stringify(payload));
-      return self.apiCall(url, payload);
+      self.apiCall(keys, ENVIRONMENT.apiurl('/accept'), payload);
     }
     
-    self.wakeupXTx = function(token, txid) {
-      var url = ENVIRONMENT.apiurl('/xtxs/'+token+'/'+txid+'/wakeup');
-      return self.apiCall(url, undefined, true);
+    self.wakeupXTx = function(keys, txid) {
+      self.apiCall(keys, ENVIRONMENT.apiurl('/xtxs/'+txid+'/wakeup'));
     }
 
-    self.cancelXTx = function(token, txid) {
-      var url = ENVIRONMENT.apiurl('/xtxs/'+token+'/'+txid+'/cancel');
-      return self.apiCall(url, undefined, true);
+    self.cancelXTx = function(keys, txid) {
+      self.apiCall(keys, ENVIRONMENT.apiurl('/xtxs/'+token+'/'+txid+'/cancel'));
     }
     
-    self.refundXTx = function(token, txid, refund_address) {
-      var url = ENVIRONMENT.apiurl('/xtxs/'+token+'/'+txid+'/refund');
-      var payload = {
-        refund_address       : refund_address
-      }
-      return self.apiCall(url, payload);
+    self.refundXTx = function(keys, txid, refund_address) {
+      var url = ENVIRONMENT.apiurl('/xtxs/'+txid+'/refund');
+      var payload = JSON.stringify({
+        refund_address : refund_address
+      });
+      return self.apiCall(keys, url, payload);
     }
     
     // *************************************************** //
     // Assets Operations Api Calls *********************** //
     
-    self.getBalance = function(address, last_block_id) {
-      // var url = ENVIRONMENT.apiurl('/addrs/'+address+'/balance');
-      // return self.apiCall(url);
-      if(last_block_id!==undefined)
-        return self.updateBalance(address, last_block_id);
-      var url = ENVIRONMENT.apiurl('/addrs/'+address+'/history');
-      return self.apiCall(url);
-    }
+    self.getBalance = function(address, before) {
 
-    self.updateBalance = function(address, last_block_id) {
-      //var url = ENVIRONMENT.apiurl('/addrs/'+address+'/balance/' + asset_id);
-      var url = ENVIRONMENT.apiurl('/addrs/'+address+'/history/newer/'+last_block_id);
-      return self.apiCall(url);
+			var filter = '';
+      if( before !== undefined)
+        filter = '?before='+before;
+
+      self.apiCall(undefined, ENVIRONMENT.apiurl('/addrs/'+address+filter));
     }
     
     self.prepareSendAsset = function(asset, from, to, amount) {
       var url = ENVIRONMENT.apiurl('/txs/new');
       var my_asset = asset;
+
       if (asset.indexOf('bit')!=0)
         my_asset = 'bit'+asset;
-      var payload = {
+
+      var payload = JSON.stringify({
         "asset" : my_asset, 
         "from"  : from,
         "to"    : [{
             "address" : to, 
             "amount"  : amount
         }]
-      }
+      });
 
-      console.log('VOY CON PREPARE ' + JSON.stringify(payload));
-
-      return self.apiCall(url, payload);
+      return self.apiCall(undefined, url, payload);
     }
     
     self.sendAsset = function(tx, secret) {
       var url = ENVIRONMENT.apiurl('/txs/send');
 
-      var payload = {
+      var payload = JSON.stringify({
         'tx'      : tx, 
         'secret'  : secret
-      }
+      });
       
-      return self.apiCall(url, payload);
+      return self.apiCall(undefined, url, payload);
     }
     
     // *************************************************** //
@@ -490,58 +529,64 @@ bitwallet_services
     
     self.getSignupInfo = function() {
       var url = ENVIRONMENT.apiurl('/signup');
-      return self.apiCall(url);
+      return self.apiCall(undefined, url);
     }
     
     self.getAccount = function(name) {
       var url = ENVIRONMENT.apiurl('/account/'+name);
-      return self.apiCall(url);
+      return self.apiCall(undefined, url);
     }
-    
-    self.pushSignupInfo = function(signupInfo) {
+              
+    self.pushSignupInfo = function(message, signature, pubkey) {
+
       var url = ENVIRONMENT.apiurl('/signup');
-      return self.apiCall(url, signupInfo);
+
+      var payload = JSON.stringify({
+        message   : message,
+        signature : signature,
+        pubkey    : pubkey
+      });
+
+      return self.apiCall(undefined, url, payload)
     }
 
-    self.registerAccount = function(token, address, account) {
+    self.registerAccount = function(keys, address, account) {
       var url = ENVIRONMENT.apiurl('/account');
 
-      var payload = {
+      var payload = JSON.stringify({
         name       : account.name,
         pubkey     : address.pubkey, 
         gravatarId : account.gravatar_id,
         token      : token
-      }
+      });
 
-      return self.apiCall(url, payload);
+      return self.apiCall(keys, url, payload);
     }
     
-    self.updateAccount = function(token, addys, assets, account) {
+    self.updateAccount = function(keys, addys, assets, account) {
       var url = ENVIRONMENT.apiurl('/txs/update_account');
 
-      var payload = {
+      var payload = JSON.stringify({
         pay_from      : addys,
         pay_in        : assets, 
         name          : account.name,
         public_data   : {gravatarId:account.gravatar_id},
         token         : token
-      }
+      });
 
-      return self.apiCall(url, payload);
+      return self.apiCall(keys, url, payload);
     }
     
-    self.sendTx = function(token, secret, tx) {
+    self.sendTx = function(secret, tx) {
       var url = ENVIRONMENT.apiurl('/txs/send');
-
-      var payload = {
+      var payload = JSON.stringify({
         secret      : secret,
         tx          : tx,
-        token       : token
-      }
+      });
 
       return self.apiCall(url, payload);
     }
-    
+
     self.getBackendToken = function(address) {
 
       var deferred = $q.defer();
@@ -550,7 +595,8 @@ bitwallet_services
 
         if(res !== undefined) {
           console.log('BitShares.getBackendToken:'+res.value);
-          deferred.resolve(res.value);
+          var tmp = res.value.split(';');
+          deferred.resolve({akey:tmp[0],skey:tmp[1]});
           return;
         }
 
@@ -562,21 +608,17 @@ bitwallet_services
               return;
             }
             self.compactSignatureForMessage(res.msg, address.privkey).then(function(signature) {
-              var myData = {
-                message   : res.msg,
-                signature : signature,
-                pubkey    : address.pubkey
-              };
-              
-              self.pushSignupInfo(myData).then(function(res) {
 
-                if(angular.isUndefined(res.token)) {
-                  deferred.reject('invalid token');
+              self.pushSignupInfo(res.msg, signature, address.pubkey).then(function(res) {
+
+                if( angular.isUndefined(res.access_key) || angular.isUndefined(res.secret_key) ) {
+                  deferred.reject('invalid keys');
                   return;
                 }
-                Setting.set(Setting.BSW_TOKEN, res.token).then(function() {
-                  console.log('BitShares.getBackendToken:'+res.token);
-                  deferred.resolve(res.token);
+
+                Setting.set(Setting.BSW_TOKEN, [res.access_key, res.secret_key].join(';')).then(function() {
+                  console.log('BitShares.getBackendToken:'+res.access_key);
+                  deferred.resolve({akey:res.access_key,skey:res.secret_key});
                 }, function(err) {
                   deferred.reject(err);
                 });
