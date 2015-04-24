@@ -1,11 +1,23 @@
 /*!
  * ngCordova
- * v0.1.9-alpha
+ * v0.1.15-alpha
  * Copyright 2014 Drifty Co. http://drifty.com/
  * See LICENSE in this repository for license information
  */
 (function(){
 var ngCordovaMocks = angular.module('ngCordovaMocks', []);
+ngCordovaMocks.factory('$cordovaAppVersion', ['$q', function($q) {
+  var throwsError = false;
+  return {
+    throwsError: throwsError,
+    getAppVersion: function() {
+      var defer = $q.defer();
+      defer.resolve('mock v');
+      return defer.promise;
+    }
+  };
+}]);
+
 /**
  * @ngdoc service
  * @name ngCordovaMocks.cordovaBarcodeScanner
@@ -98,26 +110,172 @@ ngCordovaMocks.factory('$cordovaBarcodeScanner', ['$q', function($q) {
 }]);
 /**
  * @ngdoc service
+ * @name ngCordovaMocks.cordovaBLE
+ *
+ * @description
+ * A service for ble features
+ * in an app build with ngCordova.
+**/
+ngCordovaMocks.factory('$cordovaBLE', ['$q', '$timeout', function($q, $timeout) {
+	var deviceScan = {
+    "name": "Test Device",
+    "id": "AA:BB:CC:DD:EE:FF",
+    "advertising": [2,1,6,3,3,15,24,8,9,66,97,116,116,101,114,121],
+    "rssi": -55
+  };
+
+  var deviceConnect = {
+    "name": "Test Device",
+    "id": "AA:BB:CC:DD:EE:FF",
+    "advertising": [2,1,6,3,3,15,24,8,9,66,97,116,116,101,114,121],
+    "rssi": -55,
+    "services": [
+      "1800",
+      "1801",
+      "180f"
+    ],
+    "characteristics": [
+      {
+        "service": "1800",
+        "characteristic": "2a00",
+        "properties": [ "Read" ]
+      },
+      {
+        "service": "1800",
+        "characteristic": "2a01",
+        "properties": [ "Read" ]
+      },
+      {
+        "service": "1801",
+        "characteristic": "2a05",
+        "properties": [ "Read" ]
+      },
+      {
+        "service": "180f",
+        "characteristic": "2a19",
+        "properties": [ "Read" ],
+        "descriptors": [ { "uuid": "2901" }, { "uuid": "2904" } ]
+      }
+    ]
+  };
+
+  var readData = new ArrayBuffer(8);
+
+  return {
+
+    scan: function (services, seconds) {
+      var q = $q.defer();
+      $timeout(function () {
+        q.resolve(deviceScan);
+      }, seconds*1000);
+      return q.promise;
+    },
+
+    connect: function (deviceID) {
+      var q = $q.defer();
+      $timeout(function () {
+        q.resolve(deviceConnect);
+      }, 1500);
+      return q.promise;
+    },
+
+    disconnect: function (deviceID) {
+      var q = $q.defer();
+      $timeout(function () {
+        q.resolve(true);
+      }, 500);
+      return q.promise;
+    },
+
+    read: function (deviceID, serviceUUID, characteristicUUID) {
+      var q = $q.defer();
+      $timeout(function () {
+        q.resolve(readData);
+      }, 100);
+      return q.promise;
+    },
+
+    write: function (deviceID, serviceUUID, characteristicUUID, data) {
+      var q = $q.defer();
+      $timeout(function () {
+        q.resolve(true);
+      }, 100);
+      return q.promise;
+    },
+
+    writeCommand: function (deviceID, serviceUUID, characteristicUUID, data) {
+      var q = $q.defer();
+      $timeout(function () {
+        q.resolve(true);
+      }, 100);
+      return q.promise;
+    },
+
+    notify: function (deviceID, serviceUUID, characteristicUUID) {
+      var q = $q.defer();
+      $timeout(function () {
+        q.resolve(true);
+      }, 100);
+      return q.promise;
+    },
+
+    indicate: function (deviceID, serviceUUID, characteristicUUID) {
+      var q = $q.defer();
+      $timeout(function () {
+        q.resolve(true);
+      }, 100);
+      return q.promise;
+    },
+
+    isConnected: function (deviceID) {
+      var q = $q.defer();
+      q.resolve(true);
+      return q.promise;
+    },
+
+    isEnabled: function () {
+      var q = $q.defer();
+      q.resolve(true);
+      return q.promise;
+    }
+	};
+}]);
+
+/**
+ * @ngdoc service
  * @name ngCordovaMocks.cordovaCamera
  *
  * @description
  * A service for testing camera features
  * in an app build with ngCordova.
-**/ 
+**/
 ngCordovaMocks.factory('$cordovaCamera', ['$q', function($q) {
 	var throwsError = false;
+  var imageData = '';
 
 	return {
-        /**
+
+    /**
 		 * @ngdoc property
 		 * @name throwsError
 		 * @propertyOf ngCordovaMocks.cordovaCamera
 		 *
 		 * @description
-		 * A flag that signals whether a promise should be rejected or not. 
+		 * A flag that signals whether a promise should be rejected or not.
 		 * This property should only be used in automated tests.
-		**/		
+		**/
 		throwsError: throwsError,
+
+    /**
+     * @ngdoc property
+     * @name imageData
+     * @propertyOf ngCordovaMocks.cordovaCamera
+     *
+     * @description
+     * The imagedata (e.g. an url) which will be returned from the device.
+     * This property should only be used in automated tests.
+     **/
+    imageData: imageData,
 
 		getPicture: function(options) {
 			var defer = $q.defer();
@@ -128,12 +286,13 @@ ngCordovaMocks.factory('$cordovaCamera', ['$q', function($q) {
 					options = options;	// This is just to get by JSHint.
 				}
 
-				defer.resolve();					
+        defer.resolve(this.imageData);
 			}
 			return defer.promise;
 		}
 	};
 }]);
+
 /**
  * @ngdoc service
  * @name ngCordovaMocks.cordovaCapture
@@ -314,13 +473,16 @@ ngCordovaMocks.factory('$cordovaContacts', ['$q', function($q) {
  * A service for testing datepicker features
  * in an app build with ngCordova.
  */
-ngCordovaMocks.factory('$cordovaDatePicker', function () {
+ngCordovaMocks.factory('$cordovaDatePicker', ['$q', function ($q) {
   return {
-    show: function (options, fn) {
-      return options.date;
+    show: function (options) {
+      var q = $q.defer();
+      options = options || {date: new Date(), mode: 'date'};
+      q.resolve(options.date);
+      return q.promise;
     }
   };
-});
+}]);
 
 /**
  * @ngdoc service
@@ -893,6 +1055,8 @@ ngCordovaMocks.factory('$cordovaDialogs', ['$q', function ($q) {
 ngCordovaMocks.factory('$cordovaFile', ['$q', function($q) {
 	var throwsError = false;
 	var fileSystem = {};
+    var shouldMockFiles = false;
+    var files = {};
 
 	var mockIt = function(errorMessage) {
 		var defer = $q.defer();
@@ -927,41 +1091,119 @@ ngCordovaMocks.factory('$cordovaFile', ['$q', function($q) {
 		 **/		
 		fileSystem: fileSystem,
 
-		checkDir: function(directory) {
-			return mockIt.call(this, 'There was an error checking the directory.');		
-		},
+        /**
+         * @ngdoc property
+         * @name shouldMockFiles
+         * @propertyOf ngCordovaMocks.cordovaFile
+         *
+         * @description
+         * A flag that signals whether one wish to mock files.
+         * This is useful if you need mocks specific file scenarios.
+         * This property should only be used in automated tests.
+         **/
+        shouldMockFiles: shouldMockFiles,
 
-		createDir: function(directory, overwrite) {
-			return mockIt.call(this, 'There was an error creating the directory.');		
-		},
+        /**
+         * @ngdoc property
+         * @name files
+         * @propertyOf ngCordovaMocks.cordovaFile
+         *
+         * @description
+         * An object that may be used for mocking files on the device.
+         * This property should only be used in automated tests.
+         *
+         * **/
+        files : files,
+
+        checkDir: function(directory) {
+            if(this.shouldMockFiles){
+                var defer = $q.defer();
+                if(this.files[directory] && !this.files[directory].isFile){
+                    defer.resolve();
+                }
+                else{
+                    defer.reject();
+                }
+                return defer.promise;
+            }
+
+            return mockIt.call(this, 'There was an error checking the directory.');
+        },
+
+        createDir: function(directory, overwrite) {
+            if(this.shouldMockFiles ){
+                var defer = $q.defer();
+                this.files[directory] = { isFile : false};
+                defer.resolve();
+                return defer.promise;
+            }
+            return mockIt.call(this, 'There was an error creating the directory.');
+        },
 
 		listDir: function(filePath) {
 		 	return mockIt.call(this, 'There was an error listing the directory');
 		},
 
-		checkFile: function(directory, file) {
-			return mockIt.call(this, 'There was an error checking for the file.');	
-		},
+        checkFile: function(filePath) {
+            if(this.shouldMockFiles){
+                var defer = $q.defer();
+                if(this.files[filePath] && this.files[filePath].isFile){
+                    defer.resolve();
+                }
+                else{
+                    defer.reject();
+                }
+                return defer.promise;
+            }
+            return mockIt.call(this, 'There was an error checking for the file.');
+        },
 
-		createFile: function(directory, file, overwrite) {
-			return mockIt.call(this, 'There was an error creating the file.');
-		},
+
+        createFile: function(filePath,overwrite) {
+            if(this.shouldMockFiles){
+                var defer = $q.defer();
+                this.files[filePath] = {
+                    isFile : true,
+                    fileContent : ''
+                };
+                defer.resolve();
+                return defer.promise;
+            }
+
+            return mockIt.call(this, 'There was an error creating the file.');
+        },
 
 		removeFile: function(directory, file) {
 			return mockIt.call(this,'There was an error removng the file.');	
 		},
 
-		writeFile: function(directory, file, options) {
-			return mockIt.call(this,'There was an error writing the file.');		
-		},
+        writeFile: function(filePath,data,options) {
+            if(this.shouldMockFiles && filePath && data){
+                this.files[filePath] = {
+                    isFile : true,
+                    fileContent : data
+                };
+            }
+            return mockIt.call(this,'There was an error writing the file.');
+        },
 
-		readFile: function(directory, file) {
-			return mockIt.call(this, 'There was an error reading the file.');			
-		},
+        readFile: function(filePath) {
+            return this.readAsText(filePath);
+        },
 
-		readAsText: function (filePath) {
-			return mockIt.call(this, 'There was an error reading the file as text.');
-		},
+        readAsText: function (filePath) {
+            if(this.shouldMockFiles){
+                var defer = $q.defer();
+                if(files[filePath] && files[filePath].isFile){
+                    defer.resolve(files[filePath].fileContent);
+                }
+                else{
+                    defer.reject();
+                }
+                return defer.promise;
+            }
+            return mockIt.call(this, 'There was an error reading the file as text.');
+        },
 
 		readAsDataURL: function (filePath) {
 			return mockIt.call(this, 'There was an error reading the file as a data url.');
@@ -996,6 +1238,87 @@ ngCordovaMocks.factory('$cordovaFile', ['$q', function($q) {
 		}		
 	};
 }]);
+/**
+ * @ngdoc service
+ * @name ngCordovaMocks.cordovaFileOpener2
+ *
+ * @description
+ * A service for testing fileOpener2
+ * in an app build with ngCordova.
+ */
+ngCordovaMocks.factory('$cordovaFileOpener2', ['$q', function ($q) {
+
+  var throwsError = false;
+
+  return {
+
+    /**
+     * @ngdoc property
+     * @name throwsError
+     * @propertyOf ngCordovaMocks.cordovaFileOpener2
+     *
+     * @description
+     * A flag that signals whether a promise should be rejected or not.
+     * This property should only be used in automated tests.
+     **/
+    throwsError: throwsError,
+
+    open: function (file, type) {
+
+      var defer = $q.defer();
+
+      if(this.throwError) {
+        defer.reject({
+          status: 0,
+          message: 'There was an error capturing the file.'
+        });
+      } else {
+        defer.resolve();
+      }
+
+      return defer.promise;
+
+    },
+
+    uninstall: function (pack) {
+
+      var defer = $q.defer();
+
+      if(this.throwError) {
+        defer.reject({
+          status: 0,
+          message: 'There was an error capturing the packageId.'
+        });
+      } else {
+        defer.resolve();
+      }
+
+      return defer.promise;
+
+    },
+
+    appIsInstalled: function (pack) {
+
+      var defer = $q.defer();
+
+      if(this.throwError) {
+        defer.reject({
+          status: 0,
+          message: 'There was an error capturing the packageId.'
+        });
+      } else {
+        defer.resolve();
+      }
+
+      return defer.promise;
+
+    }
+
+  };
+
+}]);
+
+
 /**
  * @ngdoc service
  * @name ngCordovaMocks.cordovaGeolocation
@@ -1245,9 +1568,10 @@ ngCordovaMocks.factory('$cordovaGeolocation', ['$interval', '$q', function($inte
  */ 
 ngCordovaMocks.factory('$cordovaGlobalization', ['$q', function($q) {
 	var throwsError = false;
-	var preferredLanguage = 'en';
+    var language = (navigator.language) ?  navigator.language : "en-US";
+	var preferredLanguage = {value: language};
 	var firstDayOfWeek = 'Sunday';
-	var localeName = '';
+	var localeName = {value: language};
 
 	return {
         /**
@@ -1474,6 +1798,204 @@ ngCordovaMocks.factory('$cordovaGlobalization', ['$q', function($q) {
 }]);
 /**
  * @ngdoc service
+ * @name ngCordovaMocks.cordovaGoogleAnalytics
+ *
+ * @description
+ * A service for testing google analytics services
+ * in an app build with ngCordova.
+ */
+ngCordovaMocks.factory('$cordovaGoogleAnalytics', ['$q', function($q) {
+  var throwsError = false;
+  var methods = {};
+      
+      /**
+   * @ngdoc property
+   * @name throwsError
+   * @propertyOf ngCordovaMocks.cordovaGeolocation
+   *
+   * @description
+   * A flag that signals whether a promise should be rejected or not.
+   * This property should only be used in automated tests.
+  **/
+  methods.throwsError = throwsError;
+
+  var methodsName = [
+    'startTrackerWithId',
+    'setUserId',
+    'debugMode',
+    'trackView',
+    'addCustomDimension',
+    'trackEvent',
+    'addTransaction',
+    'addTransactionItem'
+  ];
+
+  methodsName.forEach(function(funcName) {
+    methods[funcName] = function() {
+      var defer = $q.defer();
+      
+      (this.throwsError) ?
+        defer.reject() :
+        defer.resolve();
+
+      return defer.promise;
+    };
+  });
+
+  return methods;
+}]);
+
+'use strict';
+
+
+/**
+ * @ngdoc service
+ * @name ngCordovaMocks.googlePlayGame
+ *
+ * @description
+ * A service for testing Google Play Game features
+ * in an app build with ngCordova.
+ */  
+ngCordovaMocks.factory('$cordovaGooglePlayGame', ['$q', function ($q) {
+		var throwsError = false;
+		var isSignedIn = false;
+		var displayName = '';
+
+		return {
+
+		/**
+	     * @ngdoc property
+	     * @name _throwsError
+	     * @propertyOf ngCordovaMocks.googlePlayGame
+	     *
+	     * @description
+	     * A flag that signals whether a promise should be rejected or not. 
+	     * This property should only be used in automated tests.
+	    **/   
+	    _throwsError: throwsError,
+
+	    /**
+	     * @ngdoc property
+	     * @name _isSignedIn
+	     * @propertyOf ngCordovaMocks.googlePlayGame
+	     *
+	     * @description
+	     * A flag that signals whether a promise should be rejected or not. 
+	     * This property should only be used in automated tests.
+	    **/
+	    _isSignedIn: isSignedIn,
+
+	    /**
+	     * @ngdoc property
+	     * @name _displayName
+	     * @propertyOf ngCordovaMocks.googlePlayGame
+	     *
+	     * @description
+	     * A flag that signals whether a promise should be rejected or not. 
+	     * This property should only be used in automated tests.
+	    **/
+	    _displayName: displayName,
+
+			auth: function() {
+				var defer = $q.defer();
+				if (this._throwsError) {
+					defer.reject('There was a auth error.');
+				} else {
+					this.isSignedIn = true;
+					defer.resolve('SIGN IN SUCCESS');
+				}
+				return defer.promise;
+			},
+			signout: function() {
+				var defer = $q.defer();
+				if (this.throwsError) {
+					defer.reject('There was a signout error.');
+				} else {
+					defer.resolve();
+				}
+				return defer.promise;
+			},
+			isSignedIn: function() {
+				var defer = $q.defer();
+				if (this._throwsError) {
+					defer.reject('There was a isSignedIn error.');
+				} else {
+					defer.resolve({
+						'isSignedIn': this._isSignedIn
+					});
+				}
+				return defer.promise;
+			},
+			showPlayer: function() {
+				var defer = $q.defer();
+				if (this.throwsError) {
+					defer.reject('There was a showPlayer error.');
+				} else {
+					defer.resolve({
+						'displayName': this._displayName
+					});
+				}
+				return defer.promise;
+			},
+			submitScore: function(data) {
+				var defer = $q.defer();
+				if (this._throwsError) {
+					defer.reject('There was a submitScore error.');
+				} else {
+					defer.resolve('OK');
+				}
+				return defer.promise;
+			},
+			showAllLeaderboards: function() {
+				var defer = $q.defer();
+				if (this.throwsError) {
+					defer.reject('There was a showAllLeaderboards error.');
+				} else {
+					defer.resolve('OK');
+				}
+				return defer.promise;
+			},
+			showLeaderboard: function(data) {
+				var defer = $q.defer();
+				if (this._throwsError) {
+					defer.reject('There was a showLeaderboard error.');
+				} else {
+					defer.resolve('OK');
+				}
+				return defer.promise;
+			},
+			unlockAchievement: function(data) {
+				var defer = $q.defer();
+				if (this.throwsError) {
+					defer.reject('There was a unlockAchievement error.');
+				} else {
+					defer.resolve('OK');
+				}
+				return defer.promise;
+			},
+			incrementAchievement: function(data) {
+				var defer = $q.defer();
+				if (this._throwsError) {
+					defer.reject('There was a incrementAchievement error.');
+				} else {
+					defer.resolve('OK');
+				}
+				return defer.promise;
+			},
+			showAchievements: function() {
+				var defer = $q.defer();
+				if (this.throwsError) {
+					defer.reject('There was a showAchievements error.');
+				} else {
+					defer.resolve('OK');
+				}
+				return defer.promise;
+			}
+		};
+
+	}]);
+/**
+ * @ngdoc service
  * @name ngCordovaMocks.cordovaKeyboard
  *
  * @description
@@ -1504,6 +2026,69 @@ ngCordovaMocks.factory('$cordovaKeyboard', function() {
 
 	};
 });
+
+/**
+ * @ngdoc service
+ * @name ngCordovaMocks.cordovaKeychain
+ *
+ * @description
+ * A service for testing Keychain features
+ * in an app built with ngCordova.
+ **/
+ngCordovaMocks.factory('$cordovaKeychain', ['$q', function($q) {
+  var keychains = {};
+
+  return {
+    /**
+     * @ngdoc property
+     * @name keychains
+     * @propertyOf ngCordovaMocks.cordovaKeychain
+     *
+     * @description
+     * The collection of 'keychains' that have been saved.
+     * This property should only be used in automated tests.
+     **/
+    keychains: keychains,
+
+    getForKey: function (key, serviceName) {
+      var defer = $q.defer();
+
+      if (this.keychains[serviceName]) {
+        defer.resolve(this.keychains[serviceName][key]);
+      } else {
+        defer.reject();
+      }
+
+      return defer.promise;
+    },
+
+    setForKey: function (key, serviceName, value) {
+      var defer = $q.defer();
+
+      if (!this.keychains[serviceName]) {
+        this.keychains[serviceName] = {};
+      }
+
+      this.keychains[serviceName][key] = value;
+
+      defer.resolve();
+
+      return defer.promise;
+    },
+
+    removeForKey: function (key, serviceName) {
+      var defer = $q.defer();
+
+      if (this.keychains[serviceName]) {
+        delete this.keychains[serviceName][key];
+      }
+
+      defer.resolve();
+
+      return defer.promise;
+    }
+  };
+}]);
 
 /**
  * @ngdoc service
@@ -1554,6 +2139,82 @@ ngCordovaMocks.factory('$cordovaNetwork', function () {
 		}
 	};
 });
+'use strict';
+
+/**
+ * @ngdoc service
+ * @name ngCordovaMocks.cordovaPush
+ *
+ * @description
+ * A service for testing push notifications features
+ * in an app build with ngCordova.
+ */  
+ngCordovaMocks.factory('$cordovaPush', ['$q', '$timeout', '$rootScope', function($q, $timeout, $rootScope) {
+  var throwsError = false;
+
+  var deviceToken = '';
+
+  return {
+        /**
+     * @ngdoc property
+     * @name throwsError
+     * @propertyOf ngCordovaMocks.cordovaPush
+     *
+     * @description
+     * A flag that signals whether a promise should be rejected or not. 
+     * This property should only be used in automated tests.
+    **/   
+    throwsError: throwsError,
+
+        /**
+     * @ngdoc property
+     * @name deviceToken
+     * @propertyOf ngCordovaMocks.cordovaPush
+     *
+     * @description
+     * Token send when service register device
+     * This property should only be used in automated tests.
+    **/ 
+    deviceToken: deviceToken,
+
+    onNotification: function (notification) {
+      $timeout(function () {
+        $rootScope.$broadcast('$cordovaPush:notificationReceived', notification);
+      });
+    },
+
+    register: function (config) {
+      var _self = this;
+      var defer = $q.defer();
+      if (config !== undefined && config.ecb === undefined) {
+        config.ecb = this.onNotification;
+      }
+
+      if (this.throwsError) {
+        defer.reject('There was a register error.');
+      } else {
+        defer.resolve(this.deviceToken);
+        if (config && config.ecb) {
+          config.ecb({
+            event: 'registered',
+            regid: _self.deviceToken
+          });
+        }
+      }
+      return defer.promise;
+    },
+
+    unregister: function (options) {
+      var defer = $q.defer();
+      if (this.throwsError) {
+        defer.reject('There was a register error.');
+      } else {
+        defer.resolve();
+      }
+      return defer.promise;
+    },
+  };
+}]);
 /**
  * @ngdoc service
  * @name ngCordovaMocks.cordovaSocialSharing
@@ -1921,6 +2582,97 @@ ngCordovaMocks.factory('$cordovaStatusbar', function() {
 		}
 	};
 });
+/**
+ * @ngdoc service
+ * @name ngCordovaMocks.cordovaToast
+ *
+ * @description
+ * A service for testing toasts
+ * in an app build with ngCordova.
+ *
+ * @example
+ */
+ngCordovaMocks.factory('$cordovaToast', ['$q', function ($q) {
+  var throwsError = false;
+
+  return {
+    /**
+     * @ngdoc property
+     * @name throwsError
+     * @propertyOf ngCordovaMocks.cordovaToast
+     *
+     * @description
+     * A flag that signals whether a promise should be rejected or not.
+     * This property should only be used in automated tests.
+     **/
+    throwsError: throwsError,
+
+    showShortTop: function (message) {
+      var defer = $q.defer();
+      if (this.throwsError) {
+        defer.reject('There was an error showing the toast.');
+      } else {
+        defer.resolve();
+      }
+      return defer.promise;
+    },
+    showShortCenter: function (message) {
+      var defer = $q.defer();
+      if (this.throwsError) {
+        defer.reject('There was an error showing the toast.');
+      } else {
+        defer.resolve();
+      }
+      return defer.promise;
+    },
+    showShortBottom: function (message) {
+      var defer = $q.defer();
+      if (this.throwsError) {
+        defer.reject('There was an error showing the toast.');
+      } else {
+        defer.resolve();
+      }
+      return defer.promise;
+    },
+    showLongTop: function (message) {
+      var defer = $q.defer();
+      if (this.throwsError) {
+        defer.reject('There was an error showing the toast.');
+      } else {
+        defer.resolve();
+      }
+      return defer.promise;
+    },
+    showLongCenter: function (message) {
+      var defer = $q.defer();
+      if (this.throwsError) {
+        defer.reject('There was an error showing the toast.');
+      } else {
+        defer.resolve();
+      }
+      return defer.promise;
+    },
+    showLongBottom: function (message) {
+      var defer = $q.defer();
+      if (this.throwsError) {
+        defer.reject('There was an error showing the toast.');
+      } else {
+        defer.resolve();
+      }
+      return defer.promise;
+    },
+    show: function (message, duration, position) {
+      var defer = $q.defer();
+      if (this.throwsError) {
+        defer.reject('There was an error showing the toast.');
+      } else {
+        defer.resolve();
+      }
+      return defer.promise;
+    }
+  };
+}]);
+
 /**
  * @ngdoc service
  * @name ngCordovaMocks.cordovaVibration
