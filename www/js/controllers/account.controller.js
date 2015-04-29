@@ -200,13 +200,8 @@ bitwallet_controllers.controller('AccountCtrl', function($translate, T, BitShare
         });
 
         $q.all(prom).then(function() {
-          BitShares.getBackendToken(address).then(function(token) {
-            BitShares.sendTx(token, result.secret, result.tx).then(function(result) {
-              //console.log(JSON.stringify(result));
-              deferred.resolve(result);
-            }, function(err) {
-              deferred.reject({title:'err.occurred', message:err});
-            });
+          BitShares.sendTx(result.secret, result.tx).then(function(result) {
+            deferred.resolve(result);
           }, function(err) {
             deferred.reject({title:'err.occurred', message:err});
           });

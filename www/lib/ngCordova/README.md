@@ -55,9 +55,11 @@ $ bower install ngCordova
 - [Device Orientation](https://github.com/apache/cordova-plugin-device-orientation) *
 - [Device](https://github.com/apache/cordova-plugin-device) *
 - [Dialogs](https://github.com/apache/cordova-plugin-dialogs) *
+- [Email Composer](https://github.com/katzer/cordova-plugin-email-composer)
 - [Facebook Connect](https://github.com/Wizcorp/phonegap-facebook-plugin)
 - [Facebook AudienceNetwork Ads](https://github.com/floatinghotpot/cordova-plugin-facebookads)
 - [File](https://github.com/apache/cordova-plugin-file) *
+- [File Transfer](https://github.com/apache/cordova-plugin-file-transfer) *
 - [Flashlight](https://github.com/EddyVerbruggen/Flashlight-PhoneGap-Plugin)
 - [Flurry Ads](https://github.com/floatinghotpot/cordova-plugin-flurry)
 - [Geolocation](https://github.com/apache/cordova-plugin-geolocation) *
@@ -65,6 +67,7 @@ $ bower install ngCordova
 - [Google Ads](https://github.com/floatinghotpot/cordova-admob-pro)
 - [Google Analytics](https://github.com/danwilson/google-analytics-plugin)
 - [Google Maps]()
+- [HealthKit for iOS](https://github.com/Telerik-Verified-Plugins/HealthKit)
 - [Httpd (Web Server)](https://github.com/floatinghotpot/cordova-httpd)
 - [Apple iAd](https://github.com/floatinghotpot/cordova-iad-pro)
 - [Image Picker](https://github.com/wymsee/cordova-imagePicker)
