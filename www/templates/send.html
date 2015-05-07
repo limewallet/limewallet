@@ -51,9 +51,11 @@
           <input type="hidden" name="transactionAssetId" ng-model="transaction.asset_id" />
         </div>
       </form>
-      <button ng-click="doSend(transaction)" class="button button-block button-assertive no-margin hide-on-keyboard-open button_taller dock_bottom">
+      <fieldset ng-disabled="data.from_in_progress"> 
+        <button ng-click="doSend(transaction)" class="button button-block button-assertive no-margin hide-on-keyboard-open button_taller dock_bottom">
           {{'g.send'|translate|uppercase}} 
-      </button>
+        </button>
+      </fieldset> 
     </ion-content>
   </ion-view>
 

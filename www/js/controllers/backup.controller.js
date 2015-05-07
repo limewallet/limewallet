@@ -3,40 +3,65 @@ bitwallet_controllers
   
   $scope.backup = {};
   
+  // Disable and enable form handlers
+  $scope.data   = {from_in_progress:false};
+
+  $scope.formInProgress = function(){
+    $scope.data.from_in_progress = true;
+  }
+
+  $scope.formDone = function(){
+    $scope.data.from_in_progress = false; 
+  }
+
   $scope.doCopyWallet = function() {
+    // Disable Form
+    // $scope.formInProgress();
     $cordovaClipboard
       .copy($scope.backup.wallet_master)
       .then(function () {
-        //success
+        // Enable form
+        // $scope.formDone();
         window.plugins.toast.show(T.i('backup.copied_to_clipboard'), 'short', 'bottom');
       }, function () {
-        //error
+        // Enable form
+        // $scope.formDone();
         window.plugins.toast.show(T.i('err.unable_to_copy_ew'), 'short', 'bottom');
       });
   }
   
   $scope.doShareWallet= function() {
-      $cordovaSocialSharing
-      .share($scope.backup.wallet_master)
-      .then(function(result) {
-
-      }, function(err) {
-        window.plugins.toast.show( T.i('err.unable_to_share_ew'), 'short', 'bottom')
-      });
+    // Disable Form
+    // $scope.formInProgress();
+    
+    $cordovaSocialSharing
+    .share($scope.backup.wallet_master)
+    .then(function(result) {
+      // Enable form
+      // $scope.formDone();
+    }, function(err) {
+      // Enable form
+      // $scope.formDone();
+      window.plugins.toast.show( T.i('err.unable_to_share_ew'), 'short', 'bottom');
+    })
   }
   
   $scope.validatePasswords = function(backup) {
 
+    $scope.formInProgress();
     if(backupForm.backupPassword.value.length == 0) {
+      $scope.formDone();
       $ionicPopup.alert({
         title    : T.i('err.invalid_password'),
         template : T.i('err.enter_valid_password')
       });
+
       return;
     }
 
     if(backupForm.backupPassword.value != backupForm.backupRetypePassword.value)
     {
+      $scope.formDone();
       $ionicPopup.alert({
         title    : T.i('err.password_mismatch'),
         template : T.i('err.retype_passwords')
@@ -106,8 +131,8 @@ bitwallet_controllers
           }).then(function(){
             alertPopup.close();
           });
-          return;
         }
+        $scope.formDone();
       }); 
 
     }, 500);
@@ -116,6 +141,7 @@ bitwallet_controllers
   $scope.$on('modal.hidden', function(restore) {
     //$location.path('/home');
     $location.path('/settings');
+    $scope.formDone();
   });
   
   $ionicModal.fromTemplateUrl('settings.backup.show.html', {

@@ -14,7 +14,6 @@ bitwallet_controllers
 
         step:               1,
         timer:              {options:{}, remaining:undefined, percent:undefined, start:0, stop:0, expired:0, waiting:0},
-        //quote_expired:      false,
         
         deposit_uri:        undefined,
         deposit_qrcode:     undefined,
@@ -23,9 +22,24 @@ bitwallet_controllers
         quote:              undefined,
         quote_timestamp:    0, 
         signature:          undefined,
-        tx:                 undefined
+        tx:                 undefined,
+
+        from_in_progress:   false
   }
   
+  // Disable and enable form handlers
+  // $scope.data   = {from_in_progress:false};
+
+  $scope.formInProgress = function(){
+    $scope.data.from_in_progress = true;
+    console.log(' -- DepositCtrl Form DISABLED');
+  }
+
+  $scope.formDone = function(){
+    $scope.data.from_in_progress = false; 
+    console.log(' -- DepositCtrl Form ENABLED!!!!');
+  }
+
   $scope.default_data = {};
   angular.copy($scope.data, $scope.default_data);
   
@@ -154,6 +168,9 @@ bitwallet_controllers
       return;
     }
 
+    // Disable Form
+    $scope.formInProgress();
+
     $scope.showLoading('g.accept_tx_process');
     var addy = Wallet.getMainAddress();
     BitShares.getBackendToken(addy).then(function(token) {
@@ -173,18 +190,23 @@ bitwallet_controllers
         $scope.alreadyPaid();
 
         $scope.hideLoading();
+
+        // Enable form
+        $scope.formDone();
       }, function(error){
         if(error=='auth_failed')
           Setting.remove(Setting.BSW_TOKEN);
         $scope.hideLoading();
         $scope.showAlert('err.cant_accept', 'err.cant_accept_retry');
-        return;
+        // Enable form
+        $scope.formDone();
       });
     }, function(error){
       $scope.hideLoading();
       console.log(error);
       $scope.showAlert('err.no_token', 'err.no_token_retry');
-      return;
+      // Enable form
+      $scope.formDone();
     });
     
   }
@@ -206,6 +228,10 @@ bitwallet_controllers
   }
   
   $scope.alreadyPaid = function(){
+    
+    // Disable Form
+    $scope.formInProgress();
+
     $scope.startWaitingPayment();
     
     // 1.- Lanza un timer de 5 minutos para espera.
@@ -233,12 +259,13 @@ bitwallet_controllers
   };
   
   $scope.stopWaitingPayment = function() {
-    //w_counter_timeout = w_ttl;
     w_counter_timeout = 0;
     if($scope.nanobar)
       $timeout(function(){
           $scope.nanobar.go(0);
         }, 1000);
+    // Enable Form
+    $scope.formDone();
   }
   
   $scope.onWaitingPayment = function() {
@@ -278,8 +305,8 @@ bitwallet_controllers
   $scope.$on( '$ionicView.beforeLeave', function(){
     // Destroy timers
     console.log('DepositCtrl.ionicView.beforeLeave killing timers.');
-    w_counter_timeout=0;
-    //$scope.stopTimer();
+    //w_counter_timeout=0;
+    $scope.stopWaitingPayment();
   });
 })
 

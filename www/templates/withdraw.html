@@ -53,10 +53,12 @@
             </div>
           </div>
         </ion-scroll>
-      
-        <button ng-click="doWithdraw()" class="button button-block button-energized no-margin hide-on-keyboard-open button_taller" style="position:absolute;bottom:0px;">
-          {{'menu.withdraw'|translate|uppercase}}
-        </button>
+        
+        <fieldset ng-disabled="data.from_in_progress"> 
+          <button ng-click="doWithdraw()" class="button button-block button-energized no-margin hide-on-keyboard-open button_taller" style="position:absolute;bottom:0px;">
+            {{'menu.withdraw'|translate|uppercase}}
+          </button>
+        </fieldset>
     </ion-content>
 
   </ion-view>

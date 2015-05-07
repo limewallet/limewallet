@@ -1,8 +1,8 @@
 <ion-view cache-view="false">
   
-  <ion-nav-title>
+  <!--ion-nav-title>
       <img class="logo-center" src="img/logo.png" />
-  </ion-nav-title>
+  </ion-nav-title -->
     
   <ion-nav-buttons side="left">
     <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
@@ -12,27 +12,20 @@
   </ion-nav-buttons>
   
   
-  <ion-content class="has-header" has-bouncing="false">
-    <div class="balance_container energized_bg" ng-cloak>
-      <div >
+  <ion-content has-bouncing="false">
+    <div class="balance_container_full" ng-cloak>
+      
         <div class="balance hidden" ng-show="wallet.ui.balance.hidden" ng-click="toggleBalance()">
           <span class="balance_hidden_text">{{'home.show_balance' | translate | uppercase}} <!-- i class="fa fa16 fa-eye"></i --></span>
         </div>
         <div class="balance" ng-show="!wallet.ui.balance.hidden && wallet.initialized" ng-click="toggleBalance()">
           <span class="balance_text"><i class="{{wallet.asset.symbol_ui_class}}">{{wallet.asset.symbol_ui_text}}</i> {{wallet.asset.amount | number : 2}}</span>
           <br/>
-          <span class="{{wallet.asset.symbol|lowercase}}">{{ 'home.balance' | translate:{asset:wallet.asset.symbol} }}</span>
+          <span class="balance_curr {{wallet.asset.symbol|lowercase}}">{{ 'home.balance' | translate:{asset:wallet.asset.symbol} }}</span>
         </div>
-      </div>
-    </div>
-    <!--div class="punta2"></div -->
-    <div class="index_buttons index_buttons2 energized_bg">
-      <!--div class="button_send">
-        <a class="button button-assertive button-block" href="#/app/send////">{{'g.send' | translate | uppercase}}</a>
-      </div>
-      <div class="button_receive">
-        <a class="button button-balanced2 button-block" href="#/app/receive">{{'g.receive' | translate | uppercase}}</a>
-      </div -->
+      
+    <!--/div>
+    <div class="index_buttons index_buttons2 energized_bgNOT"-->
       <div style="width:300px;margin:0 auto;display:block;">
         <div style="padding-top:15px;" class="button-bar tabbed">
           <a class="button button-small button-send" href="#/app/send////">
@@ -58,8 +51,8 @@
       </ion-refresher>
       <ion-list style="height: 100%;" class="main_transactions">
         <div class="item item-divider _{{box}}"
-          ng-repeat-start="box in wallet.ord_transactions.orderedKeys "> <!-- ng-repeat-start="(box, transactions) in wallet.ord_transactions " -->
-                {{box|moment_separator}}
+          ng-repeat-start="box in wallet.ord_transactions.orderedKeys ">
+          {{box|moment_separator}}
         </div>
         <div ng-repeat="tx in wallet.ord_transactions[box]" class="item item-icon-left"> <!-- item-thumbnail-left -->
           <a ng-click="showActionSheet(tx)">
@@ -76,14 +69,16 @@
                   <span ng-if="tx|is_uncompleted_xtx" class="pending_text {{tx.status}}">{{('xchg.'+tx.status) | translate}}</span>
                 </h2>
                 <p>
-                <span class="wrap_text" ng-if="tx.state=='P'|| tx.status=='WP'" ng-bind-html="tx|draw_pending_tx"></span> <!-- &nbsp;{{'g.from'|translate}}&nbsp;{{tx.cl_pay_addr}} -->
-                <span class="deposit_ex wrap_text">{{tx.cl_pay|number:4}}&nbsp;{{tx.cl_pay_curr}}</span> <!-- &nbsp;{{'g.from'|translate}}&nbsp;{{tx.cl_pay_addr}} -->
-                <span class="withdraw_ex wrap_text">{{tx.cl_recv|number:4}}&nbsp;{{tx.cl_recv_curr}}</span> <!-- &nbsp;{{'g.to'|translate}}&nbsp;{{tx.cl_recv_addr}} -->
-                <span class="btc_pay_ex wrap_text">{{tx.cl_recv|number:4}}&nbsp;{{tx.cl_recv_curr}}</span> <!-- &nbsp;{{'g.to'|translate}}&nbsp;{{tx.cl_recv_addr}} -->
-                <span class="sent_ex">{{'g.to'|translate}}</span> <span class="received_ex">{{'g.from'|translate}}</span>
-                <span class="self_ex">{{'g.from'|translate}}</span><span class="tx_address">:&nbsp;{{tx.other | translate}}</span>
-                <!--{{'home.on'|translate}} tx.TS|date:'medium'--> 
-                <span style="float:right;">{{tx|from_now}}</span>
+                  <span class="wrap_text" ng-if="tx.state=='P'|| tx.status=='WP'" ng-bind-html="tx|draw_pending_tx"></span> <!-- &nbsp;{{'g.from'|translate}}&nbsp;{{tx.cl_pay_addr}} -->
+                  <span class="deposit_ex wrap_text">{{tx.cl_pay|number:4}}&nbsp;{{tx.cl_pay_curr}}</span> <!-- &nbsp;{{'g.from'|translate}}&nbsp;{{tx.cl_pay_addr}} -->
+                  <span class="withdraw_ex wrap_text">{{tx.cl_recv|number:4}}&nbsp;{{tx.cl_recv_curr}}</span> <!-- &nbsp;{{'g.to'|translate}}&nbsp;{{tx.cl_recv_addr}} -->
+                  <span class="btc_pay_ex wrap_text">{{tx.cl_recv|number:4}}&nbsp;{{tx.cl_recv_curr}}</span> <!-- &nbsp;{{'g.to'|translate}}&nbsp;{{tx.cl_recv_addr}} -->
+                  <span class="sent_ex">{{'g.to'|translate}}</span> <span class="received_ex">{{'g.from'|translate}}</span>
+                  <span class="self_ex">{{'g.from'|translate}}</span><span class="tx_address">:&nbsp;{{tx.other | translate}}</span>
+                  <!--{{'home.on'|translate}} tx.TS|date:'medium'--> 
+                  <span style="float:right;">{{tx|from_now}}</span>
+                </p>
+                <p><span class="memo">memo</span></p>
               </div>
             </div>
           </a>

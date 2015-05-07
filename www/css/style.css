@@ -6,9 +6,6 @@ html, body {
 /* BAR hack ***/
 /**************/
 .bar.bar-energized {
-  /* border-color: #01a8db; */
-  /*background-color: #01bbf4!important;*/
-  /* background-image: linear-gradient(0deg, #01a8db, #01a8db 50%, transparent 50%); */
   background-image:none!important;
   color: #fff;
 }
@@ -38,16 +35,24 @@ line-height: 38px;}
   line-height: 40px!important;}
 .receive_payment .tab-item{opacity: 1!important; }
 
+.has_header_padded {padding-top:44px!important;}
+
 .balance_container{
   color:#ffffff;
-  height:80px/*125px !important*/;
+  height:80px;
   width:100%!important;
-  /*display:table;*/
+}
+.balance_container_full{
+  height:147px;
+  /*background-image: radial-gradient(0% 100%, #71BFD5 0%, #2287A3 100%);*/
+  /*background-image: radial-gradient(0% 97%, #71BFD5 0%, #106279 100%);*/
+  /*background: rgba(44,62,80,0.70);*/
 }
 .balance{text-align:center;padding-top: 15px;}
 .balance.hidden{padding-top: 25px;}
-.balance_text{font-size:50px;line-height:50px;}
+.balance_text{font-size:50px;line-height:50px;color:#caee36;}
 .balance_text i {font-size:25px;vertical-align:middle!important;line-height: 25px;}
+.balance_curr {color:#69818d;}
 .balance_hidden_text{font-size:35px;line-height:35px;letter-spacing: -2px;}
 .balance_hidden_text i.fa {vertical-align:top;}
 
@@ -126,7 +131,7 @@ line-height: 38px;}
   height:100% !important;
 }
 
-.transactions div.list {height:100%;}
+.transactions div.list {height:100%; padding-top:20px;}
 .transactions h2 {font-size:14px!important;}
 /* ***************************************** */
 /* received */
@@ -172,6 +177,8 @@ line-height: 38px;}
 .transactions .pending .deposit_ex{display:none;}
 .transactions .pending .withdraw_ex{display:none;}
 .transactions .pending .btc_pay_ex{display:none;}
+
+h2 .transactions .sent_ex, h2 .transactions .received_ex, h2 .transactions .self_ex, h2 .transactions .deposit_ex, h2 .transactions .withdraw_ex, h2 .transactions .btc_pay_ex{font-size:16px;}
 
 .transactions .withdraw .tx_address, .transactions .deposit .tx_address, .transactions .btc_pay .tx_address { display:none;}
 
@@ -234,7 +241,7 @@ EXPIRED                 = 'EX'
 .action_container2{display:block;width:100%;height:87px;}
 .action_container .one_of_two_buttons , .action_container2 .one_of_two_buttons {width:50%;float:left;}
 .action_container .one_of_three_buttons{width:33%;float:left;}
-
+.action_container .one_of_two_buttons .button{ border-radius: 0px;}
 input.numeric {text-align:right!important;}
 span.error, input.error{color:#ef4e3a!important;}
 span.input.error{text-align:right;display:inline-block;padding:5px;width:100%;}
@@ -505,12 +512,16 @@ img.i_centered {margin-left: auto;
   height: 1px;
 }
 
+.transactions .memo {color:#b9b9b9!important; clear:both;}
+
 .list.settings .item-divider, .index_transactions .item-divider
 {
-  background-color: #ECF0F1!important;
-  color:#666666!important;
-  /*background-color:#efeef4!important;
-  color:#636268!important;*/
+  /*background-color: #ECF0F1!important;
+  color:#666666!important;*/
+  
+  background-color: #ffffff!important;
+  color:#b9b9b9!important;
+  
   font-size:14px;
   padding-top: 18px;
   padding-bottom: 4px;
@@ -524,6 +535,7 @@ img.i_centered {margin-left: auto;
 .index_transactions .item-divider{
   /*color: #fff!important;*/
   font-size:10px;
+  font-weight: bold;
   padding-top: 5px!important;
   padding-bottom: 4px!important;
   height: 28px!important;
@@ -578,12 +590,6 @@ img.i_centered {margin-left: auto;
   /* box-shadow: 0 3px 7px 0 rgba(0, 0, 0, 0.24); */
 }
 
-.list.balances .item.active
-, .list.balances .item.active .asset_balance
-, .list.balances .item.active .asset_data{
-  color: #fff!important;
-}
-
 .list.balances .item{ height:78px;}
 .list.balances .item .asset_data{
   /*margin-left: 72px;*/
@@ -592,10 +598,11 @@ img.i_centered {margin-left: auto;
 }
 .deposits .list.balances .item .asset_data{padding-top: 0px!important;}
 .list.balances .item .asset_data{
-color: #aaa;}
+  /*color: #aaa;*/}
 .list.balances .item .asset_balance{
   float: right;
   font-size: 16px;
+  color: #aaa;
 }
 
 .list.balances .item .asset_balance .balance_amount{
@@ -788,7 +795,7 @@ span.quote_error{padding-left: 16px;}
   -webkit-box-shadow: 0px 1px 4px 0px rgba(0,0,0,0.50);
   -moz-box-shadow: 0px 1px 4px 0px rgba(0,0,0,0.50);
   box-shadow: 0px 1px 4px 0px rgba(0,0,0,0.50);
-  background-color:#01bbf4; /*#2C3E50*/ /*#01bbf4*/ /* #acf */
+  background-color:#1b4356 /* 01bbf4 */; 
 }
 
 .button-bar.tabbed {
@@ -822,24 +829,24 @@ span.quote_error{padding-left: 16px;}
 
 .button-bar.tabbed > .button-energized{
   background-color:#fff;
-  color:#01bbf4;
+  color:#1b4356 /*#01bbf4*/;
 }
 
 .button-bar.tabbed > .button-energized.active{
-  background-color:#01bbf4;
+  background-color:#1b4356 /*#01bbf4*/;
   color:#fff;
 }
 
 .button-bar.tabbed > .button-send{
-  background-color:#fff;
-  color:#01bbf4;
-  border-color:#fff;
+  background-color:#546979 /*#fff*/;
+  color:#cad0d5 /*#1b4356 #01bbf4*/;
+  border-color:#546979 /*#fff*/;
 }
 
 .button-bar.tabbed > .button-receive{
-  background-color:#01bbf4;
-  color:#fff;
-  border-color:#fff;
+  background-color:#1b4356 /*#01bbf4*/;
+  color:#546979 /*#fff*/;
+  border-color:#546979 /*#fff*/;
 }
 
 .button-bar.tabbed > .button:before, .button-bar.tabbed > .button .icon:before {
@@ -878,3 +885,55 @@ span.quote_error{padding-left: 16px;}
   border-color: #d1d3d6!important; 
   /*color: #007aff!important; */
 }
+
+fieldset {
+  margin: 0!important; 
+  padding: 0!important;
+  border: none!important;
+}
+
+.successful, .welcome, .create_account, .create_account_passsword {
+    position:relative; padding-top:88px;padding-left:55px;color:#fff;padding-right:44px;
+    height:100%!important;}
+.successful h2 {color:#fff;}
+.successful a {width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      border: solid 1px #ECF0F1;
+      color:#ECF0F1!important;}
+
+.successful h2.amount {color:#2C3E50;font-weight: bold;}
+.successful p.white {color:#ECF0F1;}
+.successful p.bigger {color:#2C3E50;font-size: 16px;}
+
+.welcome .bottom_bar, .create_account .bottom_bar, .create_account_passsword .bottom_bar{
+  position: absolute;
+  bottom: 44px;
+  width: 100%;
+  padding-right: 88px;
+  text-align: center;
+  margin-left: -8px;
+}
+.create_account_passsword .bottom_bar
+{text-align:center;}
+.balance_container_full, .welcome, .welcome_bg, .create_account, .create_account_bg {background: -moz-linear-gradient(123deg, rgba(26,66,84,1) 0%, rgba(26,67,86,1) 100%); /* ff3.6+ */
+background: -webkit-gradient(linear, left top, right bottom, color-stop(0%, rgba(26,67,86,1)), color-stop(100%, rgba(26,66,84,1))); /* safari4+,chrome */
+background: -webkit-linear-gradient(123deg, rgba(26,66,84,1) 0%, rgba(26,67,86,1) 100%); /* safari5.1+,chrome10+ */
+background: -o-linear-gradient(123deg, rgba(26,66,84,1) 0%, rgba(26,67,86,1) 100%); /* opera 11.10+ */
+background: -ms-linear-gradient(123deg, rgba(26,66,84,1) 0%, rgba(26,67,86,1) 100%); /* ie10+ */
+background: linear-gradient(327deg, rgba(26,66,84,1) 0%, rgba(26,67,86,1) 100%); /* w3c */}
+
+.welcome a, .create_account a, .create_account_seed a, .create_account_password a  { font-size:13px; border-radius: 4px; text-transform:uppercase; max-height:47px;}
+.seed_container {margin:25px 0 25px 0;font-weight: bold; font-size:18px;}
+
+.create_account_password .list_password {
+        position: relative;
+        overflow: hidden;
+        padding: 6px 0 5px 16px; }
+
+/* Pseudo Material Design */
+.seed_container .item {border-color: transparent!important; 
+                       background-color: transparent!important;
+                      border-width: 0px!important; }
+.seed_container input.pmd {font-size:16px!important;  color:#fff;border-top:none; border-left:none; border-right:none; border-bottom: 1px solid #d8d8d8 !important; background-color:transparent!important;}
+.seed_container input.pmd:focus {border-bottom: 1px solid #d3eb00 !important;}

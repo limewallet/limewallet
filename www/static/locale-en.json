@@ -1,7 +1,12 @@
 {
   "g" : {
-    "sure_cancel_operation"     : "Cancel operation",
-    "sure_cancel_operation_msg" :"Are you sure you want to cancel the opration?",
+    "welcome"                       : "Welcome",
+    "create_wallet_html"            : "Create&nbsp;wallet",
+    "recover_wallet_html"           : "Recover&nbsp;wallet",
+    "create_account"                : "Create Wallet",
+    "wait_for_notifications"        : "Please wait for notifications at home screen!",  
+    "sure_cancel_operation"         : "Cancel operation",
+    "sure_cancel_operation_msg"     :"Are you sure you want to cancel the operation?",
     "cancel_ok"           : "Operation cancelled successfully.",
     "cancel_progress"     : "Cancel in progress",
     "refund_ok"           : "Refund completed successfully.",
@@ -347,5 +352,14 @@
     "headline2"               : "You can withdraw bitcoins from your wallet by converting your preferred bitasset into bitcoins.<br/>Type the destination bitcoin address and the amount you want to withdraw.",
     "address"                 : "Refund address",
     "successful"              : "Successful refund! Please wait for notifications"
+  },
+  "create_account":{
+    "gen_seed"          : "Your wallet generation seed is",
+    "advice1"           : "Please save these 12 words on paper (order is important). This seed will allow you to recover your wallet.", 
+    "advice2"           : "Never disclose your seed. Never type it on a website.",
+    "type_seed"         : "Please type your wallet generation seed",
+    "type_password1"    : "Please choose a password to encrypt your wallet keys.",
+    "type_password2"    : "Leave these fields empty if you want to disable encryption.",
+    "create_account_html" : "Create&nbsp;wallet"
   }
 }

@@ -1,5 +1,19 @@
 bitwallet_controllers.controller('RestoreCtrl', function($q, T, Setting, $rootScope, $translate, $scope, Account, Address, AddressBook, $http, $timeout, $location, $state, $ionicPopup, $ionicModal, $cordovaClipboard, BitShares, $ionicNavBarDelegate, Wallet) {
+  
   $scope.restore = {};
+
+  // Disable and enable form handlers
+  $scope.data   = {from_in_progress:false};
+  
+  $scope.formInProgress = function(){
+    console.log(' -- formInProgress: Disabled');
+    $scope.data.from_in_progress = true;
+  }
+
+  $scope.formDone = function(){
+    console.log(' -- formDone: Enabled');
+    $scope.data.from_in_progress = false; 
+  }
 
   $scope.pasteWallet = function(element) {
     $cordovaClipboard
@@ -14,6 +28,9 @@ bitwallet_controllers.controller('RestoreCtrl', function($q, T, Setting, $rootSc
   }
   
   $scope.restoreWallet = function(restore){
+    
+    // Disable form.
+    $scope.formInProgress();
 
     var ewallet = null;
     try {
@@ -31,6 +48,9 @@ bitwallet_controllers.controller('RestoreCtrl', function($q, T, Setting, $rootSc
     // Si el input no es valido?
     if(ewallet==null)
     {
+      // Enable form.
+      $scope.formDone();
+      
       $ionicPopup.alert({
         title    : T.i('err.invalid_backup'),
         template : T.i('err.enter_valid_backup')
@@ -45,9 +65,16 @@ bitwallet_controllers.controller('RestoreCtrl', function($q, T, Setting, $rootSc
     }).then(function(password) {
 
       if(password === undefined)
+      {
+        // Enable form.
+        $scope.formDone();
         return;
+      }
 
       if(password.trim().length == 0) {
+        // Enable form.
+        $scope.formDone();
+
         $ionicPopup.alert({
           title    : T.i('err.empty_password'),
           template : T.i('err.enter_valid_password')
@@ -156,6 +183,9 @@ bitwallet_controllers.controller('RestoreCtrl', function($q, T, Setting, $rootSc
             //$location.path('/home');
             $location.path('/settings');
           });
+        }).finally(function(){
+          // Enable form.
+          $scope.formDone();
         });
       }, 500);  
 

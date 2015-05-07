@@ -8,25 +8,27 @@
     <ion-content class="has-header" has-bouncing="false">
       <form novalidate name="backupForm" style="height: 100%;display: block;">
         <div class="list" style="height:100%;">
-          <label class="item item-input item-floating-label">
-            <span class="input-label">{{'g.password'|translate}}</span>
-            <input required name="backupPassword" ng-model="backup.password" type="password" placeholder="{{'g.password'|translate}}" class="big">
-          </label>
-          <label class="item item-input item-floating-label">
-            <span class="input-label">{{'g.confirm_password'|translate}}</span>
-            <input required name="backupRetypePassword" ng-model="backup.retype_password" type="password" placeholder="{{'g.confirm_password'|translate}}" class="big">
-          </label>
-          <!--label class="item item-input item-stacked-label">
-            <input required name="backupPassword" ng-model="backup.password" type="password" placeholder="{{'g.password'|translate}}" class="big">
-          </label>
-          <label class="item item-input item-stacked-label">
-            <input required name="backupRetypePassword" ng-model="backup.retype_password" type="password" placeholder="{{'g.confirm_password'|translate}}" class="big">
-          </label -->
-          <div class="action_container hide-on-keyboard-open">
-            <button class="button button-energized button-block button_taller" ng-click="validatePasswords(backup)">
-              {{'menu.backup_wallet'|translate}} 
-            </button>
-          </div>
+          <fieldset ng-disabled="data.from_in_progress">
+            <label class="item item-input item-floating-label">
+              <span class="input-label">{{'g.password'|translate}}</span>
+              <input required name="backupPassword" ng-model="backup.password" type="password" placeholder="{{'g.password'|translate}}" class="big">
+            </label>
+            <label class="item item-input item-floating-label">
+              <span class="input-label">{{'g.confirm_password'|translate}}</span>
+              <input required name="backupRetypePassword" ng-model="backup.retype_password" type="password" placeholder="{{'g.confirm_password'|translate}}" class="big">
+            </label>
+            <!--label class="item item-input item-stacked-label">
+              <input required name="backupPassword" ng-model="backup.password" type="password" placeholder="{{'g.password'|translate}}" class="big">
+            </label>
+            <label class="item item-input item-stacked-label">
+              <input required name="backupRetypePassword" ng-model="backup.retype_password" type="password" placeholder="{{'g.confirm_password'|translate}}" class="big">
+            </label -->
+            <div class="action_container hide-on-keyboard-open">
+              <button ng-autodisable class="button button-energized button-block button_taller" ng-click="validatePasswords(backup)">
+                {{'menu.backup_wallet'|translate}} 
+              </button>
+            </div>
+          </fieldset>
         </div>
       </form>
     </ion-content>

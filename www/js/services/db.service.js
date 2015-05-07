@@ -520,6 +520,20 @@ bitwallet_services
         });
       return deferred.promise;
     }
+
+    self.byId = function(id){
+      var deferred = $q.defer();
+      DB.query('SELECT * FROM operation where id = ? limit 1', [tx_id])
+        .then(function(result){
+            if( result.rows.length == 0 ) {
+              deferred.resolve(undefined);
+              return;
+            }
+            deferred.resolve(DB.fetch(result));
+            return;
+        });
+      return deferred.promise;
+    }
     
     return self;
 })

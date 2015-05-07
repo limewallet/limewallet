@@ -7,8 +7,8 @@
     
       <div class="list balances">
           <div ng-repeat="obj in assets" class="item">
-            <div class="asset_data"><b>{{obj.asset.symbol}}</b>
-              <span class="asset_balance energized"> <span class="balance_amount">{{obj.asset.amount | number : 2}}</span>&nbsp;{{obj.asset.unit}}</span>
+            <div class="asset_data energized"><b>{{obj.asset.symbol}}</b>
+              <span class="asset_balance"> <span class="balance_amount">{{obj.asset.amount | number : 2}}</span>&nbsp;{{obj.asset.unit}}</span>
             </div>  
           </div>
       </div>

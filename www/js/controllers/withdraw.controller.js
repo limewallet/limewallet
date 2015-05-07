@@ -8,28 +8,41 @@ bitwallet_controllers
 // bitcoin:BweMQsJqRdmncwagPiYtANrNbApcRvEV77?amount=1.1
   
   $scope.data = {
-        bitcoin_address:    '', //C4hJYM1NYgjqszEnqA9qr6QSAQLQvywnfk', //'BweMQsJqRdmncwagPiYtANrNbApcRvEV77', //'msmmBfcvrdG2yZiUQQ21phPkbw966f8nbb',
-        
-        amount_usd:         undefined,
-        amount_btc:         undefined,
-        quoting_usd:        false,
-        quoting_btc:        false,
-        quoting_btc_error:  undefined,
-        quoting_usd_error:  undefined,
-        
-        timer:              {options:{}, remaining:undefined, percent:undefined, start:0, stop:0, expired:0},
-        quote_expired:      false,
-        
-        deposit_uri:        undefined,
-        deposit_qrcode:     undefined,
-        deposit_short_uri:  undefined,  
-        
-        quote:              undefined,
-        quote_timestamp:    0, 
-        signature:          undefined,
-        tx:                 undefined,
-        
-        quote_ttl:          60
+    bitcoin_address:    '', //C4hJYM1NYgjqszEnqA9qr6QSAQLQvywnfk', //'BweMQsJqRdmncwagPiYtANrNbApcRvEV77', //'msmmBfcvrdG2yZiUQQ21phPkbw966f8nbb',
+    
+    amount_usd:         undefined,
+    amount_btc:         undefined,
+    quoting_usd:        false,
+    quoting_btc:        false,
+    quoting_btc_error:  undefined,
+    quoting_usd_error:  undefined,
+    
+    timer:              {options:{}, remaining:undefined, percent:undefined, start:0, stop:0, expired:0},
+    quote_expired:      false,
+    
+    deposit_uri:        undefined,
+    deposit_qrcode:     undefined,
+    deposit_short_uri:  undefined,  
+    
+    quote:              undefined,
+    quote_timestamp:    0, 
+    signature:          undefined,
+    tx:                 undefined,
+    
+    quote_ttl:          60,
+    
+    from_in_progress:   false
+  }
+  
+  // Disable and enable form handlers
+  // $scope.data   = {from_in_progress:false};
+  $scope.formInProgress = function(){
+    $scope.data.from_in_progress = true;
+    console.log(' -- WithdrawCtrl Form DISABLED');
+  }
+  $scope.formDone = function(){
+    $scope.data.from_in_progress = false; 
+    console.log(' -- WithdrawCtrl Form ENABLED!!!!');
   }
   
   $scope.default_data = {};
@@ -175,20 +188,17 @@ bitwallet_controllers
   });
   
   $scope.doWithdraw = function(){
-
+    $scope.formInProgress();
     if(!$scope.data.signature || !$scope.data.quote)
     {
+      $scope.formDone();
       $scope.showAlert('err.no_quote', 'err.no_quote_input_val');
       return;
     }
     
-    // if($scope.remainingTime()<=0)
-    // {
-      // $scope.showAlert('err.quote_expired', 'err.quote_expired_retry');
-      // return;
-    // }
     if(!$scope.data.bitcoin_address || $scope.data.bitcoin_address.length<1)
     {
+      $scope.formDone();
       $scope.showAlert('err.btc_addr_error', 'err.btc_addr_error_input');
       return;
     }
@@ -199,6 +209,7 @@ bitwallet_controllers
         
         if(!result.tx || !result.tx.cl_pay_addr)
         {
+          $scope.formDone();
           $scope.showAlert('err.occurred', 'err.please_retry');
           return;
         }
@@ -224,6 +235,7 @@ bitwallet_controllers
             .then(function() {
               $scope.sending_modal.hide();
             });
+            $scope.formDone();
             return;
           }
 
@@ -256,11 +268,13 @@ bitwallet_controllers
               $scope.sending_modal.hide();
               $scope.goHome();
               window.plugins.toast.show( T.i('withdraw.successful'), 'short', 'bottom');
-              //$scope.wallet.transactions.unshift({sign:-1, address:sendForm.transactionAddress.value, addr_name:sendForm.transactionAddress.value, amount:amount/$scope.wallet.assets[$scope.wallet.asset.id].precision, state:'P', date: new Date().getTime()});
               console.log('withdraw::send_asset XTX: '+JSON.stringify(xtx));
               console.log('withdraw::send_asset OPER res: '+JSON.stringify(res));
               xtx['operation_tx_id'] = res.tx_id;
               Wallet.onNewXTxAndLoad(xtx);
+
+              $scope.formDone();
+              
             }, function(error){
                 console.log(' -- withdraw:sendAsset error #1 ');
                 console.log(JSON.stringify(error));
@@ -287,6 +301,7 @@ bitwallet_controllers
                     //sell 15 bitUSD BTC
                     $scope.getUSDQuote();
                   }
+                  $scope.formDone();
                 });
             });
              
@@ -304,8 +319,13 @@ bitwallet_controllers
             .then(function() {
               
             });
+            
             BitShares.cancelXTx(token, xtx['id']).then(function(res){
               console.log(' Cancelled tx because an error occurred: '+ xtx['id'].toString());
+            }, function(error){
+
+            }).finally(function(){
+              $scope.formDone();
             });
         });
  
@@ -315,6 +335,7 @@ bitwallet_controllers
         if(error=='auth_failed')
           Setting.remove(Setting.BSW_TOKEN);
         $scope.showAlert('err.cant_accept', 'err.cant_accept_retry');
+        $scope.formDone();
         return;
       });
     }, function(error){
@@ -323,51 +344,11 @@ bitwallet_controllers
       if(error=='auth_failed')
         Setting.remove(Setting.BSW_TOKEN);
       $scope.showAlert('err.no_token', 'err.no_token_retry');
+      $scope.formDone();
       return;
     });
     
   }
-  
-  // $scope.nanobar  = undefined;
-  // var ttl = 60;
-  // var counter_timeout = ttl;
-  
-  // $scope.onTimeout = function() {
-  //   counter_timeout = counter_timeout - 1;
-  //   if(counter_timeout==0)
-  //   {
-  //     $scope.stopTimer();
-  //     $scope.nanobar.go(100);
-  //     $scope.data.timer.expired = 1;
-  //     return;
-  //   }
-  //   $scope.nanobar.go((ttl-counter_timeout)*100/ttl);
-  //   quote_timeout = $timeout($scope.onTimeout, 1000);
-  // }
-  
-  // $scope.startTimer = function() {
-  //   ttl = $scope.remainingTime();
-  //   counter_timeout = ttl;
-  //   if($scope.nanobar===undefined)
-  //   {
-  //     var options = {
-  //       target: document.getElementById('quote_ttl'),
-  //       id: 'mynano'
-  //     };
-  //     $scope.nanobar = new Nanobar( options );
-  //   }
-  //   $scope.data.timer.expired = 0;
-  //   counter_timeout = ttl;
-  //   quote_timeout = $timeout($scope.onTimeout, 1000);
-  // };
-  
-  // $scope.stopTimer = function() {
-  //   counter_timeout = ttl;
-  //   if($scope.nanobar)
-  //     $timeout(function(){
-  //         $scope.nanobar.go(0);
-  //       }, 1000);
-  // }
   
   $scope.copyUri = function(){
     $cordovaClipboard
@@ -401,6 +382,7 @@ bitwallet_controllers
     // Destroy timers
     console.log('WithdrawCtrl.ionicView.beforeLeave killing timers.');
     counter_timeout=0;
+    $scope.formDone();
     //$scope.stopTimer();
   });
 })

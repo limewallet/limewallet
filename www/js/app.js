@@ -406,6 +406,61 @@ bitwallet_module
       }
     })
 
+    .state('app.successful', {
+      cache:  false,
+      url:    "/successful/:xtx_id/:oper_id",
+      views: {
+              'menuContent' :{
+                templateUrl: "templates/successful.html",
+                controller: 'SuccessfulCtrl'
+            }
+      }
+    })
+
+    .state('app.welcome', {
+      cache:  false,
+      url:    "/welcome",
+      views: {
+              'menuContent' :{
+                templateUrl: "templates/welcome.html",
+                controller: 'WelcomeCtrl'
+            }
+      }
+    })
+
+    .state('app.create_account', {
+      cache:  false,
+      url:    "/create_account",
+      views: {
+              'menuContent' :{
+                templateUrl: "templates/create_account.html",
+                controller: 'CreateAccountCtrl'
+            }
+      }
+    })
+
+    .state('app.create_account_seed', {
+      cache:  false,
+      url:    "/create_account_seed",
+      views: {
+              'menuContent' :{
+                templateUrl: "templates/create_account_seed.html",
+                controller: 'CreateAccountSeedCtrl'
+            }
+      }
+    })
+
+    .state('app.create_account_password', {
+      cache:  false,
+      url:    "/create_account_password",
+      views: {
+              'menuContent' :{
+                templateUrl: "templates/create_account_password.html",
+                controller: 'CreateAccountPwdCtrl'
+            }
+      }
+    })
+
     .state('app.home', {
       cache:  false,
       url:    "/home",

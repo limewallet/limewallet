@@ -491,7 +491,7 @@ bitwallet_services
       if( before !== undefined)
         filter = '?before='+before;
 
-      self.apiCall(undefined, ENVIRONMENT.apiurl('/addrs/'+address+filter));
+      return self.apiCall(undefined, ENVIRONMENT.apiurl('/addrs/'+address+filter));
     }
     
     self.prepareSendAsset = function(asset, from, to, amount) {

@@ -538,14 +538,14 @@ bitwallet_services
               self.data.asset = self.data.assets[self.data.asset.id];
 
               //Update address balance
-              angular.forEach(Object.keys(self.data.addresses), function(addy) {
-                if (addy in res.address_balance) {
-                  self.data.addresses[addy].balances = res.address_balance[addy];
-                  angular.forEach( Object.keys(self.data.addresses[addy].balances), function(asset_id) {
-                    self.data.addresses[addy].balances[asset_id] /= self.data.assets[asset_id].precision;
-                  });
-                }
-              });
+              // angular.forEach(Object.keys(self.data.addresses), function(addy) {
+              //   if (addy in res.address_balance) {
+              //     self.data.addresses[addy].balances = res.address_balance[addy];
+              //     angular.forEach( Object.keys(self.data.addresses[addy].balances), function(asset_id) {
+              //       self.data.addresses[addy].balances[asset_id] /= self.data.assets[asset_id].precision;
+              //     });
+              //   }
+              // });
               console.log('Wallet : self.refreshBalance 6');
               //Generate tx list
               var prom = self.buildTxList(res, self.data.asset.id);

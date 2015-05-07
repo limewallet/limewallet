@@ -1,0 +1,18 @@
+<ion-view hide-nav-bar="true" title="{{'detail.transaction_details'|translate}}">
+    <ion-content has-bouncing="false" style="background-color:#2ECC71;">
+      <div class="successful">
+        <h2>{{data.title}}<br/>successful</h2>
+        <h2 class="amount">{{data.amount|number:5}} {{data.currency}}</h2>
+        <p class="white">{{data.sub_title}}</p>
+        <p class="bigger">{{data.sub_data}}</p>     
+        <div style="position:absolute;bottom:132px;width:100%;">   
+          
+          <a ng-click="goHome()" class="button button-icon icon ion-checkmark"></a>
+          <p>{{"g.wait_for_notifications"|translate}}</p>
+        </div>  
+      </div>
+
+      
+    </ion-content>
+  </ion-view>
+  
