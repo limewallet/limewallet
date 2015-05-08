@@ -5,6 +5,9 @@
   <author email="info@latincoin.com" href="http://bitwallet.latincoin.com/">Latincoin Development Team</author>
   <content src="index.html"/>
   <access origin="*"/>
+  <access origin="file://*/"/>
+  <access origin="http://*/"/>
+  <access origin="https://*/"/>
   <preference name="webviewbounce" value="false"/>
   <preference name="UIWebViewBounce" value="false"/>
   <preference name="DisallowOverscroll" value="true"/>

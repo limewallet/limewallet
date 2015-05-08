@@ -5,17 +5,17 @@ bitwallet_services
     self.requestSignature = function(keys, url, _body) {
       var deferred = $q.defer();
 
-			var body  = _body || '';
-			var path  = self.urlPath(url);
-			var nonce = Math.floor(Date.now()/1000);
+      var body  = _body || '';
+      var path  = self.urlPath(url);
+      var nonce = Math.floor(Date.now()/1000);
 
       window.plugins.BitsharesPlugin.requestSignature(
         function(data){
-			    var headers = {
-			    	ACCESS_KEY 		   : keys.akey,
-			    	ACCESS_NONCE     : nonce,
-			    	ACCESS_SIGNATURE : data.signature,
-			    };
+          var headers = {
+            'ACCESS-KEY'       : keys.akey,
+            'ACCESS-NONCE'     : nonce,
+            'ACCESS-SIGNATURE' : data.signature,
+          };
           deferred.resolve(headers);
         },
         function(error){
@@ -23,8 +23,8 @@ bitwallet_services
         },
         keys.skey, 
         nonce,
-				path,
-				body
+        path,
+        body
       );
     
       return deferred.promise;
@@ -316,22 +316,24 @@ bitwallet_services
     };
 
     self.urlPath = function(url) {
+      //console.log('URLPATH: ' + url);
       return url.substr(url.indexOf('/', url.indexOf('://')+3));
     }
 
     self.apiCall = function(keys, url, payload) {
 
       if (keys === undefined) {
-		    return self.apiCallStub(url, payload);
+        return self.apiCallStub(url, payload);
       }
 
       var deferred = $q.defer();
 
-      self.requestSignature(keys, url, payload).then(function(res) {
-				  return self.apiCallStub(url, payload, res.headers);
-				}, function(res) {
-          deferred.reject('Unable to sign request');
-			});
+      self.requestSignature(keys, url, payload).then(function(headers) {
+        return self.apiCallStub(url, payload, headers);
+      }, function(res) {
+        console.log('REQSIG: ' + JSON.stringify(res));
+        deferred.reject('Unable to sign request');
+      });
 
       return deferred.promise;
     }
@@ -343,14 +345,14 @@ bitwallet_services
 
       var req;
 
-			var headers = _headers || {};
+      var headers = _headers || {};
+
+      console.log('HEADERS: ' + JSON.stringify(headers));
       
-      if(payload !== undefined)
-			{
+      if(payload !== undefined){
         req = $http.post(url, payload ,{timeout:ENVIRONMENT.timeout, headers:headers});
-			}
-      else
-			{
+      }
+      else{
         req = $http.get(url, {timeout:ENVIRONMENT.timeout, headers:headers});
       }
 
@@ -376,7 +378,7 @@ bitwallet_services
     // Exchange Service Api Calls ************************ //
     // *************************************************** //
     self.listExchangeTxs = function(keys, before) {
-			var filter = '';
+      var filter = '';
       if( before !== undefined)
         filter = '?before='+before;
 
@@ -399,7 +401,7 @@ bitwallet_services
     self.getQuote = function(buy_sell, asset, amount) {
       var assets    = asset.split('_');
       var url       = ENVIRONMENT.apiurl('/'+buy_sell+'/'+amount+'/'+assets[0]+'/'+assets[1]);
-      return self.apiCall(url);
+      return self.apiCall(undefined, url);
     }
 
     self.getReQuote = function(keys, xtx_id) {
@@ -467,15 +469,15 @@ bitwallet_services
         xtx_id      : (xtx_id === undefined ? '' : xtx_id)
       });
 
-      self.apiCall(keys, ENVIRONMENT.apiurl('/accept'), payload);
+      return self.apiCall(keys, ENVIRONMENT.apiurl('/accept'), payload);
     }
     
     self.wakeupXTx = function(keys, txid) {
-      self.apiCall(keys, ENVIRONMENT.apiurl('/xtxs/'+txid+'/wakeup'));
+      return self.apiCall(keys, ENVIRONMENT.apiurl('/xtxs/'+txid+'/wakeup'));
     }
 
     self.cancelXTx = function(keys, txid) {
-      self.apiCall(keys, ENVIRONMENT.apiurl('/xtxs/'+token+'/'+txid+'/cancel'));
+      return self.apiCall(keys, ENVIRONMENT.apiurl('/xtxs/'+token+'/'+txid+'/cancel'));
     }
     
     self.refundXTx = function(keys, txid, refund_address) {
@@ -491,7 +493,7 @@ bitwallet_services
     
     self.getBalance = function(address, before) {
 
-			var filter = '';
+      var filter = '';
       if( before !== undefined)
         filter = '?before='+before;
 

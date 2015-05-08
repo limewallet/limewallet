@@ -4,82 +4,58 @@ bitwallet_config
     version : 1.2,
     tables: [
         {
-            name: 'address',
-            columns: [
-                {name : 'id',         type   : 'integer primary key'},
-                {name : 'deriv',      type   : 'integer'},
-                {name : 'address',    type   : 'text'},
-                {name : 'label',      type   : 'text'},
-                {name : 'pubkey',     type   : 'text'},
-                {name : 'privkey',    type   : 'text'},
-                {name : 'created_at', type   : 'integer'},
-                {name : 'is_default', type   : 'integer'},
-                {name: 'UNIQUE (deriv, label) ', type   : 'ON CONFLICT ABORT'}
-            ]
-        },
-        {
             name: 'account',
             columns: [
-                {name : 'id',                 type   : 'integer primary key'}, // pubkey
-                {name : 'name',               type   : 'text unique'},
-                {name : 'gravatar_id',        type   : 'text'},
-                {name : 'registered',         type   : 'integer'},
-                {name : 'key',                type   : 'text'},
-                {name : 'deriv',              type   : 'integer'}
+                { name : 'id',                 type  : 'integer primary key'},
+                { name : 'name',               type  : 'text unique'},
+                { name : 'number',             type  : 'integer'},
+                { name : 'active',             type  : 'integer'},
+                { name : 'registered',         type  : 'integer'},
+                { name : 'access_key',         type  : 'text'},
+                { name : 'secret_key',         type  : 'text'},
+                { name : 'created_at',         type  : 'integer'}
             ]
         },
         {
             name: 'setting',
             columns: [
-                {name : 'name',               type   : 'text primary key'},
-                {name : 'value',              type   : 'text'}
+                { name : 'name',              type   : 'text primary key'},
+                { name : 'value',             type   : 'text'}
             ]
         },
         {
-            name: 'user',
+            name: 'contact',
             columns: [
-                {name : 'id',                 type   : 'text primary key'},
-                {name : 'name',               type   : 'text unique'}, 
-                {name : 'address',            type   : 'text unique'},
-                {name : 'public_data',        type   : 'text'},
-                {name : 'source',             type   : 'text'},
-                {name : 'created_at',         type   : 'integer'}
+                { name : 'id',                type  : 'text primary key'},
+                { name : 'name',              type  : 'text unique'}, 
+                { name : 'pub_key',           type  : 'text unique'},
+                { name : 'address',           type  : 'text unique'},
+                { name : 'public_data',       type  : 'text'},
+                { name : 'source',            type  : 'text'},
+                { name : 'created_at',        type  : 'integer'}
             ]
         },
         {
             name: 'memo',
             columns: [
-                {name : 'id',                 type   : 'text primary key'},
-                {name : 'message',            type   : 'text'}, 
-                {name : 'pubkey',             type   : 'text'},
-                {name : 'type',               type   : 'integer'}
+                { name : 'id',                type  : 'text primary key'},
+                { name : 'message',           type  : 'text'}, 
+                { name : 'pubkey',            type  : 'text'},
             ]
         },
-        {
-            name: 'memo_out',
-            columns: [
-                {name : 'id',                 type   : 'text primary key'},
-                {name : 'message',            type   : 'text'}, 
-                {name : 'destination',        type   : 'text'}
-            ]
-        },
-
         {
             name: 'operation',
             columns: [
-                { name : 'fee'       , type: 'text'},
-                { name : 'sign'      , type: 'integer'},
-
-                { name : 'txid'      , type: 'text'},
-                { name : 'balance'   , type: 'text'},
-                { name : 'block'     , type: 'integer'},
                 { name : 'block_id'  , type: 'text'},
-                { name : 'op_type'   , type: 'text'},
-                { name : 'address'   , type: 'text'},
-                { name : 'amount'    , type: 'integer'},
-                { name : 'asset_id'  , type: 'integer'},
                 { name : 'timestamp' , type: 'integer'},
-                { name : 'memo_id'   , type: 'text'}
+                { name : 'memo_hash' , type: 'text'}
+                { name : 'address'   , type: 'text'},
+                { name : 'asset_id'  , type: 'integer'},
+                { name : 'fee'       , type: 'integer'},
+                { name : 'txid'      , type: 'text'},
+                { name : 'amount'    , type: 'integer'},
+                { name : 'block'     , type: 'integer'},
+                { name : 'type'      , type: 'text'},
             ],
             indexes: ['txid']
         },

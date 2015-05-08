@@ -57,7 +57,6 @@ bitwallet_services
                         query = query + 'WHERE id = ?)';
 
                         //console.log(query);
-
                         var mp = self.query(query, bindings);
                         mproms.push(mp);
                     });
@@ -440,8 +439,14 @@ bitwallet_services
         });
     };
 
-    self.addObj = function(obj) {
-        return DB.query('INSERT or REPLACE into operation (id, asset_id, amount, other, date, op_type, sign, address, block, block_id, tx_id, fee, addr_name) values (?,?,?,?,?,?,?,?,?,?,?,?,?)', [obj.id, obj.asset_id, obj.amount, obj.other, obj.date, obj.op_type, obj.sign, obj.address, obj.block, obj.block_id, obj.tx_id, obj.fee, obj.addr_name]);
+    self.addObj = function(obj, just_sql) {
+      var sql    = 'INSERT or REPLACE into operation (id, asset_id, amount, other, date, op_type, sign, address, block, block_id, tx_id, fee, addr_name, memo_id) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
+      var params = [obj.id, obj.asset_id, obj.amount, obj.other, obj.date, obj.op_type, obj.sign, obj.address, obj.block, obj.block_id, obj.tx_id, obj.fee, obj.addr_name, obj.memo_id];
+
+      if(just_sql == true) 
+        return [sql, params];
+
+      return DB.query(sql, params);
     };
     
     self.allWithXTxForAsset = function(asset_id, limit) {
@@ -501,7 +506,7 @@ bitwallet_services
               deferred.resolve(undefined);
               return;
             }
-            deferred.resolve(DB.fetch(result));
+            deferred.resolve(DB.fetch(result).block_id);
             return;
         });
       return deferred.promise;
@@ -584,7 +589,7 @@ bitwallet_services
               deferred.resolve(undefined);
               return;
             }
-            deferred.resolve(DB.fetch(result));
+            deferred.resolve(DB.fetch(result).updated_at);
             return;
         });
       return deferred.promise;
@@ -629,8 +634,14 @@ bitwallet_services
         });
     };
 
-    self.addObj = function(obj) {
-        return DB.query('INSERT or REPLACE into balance (asset_id, amount, raw_amount, updated_at) values (?,?,?,?)', [obj.asset_id, obj.amount, obj.raw_amount, obj.updated_at]);
+    self.addObj = function(obj, just_sql) {
+      var sql    = 'INSERT or REPLACE into balance (asset_id, amount, raw_amount, updated_at) values (?,?,?,?)';
+      var params = [obj.asset_id, obj.amount, obj.raw_amount, obj.updated_at];
+
+      if ( just_sql == true )
+        return [sql, params];
+
+      return DB.query(sql, params);
     }
 
     return self;
