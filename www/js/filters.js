@@ -90,21 +90,44 @@ bitwallet_filters.filter('draw_op_amount', function(BitShares, $filter) {
 bitwallet_filters.filter('tx_icon', function(BitShares, $filter) {
   return function(tx) {
     if(BitShares.isDeposit(tx.ui_type))
-      return 'icon ion-ios-plus-outline';
+      //return 'icon ion-ios-plus-outline';
+      return 'icon icon_deposit';
     if(BitShares.isWithdraw(tx.ui_type)) 
-      return 'icon ion-ios-minus-outline';
+      //return 'icon ion-ios-minus-outline';
+      return 'icon icon_withdraw';
     if(BitShares.isBtcPay(tx.ui_type))
-      return 'icon ion-social-bitcoin-outline';
+      //return 'icon ion-social-bitcoin-outline';
+      return 'icon icon_btc_pay';
     if(tx.ui_type=='sent')
-      return 'icon ion-ios-upload-outline';
+      //return 'icon ion-ios-upload-outline';
+      return 'icon icon_send';
     if(tx.ui_type=='received')
-      return 'icon ion-ios-download-outline';
+      //return 'icon ion-ios-download-outline';
+      return 'icon icon_receive';
     if(tx.ui_type=='self')
-      return 'icon ion-ios-refresh-outline';
+      //return 'icon ion-ios-refresh-outline';
+      return 'icon icon_self';
     return '';
   }
 });
 
+bitwallet_filters.filter('tx_icon_src', function(BitShares, $filter) {
+  return function(tx) {
+    if(BitShares.isDeposit(tx.ui_type))
+      return 'img/icons/ico-deposit.svg';
+    if(BitShares.isWithdraw(tx.ui_type)) 
+      return 'img/icons/ico-withdraw.svg';
+    if(BitShares.isBtcPay(tx.ui_type))
+      return 'img/icons/ico-payments.svg';
+    if(tx.ui_type=='sent')
+      return 'img/icons/ico-sent.svg';
+    if(tx.ui_type=='received')
+      return 'img/icons/ico-received.svg';
+    if(tx.ui_type=='self')
+      return 'img/icons/ico-received.svg';
+    return '';
+  }
+});
 
 bitwallet_filters.filter('draw_tx_amount', function(BitShares, $filter) {
   return function(tx) {

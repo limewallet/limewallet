@@ -43,34 +43,23 @@ line-height: 38px;}
   width:100%!important;
 }
 .balance_container_full{
-  height:147px;
-  /*background-image: radial-gradient(0% 100%, #71BFD5 0%, #2287A3 100%);*/
-  /*background-image: radial-gradient(0% 97%, #71BFD5 0%, #106279 100%);*/
-  /*background: rgba(44,62,80,0.70);*/
+  /*height:147px;*/
+  height:158px;
 }
 .balance{text-align:center;padding-top: 15px;}
 .balance.hidden{padding-top: 25px;}
-.balance_text{font-size:50px;line-height:50px;color:#caee36;}
+.balance_text{font-size:38px;line-height:38px;color:#caee36;}
 .balance_text i {font-size:25px;vertical-align:middle!important;line-height: 25px;}
-.balance_curr {color:#69818d;}
+.balance_curr { font-size:14px; color:#69818d;}
 .balance_hidden_text{font-size:35px;line-height:35px;letter-spacing: -2px;}
 .balance_hidden_text i.fa {vertical-align:top;}
+
+.balance_container_full .button-bar_container {width:300px;margin:0 auto;display:block;}
+.balance_container_full .button-bar {padding-top:28px;padding-bottom:28px;}
 
 .display_table{display:table;}
 .display_table_cell{display:table-cell;}
 .display_table_cell.vmiddle{vertical-align:middle;}
-
-.punta2 {
-  /*position:absolute;
-  bottom:-25px;*/
-  height:25px;
-  width:100%;
-  background: url(../img/triangle.png);
-  background-position:bottom;
-  background-repeat:no-repeat;
-  background-size: 100% 25px;
-
-}
 
 .index_buttons{
   overflow:hidden;padding:5px 0 10px 0;height:87px;
@@ -113,8 +102,7 @@ line-height: 38px;}
   display:block;
   overflow: hidden;
   width:100%;
-  /*top:192px;*/ /* -25 punta -20 buttons*/
-  top:147px;
+  top:158px;
   position:absolute!important; bottom:0;
   }
 .addys_empty{top:0px!important;}
@@ -171,16 +159,31 @@ line-height: 38px;}
 .transactions .btc_pay .deposit_ex{display:none;}
 .transactions .btc_pay .withdraw_ex{display:none;}
 /* pending */
-.transactions .pending .sent_ex{display:none;}
+/*.transactions .pending .sent_ex{display:none;}
 .transactions .pending .received_ex{display:none;}
 .transactions .pending .self_ex{display:none;}
 .transactions .pending .deposit_ex{display:none;}
 .transactions .pending .withdraw_ex{display:none;}
-.transactions .pending .btc_pay_ex{display:none;}
+.transactions .pending .btc_pay_ex{display:none;}*/
 
 h2 .transactions .sent_ex, h2 .transactions .received_ex, h2 .transactions .self_ex, h2 .transactions .deposit_ex, h2 .transactions .withdraw_ex, h2 .transactions .btc_pay_ex{font-size:16px;}
 
 .transactions .withdraw .tx_address, .transactions .deposit .tx_address, .transactions .btc_pay .tx_address { display:none;}
+
+.tx_icon {  width: 24px ;}
+.icon_receive   {background-image: url(../img/icons/ico-received.svg);}
+.icon_send      {background-image: url(../img/icons/ico-sent.svg);}
+.icon_self      {background-image: url(../img/icons/ico-received.svg);}
+.icon_withdraw  {background-image: url(../img/icons/ico-withdraw.svg);}
+.icon_deposit   {background-image: url(../img/icons/ico-deposit.svg);}
+.icon_btc_pay   {background-image: url(../img/icons/ico-payments.svg);}
+
+.lime_icon           { background-size: 24px 24px !important; 
+                       background-position:center center!important;
+                       background-repeat: no-repeat!important;
+                       width:32px;height:38px;}
+.lime_icon.navicon_w { background-image: url(../img/icons/menu-white.svg)!important ;}
+.lime_icon.qr i       { font-size:20px!important; /*background-image: url(../img/icons/ico-qr.svg) !important ;*/}
 
 .pending_text {
   float:right;font-size:0.7em;
@@ -388,7 +391,8 @@ margin-bottom: 20px!important;
 
 .send_form .item-input-inset{padding:0px 8px 0px 0px!important}
 
-div.full_width{width:100%;text-align: center;}
+.full_width{width:100%;}
+div.text_centered{text-align: center;}
 img.i_centered {margin-left: auto;
     margin-right: auto;
     }
@@ -492,6 +496,8 @@ img.i_centered {margin-left: auto;
   border-width: 0px; 
   /*border-style: solid; */
 }
+.main_transactions h2 , .main_transactions p {margin:0!important;}
+
 .list.settings .item .line-divider, .list.settings .line-divider, .main_transactions .line-divider{
   clear: both;
   position: absolute;
@@ -533,9 +539,8 @@ img.i_centered {margin-left: auto;
   border-width: 0px; 
 }
 .index_transactions .item-divider{
-  /*color: #fff!important;*/
-  font-size:10px;
-  font-weight: bold;
+  font-size:14px;
+  /*font-weight: bold;*/
   padding-top: 5px!important;
   padding-bottom: 4px!important;
   height: 28px!important;
@@ -916,6 +921,7 @@ fieldset {
 }
 .create_account_passsword .bottom_bar
 {text-align:center;}
+
 .balance_container_full, .welcome, .welcome_bg, .create_account, .create_account_bg {background: -moz-linear-gradient(123deg, rgba(26,66,84,1) 0%, rgba(26,67,86,1) 100%); /* ff3.6+ */
 background: -webkit-gradient(linear, left top, right bottom, color-stop(0%, rgba(26,67,86,1)), color-stop(100%, rgba(26,66,84,1))); /* safari4+,chrome */
 background: -webkit-linear-gradient(123deg, rgba(26,66,84,1) 0%, rgba(26,67,86,1) 100%); /* safari5.1+,chrome10+ */
@@ -937,3 +943,5 @@ background: linear-gradient(327deg, rgba(26,66,84,1) 0%, rgba(26,67,86,1) 100%);
                       border-width: 0px!important; }
 .seed_container input.pmd {font-size:16px!important;  color:#fff;border-top:none; border-left:none; border-right:none; border-bottom: 1px solid #d8d8d8 !important; background-color:transparent!important;}
 .seed_container input.pmd:focus {border-bottom: 1px solid #d3eb00 !important;}
+
+input.pmd {font-size:16px!important;  color:#fff;border-top:none; border-left:none; border-right:none; border-bottom: 1px solid #d8d8d8 !important; background-color:transparent!important;}

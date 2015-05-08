@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="42px" height="50px" viewBox="0 0 42 50" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <!-- Generator: Sketch 3.2.2 (9983) - http://www.bohemiancoding.com/sketch -->
+    <title>Sign receive</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="GUI-light" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <g id="Dashboard-5" sketch:type="MSArtboardGroup" transform="translate(-50.000000, -662.650080)" stroke="#D3D7D9" stroke-width="2">
+            <g id="Sign-receive" sketch:type="MSLayerGroup" transform="translate(51.000000, 654.000000)">
+                <path d="M6.02746384,8.08189357 C5.75062989,6.4492757 6.81529177,5.53651163 8.382046,6.03571997 L24.8627654,11.2869027 C26.4399992,11.7894501 28.129334,13.4859254 28.6285424,15.0526796 L33.8797251,31.533399 C34.3822724,33.1106328 33.4621057,34.1641261 31.8335515,33.8879812 L12.7249685,30.6478449 C11.0923506,30.371011 9.54374503,28.8190308 9.26760013,27.1904765 L6.02746384,8.08189357 Z" id="Rectangle-314" fill="#D3EB00" sketch:type="MSShapeGroup" transform="translate(20.000366, 19.915597) rotate(-45.000000) translate(-20.000366, -19.915597) "></path>
+                <path d="M33.8797251,39.533399 C34.3822724,41.1106328 33.4621057,42.1641261 31.8335515,41.8879812 L12.7249685,38.6478449 C11.0923506,38.371011 9.54374503,36.8190308 9.26760013,35.1904765 L6.02746384,16.0818936 C5.75062989,14.4492757 6.81529177,13.5365116 8.382046,14.03572" id="Rectangle-314" sketch:type="MSShapeGroup" transform="translate(20.000366, 27.915597) rotate(-45.000000) translate(-20.000366, -27.915597) "></path>
+                <path d="M33.8797251,47.533399 C34.3822724,49.1106328 33.4621057,50.1641261 31.8335515,49.8879812 L12.7249685,46.6478449 C11.0923506,46.371011 9.54374503,44.8190308 9.26760013,43.1904765 L6.02746384,24.0818936 C5.75062989,22.4492757 6.81529177,21.5365116 8.382046,22.03572" id="Rectangle-314" sketch:type="MSShapeGroup" transform="translate(20.000366, 35.915597) rotate(-45.000000) translate(-20.000366, -35.915597) "></path>
+                <path d="M33.8797251,55.533399 C34.3822724,57.1106328 33.4621057,58.1641261 31.8335515,57.8879812 L12.7249685,54.6478449 C11.0923506,54.371011 9.54374503,52.8190308 9.26760013,51.1904765 L6.02746384,32.0818936 C5.75062989,30.4492757 6.81529177,29.5365116 8.382046,30.03572" id="Rectangle-314" sketch:type="MSShapeGroup" transform="translate(20.000366, 43.915597) rotate(-45.000000) translate(-20.000366, -43.915597) "></path>
+            </g>
+        </g>
+    </g>
+</svg>

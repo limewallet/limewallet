@@ -1,5 +1,15 @@
 bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T, BitShares, AddressBook, Scanner, Address, $http, $ionicLoading, $ionicNavBarDelegate, $ionicModal, $ionicPopup, $location, $timeout, $rootScope, $stateParams, Wallet) {
-  
+
+  $scope.callbackMethod = function (query) {
+    return [  {id:'1', name:'recipient1', is_lime:true}, 
+              {id:'2', name:'recipient2', is_lime:true}];
+  }
+
+  $scope.callbackMethod2 = function (query) {
+    return BitShares.searchAccount(query);
+  }
+
+
   $scope.data = {address_book:[], is_btc:false};
   
   $scope.data_btc = {
@@ -70,17 +80,10 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
     sendForm.transactionAddress.value = $scope.transaction.address;
   }
 
-  $scope.showAddressBook = function(){
-    $scope.address_book_modal.show();
+  $scope.clearAddress = function(){
+    $scope.transaction.address = '';
   }
   
-  $scope.loadAddressBook = function() {
-    AddressBook.all().then(function(addr_book) {
-        $scope.data.address_book = addr_book;
-    });
-  };
-
-  $scope.loadAddressBook();
   
   $scope.selectContact = function(contact){
     $scope.address_book_modal.hide();
@@ -158,6 +161,11 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
     var extra_data;
     var prom;
     
+    // sendForm.transactionAddress
+    // #1 User choose 'searchQuery' search, THEN sendForm.transactionAddress.is_search_query == true .
+    // #2 User choose recipient from local addressbook, THEN sendForm.transactionAddress.is_lime == true . 
+    // #3 From BitShares search, in other case.
+
     BitShares.btsIsValidAddress(sendForm.transactionAddress.value)
     .then(function(is_valid){
       return is_valid;
@@ -176,7 +184,7 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
           return;
         }
         owner_key  = r.owner_key;
-        extra_data = '</br><div class="full_width"><img class="i_centered" src="'+ 'http://robohash.org/'+r.name+'?size=150x150' + '" /></div>';
+        extra_data = '</br><div class="full_width text_centered"><img class="i_centered" src="'+ 'http://robohash.org/'+r.name+'?size=150x150' + '" /></div>';
         if(r.public_data && r.public_data.gravatarId)
           extra_data = '</br><div class="full_width"><img class="i_centered" src="http://www.gravatar.com/avatar/'+r.public_data.gravatarId+'?s=150" /></div>';
       }, function(error){
@@ -572,19 +580,7 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
     });
     
   }
-  
-  
-  // Load Address book modal
-  $ionicModal.fromTemplateUrl('address-book-modal.html', function($ionicModal) {
-      $scope.address_book_modal = $ionicModal;
-  }, {
-      // Use our scope for the scope of the modal to keep it simple
-      scope: $scope,
-      // The animation we want to use for the modal entrance
-      animation: 'slide-in-up',
-      backdropClickToClose: false,
-      hardwareBackButtonClose: false
-  });
+ 
   
   // Load sending process modal view.
   $ionicModal.fromTemplateUrl('sending-modal.html', function($ionicModal) {

@@ -34,10 +34,10 @@
         <div class="list">
           <div class="item item-input-inset">
             <label class="item-input-wrapper wrapper_clean">
-              <input required name="transactionAddress" ng-model="transaction.address" type="text" placeholder="{{'g.to'|translate}}" class="big big_placeholder">
+              <!--input ion-autocomplete readonly="readonly" items-method="callbackMethod(query)" class="ion-autocomplete" autocomplete="off" required name="transactionAddress" ng-model="transaction.address" type="text" placeholder="{{'g.to'|translate}}" class="big big_placeholder" -->
+              <ion-autocomplete item-view-value-key="name" name="transactionAddress" ng-model="transaction.address" items-method="callbackMethod(query)" items-method2="callbackMethod2(query)" class="big full_width" />
             </label>
-            <button ng-click="showAddressBook()" class="button button-energized button-small icon" >
-              <i style="color:#ffffff!important;" class="fa fa-book"></i>
+            <button ng-click="clearAddress()" class="button button-icon icon ion-android-cancel" style="color:#cfd8dc!important;">
             </button>
           </div>
     
@@ -45,6 +45,12 @@
             <i class="icon fa20 {{wallet.asset.symbol_ui_class}} placeholder-icon">{{wallet.asset.symbol_ui_text}}</i>
             <!-- required -->
             <input numbers-only-key-press old-numbers-only-inputNOT required name="transactionAmount" ng-model="transaction.amount" type="number" placeholder="{{'g.amount'|translate}}" class="input_amount big big_placeholder" ng-class="{'error':sendForm.transactionAmount.$error.number}">
+            <br/>
+          </label>
+
+          <label class="item item-input">
+            <textarea name="" id="" cols="30" rows="10" name="transactionMemo" ng-model="transaction.memo"
+            class="big big_placeholder" ng-class="{'error':sendForm.transactionMemo.$error.number}" placeholder="Note"></textarea>  
             <br/>
           </label>
           <span class="error input" ng-show="sendForm.transactionAmount.$error.number">{{'err.enter_valid_amount'|translate}}</span>
@@ -77,22 +83,3 @@
     </ion-modal-view>
   </script>
   
-  <script id="address-book-modal.html" type="text/ng-template">
-    <ion-modal-view>
-      <ion-header-bar align-title="middle" class="bar-energized nav-title-slide-ios7">
-        <div class="title">{{'send.address_book'|translate}}</div>
-        <button ng-click="address_book_modal.hide()" class="button button-icon icon ion-ios-close-empty"></button>
-      </ion-header-bar>
-      
-      <ion-content class="has-header">
-        <ion-list>
-          <ion-item ng-repeat="addr in data.address_book">
-            <a ng-click="selectContact(addr)">
-              <h3 class="calm">{{addr.name}}</h3>
-              <h4>{{addr.address}} </h4>
-            </a>
-          </ion-item>
-        </ion-list>  
-      </ion-content>
-    </ion-modal-view>
-  </script>

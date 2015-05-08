@@ -5,10 +5,10 @@
   </ion-nav-title -->
     
   <ion-nav-buttons side="left">
-    <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
+    <button menu-toggle="left" class="button button-icon icon lime_icon navicon_w"></button>
   </ion-nav-buttons>
   <ion-nav-buttons side="right">
-    <button class="button button-icon icon" ng-click="scanQR()"><i class="fa fa-qrcode"></i></button>
+    <button class="button button-icon icon lime_icon qr" ng-click="scanQR()"><i class="fa fa-qrcode"></i></button>
   </ion-nav-buttons>
   
   
@@ -24,10 +24,9 @@
           <span class="balance_curr {{wallet.asset.symbol|lowercase}}">{{ 'home.balance' | translate:{asset:wallet.asset.symbol} }}</span>
         </div>
       
-    <!--/div>
-    <div class="index_buttons index_buttons2 energized_bgNOT"-->
-      <div style="width:300px;margin:0 auto;display:block;">
-        <div style="padding-top:15px;" class="button-bar tabbed">
+      <div class="button-bar_container">
+        <div class="button-bar tabbed">
+
           <a class="button button-small button-send" href="#/app/send////">
             {{'g.send' | translate | uppercase}}
           </a>
@@ -58,9 +57,10 @@
           <a ng-click="showActionSheet(tx)">
             <div class="{{tx.ui_type}}">
               <div ng-class="{true:'pending', false:''}[tx.state=='P' || tx.status=='WP']">
-                <i class="{{tx|tx_icon}} {{tx.ui_type}}_ex"></i>
+                <!-- i class="{{tx|tx_icon}} {{tx.ui_type}}_ex tx_icon"></i -->
+                <img class="{{tx.ui_type}}_ex icon tx_icon" src="{{tx|tx_icon_src}}"/>
                 <i ng-show="tx.state=='P'" ng-class="{true:'icon ion-loading-c'}[tx.state=='P']"></i> <!-- Send creada a manopla-->
-                <i class="{{tx|tx_icon}}" ng-show="tx.status=='WP'"></i> <!-- pending Xtx ; es HACK -->
+                <!-- i class="{{tx|tx_icon}}" ng-show="tx.status=='WP'"></i --> <!-- pending Xtx ; es HACK -->
                 <h2>
                   <span class="tx_amount"><i class="{{wallet.asset.symbol_ui_class}}">{{wallet.asset.symbol_ui_text}}</i>{{tx|draw_tx_amount}}</span> 
                   <span class="self_text">{{('g.'+tx.ui_type) | translate}}</span>

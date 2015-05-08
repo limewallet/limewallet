@@ -368,6 +368,10 @@ bitwallet_services
       return deferred.promise;
     }
 
+    self.searchAccount = function(query) {
+      return self.apiCall(undefined, ENVIRONMENT.apiurl('/account/'+query+'?find=true') );
+    }
+
     // *************************************************** //
     // Exchange Service Api Calls ************************ //
     // *************************************************** //

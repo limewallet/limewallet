@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="37px" height="38px" viewBox="0 0 37 38" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <!-- Generator: Sketch 3.2.2 (9983) - http://www.bohemiancoding.com/sketch -->
+    <title>ico-dashboard</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="GUI-light" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <g id="Menu-Drawer-1" sketch:type="MSArtboardGroup" transform="translate(-56.000000, -589.000000)" fill="#7F7F7F">
+            <g id="Drawer" sketch:type="MSLayerGroup">
+                <path d="M78,597 L70,597 L70,603.428571 L66,603.428571 L74,612 L82,603.428571 L78,603.428571 L78,597 M60,613.769231 L60,593 L89,593 L89,613.769231 L80.7142857,613.769231 C80.7201999,617.210692 77.940257,620 74.5,620 C71.0804425,620 68.3004996,617.210692 68.2857143,613.769231 L60,613.769231 M88.8888889,589 L60.1111111,589 C57.8212222,589 56.0205556,590.889444 56,593.222222 L56,622.777778 C56,625.108444 57.8212222,627 60.1111111,627 L88.8888889,627 C91.1582222,627 93,625.108444 93,622.777778 L93,593.222222 C93,590.889444 91.1582222,589 88.8888889,589" id="ico-dashboard" sketch:type="MSShapeGroup"></path>
+            </g>
+        </g>
+    </g>
+</svg>
