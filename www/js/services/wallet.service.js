@@ -4,7 +4,6 @@ bitwallet_services
 
     self.data = {
       assets            : {},
-      assets_x_symbol   : {},
       asset             : {},
       address_book      : {},
       addresses         : {},
@@ -284,8 +283,7 @@ bitwallet_services
       //Load Assets
       angular.forEach( ENVIRONMENT.assets , function(asset) {
         asset.amount = 0;
-        self.data.assets[asset.id]                = asset;
-        self.data.assets_x_symbol[asset.x_symbol] = asset;
+        self.data.assets[asset.id]  = asset;
       });
 
       //Create master key
@@ -356,78 +354,78 @@ bitwallet_services
       return deferred.promise;
     }
 
-    self.getMasterPrivKey = function() {
+    //self.getMasterPrivKey = function() {
 
-      var deferred = $q.defer();
+      //var deferred = $q.defer();
 
-      Account.get().then(function(account) {
+      //Account.get().then(function(account) {
 
-        if(account !== undefined && account.key !== undefined) {
-          deferred.resolve(account);
-          return;
-        }
+        //if(account !== undefined && account.key !== undefined) {
+          //deferred.resolve(account);
+          //return;
+        //}
 
-        BitShares.createMasterKey().then(function(masterPrivateKey){
+        //BitShares.createMasterKey().then(function(masterPrivateKey){
 
-          BitShares.extractDataFromKey(masterPrivateKey).then(function(keyData){
-            Account.storeKey(masterPrivateKey, -1).then(function() {
-              Address.create(
-                -1, 
-                keyData.address, 
-                keyData.pubkey, 
-                keyData.privkey, 
-                true, 
-                'main').then(function() {
-                  $rootScope.master_key_new = true;
-                  deferred.resolve({key:masterPrivateKey, deriv:-1});  
-                },function(err) {
-                  console.log('getMasterPrivKey address.create error #1: '+JSON.stringify(err));
-                  deferred.reject(err);
-                });
-            },
-            function(err){ 
-              console.log('getMasterPrivKey err #2: '+JSON.stringify(err));
-              deferred.reject(err);
-            });
-          },
-          function(err) {
-            console.log('getMasterPrivKey err #3: '+JSON.stringify(err));
-            deferred.reject(err); 
-          });
-        },
-        function(err) {
-          //Plugin error (BitShares.createMasterKey);
-          console.log('getMasterPrivKey err #4: '+JSON.stringify(err));
-          deferred.reject(err); 
-        });
+          //BitShares.extractDataFromKey(masterPrivateKey).then(function(keyData){
+            //Account.storeKey(masterPrivateKey, -1).then(function() {
+              //Address.create(
+                //-1, 
+                //keyData.address, 
+                //keyData.pubkey, 
+                //keyData.privkey, 
+                //true, 
+                //'main').then(function() {
+                  //$rootScope.master_key_new = true;
+                  //deferred.resolve({key:masterPrivateKey, deriv:-1});  
+                //},function(err) {
+                  //console.log('getMasterPrivKey address.create error #1: '+JSON.stringify(err));
+                  //deferred.reject(err);
+                //});
+            //},
+            //function(err){ 
+              //console.log('getMasterPrivKey err #2: '+JSON.stringify(err));
+              //deferred.reject(err);
+            //});
+          //},
+          //function(err) {
+            //console.log('getMasterPrivKey err #3: '+JSON.stringify(err));
+            //deferred.reject(err); 
+          //});
+        //},
+        //function(err) {
+          ////Plugin error (BitShares.createMasterKey);
+          //console.log('getMasterPrivKey err #4: '+JSON.stringify(err));
+          //deferred.reject(err); 
+        //});
 
-      }, 
-      function(err) {
-        //DB Error (MasterKey::get)
-        deferred.reject(err);
-      });
+      //}, 
+      //function(err) {
+        ////DB Error (MasterKey::get)
+        //deferred.reject(err);
+      //});
 
-      return deferred.promise;
-    }
+      //return deferred.promise;
+    //}
 
-    self.getMasterPubkey = function() {
+    //self.getMasterPubkey = function() {
 
-      var deferred = $q.defer();
-      self.getMasterPrivKey().then(function(masterPrivateKey) {
-        //console.log(' -- getMasterPubkey : ' + masterPrivateKey.key);
-        BitShares.extendedPublicFromPrivate(masterPrivateKey.key).then(function(extendedPublicKey){
-          deferred.resolve({masterPubkey:extendedPublicKey, deriv:masterPrivateKey.deriv});
-        }, function(err) {
-          console.log('getMasterPubkey err #1: '+JSON.stringify(err));
-          deferred.reject(err);  
-        })
-      }, function(err) {
-        console.log('getMasterPubkey err #2: '+JSON.stringify(err));
-        deferred.reject(err);    
-      });
+      //var deferred = $q.defer();
+      //self.getMasterPrivKey().then(function(masterPrivateKey) {
+        ////console.log(' -- getMasterPubkey : ' + masterPrivateKey.key);
+        //BitShares.extendedPublicFromPrivate(masterPrivateKey.key).then(function(extendedPublicKey){
+          //deferred.resolve({masterPubkey:extendedPublicKey, deriv:masterPrivateKey.deriv});
+        //}, function(err) {
+          //console.log('getMasterPubkey err #1: '+JSON.stringify(err));
+          //deferred.reject(err);  
+        //})
+      //}, function(err) {
+        //console.log('getMasterPubkey err #2: '+JSON.stringify(err));
+        //deferred.reject(err);    
+      //});
 
-      return deferred.promise;
-    } 
+      //return deferred.promise;
+    //} 
     
     self.truncateDate = function(timestamp, now, now_y_m_d, now_y_m, now_week, now_year){
       var my_moment = moment(timestamp);
@@ -445,6 +443,7 @@ bitwallet_services
       return my_moment.format('YYYY-MM');
       //return my_moment.year()==now_year ? my_moment.format('MMMM') : my_moment.format('MMMM YYYY');
     }
+
     self.orderTransactions = function(data){
       var now             = moment();
       var now_y_m_d       = now.format('YYYY-MM-DD');
@@ -453,10 +452,10 @@ bitwallet_services
       var now_year        = now.year();
       var orderedTxs      = {};
       var orderedKeys     = [];
+
       angular.forEach(data, function(tx) {
         var box = self.truncateDate(tx.TS, now, now_y_m_d, now_y_m, now_week, now_year);
-        if(!orderedTxs[box]) 
-        {
+        if(!orderedTxs[box]) {
           orderedTxs[box] = [];
           orderedKeys.push(box);
         }

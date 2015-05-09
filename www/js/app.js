@@ -30,6 +30,7 @@ bitwallet_module
 
   $rootScope.refresh_status = 0;
 
+  //TODO: hacerlo bien
   $rootScope.goHome = function() {
     $ionicHistory.clearHistory();
     $ionicHistory.nextViewOptions({
@@ -121,8 +122,7 @@ bitwallet_module
         'InitDone' : function(T, Wallet, BitShares, $ionicPlatform, $cordovaSplashscreen, $cordovaGlobalization, $translate, DB, $rootScope) {
 
           $rootScope.global_init = function() {
-            $rootScope.master_key_new   = false;
-            $rootScope.wallet           = Wallet.data;
+            $rootScope.wallet = Wallet.data;
             $rootScope.$watch(
                 function(){ return Wallet.data },
               function(newVal) {
@@ -141,10 +141,11 @@ bitwallet_module
             $cordovaGlobalization.getPreferredLanguage()
             .then(function(lang) {
                 console.log('Preferred language => ' + lang.value);
-                // $translate.use('es');
-                // moment.lang('es');
-                $translate.use(lang.value.slice(0,2));
-                moment.lang(lang.value.slice(0,2));
+                //TODO: traducir!
+                var tmp = lang.value.slice(0,2);
+                tmp = 'en';
+                $translate.use(tmp);
+                moment.lang(tmp);
               },
               function(error) {
                 console.log('Unable to get preferred language');
@@ -156,50 +157,73 @@ bitwallet_module
             //INIT DB
             //*****************
             .then(function() {
-               return DB.init();
+              var db_init = window.localStorage['db_init'] || 'no';
+              if ( db_init == 'yes') {
+                console.log('DB already initialized');
+                return;
+              }
+              DB.init();
             })
             .then(function() {
                 console.log('DB initialized OK');
+                window.localStorage['db_init'] = 'yes';
               },
               function(error) {
                 console.log('Unable to initialize DB:' + error);
+            })
+
+            //*****************
+            // First wallet run?
+            //*****************
+            .then(function() {
+              return Account.active();
+            })
+            .then(function(account) {
+              
+            },
+            function(error) {
+              
             })
             
             //*****************
             // Wallet init
             //*****************
-            .then(function() {
-              return Wallet.init();
-            })
-            .then(function() {
-              console.log('Wallet initialized OK');
-            },
-            function(error) {
-              console.log('Unable to initialize Wallet:' + error);
-            })
+            //.then(function() {
+              //return Wallet.init();
+            //})
+            //.then(function() {
+              //console.log('Wallet initialized OK');
+            //},
+            //function(error) {
+              //console.log('Unable to initialize Wallet:' + error);
+            //})
             
             //****************
             //Refresh Balance
             //****************
-            .then(function() {
-              console.log(' -- app.js call Wallet.refreshBalance()');
-              Wallet.refreshBalance().then(function() {
-                window.plugins.toast.show( T.i('g.updated'), 'short', 'bottom');
-              }, function(err) {
-                window.plugins.toast.show( T.i('g.unable_to_refresh'), 'long', 'bottom');
-              });
+            //.then(function() {
+              //console.log(' -- app.js call Wallet.refreshBalance()');
+              //Wallet.refreshBalance().then(function() {
+                //window.plugins.toast.show( T.i('g.updated'), 'short', 'bottom');
+              //}, function(err) {
+                //window.plugins.toast.show( T.i('g.unable_to_refresh'), 'long', 'bottom');
+              //});
 
-              // Creo que NO es al pedo, pero por las dudas cerramos el splash.
-              $cordovaSplashscreen.hide();
+              //// Creo que NO es al pedo, pero por las dudas cerramos el splash.
+              //$cordovaSplashscreen.hide();
                 
-              // FullScreen Config
-              var showFullScreen = false, showStatusBar = true;
-              ionic.Platform.fullScreen(showFullScreen, showStatusBar);
-            });
+              //// FullScreen Config
+              //var showFullScreen = false, showStatusBar = true;
+              //ionic.Platform.fullScreen(showFullScreen, showStatusBar);
+            //});
           }
 
           $ionicPlatform.ready(function(){
-            $rootScope.global_init();
+            $rootScope.global_init().then(function(has_account) {
+              
+              
+
+            });
           }); //platformReady
         } //InitDone
       } //resolve
@@ -475,5 +499,4 @@ bitwallet_module
   // if none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise('/app/home');
   //$urlRouterProvider.otherwise('/app/xtx_requote/6');
-  
 });
