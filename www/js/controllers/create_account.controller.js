@@ -4,8 +4,11 @@ bitwallet_controllers
   $scope.data = { seed: 'quiz exist ridge blouse sauce delay mobile spell rebel review fish judge'}
   
   $scope.next = function(){
-    $rootScope.goTo('app.create_account_seed');
+    $scope.setSeed($scope.data.seed);
+    $scope.goTo('app.create_wallet_seed');
   }
+
+  //console.log('$scope.init.mode = ' + $scope.init.mode);
 });
 
 

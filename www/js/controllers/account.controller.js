@@ -1,4 +1,4 @@
-bitwallet_controllers.controller('AccountCtrl', function($translate, T, BitShares, $scope, $http, $timeout, $ionicPopup, $ionicLoading, $q, Account, Wallet, $interval, Address, $stateParams) {
+bitwallet_controllers.controller('AccountCtrl', function($translate, T, BitShares, $scope, $http, $timeout, $ionicPopup, $ionicLoading, $q, Account, Wallet, $interval, $stateParams) {
   
   $scope.recoverAccountData = function(){
     setTimeout(function() {

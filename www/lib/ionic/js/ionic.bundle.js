@@ -12782,6 +12782,7 @@ function createInjector(modulesToLoad, strictDi) {
           if (cache[serviceName] === INSTANTIATING) {
             delete cache[serviceName];
           }
+          //console.log(' IONIC BUNDLE! Service name: '+serviceName);
           throw err;
         } finally {
           path.shift();

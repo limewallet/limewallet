@@ -1,5 +1,5 @@
 bitwallet_controllers
-.controller('TxCtrl', function($scope, $rootScope, $ionicNavBarDelegate, $stateParams, RawOperation, Operation){
+.controller('TxCtrl', function($scope, $rootScope, $ionicNavBarDelegate, $stateParams, Operation){
   
   $scope.data = { ops         : [],
                   tx_deposits : [],
@@ -13,17 +13,17 @@ bitwallet_controllers
   {
     $scope.data.tx_id = $stateParams.tx_id;
     console.log('TxDetails for: '+$stateParams.tx_id);
-    $scope.data.ops = RawOperation.allForTx($stateParams.tx_id).then(function(res){
-      $scope.data.ops           = res;
-      $scope.data.tx_withdraws  = $scope.getWithdraws();
-      $scope.data.tx_deposits   = $scope.getDeposits();
-    }, function(error){
-    }).then(function(){
-      Operation.byTxId($scope.data.tx_id).then(function(res){
-        $scope.data.tx    = res;
-        $scope.data.fee   = res.fee;
-      });
-    });
+    // $scope.data.ops = RawOperation.allForTx($stateParams.tx_id).then(function(res){
+    //   $scope.data.ops           = res;
+    //   $scope.data.tx_withdraws  = $scope.getWithdraws();
+    //   $scope.data.tx_deposits   = $scope.getDeposits();
+    // }, function(error){
+    // }).then(function(){
+    //   Operation.byTxId($scope.data.tx_id).then(function(res){
+    //     $scope.data.tx    = res;
+    //     $scope.data.fee   = res.fee;
+    //   });
+    // });
   }
   else{
     $scope.goHome();

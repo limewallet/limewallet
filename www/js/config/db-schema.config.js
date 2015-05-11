@@ -6,14 +6,25 @@ bitwallet_config
         {
             name: 'account',
             columns: [
-                { name : 'id',                 type  : 'integer primary key'},
-                { name : 'name',               type  : 'text unique'},
-                { name : 'number',             type  : 'integer'},
-                { name : 'active',             type  : 'integer'},
-                { name : 'registered',         type  : 'integer'},
-                { name : 'access_key',         type  : 'text'},
-                { name : 'secret_key',         type  : 'text'},
-                { name : 'created_at',         type  : 'integer'}
+                { name : 'id',                type  : 'integer primary key'},
+                { name : 'name',              type  : 'text unique'},
+                
+                { name : 'privkey',           type  : 'text'},
+                { name : 'encrypted',         type  : 'integer', default : 0},
+                { name : 'pubkey',            type  : 'text'},
+                { name : 'address',           type  : 'text'},
+
+                { name : 'number',            type  : 'integer'},
+                { name : 'active',            type  : 'integer'},
+                
+                { name : 'public_data',       type  : 'text'},
+                { name : 'source',            type  : 'text'},
+                { name : 'registered',        type  : 'integer'},
+                
+                { name : 'access_key',        type  : 'text'},
+                { name : 'secret_key',        type  : 'text'},
+                
+                { name : 'created_at',        type  : 'integer'}
             ]
         },
         {
@@ -48,7 +59,7 @@ bitwallet_config
             columns: [
                 { name : 'block_id'  , type: 'text'},
                 { name : 'timestamp' , type: 'integer'},
-                { name : 'memo_hash' , type: 'text'}
+                { name : 'memo_hash' , type: 'text'},
                 { name : 'address'   , type: 'text'},
                 { name : 'asset_id'  , type: 'integer'},
                 { name : 'fee'       , type: 'integer'},

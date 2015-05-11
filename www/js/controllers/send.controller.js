@@ -85,13 +85,6 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
   }
   
   
-  $scope.selectContact = function(contact){
-    $scope.address_book_modal.hide();
-    sendForm.transactionAddress.value = contact.address;
-    $scope.transaction.address = contact.address;
-    console.log($scope.transaction.address);
-  }
-  
   $scope.scanQR = function() {
     Scanner.scan()
     .then(function(result) {

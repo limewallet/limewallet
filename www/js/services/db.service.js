@@ -207,6 +207,15 @@ bitwallet_services
       return deferred.promise;
     }
     
+    self.create = function(privkey, encrypted, pubkey, address, number){
+      var sql    = 'INSERT into account (privkey, encrypted, pubkey, address, number) values (?,?,?,?,?,?)';
+      var params = [privkey, encrypted, pubkey, address, number]
+
+      // if(just_sql == true) 
+      //   return [sql, params];
+      return DB.query(sql, params);
+    }
+
     //self.register = function(address) {
       //var deferred = $q.defer();
       //console.log('Account::register');
@@ -271,7 +280,7 @@ bitwallet_services
     var self = this;
 
     self.add = function(obj, just_sql) {
-      var sql    = 'INSERT into operation (block_id, timestamp, memo_hash, address, asset_id, fee, txid, amount, block, type)';
+      var sql    = 'INSERT into operation (block_id, timestamp, memo_hash, address, asset_id, fee, txid, amount, block, type) values(?,?,?,?,?,?,?,?,?,?)';
       var params = [obj.block_id, obj.timestamp, obj.memo_hash, obj.address, obj.asset_id, obj.fee, obj.txid, obj.amount, obj.block, obj.type]
 
       if(just_sql == true) 

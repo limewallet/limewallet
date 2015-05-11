@@ -36,6 +36,7 @@
             <label class="item-input-wrapper wrapper_clean">
               <!--input ion-autocomplete readonly="readonly" items-method="callbackMethod(query)" class="ion-autocomplete" autocomplete="off" required name="transactionAddress" ng-model="transaction.address" type="text" placeholder="{{'g.to'|translate}}" class="big big_placeholder" -->
               <ion-autocomplete item-view-value-key="name" name="transactionAddress" ng-model="transaction.address" items-method="callbackMethod(query)" items-method2="callbackMethod2(query)" class="big full_width" />
+              <input type="password" placeholder="{{'g.confirm_password'|translate}}" class="pmd big big_placeholder">
             </label>
             <button ng-click="clearAddress()" class="button button-icon icon ion-android-cancel" style="color:#cfd8dc!important;">
             </button>

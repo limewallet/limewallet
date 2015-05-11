@@ -5,9 +5,14 @@
         <br/>
         <p>{{'create_account.type_seed'|translate}}</p>
         <div class="seed_container">
-          <textarea name="" id="" cols="30" rows="10"></textarea>  
+          <textarea ng-model="data.retype_seed" style="padding:10px;" name="" id="" cols="27" rows="10"></textarea>  
         </div>
-        <div class="bottom_bar">   
+        <div class="column">
+          <div class="row" ng-show="data.error!=''">
+            <span class="assertive bold" style="font-size:18px;width:100%;">{{data.error}}</span>
+          </div>
+        </div>
+        <div class="bottom_bar hide-on-keyboard-open"> 
           <a ng-click="next()" class="float_right button button-outline lime lime_border">{{'g.next'|translate}}</a>
         </div>  
       </div>

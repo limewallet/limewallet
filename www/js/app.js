@@ -9,102 +9,10 @@ function handleOpenURL(url) {
   );
 }
 
+
 var bitwallet_module = angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'reconnectingWebSocket', 'bit_wallet.controllers','bit_wallet.services', 'bit_wallet.filters', 'bit_wallet.config', 'ion-autocomplete']);
 
 bitwallet_module
-.run(function(DB, $state, $ionicHistory, $rootScope, $ionicPlatform, Wallet, Scanner, $q) {
-
-  $ionicPlatform.ready(function() {
-    // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
-    // for form inputs)
-    if(window.cordova && window.cordova.plugins.Keyboard) {
-      cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
-    }
-
-    if(window.StatusBar) {
-      // org.apache.cordova.statusbar required
-      StatusBar.styleDefault();
-    }
-
-  });
-
-  $rootScope.refresh_status = 0;
-
-  //TODO: hacerlo bien
-  $rootScope.goHome = function() {
-    $ionicHistory.clearHistory();
-    $ionicHistory.nextViewOptions({
-      disableAnimate : true,
-    });
-    console.log('clear history and go home!');
-    $state.go('app.home');
-  }
-
-  $rootScope.$on(Wallet.REFRESH_START, function(event, data) {
-    $rootScope.refresh_status = 1;
-    console.log('Wallet refrsh start');
-  });
-
-  $rootScope.$on(Wallet.REFRESH_DONE, function(event, data) {
-    $rootScope.refresh_status = 0;
-    console.log('Wallet refrsh done');
-  });
-
-  $rootScope.$on(Wallet.REFRESH_ERROR, function(event, data) {
-    $rootScope.refresh_status = -1;
-    console.log('Wallet refrsh error');
-  });
-
-  
-  $rootScope.goTo = function(param) {
-    $state.go(param);
-  }
-
-  /// transfer/amount/'+$scope.amount+'/asset/
-  //  window.open('bts:DVSNKLe7F5E7msNG5RnbdWZ7HDeHoxVrUMZo/transfer/amount/1.1/asset/USD', '_system', 'location=yes');
-  //  bitcoin:BweMQsJqRdmncwagPiYtANrNbApcRvEV77?amount=1.1  | bitcoin://BweMQsJqRdmncwagPiYtANrNbApcRvEV77?amount=1.1
-  //  bts:DVSNKLe7F5E7msNG5RnbdWZ7HDeHoxVrUMZo?amount=1.1    | bts://DVSNKLe7F5E7msNG5RnbdWZ7HDeHoxVrUMZo?amount=1.1
-  $rootScope.resolveURI = function(data){
-
-    if( !data.cancelled ) {
-
-        if(data.privkey !== undefined)
-        {
-          $state.go('app.import_priv', {private_key:data.privkey});
-          return;
-        }
-        
-        var promises = [];
-        //Pubkey scanned
-        if(data.pubkey !== undefined) {
-          var p = BitShares.btsPubToAddress(data.pubkey)
-          .then(function(addy){
-            data.address = addy;
-          })
-          promises.push(p);
-        }
-        
-        $q.all(promises).then(function() {
-          $state.go('app.send', {address:data.address, amount:data.amount, asset_id:data.asset_id, is_btc:data.is_btc});
-        })
-      }
-  }
-
-  window.addEventListener('OnPaymentRequest', function(e) {
-      if(!e.detail || !e.detail.url)
-      {
-        console.log('OnPaymentRequest null url.');
-        return;
-      }
-      Scanner.parseUrl(e.detail.url).then(function(data){
-        // address/:amount/:asset_id/:is_btc
-        // $state.go('app.send', {address:data.address, amount:data.amount, asset_id:data.asset_id, is_btc:data.is_btc});
-        $rootScope.resolveURI(data);
-      }, function(error){
-        console.log(error);
-      });
-    });
-})
 
 .config(function($ionicConfigProvider, $stateProvider, $urlRouterProvider, $translateProvider, ENVIRONMENT) {
   
@@ -112,121 +20,21 @@ bitwallet_module
   $ionicConfigProvider.navBar.alignTitle('center');
   $translateProvider.useStaticFilesLoader({ prefix: 'static/locale-', suffix: '.json'});
 
+  console.log(' app.js Init de .CONFIG !');
+
   $stateProvider
     .state('app', {
       url: "/app",
       abstract: true,
       templateUrl: "templates/menu.html",
       controller: 'AppCtrl',
+      
       resolve : {
         'InitDone' : function(T, Wallet, BitShares, $ionicPlatform, $cordovaSplashscreen, $cordovaGlobalization, $translate, DB, $rootScope) {
 
-          $rootScope.global_init = function() {
-            $rootScope.wallet = Wallet.data;
-            $rootScope.$watch(
-                function(){ return Wallet.data },
-              function(newVal) {
-                $rootScope.wallet = newVal;
-              }
-            );
-
-            //*****************
-            // INIT DEV/PROD ENVIRONMENT
-            //*****************
-            BitShares.setTest(ENVIRONMENT.test);
-            
-            //*****************
-            //GET LANGUAGE
-            //*****************
-            $cordovaGlobalization.getPreferredLanguage()
-            .then(function(lang) {
-                console.log('Preferred language => ' + lang.value);
-                //TODO: traducir!
-                var tmp = lang.value.slice(0,2);
-                tmp = 'en';
-                $translate.use(tmp);
-                moment.lang(tmp);
-              },
-              function(error) {
-                console.log('Unable to get preferred language');
-                $translate.use('en');
-                moment.lang('en');
-            })
-            
-            //*****************
-            //INIT DB
-            //*****************
-            .then(function() {
-              var db_init = window.localStorage['db_init'] || 'no';
-              if ( db_init == 'yes') {
-                console.log('DB already initialized');
-                return;
-              }
-              DB.init();
-            })
-            .then(function() {
-                console.log('DB initialized OK');
-                window.localStorage['db_init'] = 'yes';
-              },
-              function(error) {
-                console.log('Unable to initialize DB:' + error);
-            })
-
-            //*****************
-            // First wallet run?
-            //*****************
-            .then(function() {
-              return Account.active();
-            })
-            .then(function(account) {
-              
-            },
-            function(error) {
-              
-            })
-            
-            //*****************
-            // Wallet init
-            //*****************
-            //.then(function() {
-              //return Wallet.init();
-            //})
-            //.then(function() {
-              //console.log('Wallet initialized OK');
-            //},
-            //function(error) {
-              //console.log('Unable to initialize Wallet:' + error);
-            //})
-            
-            //****************
-            //Refresh Balance
-            //****************
-            //.then(function() {
-              //console.log(' -- app.js call Wallet.refreshBalance()');
-              //Wallet.refreshBalance().then(function() {
-                //window.plugins.toast.show( T.i('g.updated'), 'short', 'bottom');
-              //}, function(err) {
-                //window.plugins.toast.show( T.i('g.unable_to_refresh'), 'long', 'bottom');
-              //});
-
-              //// Creo que NO es al pedo, pero por las dudas cerramos el splash.
-              //$cordovaSplashscreen.hide();
-                
-              //// FullScreen Config
-              //var showFullScreen = false, showStatusBar = true;
-              //ionic.Platform.fullScreen(showFullScreen, showStatusBar);
-            //});
-          }
-
-          $ionicPlatform.ready(function(){
-            $rootScope.global_init().then(function(has_account) {
-              
-              
-
-            });
-          }); //platformReady
         } //InitDone
       } //resolve
+      
     })
 
     .state('app.backup', {
@@ -319,17 +127,6 @@ bitwallet_module
       }
     })
 
-    .state('app.address_book', {
-      url: "/address_book",
-      cache: false,
-      views: {
-        'menuContent' :{
-          templateUrl: "templates/settings.addressbook.html",
-          controller: 'AddressBookCtrl'
-        }
-      }
-    })
-    
     .state('app.import_priv', {
       url: "/import_priv/:private_key",
       views: {
@@ -375,16 +172,16 @@ bitwallet_module
       }
     })
     
-    .state('app.deposit_list', {
-      cache:  false,
-      url:    "/deposit_list",
-      views: {
-              'menuContent' :{
-                templateUrl: "templates/deposit_list.html",
-                controller: 'DepositListCtrl'
-            }
-      }
-    })
+    // .state('app.deposit_list', {
+    //   cache:  false,
+    //   url:    "/deposit_list",
+    //   views: {
+    //           'menuContent' :{
+    //             templateUrl: "templates/deposit_list.html",
+    //             controller: 'DepositListCtrl'
+    //         }
+    //   }
+    // })
     
     .state('app.withdraw', {
       cache:  false,
@@ -452,9 +249,9 @@ bitwallet_module
       }
     })
 
-    .state('app.create_account', {
+    .state('app.create_wallet', {
       cache:  false,
-      url:    "/create_account",
+      url:    "/create_wallet",
       views: {
               'menuContent' :{
                 templateUrl: "templates/create_account.html",
@@ -463,9 +260,9 @@ bitwallet_module
       }
     })
 
-    .state('app.create_account_seed', {
+    .state('app.create_wallet_seed', {
       cache:  false,
-      url:    "/create_account_seed",
+      url:    "/create_wallet_seed",
       views: {
               'menuContent' :{
                 templateUrl: "templates/create_account_seed.html",
@@ -474,9 +271,9 @@ bitwallet_module
       }
     })
 
-    .state('app.create_account_password', {
+    .state('app.create_wallet_password', {
       cache:  false,
-      url:    "/create_account_password",
+      url:    "/create_wallet_password",
       views: {
               'menuContent' :{
                 templateUrl: "templates/create_account_password.html",
@@ -497,6 +294,240 @@ bitwallet_module
     })
 
   // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/app/home');
-  //$urlRouterProvider.otherwise('/app/xtx_requote/6');
+  //$urlRouterProvider.otherwise('/app/welcome');
+
+})
+
+.run(function(DB, $state, $ionicHistory, $rootScope, $ionicPlatform, Wallet, Scanner, $q, BitShares, ENVIRONMENT, $cordovaGlobalization, $translate) {
+
+  console.log(' app.js Init de .RUN !');
+
+  $ionicPlatform.ready(function() {
+    
+    console.log(' app.js Platform Ready!');
+    // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
+    // for form inputs)
+    if(window.cordova && window.cordova.plugins.Keyboard) {
+      cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
+    }
+
+    if(window.StatusBar) {
+      // org.apache.cordova.statusbar required
+      StatusBar.styleDefault();
+    }
+
+    console.log(' -- -----------------  calling global_init');
+    $rootScope.global_init().then(function() {
+      //has_account?
+      console.log(' -- -----------------  global_init response');  
+      $rootScope.goTo('app.welcome');
+    }, function(error){
+      console.log('initPLatform ready error:'+error);
+      
+    });
+  });
+
+  //*****************************
+  // CERATE or RECOVER WALLET?
+  //*****************************
+  $rootScope.init                     = { mode : undefined,
+                                          seed : ''};
+  $rootScope.INIT_MODE_CREATE_WALLET  = 'create_wallet';
+  $rootScope.INIT_MODE_RECOVER_WALLET = 'recover_wallet';
+  
+  $rootScope.setInitMode = function(init_mode){
+    $rootScope.init.mode = init_mode;
+  }
+
+  $rootScope.isCreateInitMode = function(){
+    return $rootScope.INIT_MODE_CREATE_WALLET == $rootScope.init.mode;
+  }
+
+  $rootScope.setSeed = function(seed){
+    $rootScope.init.seed = seed;
+  }
+
+  $rootScope.isEqualSeed = function(seed){
+    console.log ('are equal? -> ' + $rootScope.init.seed +'=='+seed);
+    return $rootScope.init.seed == seed;
+  }
+
+
+  //*****************************
+
+  $rootScope.global_init = function() {
+            
+    $rootScope.wallet = Wallet.data;
+    $rootScope.$watch(
+        function(){ return Wallet.data },
+      function(newVal) {
+        $rootScope.wallet = newVal;
+      }
+    );
+
+    //*****************
+    // INIT DEV/PROD ENVIRONMENT
+    //*****************
+    BitShares.setTest(ENVIRONMENT.test);
+    
+    //*****************
+    //GET LANGUAGE
+    //*****************
+    return $cordovaGlobalization.getPreferredLanguage()
+    .then(function(lang) {
+        console.log('Preferred language => ' + lang.value);
+        //TODO: traducir!
+        var tmp = lang.value.slice(0,2);
+        tmp = 'en';
+     -   $translate.use(tmp);
+        moment.lang(tmp);
+      },
+      function(error) {
+        console.log('Unable to get preferred language');
+        $translate.use('en');
+        moment.lang('en');
+    })
+    
+    //*****************
+    //INIT DB
+    //*****************
+    .then(function() {
+      var db_init = window.localStorage['db_init'] || 'no';
+      if ( db_init == 'yes') {
+        console.log('DB already initialized');
+        return;
+      }
+      DB.init();
+    })
+    .then(function() {
+        console.log('DB initialized OK');
+        window.localStorage['db_init'] = 'yes';
+      },
+      function(error) {
+        console.log('Unable to initialize DB:' + error);
+    })
+
+    
+    //*****************
+    // First wallet run?
+    //*****************
+    // .then(function() {
+    //   return Account.active();
+    // })
+    // .then(function(account) {
+    //   // ToDo: load account
+    //   //global_init
+    // },
+    // function(error) {
+      
+    // })
+    
+    //*****************
+    // Wallet init
+    //*****************
+    //.then(function() {
+      //return Wallet.init();
+    //})
+    //.then(function() {
+      //console.log('Wallet initialized OK');
+    //},
+    //function(error) {
+      //console.log('Unable to initialize Wallet:' + error);
+    //})
+    
+    //****************
+    //Refresh Balance
+    //****************
+    //.then(function() {
+      //console.log(' -- app.js call Wallet.refreshBalance()');
+      //Wallet.refreshBalance().then(function() {
+        //window.plugins.toast.show( T.i('g.updated'), 'short', 'bottom');
+      //}, function(err) {
+        //window.plugins.toast.show( T.i('g.unable_to_refresh'), 'long', 'bottom');
+      //});
+
+      //// Creo que NO es al pedo, pero por las dudas cerramos el splash.
+      //$cordovaSplashscreen.hide();
+        
+      //// FullScreen Config
+      //var showFullScreen = false, showStatusBar = true;
+      //ionic.Platform.fullScreen(showFullScreen, showStatusBar);
+    //});
+  }
+
+  $rootScope.refresh_status = 0;
+
+  //TODO: hacerlo bien
+  $rootScope.goHome = function() {
+    $ionicHistory.clearHistory();
+    $ionicHistory.nextViewOptions({
+      disableAnimate : true,
+    });
+    console.log('clear history and go home!');
+    $state.go('app.home');
+  }
+
+  $rootScope.$on(Wallet.REFRESH_START, function(event, data) {
+    $rootScope.refresh_status = 1;
+    console.log('Wallet refresh start');
+  });
+
+  $rootScope.$on(Wallet.REFRESH_DONE, function(event, data) {
+    $rootScope.refresh_status = 0;
+    console.log('Wallet refresh done');
+  });
+
+  $rootScope.$on(Wallet.REFRESH_ERROR, function(event, data) {
+    $rootScope.refresh_status = -1;
+    console.log('Wallet refresh error');
+  });
+  
+  $rootScope.goTo = function(param) {
+    $state.go(param);
+  }
+
+  /// transfer/amount/'+$scope.amount+'/asset/
+  //  window.open('bts:DVSNKLe7F5E7msNG5RnbdWZ7HDeHoxVrUMZo/transfer/amount/1.1/asset/USD', '_system', 'location=yes');
+  //  bitcoin:BweMQsJqRdmncwagPiYtANrNbApcRvEV77?amount=1.1  | bitcoin://BweMQsJqRdmncwagPiYtANrNbApcRvEV77?amount=1.1
+  //  bts:DVSNKLe7F5E7msNG5RnbdWZ7HDeHoxVrUMZo?amount=1.1    | bts://DVSNKLe7F5E7msNG5RnbdWZ7HDeHoxVrUMZo?amount=1.1
+  $rootScope.resolveURI = function(data){
+
+    if( !data.cancelled ) {
+
+        if(data.privkey !== undefined)
+        {
+          $state.go('app.import_priv', {private_key:data.privkey});
+          return;
+        }
+        
+        var promises = [];
+        //Pubkey scanned
+        if(data.pubkey !== undefined) {
+          var p = BitShares.btsPubToAddress(data.pubkey)
+          .then(function(addy){
+            data.address = addy;
+          })
+          promises.push(p);
+        }
+        
+        $q.all(promises).then(function() {
+          $state.go('app.send', {address:data.address, amount:data.amount, asset_id:data.asset_id, is_btc:data.is_btc});
+        })
+      }
+  }
+
+  window.addEventListener('OnPaymentRequest', function(e) {
+      if(!e.detail || !e.detail.url)
+      {
+        console.log('OnPaymentRequest null url.');
+        return;
+      }
+      Scanner.parseUrl(e.detail.url).then(function(data){
+        // address/:amount/:asset_id/:is_btc
+        // $state.go('app.send', {address:data.address, amount:data.amount, asset_id:data.asset_id, is_btc:data.is_btc});
+        $rootScope.resolveURI(data);
+      }, function(error){
+        console.log(error);
+      });
+    });
 });

@@ -1,9 +1,25 @@
 bitwallet_controllers
-.controller('CreateAccountPwdCtrl', function($scope, $rootScope, $ionicNavBarDelegate, $stateParams, Operation, ExchangeTransaction){
+.controller('CreateAccountPwdCtrl', function($scope, $rootScope, $ionicNavBarDelegate, $stateParams, T, ){
   
-  //$scope.data = { seed: 'quiz exist ridge blouse sauce delay mobile spell rebel review fish judge'}
+  $scope.data = { password:         undefined,
+                  retype_password:  undefined};
   
-  $scope.create_account = function(){
+  $scope.createWallet = function(){
+
+
+    if($scope.data.password!=$scope.data.retype_password)
+    {
+      $scope.data.error = T.i('err.password_mismatch');
+      return;
+    }
+
+    var do_encrypt = ($scope.data.password!='');
+    
+    Account.create(privkey, encrypted, pubkey, address, number).then(function(){
+
+    }, function(error){
+
+    });
 
     $scope.goHome();
   }

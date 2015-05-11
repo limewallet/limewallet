@@ -86,6 +86,7 @@
   },
 
   "err" : {
+    "seed_equal_error"      : "Please retype seed.",
     "invalid_xtx_id"        : "Invalid transaction id",
     "cant_cancel"           : "Cancel failed",
     "cant_cancel_msg"       : "Oops.. We were not able to cancel the transaction due to state change",

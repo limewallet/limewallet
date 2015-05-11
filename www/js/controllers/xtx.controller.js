@@ -1,5 +1,5 @@
 bitwallet_controllers
-.controller('XTxCtrl', function($scope, $rootScope, $ionicNavBarDelegate, $stateParams, RawOperation, ExchangeTransaction){
+.controller('XTxCtrl', function($scope, $rootScope, $ionicNavBarDelegate, $stateParams, ExchangeTransaction){
   
   $scope.data = { xtx         : undefined,
                   x_id        : undefined,
@@ -15,13 +15,13 @@ bitwallet_controllers
       $scope.data.xtx    = res;
       if($scope.data.xtx.tx_id===null)
         return;
-      $scope.data.ops = RawOperation.allForTx($scope.data.xtx.tx_id).then(function(res){
-        $scope.data.ops           = res;
-        $scope.data.tx_withdraws  = $scope.getWithdraws();
-        $scope.data.tx_deposits   = $scope.getDeposits();
-      }, function(error){
-        console.log('XTxCtrl ERROR 1 '); console.log(error);
-      });
+      // $scope.data.ops = RawOperation.allForTx($scope.data.xtx.tx_id).then(function(res){
+      //   $scope.data.ops           = res;
+      //   $scope.data.tx_withdraws  = $scope.getWithdraws();
+      //   $scope.data.tx_deposits   = $scope.getDeposits();
+      // }, function(error){
+      //   console.log('XTxCtrl ERROR 1 '); console.log(error);
+      // });
     }, function(error){
       console.log('XTxCtrl ERROR 2 '); console.log(error);
     });

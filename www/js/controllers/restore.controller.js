@@ -1,4 +1,4 @@
-bitwallet_controllers.controller('RestoreCtrl', function($q, T, Setting, $rootScope, $translate, $scope, Account, Address, AddressBook, $http, $timeout, $location, $state, $ionicPopup, $ionicModal, $cordovaClipboard, BitShares, $ionicNavBarDelegate, Wallet) {
+bitwallet_controllers.controller('RestoreCtrl', function($q, T, Setting, $rootScope, $translate, $scope, Account, $http, $timeout, $location, $state, $ionicPopup, $ionicModal, $cordovaClipboard, BitShares, $ionicNavBarDelegate, Wallet) {
   
   $scope.restore = {};
 
@@ -37,9 +37,8 @@ bitwallet_controllers.controller('RestoreCtrl', function($q, T, Setting, $rootSc
       ewallet = JSON.parse(restoreForm.restore_wallet.value);
       var b1 = 'master_key' in ewallet;
       var b2 = 'address' in ewallet;
-      var b3 = 'address_book' in ewallet;
       var b4 = 'version' in ewallet;
-      if(!b1 || !b2 || !b3 || !b4)
+      if(!b1 || !b2 || !b4)
         ewallet=null;
     } catch(err) {
       ewallet = null;
@@ -112,12 +111,6 @@ bitwallet_controllers.controller('RestoreCtrl', function($q, T, Setting, $rootSc
             });
             return $q.reject(error);
         })
-        .then(function(){
-          return Address.deleteAll();
-        })
-        .then(function() {
-          return AddressBook.deleteAll();
-        })
         .then(function() {
           var prom = [];
           var addys = ewallet['address'];
@@ -141,17 +134,6 @@ bitwallet_controllers.controller('RestoreCtrl', function($q, T, Setting, $rootSc
             prom.push(p);
           }*/
           
-          var address_book = ewallet['address_book'];
-          for(var i=0; i<address_book.length; i++){
-            if(ewallet.version == 1) {
-              address_book[i].address = 'BTS' + address_book[i].address.substr(4);
-            }
-            var p = AddressBook.add(address_book[i].address, address_book[i].name, address_book[i].is_favorite);
-            prom.push(p);
-          }
-          
-          //console.log('TomaloNET : ' + ewallet.default_asset);
-
           if(typeof ewallet.default_asset === 'number') {
             //console.log('TomaloNET : ' + ewallet.default_asset);
             var p = Setting.set(Setting.DEFAULT_ASSET, ewallet.default_asset);
@@ -163,8 +145,7 @@ bitwallet_controllers.controller('RestoreCtrl', function($q, T, Setting, $rootSc
         .then(function(){
           var p1 = Operation.clear();
           var p2 = ExchangeTransaction.clear();
-          var p3 = RawOperation.clear();
-          return $q.all([p1, p2, p3]);
+          return $q.all([p1, p2]);
         })
         .then(function() {
           

@@ -1,5 +1,5 @@
 bitwallet_services
-.service('Wallet', function($translate, $rootScope, $q, ENVIRONMENT, BitShares, ReconnectingWebSocket, Address, Setting, AddressBook, Account, Operation, ExchangeTransaction, Balance, RawOperation) {
+.service('Wallet', function($translate, $rootScope, $q, ENVIRONMENT, BitShares, ReconnectingWebSocket, Setting, Account, Operation, ExchangeTransaction, Balance) {
     var self = this;
 
     self.data = {
@@ -161,43 +161,6 @@ bitwallet_services
       
     }
     
-    self.onAddressBookChanged = function() {
-      var txs = [];
-      angular.copy(self.data.transactions, txs);
-      for(var i=0; i<txs.length; i++) {
-         if(txs[i]['addr_name'] != 'Me')
-         {
-           if( txs[i]['address'] in self.data.address_book )
-            txs[i]['addr_name'] = self.data.address_book[txs[i]['address']].name;
-           else
-            txs[i]['addr_name'] = txs[i]['address'];
-         }
-         //console.log('ADDRNAME => ' + txs[i]['addr_name']);
-      }
-      self.data.transactions = txs;
-        
-    }
-
-    self.loadAddressBook = function() {
-      var deferred = $q.defer();
-      AddressBook.all()
-      .then(function(addys) {
-        var addys_book = [];
-        addys.forEach(function(addr) {
-          addys_book[addr.address] = addr;
-        });
-        self.data.address_book = addys_book;
-
-        deferred.resolve();
-      },
-      function(err) {
-        //DB Error (AddressBook::all)
-        deferred.reject(err);
-      });
-
-      return deferred.promise;
-    }
-
     self.disconnect_count = 0;
     self.connectToBackend = function(backend_url) {
       self.ws = new ReconnectingWebSocket(backend_url);
@@ -257,6 +220,9 @@ bitwallet_services
     }
 
     self.subscribeToNotifications = function() {
+      // HACKO
+      return undefined;
+      
       self.getMasterPubkey().then(function(res) {
         Setting.get(Setting.BSW_TOKEN, false).then(function(bsw_token){
           var sub = res.masterPubkey + ':' + res.deriv;
@@ -303,10 +269,6 @@ bitwallet_services
             self.loadAccountAddresses()
             .then(function() {
 
-              //Load addressbook
-              self.loadAddressBook().then(function() {
-                //deferred.resolve();
-                
                 // Load account data (bitshares accountname, photo)
                 self.loadAccount().then(function(account) {
                 
@@ -331,9 +293,7 @@ bitwallet_services
                 }, function(err) {
                   deferred.reject(err); 
                 });
-              }, function(err) {
-                deferred.reject(err); 
-              });
+              
 
             }, function(err) {
               deferred.reject(err);
@@ -466,6 +426,7 @@ bitwallet_services
     }
     
     self.loadBalance = function(){
+      return undefined;
       var deferred = $q.defer();
       Balance.all().then(function(balances){
         angular.forEach(balances, function(balance) {
@@ -494,21 +455,6 @@ bitwallet_services
       self.emit(self.REFRESH_ERROR);
       d.reject(err); 
     }
-
-    if(res.resync == true)
-      sql_cmd = sql_cmd + 'DELETE FROM OPERATION;\n'
-
-            //self.data.asset = self.data.assets[self.data.asset.id];
-
-            //Update address balance
-            //angular.forEach(Object.keys(self.data.addresses), function(addy) {
-              //if (addy in res.address_balance) {
-                //self.data.addresses[addy].balances = res.address_balance[addy];
-                //angular.forEach( Object.keys(self.data.addresses[addy].balances), function(asset_id) {
-                  //self.data.addresses[addy].balances[asset_id] /= self.data.assets[asset_id].precision;
-                //});
-              //}
-            //});
   
     self.refreshBalance = function(from_start) {
 
@@ -516,6 +462,9 @@ bitwallet_services
       var deferred = $q.defer();
 
       var dec_proms = [];
+
+      // HACKO
+      return undefined;
 
       self.getMasterPubkey().then(function(mpk) {
 
@@ -548,29 +497,31 @@ bitwallet_services
               sql_params  = sql_params.concat(tmp[1]);
             });
 
-        }, function(error){
-          self.refreshError(deferred, error, 'Operation.lastUpdate ERROR');
+          }, function(error){
+            self.refreshError(deferred, error, 'Operation.lastUpdate ERROR');
+          });
+
+          var prom2 = ExchangeTransaction.lastUpdate().then(function(updated_at){
+
+            if( force_start )
+              updated_at = undefined;
+
+          }, function(error){
+            self.refreshError(deferred, error, 'ExchangeTransaction.lastUpdate ERROR');
+          });
+
+
+        }, function(err) {
+          self.refreshError(deferred, error, 'getMasterPubkey ERROR');
         });
-
-        var prom2 = ExchangeTransaction.lastUpdate().then(function(updated_at){
-
-          if( force_start )
-            updated_at = undefined;
-
-        }, function(error){
-          self.refreshError(deferred, error, 'ExchangeTransaction.lastUpdate ERROR');
-        });
-
-
-      }, function(err) {
-        self.refreshError(deferred, error, 'getMasterPubkey ERROR');
       });
-
       return deferred.promise;
     }
-
     
     self.refreshBalance_PP = function() {
+      // HACKO
+      return undefined;
+
       var deferred = $q.defer();
       console.log('Wallet : self.refreshBalance IN');
       self.emit(self.REFRESH_START);
@@ -603,8 +554,8 @@ bitwallet_services
             {  
               var p = Operation.clear();
               proms.push(p);
-              var pr = RawOperation.clear();
-              proms.push(pr);
+              // var pr = RawOperation.clear();
+              // proms.push(pr);
             }
             
             $q.all(proms).then(function(){

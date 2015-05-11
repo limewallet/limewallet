@@ -1,22 +1,11 @@
 bitwallet_controllers
-.controller('HomeCtrl', function(T, Wallet, Scanner, AddressBook, $ionicActionSheet, $scope, $state, $http, $ionicModal, $rootScope, $ionicPopup, $timeout, $location, BitShares, $q, $ionicLoading) {
+.controller('HomeCtrl', function(T, Wallet, Scanner, $ionicActionSheet, $scope, $state, $http, $ionicModal, $rootScope, $ionicPopup, $timeout, $location, BitShares, $q, $ionicLoading) {
   
   // For testing purposes, remove on prod.
-  $timeout(function(){
-    $state.go('app.send');
-  }, 3000);
+  // $timeout(function(){
+  //   $state.go('app.send');
+  // }, 3000);
 
-  $scope.$watch('master_key_new', function(newValue, oldValue, scope) {
-    if(newValue===oldValue)
-      return;
-    if($scope && $scope.master_key_new !== undefined && $scope.master_key_new==true)
-    {
-      $scope.master_key_new = false;
-      $state.go('app.account', {first_time:'1'});
-      return;
-    }
-  });
-  
   $scope.$on( '$ionicView.beforeEnter', function(){
     if(!$scope || !$scope.wallet || !$scope.wallet.ui)
       return;
@@ -62,10 +51,6 @@ bitwallet_controllers
       window.plugins.toast.show(error, 'long', 'bottom')
     });
   }
-
-  $rootScope.$on('address-book-changed', function(event, data) {
-    Wallet.onAddressBookChanged();
-  });
 
   $scope.showLoading = function(text){
     $ionicLoading.show({
@@ -116,7 +101,7 @@ bitwallet_controllers
     }
     else{
       opt_buttons = [
-          { text: '<b>'+T.i('home.add_to_book')+'</b>' },
+          //{ text: '<b>'+T.i('home.add_to_book')+'</b>' },
           { text: T.i('home.view_details') }
       ];
     }
@@ -150,23 +135,8 @@ bitwallet_controllers
           $state.go('app.xtransaction_details', {x_id:tx['x_id']});
         }
         else{
-          // Add to addressbook
-          $ionicPopup.prompt({
-            title: T.i('home.add_to_book'),
-            inputType: 'text',
-            inputPlaceholder: T.i('home.address_name'),
-            cancelText: T.i('g.cancel'),
-            okText: T.i('g.save')
-          }).then(function(name) {
-            if(name === undefined)
-              return;
-            AddressBook.add(tx.address, name).then(function() {
-              Wallet.loadAddressBook().then(function(){
-                $rootScope.$emit('address-book-changed');
-              });
-              window.plugins.toast.show( T.i('home.save_successful'), 'short', 'bottom');
-            });
-          });
+          // View transaction details
+          $state.go('app.transaction_details', {tx_id:tx['tx_id']});
         }
       }
       
@@ -193,8 +163,7 @@ bitwallet_controllers
           });
         }
         else{
-          // View transaction details
-          $state.go('app.transaction_details', {tx_id:tx['tx_id']});
+          
         } 
       }
       

@@ -1,5 +1,5 @@
 bitwallet_controllers
-.controller('BackupCtrl', function(DB_CONFIG, T, $translate, Account, Address, AddressBook, $scope, $http, $timeout, $location, $state, $ionicPopup, $ionicModal, $cordovaSocialSharing, $cordovaClipboard, BitShares, $q, $ionicNavBarDelegate) {
+.controller('BackupCtrl', function(DB_CONFIG, T, $translate, Account, $scope, $http, $timeout, $location, $state, $ionicPopup, $ionicModal, $cordovaSocialSharing, $cordovaClipboard, BitShares, $q, $ionicNavBarDelegate) {
   
   $scope.backup = {};
   
@@ -95,7 +95,8 @@ bitwallet_controllers
           ewallet['master_key'] = my_master_key;
       })
       .then(function(){
-        return Address.all();
+        // HACKO
+        return []; //Address.all();
       })
       .then(function(addys) {
         var proms2 = [];
@@ -111,14 +112,10 @@ bitwallet_controllers
       })
       .then(function() {
         ewallet['address'] = ewallet_address;
-        return AddressBook.all();
-      })
-      .then(function(contacts){
-        ewallet['address_book'] = contacts;
       })
       .finally(function() {
         //TODO: check for complete ewallet
-        if('master_key' in ewallet && 'address' in ewallet && 'address_book' in ewallet) {
+        if('master_key' in ewallet && 'address' in ewallet) {
           $scope.backup.wallet_master = JSON.stringify(ewallet,  null, '\t');
           //console.log($scope.backup.wallet_master);
           $scope.backup.wallet = $scope.backup.wallet_master;
