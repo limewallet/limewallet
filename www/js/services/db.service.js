@@ -185,7 +185,7 @@ bitwallet_services
     var self = this;
 
     self.DEFAULT_ASSET          = 'default_asset';
-    self.BSW_TOKEN              = 'bsw_token';
+    self.UI_HIDE_BALANCE        = 'hide_balance';
     self.UI_ALLOW_HIDE_BALANCE  = 'allow_hide_balance';
     self.SEED                   = 'seed'; // json 
     
@@ -243,20 +243,19 @@ bitwallet_services
       var deferred = $q.defer();
       DB.query('SELECT * FROM account where active != 0 limit 1', [])
       .then(function(result){
-        if( result.rows.length == 0 ) {
-          deferred.reject();
-        } else {
           var account = DB.fetch(result);
           
           //TODO: BORRAR!!
-          account.pubkey       = 'DVS6G3wqTYYt8Hpz9pFQiJYpxvUja8cEMNwWuP5wNoxr9NqhF8CLS';
-          account.address      = 'DVSM5HFFtCbhuv3xPfRPauAeQ5GgW7y4UueL';
-          account.priv_account = '5HymcH7QHpzCZNZcKSbstrQc1Q5vcNjCLj9wBk5aqYZcHCR6SzN';
-          account.access_key   = '7cMHdvnvhv8Q36c4Xf8HJQaibTi4kpANNaBQYhtzQ2M6';
-          account.secret_key   = '7teitGUUbtaRJY6mnv3mB9d1VB3UggiBQf4kyiL2PaKB';
+          if( account !== undefined) {
+            account.pubkey       = 'DVS6G3wqTYYt8Hpz9pFQiJYpxvUja8cEMNwWuP5wNoxr9NqhF8CLS';
+            account.address      = 'DVSM5HFFtCbhuv3xPfRPauAeQ5GgW7y4UueL';
+            account.priv_account = '5HymcH7QHpzCZNZcKSbstrQc1Q5vcNjCLj9wBk5aqYZcHCR6SzN';
+            account.access_key   = '7cMHdvnvhv8Q36c4Xf8HJQaibTi4kpANNaBQYhtzQ2M6';
+            account.secret_key   = '7teitGUUbtaRJY6mnv3mB9d1VB3UggiBQf4kyiL2PaKB';
+          }
 
           deferred.resolve(account);
-        }
+
       }, function(err) {
         deferred.reject(err);
       });
@@ -359,6 +358,31 @@ bitwallet_services
       var sql    = 'INSERT into operation (block_id, timestamp, memo_hash, address, asset_id, fee, txid, amount, block, type) values(?,?,?,?,?,?,?,?,?,?)';
       var params = [obj.block_id, obj.timestamp, obj.memo_hash, obj.address, obj.asset_id, obj.fee, obj.txid, obj.amount, obj.block, obj.type]
       return {'sql':sql, 'params':params};
+    }
+   
+    self.all = function() {
+          var query = "SELECT * FROM ( \
+            SELECT o.date as TS, \
+              CASE \
+                   WHEN o.type=='deposit'  and et.id IS NULL        THEN 'received' \
+                   WHEN o.type=='withdraw' and et.id IS NULL        THEN 'sent' \
+                   WHEN o.type=='deposit'  and et.id IS NOT NULL    THEN 'deposit' \
+                   WHEN o.type=='withdraw' and et.id IS NOT NULL    THEN 'withdraw' \
+                END as ui_type, \
+                o.*, et.* FROM operation o \
+              LEFT JOIN exchange_transaction et \
+                ON o.tx_id = et.cl_pay_tx OR o.tx_id = et.cl_recv_tx \
+            UNION \
+              SELECT IFNULL(et.created_at, et.quoted_at) as TS, \
+                et.tx_type as ui_type, \
+                o.*, et.* FROM exchange_transaction et  \
+                LEFT JOIN operation o \
+              WHERE et.cl_recv_tx IS NULL and (et.cl_pay_tx is NULL or et.cl_pay_curr = 'BTC') \
+            ) AS peto ORDER BY TS DESC";
+
+        return DB.query(query).then(function(result){
+            return DB.fetchAll(result);
+        });
     }
 
     //self.allWithXTxForAsset = function(asset_id, limit) {

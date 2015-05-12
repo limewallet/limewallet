@@ -9,10 +9,9 @@ bitwallet_services
       addresses         : {},
       transactions      : [],
       ord_transactions  : {},
-      raw_txs           : {},
       account           : {},
       ui                : { balance:  { hidden:false, allow_hide:false  } },
-      initialized  : false
+      initialized       : false
     }
 
     self.timeout = {
@@ -21,40 +20,27 @@ bitwallet_services
       load    : 0
     };
 
-    self.setRefreshing = function(param) {
-      self.is_refreshing.val = param;
-    }
-
     self.switchAsset = function(asset_id) {
       self.data.transactions = [],
       self.setDefaultAsset(asset_id);
-      return self.loadBalance();
-      //return self.refreshBalance();
+      return self.refreshBalance();
     }
 
     self.setDefaultAsset = function(asset_id) {
       self.data.asset = self.data.assets[asset_id];
       Setting.set(Setting.DEFAULT_ASSET, asset_id);
     }
-    
-    self.setUIHideBalance = function(hide_balance) {
-      self.data.ui.balance.allow_hide = hide_balance;
-      Setting.set(Setting.UI_ALLOW_HIDE_BALANCE, hide_balance);
+
+    self.setHideBalance = function(hide_balance) {
+      self.data.ui.balance.hidden = hide_balance;
+      Setting.set(Setting.UI_, allow_hide);
     }
     
-    self.loadUIConfig = function(){
-      var deferred = $q.defer();
-      Setting.get(Setting.UI_ALLOW_HIDE_BALANCE, false).then(function(hide_balance){
-        self.data.ui.balance.allow_hide = hide_balance.value;
-        self.data.ui.balance.hidden     = hide_balance.value;
-        //console.log('load UI_ALLOW_HIDE_BALANCE:' + hide_balance.value);  
-        deferred.resolve();
-      }, function(error){
-        deferred.resolve();
-      });
-      
-      return deferred.promise;
+    self.setAllowHideBalance = function(allow_hide) {
+      self.data.ui.balance.allow_hide = allow_hide;
+      Setting.set(Setting.UI_ALLOW_HIDE_BALANCE, allow_hide);
     }
+    
     self.ADDRESS_BOOK_CHANGE = 'w-address-book-changed';
     self.NEW_BALANCE         = 'w-new-balance';
     self.REFRESH_START       = 'w-refresh-start';
@@ -66,100 +52,6 @@ bitwallet_services
       $rootScope.$emit(event_id, event_data);
     }
 
-    self.getMainAddress = function() {
-      var res;
-      angular.forEach( Object.keys(self.data.addresses), function(addy) {
-        if( self.data.addresses[addy].deriv == -1 ) {
-          res = self.data.addresses[addy];
-        }
-      });
-      return res;
-    }
-    
-    self.loadAccountAddresses = function() {
-      var deferred = $q.defer();
-      Address.all().then(function(addys) {
-        var new_balance_addys   = [];
-        var balance_addys_keys  = Object.keys(self.data.addresses);
-        
-        angular.forEach(addys, function(addr) {
-          addr.balances = {};
-          if(balance_addys_keys.indexOf(addr.address)>-1)
-            addr.balances = self.data.addresses[addr.address].balances;
-          new_balance_addys[addr.address] = addr;  
-        });
-        self.data.addresses = new_balance_addys;
-        deferred.resolve();
-      }, function(err) {
-        //DB Error (Address::all)
-        deferred.reject(err);
-      });
-      return deferred.promise;
-    };
-    
-    self.deriveNewAddress = function() {
-      var deferred = $q.defer();
-      deferred.reject('Sorry! Derive address is not available.');
-      return;
-      Account.get().then(function(master_key) {
-        master_key.deriv = parseInt(master_key.deriv)+1;
-
-        BitShares.derivePrivate(master_key.key, master_key.deriv)
-        .then(
-          function(extendedPrivateKey){
-            BitShares.extractDataFromKey(extendedPrivateKey)
-            .then(
-              function(keyData){
-                Account.storeKey(master_key.key, master_key.deriv).then(function() {
-                  Address.create(master_key.deriv, 
-                                keyData.address, 
-                                keyData.pubkey, 
-                                keyData.privkey, 
-                                false, '').then(function(){
-                    self.loadAccountAddresses().then(function(){
-                        self.subscribeToNotifications();
-                        deferred.resolve();
-                    },
-                    function(err){
-                      deferred.reject(err);
-                    })
-                  });
-                });
-                
-            },
-            function(err){
-              deferred.reject(err);
-            })
-        },
-        function(err){
-          deferred.reject(err);
-        })
-      });
-     
-      return deferred.promise;
-    };
-    
-    self.onDerivedAddressChanged = function(){
-      var deferred = $q.defer();
-      // var addresses = [];
-      // angular.copy(self.data.addresses, addresses);
-      // Address.all().then(function(addys) {
-        // angular.forEach(addys, function(addr) {
-          // if(addresses[addr.address])
-            // addresses[addr.address].label = addr.label;  
-        // });
-        // self.data.addresses = addresses;
-        // deferred.resolve();
-      // }, function(err) {
-        // //DB Error (Address::all)
-        // deferred.reject(err);
-      // });
-      self.loadAccountAddresses().then(function(){
-        deferred.resolve();
-      });
-      return deferred.promise;
-      
-    }
     
     self.disconnect_count = 0;
     self.connectToBackend = function(backend_url) {
@@ -242,6 +134,7 @@ bitwallet_services
     }
 
     self.init = function() {
+
       var deferred = $q.defer();
 
       self.connectToBackend(ENVIRONMENT.wsurl);
@@ -252,63 +145,24 @@ bitwallet_services
         self.data.assets[asset.id]  = asset;
       });
 
-      //Create master key
-      self.getMasterPrivKey()
-      .then(function() {
-        
-        //Get default asset
-        Setting.get(Setting.DEFAULT_ASSET, ENVIRONMENT.default_asset)
-        .then(function(default_asset){
-          //console.log('Seting::DEFAULT_ASSET ' + JSON.stringify(default_asset));
-          self.data.asset = self.data.assets[default_asset.value];
-          
-          // Load ui config
-          self.loadUIConfig().then(function(account) {
-                
-            //Load derived address from masterkey
-            self.loadAccountAddresses()
-            .then(function() {
+      var proms = {
+        'default_asset' : Setting.get(Setting.DEFAULT_ASSET, ENVIRONMENT.default_asset),
+        'hide_balance'  : Setting.get(Setting.UI_HIDE_BALANCE, false),
+        'allow_hide'    : Setting.get(Setting.UI_ALLOW_HIDE_BALANCE, false),
+        'account'       : Account.active()
+      }
 
-                // Load account data (bitshares accountname, photo)
-                self.loadAccount().then(function(account) {
-                
-                  //Remove last WS TOKEN
-                  //Setting.remove(Setting.BSW_TOKEN).then(function(){
-                    
-                    self.loadBalance().then(function(){
-                      deferred.resolve();
-                      self.data.initialized = true;
-                      self.emit(self.DATA_INITIALIZED);
-                    }, function(error){
-                      deferred.resolve();
-                      self.data.initialized = true;
-                      self.emit(self.DATA_INITIALIZED);
-                    })
-                    
-                  //}, function(){
-                    //deferred.resolve();
-                    //self.data.initialized = true;
-                    //self.emit(self.DATA_INITIALIZED);
-                  //});
-                }, function(err) {
-                  deferred.reject(err); 
-                });
-              
+      $q.all(proms).then(function(res) {
+        self.data.asset                 = self.data.assets[res.default_asset.value];
+        self.data.ui.balance.allow_hide = res.allow_hide.value;
+        self.data.ui.balance.hidden     = res.hide_balance.value;
+        self.data.account               = res.account;
+        self.data.initialized           = true;
+        deferred.resolve();
 
-            }, function(err) {
-              deferred.reject(err);
-            });
-
-          }, function(err) {
-            deferred.reject(err); 
-          });
-        
-        }, function(err) {
-          deferred.reject(err); 
-        });
-      
       }, function(err) {
-        deferred.reject(err); 
+        //TODO:
+        deferred.reject(err);
       });
 
       return deferred.promise;
@@ -325,7 +179,6 @@ bitwallet_services
       if(my_moment.format('YYYY-MM')==now_y_m)
         return '2_this_month';
       return my_moment.format('YYYY-MM');
-      //return my_moment.year()==now_year ? my_moment.format('MMMM') : my_moment.format('MMMM YYYY');
     }
 
     self.orderTransactions = function(data){
@@ -354,7 +207,11 @@ bitwallet_services
       self.emit(self.REFRESH_ERROR);
       d.reject(err); 
     }
-  
+
+    self.loadBalance = function() {
+      console.log( JSON.stringify( Operation.all() ) );
+    }
+
     self.refreshBalance = function(from_start) {
 
       if (from_start === undefined)
@@ -413,19 +270,27 @@ bitwallet_services
           });
 
           DB.queryMany(sql_cmd, sql_params).then(function(res) {
-            console.log('refreshBalance: PARECE QUE METI TODO!!!');
+            
+            //Data is on the DB 
+            self.loadBalance().then(function() {
+              deferred.resolve();
+            }, function(err) {
+              deferred.reject(err); 
+            });
+
           }, function(err) {
-            console.log('refreshBalance: Err 1 :' + err);
+            deferred.reject(err);
           });
 
-
         }, function(err){
-          console.log('refreshBalance: Err 2');
+          deferred.reject(err);
         });
 
       }, function(err){
-        console.log('refreshBalance: Err 3');
+        deferred.reject(err);
       });
+
+      return deferred.promise;
 
     }
 

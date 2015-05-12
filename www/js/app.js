@@ -324,12 +324,17 @@ bitwallet_module
         return;
       }
 
-      $rootScope.goTo('app.home');
-
       console.log(' -- -----------------  global_init response =>' + JSON.stringify(account));  
+
+      Wallet.init().then(function() {
+        $rootScope.goTo('app.home');
+        Wallet.refreshBalance();
+      }, function(err) {
+
+      })
       //$rootScope.goTo('app.welcome');
     }, function(error){
-      console.log('initPLatform ready error:'+error);
+      console.log('initPLatform ready error:'+JSON.stringify(error));
       
     });
   });

@@ -22,7 +22,7 @@ bitwallet_controllers
   //   $scope.wallet.initialized = true;
   // }, 2000); 
   
-  Wallet.refreshBalance(false);
+  //Wallet.refreshBalance(false);
 
   $scope.toggleBalance = function(){
     if($scope.wallet.ui.balance.allow_hide)
