@@ -30,6 +30,37 @@ bitwallet_services
       return deferred.promise;
     };
 
+    self.mnemonicToMasterKey = function(words) {
+      var deferred = $q.defer();
+
+      window.plugins.BitsharesPlugin.mnemonicToMasterKey(
+        function(data){
+          deferred.resolve(data.masterPrivateKey);
+        },
+        function(error){
+          deferred.reject(error);
+        },
+        words
+      );
+    
+      return deferred.promise;
+    };
+
+    self.createMnemonic = function(entropy) {
+      var deferred = $q.defer();
+
+      window.plugins.BitsharesPlugin.createMnemonic(
+        function(data){
+          deferred.resolve(data.words);
+        },
+        function(error){
+          deferred.reject(error);
+        },
+        entropy
+      );
+    
+      return deferred.promise;
+    };
 
     self.compactSignatureForMessage = function(msg, wif) {
       var deferred = $q.defer();
@@ -94,7 +125,7 @@ bitwallet_services
       return deferred.promise;
     };
 
-    self.extractDataFromKey = function(key) {
+    self.extractDataFromKey = function(parent, key) {
       var deferred = $q.defer();
 
       window.plugins.BitsharesPlugin.extractDataFromKey(
@@ -104,13 +135,14 @@ bitwallet_services
         function(error){
           deferred.reject(error);
         },
+        parent,
         key
       );
 
       return deferred.promise;
     };
 
-    self.extendedPublicFromPrivate = function(key) {
+    self.extendedPublicFromPrivate = function(parent, key) {
       var deferred = $q.defer();
 
       window.plugins.BitsharesPlugin.extendedPublicFromPrivate(
@@ -120,6 +152,7 @@ bitwallet_services
         function(error){
           deferred.reject(error);
         },
+        parent,
         key
       );
 
@@ -160,7 +193,7 @@ bitwallet_services
       return deferred.promise;
     };
 
-    self.isValidKey = function(key) {
+    self.isValidKey = function(parent, key) {
       var deferred = $q.defer();
 
       window.plugins.BitsharesPlugin.isValidKey(
@@ -170,6 +203,7 @@ bitwallet_services
         function(error){
           deferred.reject(error);
         },
+        parent,
         key
       );
 
@@ -192,7 +226,7 @@ bitwallet_services
       return deferred.promise;
     };
 
-    self.derivePrivate = function(key, deriv) {
+    self.derivePrivate = function(parent, key, deriv) {
       var deferred = $q.defer();
       
       window.plugins.BitsharesPlugin.derivePrivate(
@@ -202,6 +236,7 @@ bitwallet_services
         function(error){
           deferred.reject(error);
         }
+        , parent
         , key
         , deriv
       );
@@ -329,10 +364,13 @@ bitwallet_services
       var deferred = $q.defer();
 
       self.requestSignature(keys, url, payload).then(function(headers) {
-        return self.apiCallStub(url, payload, headers);
-      }, function(res) {
-        console.log('REQSIG: ' + JSON.stringify(res));
-        deferred.reject('Unable to sign request');
+        self.apiCallStub(url, payload, headers).then(function(res){
+          deferred.resolve(res);
+        }, function(err){
+          deferred.reject(err);
+        });
+      }, function(err) {
+        deferred.reject('Unable to sign request:' + JSON.stringify(err));
       });
 
       return deferred.promise;
@@ -359,9 +397,15 @@ bitwallet_services
       req.success(function(res) {
         console.log('vuelve APICALL ' + JSON.stringify(res));
         if(!angular.isUndefined(res.error))
+        {
+          console.log('APICALLSTUB: RESUELVO CON ERROR');
           deferred.reject(res.error);
+        }
         else
+        {
+          console.log('APICALLSTUB: RESUELVO OK');
           deferred.resolve(res);
+        }
       })
       .error(function(data, status, headers, config) {
         deferred.reject();

@@ -1,5 +1,5 @@
 bitwallet_services
-.service('Wallet', function($translate, $rootScope, $q, ENVIRONMENT, BitShares, ReconnectingWebSocket, Setting, Account, Operation, ExchangeTransaction, Balance) {
+.service('Wallet', function($translate, $rootScope, $q, ENVIRONMENT, BitShares, ReconnectingWebSocket, DB, Setting, Account, Operation, ExchangeTransaction, Balance) {
     var self = this;
 
     self.data = {
@@ -313,79 +313,6 @@ bitwallet_services
 
       return deferred.promise;
     }
-
-    //self.getMasterPrivKey = function() {
-
-      //var deferred = $q.defer();
-
-      //Account.get().then(function(account) {
-
-        //if(account !== undefined && account.key !== undefined) {
-          //deferred.resolve(account);
-          //return;
-        //}
-
-        //BitShares.createMasterKey().then(function(masterPrivateKey){
-
-          //BitShares.extractDataFromKey(masterPrivateKey).then(function(keyData){
-            //Account.storeKey(masterPrivateKey, -1).then(function() {
-              //Address.create(
-                //-1, 
-                //keyData.address, 
-                //keyData.pubkey, 
-                //keyData.privkey, 
-                //true, 
-                //'main').then(function() {
-                  //$rootScope.master_key_new = true;
-                  //deferred.resolve({key:masterPrivateKey, deriv:-1});  
-                //},function(err) {
-                  //console.log('getMasterPrivKey address.create error #1: '+JSON.stringify(err));
-                  //deferred.reject(err);
-                //});
-            //},
-            //function(err){ 
-              //console.log('getMasterPrivKey err #2: '+JSON.stringify(err));
-              //deferred.reject(err);
-            //});
-          //},
-          //function(err) {
-            //console.log('getMasterPrivKey err #3: '+JSON.stringify(err));
-            //deferred.reject(err); 
-          //});
-        //},
-        //function(err) {
-          ////Plugin error (BitShares.createMasterKey);
-          //console.log('getMasterPrivKey err #4: '+JSON.stringify(err));
-          //deferred.reject(err); 
-        //});
-
-      //}, 
-      //function(err) {
-        ////DB Error (MasterKey::get)
-        //deferred.reject(err);
-      //});
-
-      //return deferred.promise;
-    //}
-
-    //self.getMasterPubkey = function() {
-
-      //var deferred = $q.defer();
-      //self.getMasterPrivKey().then(function(masterPrivateKey) {
-        ////console.log(' -- getMasterPubkey : ' + masterPrivateKey.key);
-        //BitShares.extendedPublicFromPrivate(masterPrivateKey.key).then(function(extendedPublicKey){
-          //deferred.resolve({masterPubkey:extendedPublicKey, deriv:masterPrivateKey.deriv});
-        //}, function(err) {
-          //console.log('getMasterPubkey err #1: '+JSON.stringify(err));
-          //deferred.reject(err);  
-        //})
-      //}, function(err) {
-        //console.log('getMasterPubkey err #2: '+JSON.stringify(err));
-        //deferred.reject(err);    
-      //});
-
-      //return deferred.promise;
-    //} 
     
     self.truncateDate = function(timestamp, now, now_y_m_d, now_y_m, now_week, now_year){
       var my_moment = moment(timestamp);
@@ -393,9 +320,6 @@ bitwallet_services
         return '0_today';
       if(my_moment.week()==now_week && my_moment.year()==now_year)
       { 
-        // console.log('1:-'+moment((new Date()).getTime()).format('YYYY-MM-DD'));
-        // console.log('2:-'+(new Date(timestamp)));
-        // console.log(my_moment.format('YYYY-MM-DD') + ' -> ' + now_y_m_d);
         return '1_this_week';
       }
       if(my_moment.format('YYYY-MM')==now_y_m)
@@ -425,31 +349,6 @@ bitwallet_services
       return orderedTxs;
     }
     
-    self.loadBalance = function(){
-      return undefined;
-      var deferred = $q.defer();
-      Balance.all().then(function(balances){
-        angular.forEach(balances, function(balance) {
-          self.data.assets[balance.asset_id].amount = balance.amount;
-        });
-      },
-      function(error){
-        console.log(' -- Erro Wallet loadBalance 1'); console.log(JSON.stringify(error));
-      })
-      Operation.allWithXTxForAsset(self.data.asset.id).then(function(res){
-        self.data.ord_transactions  = self.orderTransactions(res);
-        self.data.transactions      = res; 
-        deferred.resolve();
-        self.emit(self.REFRESH_DONE);
-      },
-      function(error){
-        console.log(' -- Erro Wallet loadBalance 2'); console.log(JSON.stringify(error));
-        deferred.reject(error);
-        self.emit(self.REFRESH_ERROR);
-      });
-      return deferred.promise;
-    }
-
     self.refreshError = function(d, err, log_msg) {
       console.log('refreshError: ' + log_msg + '->' + JSON.stringify(err));
       self.emit(self.REFRESH_ERROR);
@@ -458,491 +357,78 @@ bitwallet_services
   
     self.refreshBalance = function(from_start) {
 
+      if (from_start === undefined)
+        from_start = true;
+
       self.emit(self.REFRESH_START);
       var deferred = $q.defer();
 
-      var dec_proms = [];
+      var proms = {
+        'account'  : Account.active(),
+        'block_id' : from_start ? undefined : Operation.lastUpdate(),
+        'last_xtx' : from_start ? undefined : ExchangeTransaction.lastUpdate()
+      };
 
-      // HACKO
-      return undefined;
+      var sql_cmd    = [];
+      var sql_params = [];
 
-      self.getMasterPubkey().then(function(mpk) {
+      $q.all(proms).then(function(res) { 
 
-        var prom1 = Operation.lastUpdate().then(function(block_id){
+        console.log('refreshBalance: PARAMS: from_start: ' + from_start + ' - block_id: ' + res.block_id + ' - last_xtx: ' + res.last_xtx);
 
-          var sql_cmd    = '';
-          var sql_params = []
+        var keys = {
+          'akey' : res.account.access_key,
+          'skey' : res.account.secret_key
+        }
 
-          if( force_start )
-            block_id = undefined;
+        proms = { 
+          'ops'  : BitShares.getBalance(res.account.address, res.block_id),
+          'xtxs' : BitShares.listExchangeTxs(keys, res.last_xtx)
+        }
 
-          BitShares.getBalance(mpl.masterPubkey+':'+mpk.deriv, block_id).then(function(res) {
-            var date = new Date();
-            res.balances.forEach(function(bal){
-              var tmp = Balance.addObj(bal, true);
-              sql_cmd     = sql_cmd + tmp[0];
-              sql_params  = sql_params.concat(tmp[1]);
-            });
+        $q.all(proms).then(function(res) {
 
-            var operations = self.build_one_row(res.operations);
-            operations.forEach(function(op){
-              
-              if( op['memo'] !== '' ) {
-                dec_proms.push(self.decryptMemo(op['memo']));
-              }
-
-              var tmp = Operation.addObj(op, true);
-
-              sql_cmd     = sql_cmd + tmp[0];
-              sql_params  = sql_params.concat(tmp[1]);
-            });
-
-          }, function(error){
-            self.refreshError(deferred, error, 'Operation.lastUpdate ERROR');
+          if (from_start) {
+            sql_cmd.push('DELETE FROM OPERATION'); sql_params.push([]);
+            sql_cmd.push('DELETE FROM EXCHANGE_TRANSACTION'); sql_params.push([]);
+            sql_cmd.push('DELETE FROM BALANCE'); sql_params.push([]);
+          }
+            
+          res.ops.balances.forEach(function(bal){
+            var tmp = Balance._add(bal);
+            sql_cmd.push(tmp.sql);
+            sql_params.push(tmp.params);
           });
 
-          var prom2 = ExchangeTransaction.lastUpdate().then(function(updated_at){
-
-            if( force_start )
-              updated_at = undefined;
-
-          }, function(error){
-            self.refreshError(deferred, error, 'ExchangeTransaction.lastUpdate ERROR');
+          res.ops.operations.forEach(function(op){
+            var tmp = Operation._add(op);
+            sql_cmd.push(tmp.sql);
+            sql_params.push(tmp.params);
+          });
+          
+          res.xtxs.txs.forEach(function(xtx){
+            var tmp = ExchangeTransaction._add(xtx);
+            sql_cmd.push(tmp.sql);
+            sql_params.push(tmp.params);
           });
 
-
-        }, function(err) {
-          self.refreshError(deferred, error, 'getMasterPubkey ERROR');
-        });
-      });
-      return deferred.promise;
-    }
-    
-    self.refreshBalance_PP = function() {
-      // HACKO
-      return undefined;
-
-      var deferred = $q.defer();
-      console.log('Wallet : self.refreshBalance IN');
-      self.emit(self.REFRESH_START);
-      self.getMasterPubkey().then(function(res) {
-        console.log('Wallet : self.refreshBalance 1');
-        // Load last BTS Transaction BlockHash, and last Exchange Operation updated_at;
-        var last_block_id = undefined;
-        var last_updated_at = undefined;
-        var prom1 = Operation.lastUpdate().then(function(res){
-          console.log('Wallet : self.refreshBalance 2');
-          if(res!==undefined)
-            last_block_id = res.block_id;
-        }, function(error){
-          console.log('Wallet : Error Operation.lastUpdate()');
-        });
-        var prom2 = ExchangeTransaction.lastUpdate().then(function(res){
-          console.log('Wallet : self.refreshBalance 3');
-          if(res!==undefined) 
-            last_updated_at = res.updated_at;
-        }, function(error){
-          console.log('Wallet : Error ExchangeTransaction.lastUpdate()');
-        });
-        $q.all([prom1, prom2]).then(function(){
-          console.log('Wallet : self.refreshBalance 4');
-          console.log('Wallet : calling BitShares.getBalance last_block_id:['+last_block_id+']');
-          BitShares.getBalance(res.masterPubkey+':'+res.deriv, last_block_id).then(function(res) {
-            
-            var proms = [];
-            if(res.resync !== undefined && res.resync == true)
-            {  
-              var p = Operation.clear();
-              proms.push(p);
-              // var pr = RawOperation.clear();
-              // proms.push(pr);
-            }
-            
-            $q.all(proms).then(function(){
-              console.log('Wallet : self.refreshBalance 5');
-              var date = new Date();
-              //Update assets balance
-              res.balances.forEach(function(bal){
-                Balance.addObj({asset_id:bal.asset_id, amount:bal.amount/self.data.assets[bal.asset_id].precision, raw_amount:bal.amount, updated_at:date.getTime()});
-              });
-
-              self.data.asset = self.data.assets[self.data.asset.id];
-
-              //Update address balance
-              // angular.forEach(Object.keys(self.data.addresses), function(addy) {
-              //   if (addy in res.address_balance) {
-              //     self.data.addresses[addy].balances = res.address_balance[addy];
-              //     angular.forEach( Object.keys(self.data.addresses[addy].balances), function(asset_id) {
-              //       self.data.addresses[addy].balances[asset_id] /= self.data.assets[asset_id].precision;
-              //     });
-              //   }
-              // });
-              console.log('Wallet : self.refreshBalance 6');
-              //Generate tx list
-              var prom = self.buildTxList(res, self.data.asset.id);
-              
-              console.log('Wallet : self.refreshBalance 7');
-              console.log('Wallet : calling BitShares.listExchangeTxs last_updated_at:['+last_updated_at+']');
-              //Get Exchange Transactions
-              var prom2 = self.getExchangeTransactions(last_updated_at);
-              
-              return $q.all([prom, prom2]).then(function(){
-                console.log('Wallet : self.refreshBalance 8');
-                self.loadBalance().then(function(){
-                  deferred.resolve();
-                }, function(error){
-                  console.log(' -- Erro Wallet 66'); console.log(JSON.stringify(error));
-                  deferred.reject(error);
-                  self.emit(self.REFRESH_ERROR);
-                });
-              }, function(error){
-                console.log(' -- Erro Wallet 2'); console.log(JSON.stringify(error));
-                deferred.reject(error);
-                self.emit(self.REFRESH_ERROR);
-              })
-            
-            })
-            
+          DB.queryMany(sql_cmd, sql_params).then(function(res) {
+            console.log('refreshBalance: PARECE QUE METI TODO!!!');
           }, function(err) {
-            console.log(' -- Erro Wallet 3'); console.log(JSON.stringify(err));
-            deferred.reject(err);
-            self.emit(self.REFRESH_ERROR);
-          })
-       }, function(error){
-          console.log(' -- Erro Wallet 4');  console.log(JSON.stringify(error));
-          deferred.reject(error); 
-          self.emit(self.REFRESH_ERROR);
-       })
-      }, function(err) {
-        console.log(' -- Erro Wallet 5');  console.log(JSON.stringify(err));
-        deferred.reject(err); 
-        self.emit(self.REFRESH_ERROR);
-      });
-      return deferred.promise;
-    };
-    
-    self.processXTx = function(xtx){
-      xtx['tx_type']      = xtx.extra_data=='marty'?'deposit':xtx.extra_data;
-      xtx['x_id']         = xtx.id;
-      xtx.quoted_at       = xtx.quoted_at*1000;
-      xtx.updated_at      = xtx.updated_at*1000;
-      xtx.created_at      = xtx.created_at*1000;
-      xtx['x_asset_id'] = 24;
-      if(BitShares.isDeposit(xtx.tx_type))
-      {
-        var assot = self.data.assets_x_symbol[xtx.cl_recv_curr];
-        if (assot!==undefined && assot)
-          xtx['x_asset_id']   = parseInt(assot.id);
-      }
-      else if(BitShares.isWithdraw(xtx.tx_type) || BitShares.isBtcPay(xtx.tx_type)){
-        var assot = self.data.assets_x_symbol[xtx.cl_pay_curr];
-        if (assot!==undefined && assot)
-        xtx['x_asset_id']   = parseInt(assot.id);
-      }
-      return xtx;
-    }
-    
-    self.onNewXTx = function(xtx){
-      var xtx = self.processXTx(xtx);
-      return ExchangeTransaction.addObj(xtx);
-    }
+            console.log('refreshBalance: Err 1 :' + err);
+          });
 
-    self.onNewXTxAndLoad = function(xtx){
-      self.onNewXTx(xtx).then(function(res){
-        self.loadBalance();
+
+        }, function(err){
+          console.log('refreshBalance: Err 2');
+        });
+
       }, function(err){
-        console.log('Wallet.onNewXTxAndLoad err:'+JSON.stringify(err));
+        console.log('refreshBalance: Err 3');
       });
-    }
-    
-    self.getExchangeTransactions = function(last_updated_at){
-      var deferred = $q.defer();
-      var address = self.getMainAddress();
-      BitShares.getBackendToken(address).then(function(token){
-        BitShares.listExchangeTxs(token, last_updated_at).then(function(res){
-          var proms = [];
-          res.txs.forEach(function(o){
-            // var xtx = self.processXTx(o);
-            // var p = ExchangeTransaction.addObj(xtx);
-            var p = self.onNewXTx(o);
-            proms.push(p);
-          });
-          $q.all(proms).then(function(){
-            deferred.resolve();
-          },function(error){
-            console.log(' -- Error Wallet getXTx 1'); console.log(JSON.stringify(error));
-            deferred.reject(error); 
-          })
-        }, function(error){
-          if(error=='auth_failed')
-            Setting.remove(Setting.BSW_TOKEN);
-          console.log(' -- Error Wallet getXTx 2'); console.log(JSON.stringify(error));
-          deferred.reject(error); 
-        })
-      }, function(error){
-        console.log(' -- Error Wallet getXTx 3'); console.log(JSON.stringify(error));
-        deferred.reject(error); 
-      })
-      
-      return deferred.promise;
-    }
-    
-    self.close_tx = function(tx) {
-      var my_txs = [];
-      var assets = Object.keys(tx['assets']);
-      for(var i=0; i<assets.length; i++) {
-       var precision = self.data.assets[assets[i]].precision;
-       p = {}; 
-       p['fee']  = 0.0; //(tx['assets'][assets[i]]['w_amount'] - tx['assets'][assets[i]]['d_amount'])/precision;
-       p['sign'] = 0;
-       p['date'] = tx['assets'][assets[i]]['timestamp']*1000;
 
-       p['memo'] = tx['assets'][assets[i]]['memo'];
-
-       if(tx['assets'][assets[i]]['i_w']) { 
-         p['sign']--;
-         p['address'] = tx['assets'][assets[i]]['to'][0];
-         p['amount'] = tx['assets'][assets[i]]['my_w_amount']/precision - p['fee'];
-       }
-       if(tx['assets'][assets[i]]['i_d']) { 
-         p['sign']++;
-         p['address'] = tx['assets'][assets[i]]['from'][0];
-         p['amount'] = tx['assets'][assets[i]]['my_d_amount']/precision;
-       }
-       if(p['sign'] == 0)
-       {
-         p['addr_name'] = 'Me';
-       }
-
-       if(p['addr_name'] != 'Me')
-       {
-         if( p['address'] in self.data.address_book )
-          p['addr_name'] = self.data.address_book[p['address']].name;
-         else
-          p['addr_name'] = p['address'];
-       }
-       p['tx_id']     = tx['txid'];
-       p['asset_id']  = assets[i];
-       p['block']     = tx['block'];    //tx['assets'][assets[i]]['block'];
-       p['block_id']  = tx['block_id']; //tx['assets'][assets[i]]['block_id'];
-       p['other']     = tx['other'];    //tx['assets'][assets[i]]['other'];
-       p['id']        = tx['assets'][assets[i]]['id'];
-       my_txs.push(p);
-      }
-      return my_txs;
     }
 
-    self.build_one_row = function(operations, asset_id) {
-
-      var tx  = {};
-      var txs = [];
-
-      operations.forEach(function(o){
-        if(o.op_type == 'd' && o.address in self.data.addresses) { 
-          tx['tx_id']       = o.txid;
-          tx['other']       = o.other,
-          tx['block']       = o.block,
-          tx['block_id']    = o.block_id
-          tx['fee']         = 0;
-          tx['sign']        = 1;
-          tx['date']        = o.timestamp;
-          tx['address']     = o.address;
-          tx['amount']      = o.amount;
-          tx['asset_id']    = o.asset_id;
-          tx['op_type']     = o.op_type; 
-          tx['memo_id']     = o.memo;
-        }
-      });
-       
-      operations.forEach(function(o){
-
-        if( tx['txid'] !== undefined && tx['txid'] != o.txid ) {
-          var rows = self.close_tx(tx);
-          txs = txs.concat(rows);
-          tx = {};
-        }
-
-        if( tx['txid'] === undefined || ( tx['assets'] !== undefined && !(o.asset_id in tx['assets']) )  ) {
-          //console.log('abro');
-          tx['txid']        = o.txid;
-          tx['other']       = o.other,
-          tx['block']       = o.block,
-          tx['block_id']    = o.block_id
-          tx['assets']      = {};
-          tx['assets'][o.asset_id] = {
-            'id'          : o.id,
-            'from'        : [],
-            'to'          : [],
-            'memo'        : '',
-            'w_amount'    : 0,
-            'my_w_amount' : 0,
-            'd_amount'    : 0,
-            'my_d_amount' : 0,
-            'timestamp'   : o.timestamp,
-            'i_w'         : false,
-            'i_d'         : false,
-            'other'       : o.other
-          }
-        } 
-        tx['assets'][o.asset_id]['other'] = o.other;
-        if(o.op_type == 'w') { 
-          tx['assets'][o.asset_id]['w_amount'] += o.amount
-          if(o.address in self.data.addresses) {
-            tx['assets'][o.asset_id]['my_w_amount'] += o.amount;
-            tx['assets'][o.asset_id]['i_w']          = true;
-          } else {
-            //TODO: lookup in the address book
-            tx['assets'][o.asset_id]['from'].push(o.address);
-          }
-         } else {
-          tx['assets'][o.asset_id]['d_amount'] += o.amount
-          if(o.address in self.data.addresses) {
-            tx['assets'][o.asset_id]['my_d_amount'] += o.amount
-            tx['assets'][o.asset_id]['i_d']          = true;
-          } else {
-            //TODO: lookup in the address book
-            tx['assets'][o.asset_id]['to'].push(o.address)
-          }
-          if ( tx['assets'][o.asset_id]['memo']  == '' && o.memo !== undefined )
-          {
-            tx['assets'][o.asset_id]['memo'] = o.memo;
-          }
-       }
-      });
-
-       //console.log('salgo del loop con ' + tx['txid']);
-
-       if( tx['txid'] !== undefined) {
-        var rows = self.close_tx(tx);
-        txs = txs.concat(rows);
-        tx = {};
-       }
-
-       return txs;
-    };
-    
-    //self.buildTxList = function(res, asset_id) {
-      //self.data.raw_txs = [];
-      //var tx  = {};
-      //var txs = [];
-      //var db_proms = [];
-       
-      //res.operations.forEach(function(o){
-        //if(o.asset_id != asset_id)
-        //{
-          ////console.log('me voy xq ' + o.asset_id + '!=' + asset_id);
-          //return;
-        //}
-
-        ////Esto es para mostrar en el detalle de "renglon"
-        //if(!(o.txid in self.data.raw_txs) )
-          //self.data.raw_txs[o.txid] = [];
-        //self.data.raw_txs[o.txid].push(o);
-         
-        //if( tx['txid'] !== undefined && tx['txid'] != o.txid ) {
-          ////console.log('mando a cerrar');
-          //var ret = self.close_tx(tx);
-          //db_proms.push(ret.ret_proms);
-          //txs.push(ret.my_txs)
-          //tx = {};
-        //}
-
-        //if( tx['txid'] === undefined || ( tx['assets'] !== undefined && !(o.asset_id in tx['assets']) )  ) {
-          ////console.log('abro');
-          //tx['txid']        = o.txid;
-          //tx['other']       = o.other,
-          //tx['block']       = o.block,
-          //tx['block_id']    = o.block_id
-          //tx['assets']      = {};
-          //tx['assets'][o.asset_id] = {
-            //'id'          : o.id,
-            //'from'        : [],
-            //'to'          : [],
-            //'w_amount'    : 0,
-            //'my_w_amount' : 0,
-            //'d_amount'    : 0,
-            //'my_d_amount' : 0,
-            //'timestamp'   : o.timestamp,
-            //'i_w'         : false,
-            //'i_d'         : false,
-            //'other'       : o.other
-          //}
-        //} 
-        //tx['assets'][o.asset_id]['other'] = o.other;
-        //if(o.op_type == 'w') { 
-          //tx['assets'][o.asset_id]['w_amount'] += o.amount
-          //if(o.address in self.data.addresses) {
-            //tx['assets'][o.asset_id]['my_w_amount'] += o.amount;
-            //tx['assets'][o.asset_id]['i_w']          = true;
-          //} else {
-            ////TODO: lookup in the address book
-            //tx['assets'][o.asset_id]['from'].push(o.address);
-          //}
-         //} else {
-          //tx['assets'][o.asset_id]['d_amount'] += o.amount
-          //if(o.address in self.data.addresses) {
-            //tx['assets'][o.asset_id]['my_d_amount'] += o.amount
-            //tx['assets'][o.asset_id]['i_d']          = true;
-          //} else {
-            ////TODO: lookup in the address book
-            //tx['assets'][o.asset_id]['to'].push(o.address)
-          //}
-       //}
-         
-      //});
-
-       ////console.log('salgo del loop con ' + tx['txid']);
-
-       //if( tx['txid'] !== undefined) {
-        //var ret = self.close_tx(tx);
-        //db_proms.push(ret.ret_proms);
-        //txs.push(ret.my_txs)
-        //tx = {};
-       //}
-
-       ////self.data.transactions=txs; 
-       //return $q.all(db_proms);
-    //};
-
-    self.loadAccount = function() {
-      self.data.account = { name          : 'unregistered :(', 
-                            gravatar_id   : undefined,
-                            registered    : 0,
-                            photo         :'img/user_empty.png',
-                            is_default    : 1};
-                            
-      var deferred = $q.defer();
-      Account.get().then(function(result){
-        //console.log('loadAccount::' + JSON.stringify(result));
-        if(result!==undefined && result.name && result.name.length>0)
-          self.data.account = { name          : result.name, 
-                                gravatar_id   : result.gravatar_id,
-                                registered    : result.registered,
-                                photo         :(result.gravatar_id===undefined || result.gravatar_id===null || result.gravatar_id.length==0)
-                                                ?'http://robohash.org/'+result.name+'?size=56x56'
-                                                :'http://www.gravatar.com/avatar/'+result.gravatar_id+'?s=150',
-                                is_default    : 0};
-        deferred.resolve(self.data.account);
-      });
-      return deferred.promise;
-    };
-    
-    self.updateAccountFromNetwork = function(addy){
-      BitShares.getAccount(addy.pubkey).then(
-        function(data){
-          var gravatar_id = undefined;
-          if(data.public_data && data.public_data.gravatarId)
-            gravatar_id=data.public_data.gravatarId;
-          Account.storeProfile(data.name, gravatar_id).then(function(){
-            Account.registeredOk().then(function(){
-              self.loadAccount();
-            });
-          });
-        },
-        function(error){
-        }
-      )
-    };
     return self;
 });
 

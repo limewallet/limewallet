@@ -9,22 +9,26 @@ bitwallet_config
                 { name : 'id',                type  : 'integer primary key'},
                 { name : 'name',              type  : 'text unique'},
                 
-                { name : 'privkey',           type  : 'text'},
-                { name : 'encrypted',         type  : 'integer', default : 0},
                 { name : 'pubkey',            type  : 'text'},
                 { name : 'address',           type  : 'text'},
 
-                { name : 'number',            type  : 'integer'},
-                { name : 'active',            type  : 'integer'},
+                { name : 'priv_account',      type  : 'text'},
+                { name : 'priv_memos',        type  : 'text'},
+                { name : 'memo_index',        type  : 'text'},
+
+                { name : 'encrypted',         type  : 'integer'},
+
+                { name : 'number',            type  : 'integer unique'},
+                { name : 'active',            type  : 'integer default 1'},
                 
                 { name : 'public_data',       type  : 'text'},
-                { name : 'source',            type  : 'text'},
-                { name : 'registered',        type  : 'integer'},
+
+                { name : 'registered',        type  : 'integer default 0'}, // -1:no, 1:yes, 0:unknown
                 
                 { name : 'access_key',        type  : 'text'},
                 { name : 'secret_key',        type  : 'text'},
                 
-                { name : 'created_at',        type  : 'integer'}
+                { name : 'created_at',        type  : 'datetime default CURRENT_TIMESTAMP'}
             ]
         },
         {

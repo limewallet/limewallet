@@ -5,7 +5,7 @@
         <br/>
         <p>{{'create_account.gen_seed'|translate}}</p>
         <div class="seed_container">
-          <p class="lime">{{data.seed}}</p>
+          <p class="lime" ng-click="copySeed()">{{data.seed}}</p>
         </div>
         <p>{{'create_account.advice1'|translate}}</p>
         <p>{{'create_account.advice2'|translate}}</p>

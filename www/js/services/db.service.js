@@ -3,7 +3,7 @@ bitwallet_services
     var self = this;
     self.db = null;
  
-    self.init = function(remove) {
+    self.init = function(remove, check_tables) {
         if(remove) {
           window.sqlitePlugin.deleteDatabase(DB_CONFIG.name, function() {
             console.log('Database deleted');
@@ -12,6 +12,8 @@ bitwallet_services
           });
         }
         self.db = window.sqlitePlugin.openDatabase({name: DB_CONFIG.name});
+        if( !check_tables )
+          return;
 
         proms = []
         //console.log('voy a entrar al forEach');
@@ -94,6 +96,45 @@ bitwallet_services
         return deferred.promise;
     };
  
+    self.queryMany = function(query, bindings) {
+                
+        var deferred = $q.defer();
+        if ( query.lenght == 0 )
+        {
+          deferred.resolve();
+          return deferred.promise;
+        }
+
+        self.db.transaction(function(transaction) {
+          
+          var proms = [];
+          for(var i=0; i<query.length; i++) {
+            
+            var df = $q.defer();
+            
+            transaction.executeSql(query[i], bindings[i], function(tx, res) {
+              df.resolve(res);
+            }, function(tx, err) {
+              df.reject(err);
+            });
+
+            proms.push(df);
+          }
+
+          $q.all(proms).then(function(res) {
+            deferred.resolve(res);
+          }, function(err) {
+            deferred.reject(err);
+          })
+          
+
+        }, function(err) {
+          deferred.reject(err);
+        });
+ 
+        return deferred.promise;
+    };
+
     self.fetchAll = function(result) {
         var output = [];
 
@@ -146,6 +187,7 @@ bitwallet_services
     self.DEFAULT_ASSET          = 'default_asset';
     self.BSW_TOKEN              = 'bsw_token';
     self.UI_ALLOW_HIDE_BALANCE  = 'allow_hide_balance';
+    self.SEED                   = 'seed'; // json 
     
     self.get = function(name, _default) {
         var deferred = $q.defer();
@@ -178,7 +220,12 @@ bitwallet_services
     };
 
     self.set = function(name, value) {
-        return DB.query('INSERT or REPLACE into setting (name, value) values (?,?)', [name, value.toString()]);
+        var res = self._set(name, value);
+        return DB.query(res[0], res[1]);
+    };
+
+    self._set = function(name, value) {
+        return ['INSERT or REPLACE into setting (name, value) values (?,?)', [name, value.toString()] ];
     };
     
     self.remove = function(name) {
@@ -199,7 +246,16 @@ bitwallet_services
         if( result.rows.length == 0 ) {
           deferred.reject();
         } else {
-          deferred.resolve(DB.fetch(result));
+          var account = DB.fetch(result);
+          
+          //TODO: BORRAR!!
+          account.pubkey       = 'DVS6G3wqTYYt8Hpz9pFQiJYpxvUja8cEMNwWuP5wNoxr9NqhF8CLS';
+          account.address      = 'DVSM5HFFtCbhuv3xPfRPauAeQ5GgW7y4UueL';
+          account.priv_account = '5HymcH7QHpzCZNZcKSbstrQc1Q5vcNjCLj9wBk5aqYZcHCR6SzN';
+          account.access_key   = '7cMHdvnvhv8Q36c4Xf8HJQaibTi4kpANNaBQYhtzQ2M6';
+          account.secret_key   = '7teitGUUbtaRJY6mnv3mB9d1VB3UggiBQf4kyiL2PaKB';
+
+          deferred.resolve(account);
         }
       }, function(err) {
         deferred.reject(err);
@@ -207,13 +263,28 @@ bitwallet_services
       return deferred.promise;
     }
     
-    self.create = function(privkey, encrypted, pubkey, address, number){
-      var sql    = 'INSERT into account (privkey, encrypted, pubkey, address, number) values (?,?,?,?,?,?)';
-      var params = [privkey, encrypted, pubkey, address, number]
+    self.create = function(pubkey, address, number, priv_account, priv_memos, memo_index, encrypted) {
+      var res = self._create(pubkey, address, number, priv_account, priv_memos, memo_index, encrypted);
+      return DB.query(res[0], res[1]);
+    }
 
-      // if(just_sql == true) 
-      //   return [sql, params];
-      return DB.query(sql, params);
+    self._create = function(pubkey, address, number, priv_account, priv_memos, memo_index, encrypted) {
+      var sql    = 'INSERT into account (pubkey, address, number, priv_account, priv_memos, memo_index, encrypted) values (?,?,?,?,?,?,?)';
+      var params = [pubkey, address, number, priv_account, priv_memos, memo_index, encrypted];
+
+      return [sql, params];
+    }
+
+    self.count = function() {
+
+      var deferred = $q.defer();
+
+      DB.query('SELECT COUNT(*) as county FROM account')
+      .then(function(result){
+          deferred.resolve(DB.fetch(result)['county']);
+      });
+
+      return deferred.promise;
     }
 
     //self.register = function(address) {
@@ -279,16 +350,17 @@ bitwallet_services
 .service('Operation', function(DB, $q) {
     var self = this;
 
-    self.add = function(obj, just_sql) {
+    self.add = function(obj) {
+      var tmp = self._add(obj);
+      return DB.query(tmp.sql, tmp.params);
+    }
+
+    self._add = function(obj) {
       var sql    = 'INSERT into operation (block_id, timestamp, memo_hash, address, asset_id, fee, txid, amount, block, type) values(?,?,?,?,?,?,?,?,?,?)';
       var params = [obj.block_id, obj.timestamp, obj.memo_hash, obj.address, obj.asset_id, obj.fee, obj.txid, obj.amount, obj.block, obj.type]
+      return {'sql':sql, 'params':params};
+    }
 
-      if(just_sql == true) 
-        return [sql, params];
-
-      return DB.query(sql, params);
-    };
-    
     //self.allWithXTxForAsset = function(asset_id, limit) {
         //var my_limit = 30;
         //if (limit!==undefined)
@@ -332,7 +404,7 @@ bitwallet_services
     
     self.lastUpdate = function(){
       var deferred = $q.defer();
-      DB.query('SELECT block_id FROM operation order by block desc limit 1', [])
+      DB.query('SELECT block_id FROM operation order by block limit 1', [])
         .then(function(result){
             if( result.rows.length == 0 ) {
               deferred.resolve(undefined);
@@ -365,20 +437,21 @@ bitwallet_services
 .service('ExchangeTransaction', function(DB, $q) {
     var self = this;
 
-    self.add = function(obj, just_sql) {
 
+    self.add = function(obj) {
+      var tmp = self._add(obj);
+      return DB.query(tmp.sql, tmp.params);
+    }
+
+    self._add = function(obj) {
       var sql = 'INSERT into exchange_transaction (x_id, x_asset_id, status, quoted_at, created_at, cl_pay_curr, cl_pay_addr, cl_pay_tx, canceled, rate, cl_pay, balance, expired, cl_recv, cl_recv_tx, cl_recv_addr, cl_recv_curr, tx_type, updated_at) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
       var params = [obj.x_id, obj.x_asset_id, obj.status, obj.quoted_at, obj.created_at, obj.cl_pay_curr, obj.cl_pay_addr, obj.cl_pay_tx, obj.canceled, obj.rate, obj.cl_pay, obj.balance, obj.expired, obj.cl_recv, obj.cl_recv_tx, obj.cl_recv_addr, obj.cl_recv_curr, obj.tx_type, obj.updated_at];
-
-      if ( just_sql == true )
-        return [sql, params];
-
-      return DB.query(sql, params);
+      return {'sql':sql, 'params': params};
     }
 
     self.lastUpdate = function(){
       var deferred = $q.defer();
-      DB.query('SELECT updated_at FROM exchange_transaction where updated_at is not null order by updated_at desc limit 1 ', [])
+      DB.query('SELECT updated_at FROM exchange_transaction where updated_at is not null order by updated_at limit 1 ', [])
         .then(function(result){
             if( result.rows.length == 0 ) {
               deferred.resolve(undefined);
@@ -429,14 +502,15 @@ bitwallet_services
         });
     };
 
-    self.addObj = function(obj, just_sql) {
+    self.add = function(obj) {
+      var tmp = self._add(obj);
+      return DB.query(tmp.sql, tmp.params);
+    }
+
+    self._add = function(obj) {
       var sql    = 'INSERT or REPLACE into balance (asset_id, amount, address) values (?,?,?)';
       var params = [obj.asset_id, obj.amount, obj.address];
-
-      if ( just_sql == true )
-        return [sql, params];
-
-      return DB.query(sql, params);
+      return {'sql':sql, 'params':params};
     }
 
     self.clear = function() {

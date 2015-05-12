@@ -942,6 +942,7 @@ background: linear-gradient(327deg, rgba(26,66,84,1) 0%, rgba(26,67,86,1) 100%);
 a.w_126 {min-width:126px!important;}
 a.w_145 {min-width:145px!important;}
 .seed_container {margin:25px 0 25px 0;font-weight: bold; /*font-size:18px;*/}
+.seed_container p{font-size:18px;}
 
 a.button.lime_border.activated{background-color:#d3eb00!important; color:rgba(26,66,84,1)!important;}
 

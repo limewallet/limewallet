@@ -6,22 +6,24 @@ bitwallet_controllers
   //   $state.go('app.send');
   // }, 3000);
 
-  $scope.$on( '$ionicView.beforeEnter', function(){
-    if(!$scope || !$scope.wallet || !$scope.wallet.ui)
-      return;
-    if(!$scope.wallet.ui.balance.allow_hide)
-    { 
-      $scope.wallet.ui.balance.hidden = false;
-      return;
-    }
-    $scope.wallet.ui.balance.hidden = true;
+  // $scope.$on( '$ionicView.beforeEnter', function(){
+  //   if(!$scope || !$scope.wallet || !$scope.wallet.ui)
+  //     return;
+  //   if(!$scope.wallet.ui.balance.allow_hide)
+  //   { 
+  //     $scope.wallet.ui.balance.hidden = false;
+  //     return;
+  //   }
+  //   $scope.wallet.ui.balance.hidden = true;
     
-  });
+  // });
   
-  $timeout(function () {
-    $scope.wallet.initialized = true;
-  }, 2000); 
+  // $timeout(function () {
+  //   $scope.wallet.initialized = true;
+  // }, 2000); 
   
+  Wallet.refreshBalance(false);
+
   $scope.toggleBalance = function(){
     if($scope.wallet.ui.balance.allow_hide)
     {

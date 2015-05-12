@@ -1,5 +1,6 @@
 {
   "g" : {
+    "seed_copied"                   : "Seed copied successfully!",
     "welcome"                       : "Welcome",
     "create_wallet_html"            : "Create&nbsp;wallet",
     "recover_wallet_html"           : "Recover&nbsp;wallet",
@@ -86,6 +87,7 @@
   },
 
   "err" : {
+    "seed_copied"           : "Oops... Seed could not be copied!",
     "seed_equal_error"      : "Please retype seed.",
     "invalid_xtx_id"        : "Invalid transaction id",
     "cant_cancel"           : "Cancel failed",

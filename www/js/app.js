@@ -294,11 +294,11 @@ bitwallet_module
     })
 
   // if none of the above states are matched, use this as the fallback
-  //$urlRouterProvider.otherwise('/app/welcome');
+  $urlRouterProvider.otherwise('about:blank');
 
 })
 
-.run(function(DB, $state, $ionicHistory, $rootScope, $ionicPlatform, Wallet, Scanner, $q, BitShares, ENVIRONMENT, $cordovaGlobalization, $translate) {
+.run(function(Account, DB, $state, $ionicHistory, $rootScope, $ionicPlatform, Wallet, Scanner, $q, BitShares, ENVIRONMENT, $cordovaGlobalization, $translate) {
 
   console.log(' app.js Init de .RUN !');
 
@@ -317,10 +317,17 @@ bitwallet_module
     }
 
     console.log(' -- -----------------  calling global_init');
-    $rootScope.global_init().then(function() {
-      //has_account?
-      console.log(' -- -----------------  global_init response');  
-      $rootScope.goTo('app.welcome');
+    $rootScope.global_init().then(function(account) {
+      
+      if( account === undefined) {
+        $rootScope.goTo('app.welcome');
+        return;
+      }
+
+      $rootScope.goTo('app.home');
+
+      console.log(' -- -----------------  global_init response =>' + JSON.stringify(account));  
+      //$rootScope.goTo('app.welcome');
     }, function(error){
       console.log('initPLatform ready error:'+error);
       
@@ -379,7 +386,7 @@ bitwallet_module
         //TODO: traducir!
         var tmp = lang.value.slice(0,2);
         tmp = 'en';
-     -   $translate.use(tmp);
+        $translate.use(tmp);
         moment.lang(tmp);
       },
       function(error) {
@@ -393,11 +400,13 @@ bitwallet_module
     //*****************
     .then(function() {
       var db_init = window.localStorage['db_init'] || 'no';
+      DB.init(false, db_init == 'no');
+      
       if ( db_init == 'yes') {
         console.log('DB already initialized');
-        return;
+        //return;
       }
-      DB.init();
+      //DB.init();
     })
     .then(function() {
         console.log('DB initialized OK');
@@ -408,15 +417,13 @@ bitwallet_module
     })
 
     
-    //*****************
+    // *****************
     // First wallet run?
-    //*****************
-    // .then(function() {
-    //   return Account.active();
-    // })
+    // *****************
+    .then(function() {
+      return Account.active();
+    })
     // .then(function(account) {
-    //   // ToDo: load account
-    //   //global_init
     // },
     // function(error) {
       

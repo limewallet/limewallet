@@ -1,12 +1,28 @@
 bitwallet_controllers
-.controller('CreateAccountCtrl', function($scope, $rootScope, $ionicNavBarDelegate, $stateParams, Operation, ExchangeTransaction){
+.controller('CreateAccountCtrl', function(BitShares, $scope, $rootScope, $ionicNavBarDelegate, $stateParams, $cordovaClipboard, T){
   
-  $scope.data = { seed: 'quiz exist ridge blouse sauce delay mobile spell rebel review fish judge'}
+  $scope.data = { seed: ''}
   
   $scope.next = function(){
     $scope.setSeed($scope.data.seed);
     $scope.goTo('app.create_wallet_seed');
   }
+
+  $scope.copySeed = function(){
+    $cordovaClipboard
+      .copy($scope.data.seed)
+      .then(function () {
+        window.plugins.toast.show(T.i('g.seed_copied'), 'short', 'bottom');
+      }, function () {
+        window.plugins.toast.show(T.i('err.seed_copied'), 'short', 'bottom');
+      });
+  }
+
+  BitShares.createMnemonic(128).then(function(words){
+    $scope.data.seed = words;
+  }, function(err) {
+
+  });
 
   //console.log('$scope.init.mode = ' + $scope.init.mode);
 });
