@@ -209,7 +209,16 @@ bitwallet_services
     }
 
     self.loadBalance = function() {
-      console.log( JSON.stringify( Operation.all() ) );
+      var deferred = $q.defer();
+      
+      Operation.all().then(function(ops) {
+        self.data.ord_transactions = self.orderTransactions(ops)
+        console.log( JSON.stringify(self.data.ord_transactions) );
+      }, function(err) {
+        console.log( JSON.stringify(err) );
+      });
+
+      return deferred.promise;
     }
 
     self.refreshBalance = function(from_start) {

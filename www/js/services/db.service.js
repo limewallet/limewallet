@@ -362,16 +362,16 @@ bitwallet_services
    
     self.all = function() {
           var query = "SELECT * FROM ( \
-            SELECT o.date as TS, \
+            SELECT o.timestamp as TS, \
               CASE \
-                   WHEN o.type=='deposit'  and et.id IS NULL        THEN 'received' \
-                   WHEN o.type=='withdraw' and et.id IS NULL        THEN 'sent' \
-                   WHEN o.type=='deposit'  and et.id IS NOT NULL    THEN 'deposit' \
-                   WHEN o.type=='withdraw' and et.id IS NOT NULL    THEN 'withdraw' \
+                   WHEN o.type=='deposit'  and et.x_id IS NULL        THEN 'received' \
+                   WHEN o.type=='withdraw' and et.x_id IS NULL        THEN 'sent' \
+                   WHEN o.type=='deposit'  and et.x_id IS NOT NULL    THEN 'deposit' \
+                   WHEN o.type=='withdraw' and et.x_id IS NOT NULL    THEN 'withdraw' \
                 END as ui_type, \
                 o.*, et.* FROM operation o \
               LEFT JOIN exchange_transaction et \
-                ON o.tx_id = et.cl_pay_tx OR o.tx_id = et.cl_recv_tx \
+                ON o.txid = et.cl_pay_tx OR o.txid = et.cl_recv_tx \
             UNION \
               SELECT IFNULL(et.created_at, et.quoted_at) as TS, \
                 et.tx_type as ui_type, \
