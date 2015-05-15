@@ -42,6 +42,25 @@ bitwallet_services
         },
         words
       );
+
+      return deferred.promise;
+    };
+
+    self.decryptMemo = function(oneTimeKey, encryptedMemo, privKey) {
+
+      var deferred = $q.defer();
+
+      window.plugins.BitsharesPlugin.decryptMemo(
+        function(decryptedMemo){
+          deferred.resolve(decryptedMemo);
+        },
+        function(error){
+          deferred.reject(error);
+        },
+        oneTimeKey,
+        encryptedMemo,
+        privKey
+      );
     
       return deferred.promise;
     };
@@ -352,6 +371,7 @@ bitwallet_services
 
     self.urlPath = function(url) {
       //console.log('URLPATH: ' + url);
+      if(url[0] == '/') return url;
       return url.substr(url.indexOf('/', url.indexOf('://')+3));
     }
 
@@ -395,15 +415,15 @@ bitwallet_services
       }
 
       req.success(function(res) {
-        console.log('vuelve APICALL ' + JSON.stringify(res));
+        //console.log('vuelve APICALL ' + JSON.stringify(res));
         if(!angular.isUndefined(res.error))
         {
-          console.log('APICALLSTUB: RESUELVO CON ERROR');
+          //console.log('APICALLSTUB: RESUELVO CON ERROR');
           deferred.reject(res.error);
         }
         else
         {
-          console.log('APICALLSTUB: RESUELVO OK');
+          //console.log('APICALLSTUB: RESUELVO OK');
           deferred.resolve(res);
         }
       })
@@ -421,10 +441,17 @@ bitwallet_services
     // *************************************************** //
     // Exchange Service Api Calls ************************ //
     // *************************************************** //
-    self.listExchangeTxs = function(keys, before) {
-      var filter = '';
+    self.listExchangeTxs = function(keys, before, asset) {
+
+      var obj = {};
       if( before !== undefined)
-        filter = '?before='+before;
+        obj['before']=before;
+      if( asset !== undefined)
+        obj['asset']=asset;
+
+      var filter = '';
+      if( Object.keys(obj).length !== 0 )
+        filter = '?' + self.toQueryString(obj);
 
       return self.apiCall(keys, ENVIRONMENT.apiurl('/xtxs'+filter) );
     }
@@ -534,12 +561,29 @@ bitwallet_services
     
     // *************************************************** //
     // Assets Operations Api Calls *********************** //
+
+    self.toQueryString = function(obj) {
+        var parts = [];
+        for (var i in obj) {
+            if (obj.hasOwnProperty(i)) {
+                parts.push(encodeURIComponent(i) + "=" + encodeURIComponent(obj[i]));
+            }
+        }
+        var xx = parts.join("&");
+        return xx;
+    }
     
-    self.getBalance = function(address, before) {
+    self.getBalance = function(address, before, asset) {
+
+      var obj = {};
+      if( before !== undefined)
+        obj['before']=before;
+      if( asset !== undefined)
+        obj['asset']=asset;
 
       var filter = '';
-      if( before !== undefined)
-        filter = '?before='+before;
+      if( Object.keys(obj).length !== 0 )
+        filter = '?' + self.toQueryString(obj);
 
       return self.apiCall(undefined, ENVIRONMENT.apiurl('/addrs/'+address+filter));
     }
