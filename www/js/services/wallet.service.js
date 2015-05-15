@@ -1,13 +1,11 @@
 bitwallet_services
-.service('Wallet', function($translate, $rootScope, $q, ENVIRONMENT, BitShares, ReconnectingWebSocket, DB, Setting, Account, Operation, ExchangeTransaction, Balance) {
+.service('Wallet', function($translate, $rootScope, $q, ENVIRONMENT, BitShares, ReconnectingWebSocket, DB, Memo, Setting, Account, Operation, ExchangeTransaction, Balance, Contact) {
     var self = this;
 
     self.data = {
       assets            : {},
       asset             : {},
-      address_book      : {},
-      addresses         : {},
-      transactions      : [],
+      transactions      : [1],
       ord_transactions  : {},
       account           : {},
       ui                : { balance:  { hidden:false, allow_hide:false  } },
@@ -112,32 +110,37 @@ bitwallet_services
     }
 
     self.subscribeToNotifications = function() {
-      // HACKO
-      return undefined;
+
+      var keys = undefined;
       
-      self.getMasterPubkey().then(function(res) {
-        Setting.get(Setting.BSW_TOKEN, false).then(function(bsw_token){
-          var sub = res.masterPubkey + ':' + res.deriv;
-          if( bsw_token === false )
-            self.ws.send('sub ' + sub);
-          else
-          {
-            console.log('mando : ' + bsw_token.value + ' ' + sub);
-            self.ws.send('sub2 ' + bsw_token.value + ' ' + sub);
-          }
-        }, function(error){
-          console.log('Unable to subscribe to events 2:' + err);   
-        });
+      if (self.data.account.access_key !== undefined) {
+        keys = {
+          'akey' : self.data.account.access_key,
+          'skey' : self.data.account.secret_key
+        };
+      }
+
+      var cmd = {
+        cmd     : 'sub',
+        address : self.data.account.address
+      }
+
+      if( keys === undefined ) {
+        self.ws.send(JSON.stringify(cmd));
+      }
+
+      var to_sign = '/sub/' + self.data.account.address;
+      BitShares.requestSignature(keys, to_sign).then(function(headers) {
+        cmd.headers = headers;
+        self.ws.send(JSON.stringify(cmd));
       }, function(err) {
-        console.log('Unable to subscribe to events:' + err);   
+        console.log(err);
       });
     }
 
     self.init = function() {
 
       var deferred = $q.defer();
-
-      self.connectToBackend(ENVIRONMENT.wsurl);
 
       //Load Assets
       angular.forEach( ENVIRONMENT.assets , function(asset) {
@@ -158,6 +161,9 @@ bitwallet_services
         self.data.ui.balance.hidden     = res.hide_balance.value;
         self.data.account               = res.account;
         self.data.initialized           = true;
+
+        self.connectToBackend(ENVIRONMENT.wsurl);
+
         deferred.resolve();
 
       }, function(err) {
@@ -196,6 +202,8 @@ bitwallet_services
           orderedTxs[box] = [];
           orderedKeys.push(box);
         }
+        //TUNNING:
+        tx.amount = tx.amount/self.data.asset.precision;
         orderedTxs[box].push(tx);
       });
       orderedTxs['orderedKeys'] = orderedKeys;
@@ -208,14 +216,122 @@ bitwallet_services
       d.reject(err); 
     }
 
+    self.lookupContacts = function(ops) {
+
+      var deferred = $q.defer();
+
+      var proms = {};
+      ops.forEach(function(o) {
+        if(o.pubkey != null && o.name == null) {
+          proms[o.pubkey] = BitShares.getAccount(o.pubkey);
+        }  
+      });
+
+      if( Object.keys(proms).length == 0 ) {
+        console.log('No hay nada para buscar genio y genio');
+        deferred.resolve();
+        return deferred.promise;
+      }
+
+      var sql_cmd    = [];
+      var sql_params = [];
+
+      $q.all(proms).then(function(res) {
+
+        proms = [];
+        Object.keys(res).forEach(function(pubkey) {
+          if( res[pubkey].error !== undefined ) return;
+          var p = BitShares.btsPubToAddress(pubkey).then(function(addy) {
+            var tmp = Contact._add(pubkey, res[pubkey].name, addy, JSON.stringify(res[pubkey].public_data), 'transfer');
+            sql_cmd.push(tmp.sql);
+            sql_params.push(tmp.params);
+          }, function(err) {
+            console.log( 'lookupContacts errX:' + JSON.stringify(err) );
+          });
+
+          proms.push(p);
+        });
+
+        $q.all(proms).then(function() {
+          DB.queryMany(sql_cmd, sql_params).then(function() {
+            deferred.resolve();
+          }, function(err) {
+            console.log( 'lookupContacts err1:' + JSON.stringify(err) );
+            deferred.reject(err);
+          });
+        }, function(err) {
+          console.log( 'lookupContacts err10:' + JSON.stringify(err) );
+          deferred.reject(err);
+        });
+
+      }, function(err) {
+        console.log( 'lookupContacts err2:' + JSON.stringify(err) );
+        deferred.reject(err);
+      });
+
+      return deferred.promise;
+    }
+
     self.loadBalance = function() {
       var deferred = $q.defer();
-      
-      Operation.all().then(function(ops) {
-        self.data.ord_transactions = self.orderTransactions(ops)
-        console.log( JSON.stringify(self.data.ord_transactions) );
+
+      //HACK:
+      self.data.account.encrypted = 0;
+
+      var proms = {
+        'balance' : Balance.forAsset(self.data.asset.id),
+        'memo'    : self.data.account.encrypted ? [] : Memo.to_decrypt(self.data.account.id)
+      }
+
+      $q.all(proms).then(function(res) {
+
+        self.data.asset.amount = res.balance.amount/self.data.asset.precision;
+        
+        proms = {};
+        res.memo.forEach(function(m) {
+          proms[m.id] = BitShares.decryptMemo(m.one_time_key, m.memo, self.data.account.priv_account);
+        });
+ 
+        $q.all(proms).then(function(res) {
+
+          var sql_cmd    = [];
+          var sql_params = [];
+          Object.keys(proms).forEach(function(mid) {
+            if(!res[mid].error) {
+              var tmp = Memo._decrypt(mid, res[mid].message, res[mid].from);
+              sql_cmd.push(tmp.sql);
+              sql_params.push(tmp.params);
+            } else {
+              console.log('Error decrypting memo ...');
+            }
+          });            
+
+          //Insert decrypted memos 
+          DB.queryMany(sql_cmd, sql_params).then(function() {
+
+          Operation.all().then(function(ops) {
+
+            self.data.ord_transactions = self.orderTransactions(ops);
+            self.lookupContacts(ops);
+
+          }, function(err) {
+            console.log( 'loadBalance err0:' + JSON.stringify(err) );
+            deferred.reject(err);
+          });
+
+          }, function(err) {
+            console.log( 'loadBalance err1:' + JSON.stringify(err) );
+            deferred.reject(err);
+          });
+
+        }, function(err) {
+          console.log( 'loadBalance err2:' + JSON.stringify(err) );
+          deferred.reject(err);
+        });
+
       }, function(err) {
-        console.log( JSON.stringify(err) );
+        console.log( 'loadBalance err3:' + JSON.stringify(err) );
+        deferred.reject(err);
       });
 
       return deferred.promise;
@@ -230,7 +346,6 @@ bitwallet_services
       var deferred = $q.defer();
 
       var proms = {
-        'account'  : Account.active(),
         'block_id' : from_start ? undefined : Operation.lastUpdate(),
         'last_xtx' : from_start ? undefined : ExchangeTransaction.lastUpdate()
       };
@@ -243,13 +358,13 @@ bitwallet_services
         console.log('refreshBalance: PARAMS: from_start: ' + from_start + ' - block_id: ' + res.block_id + ' - last_xtx: ' + res.last_xtx);
 
         var keys = {
-          'akey' : res.account.access_key,
-          'skey' : res.account.secret_key
+          'akey' : self.data.account.access_key,
+          'skey' : self.data.account.secret_key
         }
 
         proms = { 
-          'ops'  : BitShares.getBalance(res.account.address, res.block_id),
-          'xtxs' : BitShares.listExchangeTxs(keys, res.last_xtx)
+          'ops'  : BitShares.getBalance(self.data.account.address, res.block_id, self.data.asset.id),
+          'xtxs' : BitShares.listExchangeTxs(keys, res.last_xtx, self.data.asset.id)
         }
 
         $q.all(proms).then(function(res) {
@@ -266,10 +381,20 @@ bitwallet_services
             sql_params.push(tmp.params);
           });
 
+          var memos = {};
           res.ops.operations.forEach(function(op){
             var tmp = Operation._add(op);
             sql_cmd.push(tmp.sql);
             sql_params.push(tmp.params);
+
+            if( op.memo_hash ) {
+              memos[op.memo_hash] = {
+                id           : op.memo_hash,
+                account      : self.data.account.id,
+                memo         : op.memo,
+                one_time_key : op.one_time_key
+              }
+            }
           });
           
           res.xtxs.txs.forEach(function(xtx){
@@ -278,18 +403,43 @@ bitwallet_services
             sql_params.push(tmp.params);
           });
 
-          DB.queryMany(sql_cmd, sql_params).then(function(res) {
-            
-            //Data is on the DB 
-            self.loadBalance().then(function() {
-              deferred.resolve();
-            }, function(err) {
-              deferred.reject(err); 
+          //console.log('VAMOS POR ACA');
+
+          Memo.in( Object.keys(memos) ).then(function(memos_in) {
+
+            //memos_in.forEach(function(m) {
+              //delete memos[m.id];
+            //});
+
+            Object.keys(memos).forEach(function(mid){
+              //console.log('VAMOS POR ACA 3 ' + JSON.stringify(mid));
+
+              var tmp = Memo._add(memos[mid]);
+              //console.log('VAMOS POR ACA 4 ' + tmp.sql);
+              sql_cmd.push(tmp.sql);
+              sql_params.push(tmp.params);
             });
 
+            DB.queryMany(sql_cmd, sql_params).then(function(res) {
+              
+              console.log('Todo metido en la DB!!!');
+              //Data is on the DB 
+              self.loadBalance().then(function() {
+                deferred.resolve();
+              }, function(err) {
+                deferred.reject(err); 
+              });
+
+            }, function(err) {
+              deferred.reject(err);
+            });
+
+
           }, function(err) {
+            console.log(JSON.stringify(err));
             deferred.reject(err);
           });
+
 
         }, function(err){
           deferred.reject(err);

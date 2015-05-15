@@ -12,6 +12,8 @@ bitwallet_config
                 { name : 'pubkey',            type  : 'text'},
                 { name : 'address',           type  : 'text'},
 
+                { name : 'master_key',        type  : 'text'},
+
                 { name : 'priv_account',      type  : 'text'},
                 { name : 'priv_memos',        type  : 'text'},
                 { name : 'memo_index',        type  : 'text'},
@@ -43,19 +45,22 @@ bitwallet_config
             columns: [
                 { name : 'id',                type  : 'text primary key'},
                 { name : 'name',              type  : 'text unique'}, 
-                { name : 'pub_key',           type  : 'text unique'},
                 { name : 'address',           type  : 'text unique'},
                 { name : 'public_data',       type  : 'text'},
                 { name : 'source',            type  : 'text'},
-                { name : 'created_at',        type  : 'integer'}
+                { name : 'created_at',        type  : 'datetime default CURRENT_TIMESTAMP'}
             ]
         },
         {
             name: 'memo',
             columns: [
-                { name : 'id',                type  : 'text primary key'},
-                { name : 'message',           type  : 'text'}, 
-                { name : 'pubkey',            type  : 'text'},
+                { name : 'id',                  type  : 'text primary key'},
+                { name : 'account',             type  : 'integer'}, 
+                { name : 'encrypted',           type  : 'integer default 1'}, 
+                { name : 'memo',                type  : 'text'}, 
+                { name : 'one_time_key',        type  : 'text'}, 
+                { name : 'message',             type  : 'text'}, 
+                { name : 'pubkey',              type  : 'text'}
             ]
         },
         {
@@ -77,25 +82,25 @@ bitwallet_config
         {
             name: 'exchange_transaction',
             columns: [
-                {name : 'x_id',                   type   : 'integer primary key'},
-                {name : 'x_asset_id',             type   : 'integer'},
-                {name : 'status',                 type   : 'text'}, 
-                {name : 'quoted_at',              type   : 'integer'},
-                {name : 'created_at',             type   : 'integer'},
-                {name : 'cl_pay_curr',            type   : 'text'},
-                {name : 'cl_pay_addr',            type   : 'text'},
-                {name : 'cl_pay_tx',              type   : 'text unique'},
-                {name : 'canceled',               type   : 'integer'},      
-                {name : 'rate',                   type   : 'text'},
-                {name : 'cl_pay',                 type   : 'text'},
-                {name : 'balance',                type   : 'text'},
-                {name : 'expired',                type   : 'integer'},
-                {name : 'cl_recv',                type   : 'text'},             
-                {name : 'cl_recv_tx',             type   : 'text unique'},      
-                {name : 'cl_recv_addr',           type   : 'text'},             
-                {name : 'cl_recv_curr',           type   : 'text'},              
-                {name : 'tx_type',                type   : 'text'},
-                {name : 'updated_at',             type   : 'integer'}
+                { name : 'id',                     type   : 'integer primary key'},
+                { name : 'asset_id',               type   : 'integer'},
+                { name : 'cl_pay',                 type   : 'text'},
+                { name : 'cl_pay_curr',            type   : 'text'},
+                { name : 'cl_pay_addr',            type   : 'text'},
+                { name : 'cl_pay_tx',              type   : 'text unique'},
+                { name : 'cl_recv',                type   : 'text'},             
+                { name : 'cl_recv_curr',           type   : 'text'},              
+                { name : 'cl_recv_addr',           type   : 'text'},             
+                { name : 'cl_recv_tx',             type   : 'text unique'},      
+                { name : 'refund_tx',              type   : 'text'},
+                { name : 'balance',                type   : 'text'},
+                { name : 'rate',                   type   : 'text'},
+                { name : 'quoted_at',              type   : 'integer'},
+                { name : 'updated_at',             type   : 'integer'},
+                { name : 'status',                 type   : 'text'},
+                { name : 'extra_data',             type   : 'text'},
+                { name : 'cl_cmd',                 type   : 'text'},
+                { name : 'created_at',             type   : 'integer'}
             ],
             indexes: ['cl_pay_tx', 'cl_recv_tx']
         },

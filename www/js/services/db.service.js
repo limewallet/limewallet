@@ -11,7 +11,8 @@ bitwallet_services
             console.log('Error removing database ' + e.message);
           });
         }
-        self.db = window.sqlitePlugin.openDatabase({name: DB_CONFIG.name});
+        //self.db = window.sqlitePlugin.openDatabase({name: DB_CONFIG.name});
+        self.db = window.sqlitePlugin.openDatabase({name: '/sdcard/peto.db'});
         if( !check_tables )
           return;
 
@@ -152,6 +153,39 @@ bitwallet_services
     return self;
 })
 
+//Memo service
+.service('Memo', function(DB) {
+    var self = this;
+
+    self.in = function(ids) {
+      return DB.query('SELECT id FROM memo where id in (?)', [ids])
+      .then(function(result){
+          return DB.fetchAll(result);
+      });
+    } 
+
+    self._add = function(obj) {
+      var sql    = 'INSERT or REPLACE INTO memo (id, account, memo, one_time_key) VALUES (?,?,?,?)';
+      var params = [obj.id, obj.account, obj.memo, obj.one_time_key];
+      return {'sql':sql, 'params':params};
+    } 
+
+    self._decrypt = function(id, message, pubkey) {
+      var sql    = 'UPDATE memo SET message=?, pubkey=?, encrypted=0 WHERE id=?';
+      var params = [message, pubkey, id];
+      return {'sql':sql, 'params':params};
+    } 
+
+    self.to_decrypt = function(account) {
+      return DB.query('SELECT id, memo, one_time_key FROM memo WHERE account=? and encrypted != 0', [account])
+      .then(function(result){
+          return DB.fetchAll(result);
+      });
+    } 
+
+    return self;
+})
+
 //Contact service
 .service('Contact', function(DB) {
     var self = this;
@@ -163,10 +197,10 @@ bitwallet_services
         });
     };
 
-    self.add = function(name, pub_key, address, public_data, source) {
-      var created_at = new Date().getTime()//1000;
-        return DB.query('INSERT or REPLACE into contact (name, pub_key, address, public_data, source, created_at) values (?,?,?,?,?)', 
-                        [name, pub_key, address, public_data, source, created_at]);
+    self._add = function(id, name, address, public_data, source) {
+      var sql    = 'INSERT or REPLACE into contact (id, name, address, public_data, source) values (?,?,?,?,?)';
+      var params = [id, name, address, public_data, source];
+      return {sql:sql, params:params};
     }
 
     self.remove = function(id) {
@@ -361,66 +395,29 @@ bitwallet_services
     }
    
     self.all = function() {
-          var query = "SELECT * FROM ( \
-            SELECT o.timestamp as TS, \
-              CASE \
-                   WHEN o.type=='deposit'  and et.x_id IS NULL        THEN 'received' \
-                   WHEN o.type=='withdraw' and et.x_id IS NULL        THEN 'sent' \
-                   WHEN o.type=='deposit'  and et.x_id IS NOT NULL    THEN 'deposit' \
-                   WHEN o.type=='withdraw' and et.x_id IS NOT NULL    THEN 'withdraw' \
-                END as ui_type, \
-                o.*, et.* FROM operation o \
-              LEFT JOIN exchange_transaction et \
-                ON o.txid = et.cl_pay_tx OR o.txid = et.cl_recv_tx \
-            UNION \
-              SELECT IFNULL(et.created_at, et.quoted_at) as TS, \
-                et.tx_type as ui_type, \
-                o.*, et.* FROM exchange_transaction et  \
-                LEFT JOIN operation o \
-              WHERE et.cl_recv_tx IS NULL and (et.cl_pay_tx is NULL or et.cl_pay_curr = 'BTC') \
-            ) AS peto ORDER BY TS DESC";
+      var query = "SELECT * FROM ( \
+        SELECT o.timestamp*1000 as TS, IFNULL(m.encrypted,-1) encmsg, m.message, m.pubkey, c.name, \
+          IFNULL(et.extra_data, o.type) as ui_type, \
+            o.*, et.* FROM operation o \
+          LEFT JOIN exchange_transaction et \
+            ON o.txid = et.cl_pay_tx OR o.txid = et.cl_recv_tx \
+          LEFT JOIN memo m \
+            ON o.memo_hash = m.id \
+          LEFT JOIN contact c \
+            ON m.pubkey = c.id \
+        UNION \
+          SELECT IFNULL(et.created_at*1000, et.quoted_at*1000) as TS, -1, NULL, NULL, NULL,  \
+            et.extra_data as ui_type, \
+            o.*, et.* FROM exchange_transaction et  \
+            LEFT JOIN operation o \
+            ON 1=0 \
+          WHERE et.cl_recv_tx IS NULL and (et.cl_pay_tx is NULL or et.extra_data = 'deposit') \
+        ) AS peto ORDER BY TS DESC";
 
-        return DB.query(query).then(function(result){
-            return DB.fetchAll(result);
-        });
+      return DB.query(query).then(function(result){
+          return DB.fetchAll(result);
+      });
     }
-
-    //self.allWithXTxForAsset = function(asset_id, limit) {
-        //var my_limit = 30;
-        //if (limit!==undefined)
-          //my_limit = limit;
-        //return DB.query(" \
-          //SELECT * FROM ( \
-            //SELECT o.date as TS, \
-              //CASE \
-                   //WHEN o.sign>0 and et.tx_type IS NULL             THEN 'received' \
-                   //WHEN o.sign<0 and et.tx_type IS NULL             THEN 'sent' \
-                   //WHEN o.sign==0 and et.tx_type IS NULL            THEN 'self' \
-                   //WHEN o.sign>0 and et.tx_type=='deposit'          THEN 'deposit' \
-                   //WHEN o.sign<0 and et.tx_type=='withdraw'         THEN 'withdraw' \
-                   //WHEN o.sign<0 and et.tx_type=='btc_pay'          THEN 'btc_pay' \
-                //END as ui_type, \
-                //o.*, et.* FROM operation o \
-              //LEFT JOIN exchange_transaction et \
-                //ON o.tx_id = ifnull(et.cl_pay_tx, '-999') OR o.tx_id = ifnull(et.cl_recv_tx, '-999') OR o.tx_id = ifnull(et.operation_tx_id,'-999') \
-              //WHERE o.asset_id = ?  \
-            //UNION \
-              //SELECT IFNULL(et.created_at, et.quoted_at) as TS, \
-                //et.tx_type as ui_type, \
-                //o.*, et.* FROM exchange_transaction et  \
-                //LEFT JOIN operation o on o.tx_id = '-999' \
-              //WHERE et.x_asset_id = ? \
-                    //and et.status <> 'XX' \
-                    //and ifnull(et.cl_pay_tx, '-999') not in (select tx_id from operation) \
-                    //and ifnull(et.cl_recv_tx, '-999') not in (select tx_id from operation) \
-                    //and ifnull(et.operation_tx_id, '-999') not in (select tx_id from operation) \
-            //) AS peto WHERE ui_type IS NOT NULL ORDER BY TS DESC LIMIT " + my_limit, [asset_id, asset_id])
-        //.then(function(result){
-            //return DB.fetchAll(result);
-        //});
-        
-                        ////ON o.tx_id = et.cl_pay_tx OR o.tx_id = et.cl_recv_tx 
-    //};
     
     self.clear = function() {
         return DB.query('DELETE from operation ', []);
@@ -468,8 +465,8 @@ bitwallet_services
     }
 
     self._add = function(obj) {
-      var sql = 'INSERT into exchange_transaction (x_id, x_asset_id, status, quoted_at, created_at, cl_pay_curr, cl_pay_addr, cl_pay_tx, canceled, rate, cl_pay, balance, expired, cl_recv, cl_recv_tx, cl_recv_addr, cl_recv_curr, tx_type, updated_at) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
-      var params = [obj.x_id, obj.x_asset_id, obj.status, obj.quoted_at, obj.created_at, obj.cl_pay_curr, obj.cl_pay_addr, obj.cl_pay_tx, obj.canceled, obj.rate, obj.cl_pay, obj.balance, obj.expired, obj.cl_recv, obj.cl_recv_tx, obj.cl_recv_addr, obj.cl_recv_curr, obj.tx_type, obj.updated_at];
+      var sql    = 'insert or replace into exchange_transaction (id,asset_id,cl_pay,cl_pay_curr,cl_pay_addr,cl_pay_tx,cl_recv,cl_recv_curr,cl_recv_addr,cl_recv_tx,refund_tx,balance,rate,quoted_at,updated_at,status,extra_data,cl_cmd,created_at) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
+      var params = [obj.id, obj.asset_id, obj.cl_pay, obj.cl_pay_curr, obj.cl_pay_addr, obj.cl_pay_tx, obj.cl_recv, obj.cl_recv_curr, obj.cl_recv_addr, obj.cl_recv_tx, obj.refund_tx, obj.balance, obj.rate, obj.quoted_at, obj.updated_at, obj.status, obj.extra_data, obj.cl_cmd, obj.created_at];
       return {'sql':sql, 'params': params};
     }
 
@@ -513,14 +510,14 @@ bitwallet_services
     var self = this;
     
     self.all = function(limit) {
-        return DB.query('SELECT asset_id, sum(amount) FROM balance group by asset_id order by asset_id desc ')
+        return DB.query('SELECT asset_id, sum(amount) amount FROM balance group by asset_id order by asset_id desc ')
         .then(function(result){
             return DB.fetchAll(result);
         });
     };
     
     self.forAsset = function(asset_id) {
-        return DB.query('SELECT asset_id, sum(amount) FROM balance group by asset_id where asset_id=?', [asset_id])
+        return DB.query('SELECT asset_id, sum(amount) amount FROM balance where asset_id=?', [asset_id])
         .then(function(result){
             return DB.fetch(result);
         });
