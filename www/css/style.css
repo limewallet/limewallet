@@ -1016,6 +1016,11 @@ input.pmd {font-size:16px!important;  color:#fff;border-top:none; border-left:no
   transform: rotate(90deg);
   font-size: 24px;
 }
+
+.send_form .recipient_container {position:relative;display:block;width:100%;height:auto;overflow: hidden;}
+.send_form .recipient_container label.pmd{width:315px!important;float:left;}
+.send_form .recipient_container button{position: absolute;right: 5px;color:#eaeaea!important;}
+
 .send_form_button {color: #8ec919!important;font-weight: bold;}
 .bold {font-weight: bold!important;}
 .color_white {color:#fff!important;}
@@ -1027,6 +1032,7 @@ input.pmd {font-size:16px!important;  color:#fff;border-top:none; border-left:no
   border:none!important;}
 
 .send_rate {padding-left:71px;padding-right:20px;}
+.send_rate .hint.padded_r{padding-right:27px}
 .hint.left {
     overflow: hidden;
     min-height: 25px;
@@ -1036,7 +1042,7 @@ input.pmd {font-size:16px!important;  color:#fff;border-top:none; border-left:no
     min-width: 140px;
     font-size:12px;
 }
-.hint.left.w110{min-width: 100px!important;}
+
 .hint.right {
     text-align: right;
     float: right;
@@ -1045,3 +1051,9 @@ input.pmd {font-size:16px!important;  color:#fff;border-top:none; border-left:no
     margin-left: 10px;
     font-size:12px;
 }
+.deposit_rate .hint.left{min-width: 70px!important;}
+.deposit_rate {clear:both;padding-left:71px;padding-right: 80px;margin-top: 40px;}
+.deposit_rate .hint.padded_r{padding-right:27px}
+.deposit_form .amount_container {position:relative;display:block;width:100%;height:auto;padding-top:25px;}
+.deposit_form .amount_container label.pmd{width: 300px!important;float:left;padding-left: 32px!important;} /*flex: 1 0;*/
+.deposit_form .toggle_curr {top: 15px;right: 0px;color:#eaeaea!important;}

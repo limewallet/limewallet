@@ -8,22 +8,23 @@
         
         <div class="step1" ng-show="data.step==1">
           
-          <form novalidate name="sendForm" class="send_form">
+          <form novalidate name="sendForm" class="deposit_form send_form">
             <div class="list">
-              <div style="position:relative;display:block;width:100%;height:auto;padding-top:25px;">
-                <label style="flex: 1 0;width: 300px!important;float:left;" class="item item-input pmd">
-                  <span class="input-label pmd">{{'g.amount'|translate}}</span>
-                  <input numbers-only-key-press required name="transactionAmount" type="number" class="full_width input_amount big pmd" style="padding-right:60px;" ng-model="data.input_amount" /> <!-- margin-right: 60px; --> <!-- ng-class="{'error':sendForm.transactionAmount.$error.number}" --> 
+              <div class="amount_container">
+                <label class="item item-input pmd">
+                  <!--span class="input-label pmd">{{'g.amount'|translate}}</span -->
+                  <input numbers-only-key-press required name="transactionAmount" type="number" class="full_width input_amount big pmd" style="padding-right:60px;" ng-model="data.input_amount" />
                   <i class="pmd icon placeholder-icon" style="margin-right: 0px;">{{data.input_curr}}</i>
                 </label>
-                <button ng-click="toggleInputCurrency()" class="button button-icon icon ion-arrow-swap base-color" style="top: 15px;right: 0px;">
-                <!--  ng-class="{true:'ion-toggle', false:'ion-toggle-filled'}[data.input_toggle==true]" -->
+                <button ng-click="toggleInputCurrency()" class="button button-icon icon ion-arrow-swap base-color toggle_curr">
                 </button>
-                <!--ion-toggle ng-model="data.input_toggle" ng-change="toggleInputCurrency()" toggle-class="base-color"></ion-toggle-->
                 <br/>
-                <div style="clear:both;padding-left:71px;padding-right: 60px;">
-                  <div class="hint left w110">{{'g.you_pay'|translate}}:</div><div class="hint right base-color">55.5 USD</div> <br/>
-                  <div class="hint left w110">{{'g.cur_rate'|translate}}:</div><div class="hint right base-color">251.8 USD/BTC</div>
+                <div class="deposit_rate">
+                  <div class="hint left" ng-show="data.input_in_btc==true">{{'g.you_receive'|translate}}:</div>
+                  <div class="hint right base-color padded_r" ng-show="data.input_in_btc==true"><strong>55.5</strong> USD</div>
+                  <div class="hint left" ng-show="data.input_in_btc==false">{{'g.you_pay'|translate}}:</div>
+                  <div class="hint right base-color padded_r" ng-show="data.input_in_btc==false"><strong>0.2</strong> BTC</div> <br/>
+                  <div class="hint left">{{'g.cur_rate'|translate}}:</div><div class="hint right base-color"><strong>251.8</strong> USD/BTC</div>
                 </div>
               </div>
             </div>

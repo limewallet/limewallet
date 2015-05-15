@@ -1,6 +1,7 @@
 {
   "g" : {
     "you_pay"                       : "You pay",
+    "you_receive"                   : "You receive",
     "cur_rate"                      : "Current rate",
     "memo"                          : "Memo",
     "seed_copied"                   : "Seed copied successfully!",

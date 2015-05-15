@@ -7,7 +7,7 @@ bitwallet_controllers
   $scope.data = {
         input_amount      : 0, 
         input_curr        : 'BTC', 
-        input_toggle      : true,
+        input_in_btc      : true,
 
         amount_usd:         undefined,
         amount_btc:         undefined,
@@ -16,7 +16,7 @@ bitwallet_controllers
         quoting_btc_error:  undefined,
         quoting_usd_error:  undefined,
 
-        step:               1,
+        step:               2,
         timer:              {options:{}, remaining:undefined, percent:undefined, start:0, stop:0, expired:0, waiting:0},
         
         deposit_uri:        undefined,
@@ -31,10 +31,16 @@ bitwallet_controllers
         from_in_progress:   false
   }
   
+  // testing for UI
+  $scope.data.tx              = {cl_pay:22.15, cl_pay_addr: 'Bso7DduduMapkTDW7HNWXf5dMCcYcNdpXi'}
+  $scope.data.deposit_uri     = 'bitcoin://Bso7DduduMapkTDW7HNWXf5dMCcYcNdpXi?amount=22.15&label=bitwallet_deposit&message=convert_btc_to_bitasset';
+  $scope.data.deposit_qrcode    = 'http://zxing.org/w/chart?chs=300x300&cht=qr&choe=UTF-8&chld=L|1&chl=7'+encodeURIComponent($scope.data.deposit_uri);
+
+
   $scope.toggleInputCurrency = function(){
-    $scope.data.input_toggle = $scope.data.input_toggle?false:true;
+    $scope.data.input_in_btc = $scope.data.input_in_btc?false:true;
     $scope.data.input_amount=0;
-    if($scope.data.input_toggle==false){
+    if($scope.data.input_in_btc==false){
       $scope.data.input_curr='USD';
     }
     else{

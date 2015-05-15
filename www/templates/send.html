@@ -20,13 +20,14 @@
             <br/>
           </label>
           
-          <label class="item item-input pmd" ng-disabled="data.is_btc==true" ng-show="data.is_btc==false">
-            <span class="input-label pmd">{{'send.recipient'|translate}}</span>
-            <ion-autocomplete item-view-value-key="name" name="transactionAddress" ng-model="transaction.address" items-method="callbackMethod(query)" items-method2="callbackMethod2(query)" class="big full_width pmd"></ion-autocomplete>
+          <div class="recipient_container">
+            <label class="item item-input pmd" ng-disabled="data.is_btc==true" ng-show="data.is_btc==false">
+              <span class="input-label pmd">{{'send.recipient'|translate}}</span>
+              <ion-autocomplete item-view-value-key="name" name="transactionAddress" ng-model="transaction.address" items-method="callbackMethod(query)" items-method2="callbackMethod2(query)" class="big full_width pmd"></ion-autocomplete>
+            </label>
             <button ng-click="clearAddress()" class="button button-icon icon ion-android-cancel">
             </button>
-          </label>
-
+          </div>
           <!-- BTC -->
           <div class="btc_amount_container" ng-show="data.is_btc==true">
             <label class="item item-input pmd" ng-disabled="data.is_btc==false">
@@ -36,8 +37,8 @@
               <br/>
             </label>
             <div class="send_rate">
-              <div class="hint left">{{'g.you_pay'|translate}}:</div><div class="hint right base-color">55.5 USD</div> <br/>
-              <div class="hint left">{{'g.cur_rate'|translate}}:</div><div class="hint right base-color">251.8 USD/BTC</div>
+              <div class="hint left">{{'g.you_pay'|translate}}:</div><div class="hint right base-color padded_r"><strong>55.5</strong> USD</div> <br/>
+              <div class="hint left">{{'g.cur_rate'|translate}}:</div><div class="hint right base-color"><strong>251.8</strong> USD/BTC</div>
             </div>
           </div>
           
