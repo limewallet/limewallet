@@ -1,4 +1,4 @@
-html, body {
+.html, body {
     height: 100%;
 }
 
@@ -404,8 +404,6 @@ margin-bottom: 20px!important;
 }
 .tx_details .row{ margin-top:0px!important;padding:0!important;}
 .tx_details .row .col{font-size:11px!important;}
-
-.send_form .item-input-inset{padding:0px 8px 0px 0px!important}
 
 .full_width{width:100%;}
 div.text_centered{text-align: center;}
@@ -987,6 +985,9 @@ input.pmd {font-size:16px!important;  color:#fff;border-top:none; border-left:no
 .seed_container input.pmd {font-size:16px!important;  color:#fff;border-top:none; border-left:none; border-right:none; border-bottom: 1px solid #d8d8d8 !important; background-color:transparent!important;}
 .seed_container input.pmd:focus {border-bottom: 1px solid #d3eb00 !important;color:#d3eb00 !important;}
 
+.send_form {padding-top: 10px;}
+.send_form .item-input-inset{padding:0px 8px 0px 0px!important}
+
 .send_form input{color:#546979!important;}                      
 .send_form input.pmd {font-size:14px!important; line-height:14px!important;
     border-top:none; border-left:none; border-right:none; border-bottom: 1px solid #d8d8d8 !important; 
@@ -1004,29 +1005,35 @@ input.pmd {font-size:16px!important;  color:#fff;border-top:none; border-left:no
               border-bottom: 1px solid #d8d8d8 !important; background-color:transparent!important;margin-left: 8px;}
 .send_form textarea.pmd:focus{border-bottom: 1px solid #8ec919 !important;}    
 .send_form .input-label.pmd {font-size:10px;color:#8ec919 !important;font-weight: bold;}
-.send_form label.pmd {padding-left:14px!important; position:relative;}
+.send_form label.pmd {
+    padding-left:14px!important; 
+    position:relative;
+    align-items: flex-start;}
 .send_form label.pmd span {width:52px;text-align:right;}
-
+.send_form .btc_amount_container{position:relative;display:block;width:100%;height:auto;}
 .send_form .button.icon.ion-arrow-swap:before{
   -webkit-transform: rotate(90deg);
   transform: rotate(90deg);
   font-size: 24px;
 }
+.send_form_button {color: #8ec919!important;font-weight: bold;}
 .bold {font-weight: bold!important;}
 .color_white {color:#fff!important;}
+.bgcolor_white {background-color:#fff!important;}
 
 .send_form .item.pmd {border-color: transparent!important;
   margin: 0px!important;
   padding: 16px;
   border:none!important;}
 
+.send_rate {padding-left:71px;padding-right:20px;}
 .hint.left {
     overflow: hidden;
     min-height: 25px;
     float:left;
     color: #d8d8d8;
     text-align: right;
-    min-width: 160px;
+    min-width: 140px;
     font-size:12px;
 }
 .hint.left.w110{min-width: 100px!important;}

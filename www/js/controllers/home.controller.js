@@ -3,7 +3,7 @@ bitwallet_controllers
   
   // For testing purposes, remove on prod.
   $timeout(function(){
-    $state.go('app.deposit');
+    $state.go('app.send');
   }, 3000);
 
   // $scope.$on( '$ionicView.beforeEnter', function(){
