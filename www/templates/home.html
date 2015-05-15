@@ -4,6 +4,9 @@
       <img class="logo-center" src="img/logo.png" />
   </ion-nav-title -->
     
+  <ion-nav-bar class="bar-energized energized_bg nav-title-slide-ios7">
+  </ion-nav-bar>  
+
   <ion-nav-buttons side="left">
     <button menu-toggle="left" class="button button-icon icon lime_icon navicon_w"></button>
   </ion-nav-buttons>
@@ -19,7 +22,7 @@
           <span class="balance_hidden_text">{{'home.show_balance' | translate | uppercase}} <!-- i class="fa fa16 fa-eye"></i --></span>
         </div>
         <div class="balance" ng-show="!wallet.ui.balance.hidden && wallet.initialized" ng-click="toggleBalance()">
-          <span class="balance_text"><i class="{{wallet.asset.symbol_ui_class}}">{{wallet.asset.symbol_ui_text}}</i> {{wallet.asset.amount | number : 2}}</span>
+          <span class="balance_text">{{wallet.asset.symbol_ui_text}} {{wallet.asset.amount | number : 2}}</span>
           <br/>
           <span class="balance_curr {{wallet.asset.symbol|lowercase}}">{{ 'home.balance' | translate:{asset:wallet.asset.symbol} }}</span>
         </div>

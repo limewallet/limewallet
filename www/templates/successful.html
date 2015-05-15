@@ -1,14 +1,16 @@
 <ion-view hide-nav-bar="true" title="{{'detail.transaction_details'|translate}}">
-    <ion-content has-bouncing="false" style="background-color:#2ECC71;">
+    <ion-content has-bouncing="false" class="dark_blue_bg">
       <div class="successful">
         <h2>{{data.title}}<br/>successful</h2>
-        <h2 class="amount">{{data.amount|number:5}} {{data.currency}}</h2>
+        <h2 class="amount lime">{{data.amount|number:5}} {{data.currency}}</h2>
         <p class="white">{{data.sub_title}}</p>
-        <p class="bigger">{{data.sub_data}}</p>     
-        <div style="position:absolute;bottom:132px;width:100%;">   
-          
-          <a ng-click="goHome()" class="button button-icon icon ion-checkmark"></a>
-          <p>{{"g.wait_for_notifications"|translate}}</p>
+        <p class="bigger lime">{{data.sub_data}}</p>     
+        <p class="white">{{data.sub_title2}}</p>
+        <p class="bigger lime">{{data.sub_data2}}</p>     
+        
+        <div class="dock_bottom" style="height:100px; padding-right:99px">   
+          <a ng-click="goHome()" class="button button-icon icon ion-ios-checkmark-empty lime lime_border" style="float:left;font-size: 40px!important;"></a>
+          <p class="hint right" style="padding-top: 12px;width: 160px;line-height: 14px;">{{"g.wait_for_notifications"|translate}}</p>
         </div>  
       </div>
 

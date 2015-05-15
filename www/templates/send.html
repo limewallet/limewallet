@@ -1,15 +1,15 @@
-  <ion-view class="dark" view-title="{{'send.send_payment'|translate}}">
+  <ion-view class="dark" view-title="{{'send.payment'|translate}}">
   
     <ion-nav-buttons side="left">
-      <button ng-click="goHome()" class="button button-icon icon ion-ios-arrow-back"></button>
+      <button ng-click="goHome()" class="button button-icon icon ion-ios-arrow-back base-color"></button>
     </ion-nav-buttons>
     <ion-nav-buttons side="right">
-      <button class="button button-icon icon" ng-click="scanQR()"><i class="fa fa-qrcode"></i></button>
+      <button class="button button-icon icon base-color" ng-click="scanQR()"><i class="fa fa-qrcode"></i></button>
     </ion-nav-buttons>
   
     <ion-content class="has-header">
       
-      <div id="bitcoin_payment_info" ng-show="data.is_btc">
+      <div id="bitcoin_payment_info" ng-show="data.is_btc=='TATATATATATATA'">
         <div class="register_container energized_bg register_color">
           <h4 style="padding-top:0px;">{{ 'send.pay_in_bitcoins'|translate|uppercase}}</h4>
           <div style="display:block;position:relative;" class="padding">
@@ -30,28 +30,50 @@
           <span class="quote_error assertive" ng-show="data_btc.quoting_usd_error!==undefined">{{data_btc.quoting_usd_error}}</span>
         </div>
       </div>
-      <form novalidate name="sendForm" class="send_form" ng-show="!data.is_btc">
+      
+      <form novalidate name="sendForm" class="send_form"> <!--ng-show="data.is_btc==false" -->
         <div class="list">
-          <div class="item item-input-inset">
-            <label class="item-input-wrapper wrapper_clean">
-              <!--input ion-autocomplete readonly="readonly" items-method="callbackMethod(query)" class="ion-autocomplete" autocomplete="off" required name="transactionAddress" ng-model="transaction.address" type="text" placeholder="{{'g.to'|translate}}" class="big big_placeholder" -->
-              <ion-autocomplete item-view-value-key="name" name="transactionAddress" ng-model="transaction.address" items-method="callbackMethod(query)" items-method2="callbackMethod2(query)" class="big full_width" />
-              <input type="password" placeholder="{{'g.confirm_password'|translate}}" class="pmd big big_placeholder">
-            </label>
-            <button ng-click="clearAddress()" class="button button-icon icon ion-android-cancel" style="color:#cfd8dc!important;">
-            </button>
-          </div>
-    
-          <label class="item item-input">
-            <i class="icon fa20 {{wallet.asset.symbol_ui_class}} placeholder-icon">{{wallet.asset.symbol_ui_text}}</i>
-            <!-- required -->
-            <input numbers-only-key-press old-numbers-only-inputNOT required name="transactionAmount" ng-model="transaction.amount" type="number" placeholder="{{'g.amount'|translate}}" class="input_amount big big_placeholder" ng-class="{'error':sendForm.transactionAmount.$error.number}">
+          
+          <!-- BTS -->
+          <label class="item item-input pmd" ng-disabled="data.is_btc==true" ng-show="data.is_btc==false">
+            <span class="input-label pmd">{{'g.amount'|translate}}</span>
+            <input numbers-only-key-press required name="transactionAmount" ng-model="transaction.amount" type="number" class="input_amount big pmd" ng-class="{'error':sendForm.transactionAmount.$error.number}"> 
+            <i class="pmd icon placeholder-icon">$</i>
             <br/>
           </label>
+          
+          <label class="item item-input pmd" ng-disabled="data.is_btc==true" ng-show="data.is_btc==false">
+            <span class="input-label pmd">{{'send.recipient'|translate}}</span>
+            <ion-autocomplete item-view-value-key="name" name="transactionAddress" ng-model="transaction.address" items-method="callbackMethod(query)" items-method2="callbackMethod2(query)" class="big full_width pmd"></ion-autocomplete>
+            <button ng-click="clearAddress()" class="button button-icon icon ion-android-cancel">
+            </button>
+          </label>
 
-          <label class="item item-input">
-            <textarea name="" id="" cols="30" rows="10" name="transactionMemo" ng-model="transaction.memo"
-            class="big big_placeholder" ng-class="{'error':sendForm.transactionMemo.$error.number}" placeholder="Note"></textarea>  
+          <!-- BTC -->
+          <div style="position:relative;display:block;width:100%;height:auto;">
+            <label class="item item-input pmd" ng-disabled="data.is_btc==false" ng-show="data.is_btc==true">
+              <span class="input-label pmd">{{'g.amount'|translate}}</span>
+              <input numbers-only-key-press required name="transactionAmount" ng-model="transaction.amount" type="number" class="input_amount big pmd" ng-class="{'error':sendForm.transactionAmount.$error.number}"> 
+              <i class="pmd icon placeholder-icon">BTC</i>
+              <br/>
+            </label>
+            <div style="padding-left:71px;">
+              <div class="hint left">{{'g.you_pay'|translate}}:</div><div class="hint right base-color">55.5 USD</div> <br/>
+              <div class="hint left">{{'g.cur_rate'|translate}}:</div><div class="hint right base-color">251.8 USD/BTC</div>
+            </div>
+          </div>
+          
+          <label class="item item-input pmd" ng-disabled="data.is_btc==false" ng-show="data.is_btc==true">
+            <span class="input-label pmd">{{'send.recipient'|translate}}</span>
+            <input name="transactionAddress" ng-model="transaction.address" class="big full_width pmd" />
+          </label>
+
+          
+          <!-- BTS & BTC -->
+          <label class="item item-input pmd">
+            <span class="input-label pmd">{{'g.memo'|translate}}</span>
+            <textarea name="" id="" cols="30" rows="10"  name="transactionMemo" ng-model="transaction.memo"
+            class="big pmd base-color" ng-class="{'error':sendForm.transactionMemo.$error.number}"></textarea>  
             <br/>
           </label>
           <span class="error input" ng-show="sendForm.transactionAmount.$error.number">{{'err.enter_valid_amount'|translate}}</span>
@@ -59,8 +81,11 @@
         </div>
       </form>
       <fieldset ng-disabled="data.from_in_progress"> 
-        <button ng-click="doSend(transaction)" class="button button-block button-assertive no-margin hide-on-keyboard-open button_taller dock_bottom">
+        <!--button ng-click="doSend(transaction)" class="button button-block button-assertive no-margin hide-on-keyboard-open button_taller dock_bottom">
           {{'g.send'|translate|uppercase}} 
+        </button -->
+        <button ng-click="doSend(transaction)" class="button button-block button no-margin hide-on-keyboard-open button_taller dock_bottom button-icon ion-ios-paperplane base-color_bg lime"> <!-- base-color lime_bg -->
+          <!--i class=" rotate45"></i -->
         </button>
       </fieldset> 
     </ion-content>

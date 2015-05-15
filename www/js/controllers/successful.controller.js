@@ -3,9 +3,11 @@ bitwallet_controllers
   
   $scope.data = { title       : "title",
                   amount      : 0,
-                  currency    : "curr",
-                  sub_title   : "sub_title",
-                  sub_data    : "sub_data",
+                  currency    : "USD",
+                  sub_title   : "Recipient",
+                  sub_data    : "recipient?",
+                  sub_title2  : "Memo",
+                  sub_data2   : "memo?",
                   oper_id     : 0,
                   xtx_id      : 0
                 }

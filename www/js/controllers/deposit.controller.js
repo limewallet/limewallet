@@ -5,6 +5,10 @@ bitwallet_controllers
   // bitcoin://CCDVYmCptt5b3HnxPwHgdKZ8zXEywMB1Rb?amount=0.10000000?label=bitwallet_deposit?message=convert_btc_to_bitasset
   
   $scope.data = {
+        input_amount      : 0, 
+        input_curr        : 'BTC', 
+        input_toggle      : true,
+
         amount_usd:         undefined,
         amount_btc:         undefined,
         quoting_usd:        false,
@@ -27,6 +31,18 @@ bitwallet_controllers
         from_in_progress:   false
   }
   
+  $scope.toggleInputCurrency = function(){
+    $scope.data.input_toggle = $scope.data.input_toggle?false:true;
+    $scope.data.input_amount=0;
+    if($scope.data.input_toggle==false){
+      $scope.data.input_curr='USD';
+    }
+    else{
+      $scope.data.input_curr='BTC';
+    }
+    console.log('$scope.data.input_curr: '+$scope.data.input_curr);
+  }
+
   // Disable and enable form handlers
   // $scope.data   = {from_in_progress:false};
 

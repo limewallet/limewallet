@@ -1,26 +1,41 @@
 <ion-view class="dark" title="{{'menu.deposit'|translate}}">
     <ion-nav-buttons side="left">
-      <button ng-click="goHome()" class="button button-icon icon ion-ios-arrow-back"></button>
+      <button ng-click="goHome()" class="button button-icon icon ion-ios-arrow-back base-color"></button>
     </ion-nav-buttons>
     
     <ion-content class="has-header register deposit" has-bouncing="false" scroll="false" overflow-scroll="false">
-      <ion-scroll zooming="false" direction="y" class="register_details margin-bottom-buttonNOT">
-        <div class="energized_bg register_container" ng-show="data.step==1">
-          <h4 class="register_color" ng-bind-html="'g.deposit_title'|translate:{asset:wallet.asset}"></h4>
-        </div>
+      <!--ion-scroll zooming="false" direction="y" class="register_details margin-bottom-buttonNOT"-->
         
         <div class="step1" ng-show="data.step==1">
-          <div class="register_container energized_bg register_color">
-            <p ng-bind-html="'g.deposit_paragraph'|translate:{asset:wallet.asset}">
-            </p>
-          </div>
-          <div class="list settings quote">
-            <div class="row" ng-cloak>
+          
+          <form novalidate name="sendForm" class="send_form">
+            <div class="list">
+              <div style="position:relative;display:block;width:100%;height:auto;padding-top:25px;">
+                <label style="flex: 1 0;width: 300px!important;float:left;" class="item item-input pmd">
+                  <span class="input-label pmd">{{'g.amount'|translate}}</span>
+                  <input numbers-only-key-press required name="transactionAmount" type="number" class="full_width input_amount big pmd" style="padding-right:60px;" ng-model="data.input_amount" /> <!-- margin-right: 60px; --> <!-- ng-class="{'error':sendForm.transactionAmount.$error.number}" --> 
+                  <i class="pmd icon placeholder-icon" style="margin-right: 0px;">{{data.input_curr}}</i>
+                </label>
+                <button ng-click="toggleInputCurrency()" class="button button-icon icon ion-arrow-swap base-color" style="top: 15px;right: 0px;">
+                <!--  ng-class="{true:'ion-toggle', false:'ion-toggle-filled'}[data.input_toggle==true]" -->
+                </button>
+                <!--ion-toggle ng-model="data.input_toggle" ng-change="toggleInputCurrency()" toggle-class="base-color"></ion-toggle-->
+                <br/>
+                <div style="clear:both;padding-left:71px;padding-right: 60px;">
+                  <div class="hint left w110">{{'g.you_pay'|translate}}:</div><div class="hint right base-color">55.5 USD</div> <br/>
+                  <div class="hint left w110">{{'g.cur_rate'|translate}}:</div><div class="hint right base-color">251.8 USD/BTC</div>
+                </div>
+              </div>
+            </div>
+          </form>
+
+          <div class="list settings quote ng-hide">
+            <div class="row">
               <div class="col col-50">
                 <label class="item item-input item-floating-label">
                   <span class="input-label">{{wallet.asset.symbol}}</span>
                   <input type="number" placeholder="{{wallet.asset.symbol}}" ng-model="data.amount_usd">
-                  <i class="icon ion-loading-c" ng-cloak ng-show="data.quoting_usd"></i>
+                  <i class="icon ion-loading-c" ng-show="data.quoting_usd"></i>
                   <div class="line-divider"></div>            
                 </label>
                 <span class="quote_error assertive" ng-show="data.quoting_btc_error!==undefined">{{data.quoting_btc_error}}</span>
@@ -29,7 +44,7 @@
                 <label class="item item-input item-floating-label">
                   <span class="input-label">BTC</span>
                   <input type="number" placeholder="BTC" ng-model="data.amount_btc">
-                  <i class="icon ion-loading-c" ng-cloak ng-show="data.quoting_btc"> </i>
+                  <i class="icon ion-loading-c" ng-show="data.quoting_btc"> </i>
                   <div class="line-divider"></div>   
                 </label>
                 <span class="quote_error assertive" ng-show="data.quoting_usd_error!==undefined">{{data.quoting_usd_error}}</span>
@@ -52,26 +67,29 @@
             </div>
           </div>
         </div>
-      </ion-scroll>
+      <!-- /ion-scroll -->
       
-      <fieldset ng-disabled="data.from_in_progress">
-        <button ng-click="next()" ng-show="data.step==1" class="button button-block button-energized no-margin hide-on-keyboard-open button_taller dock_bottom">
-          {{'g.next'|translate|uppercase}}
-        </button>
-        
-        <div style="height:67px;" class="dock_bottom hide-on-keyboard-open" ng-show="data.step==2">
-          <div ng-show="data.timer.expired ==true">
-            <button ng-click="alreadyPaid()" class="button button-block button-stable no-margin button_taller" >
-              {{'g.already_paid'|translate|uppercase}}
-            </button>
+      <div style="clear:both;position: absolute;bottom:0px;display:block;width:100%;">
+        <fieldset ng-disabled="data.from_in_progress">
+          <button ng-click="next()" ng-show="data.step==1" class="button button-block button-energized no-margin hide-on-keyboard-open button_taller dock_bottom">
+            {{'g.next'|translate|uppercase}}
+          </button>
+          
+          <div style="height:67px;" class="dock_bottom hide-on-keyboard-open" ng-show="data.step==2">
+            <div ng-show="data.timer.expired ==true">
+              <button ng-click="alreadyPaid()" class="button button-block button-stable no-margin button_taller" >
+                {{'g.already_paid'|translate|uppercase}}
+              </button>
+            </div>
+            <div ng-show="data.timer.expired==false" style="display:block;">
+              <a class="button button-block button-energized no-margin button_taller" ng-click="window.open('{{data.deposit_short_uri}}', '_system', 'location=yes');" hrefNOT="{{data.deposit_short_uri}}" target="_system">
+                {{'g.pay'|translate|uppercase}}
+              </a>
+            </div>
           </div>
-          <div ng-show="data.timer.expired==false" style="display:block;">
-            <a class="button button-block button-energized no-margin button_taller" ng-click="window.open('{{data.deposit_short_uri}}', '_system', 'location=yes');" hrefNOT="{{data.deposit_short_uri}}" target="_system">
-              {{'g.pay'|translate|uppercase}}
-            </a>
-          </div>
-        </div>
-      </fieldset>  
+        </fieldset>
+      </div>
+      
     </ion-content>
 
   </ion-view>

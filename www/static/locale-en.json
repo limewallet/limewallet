@@ -1,5 +1,8 @@
 {
   "g" : {
+    "you_pay"                       : "You pay",
+    "cur_rate"                      : "Current rate",
+    "memo"                          : "Memo",
     "seed_copied"                   : "Seed copied successfully!",
     "welcome"                       : "Welcome",
     "create_wallet_html"            : "Create&nbsp;wallet",
@@ -214,7 +217,9 @@
     "pay_in_bitcoins"        : "Pay in bitcoins",
     "dest_address"           : "Destination address",
     "instant_quote"          : "Instant quote",
-    "btc_amount"             : "BTC amount"
+    "btc_amount"             : "BTC amount",
+    "payment"                : "Payment",
+    "recipient"              : "Recipient"
 
   },
 

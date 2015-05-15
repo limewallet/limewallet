@@ -1,4 +1,4 @@
-bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T, BitShares, AddressBook, Scanner, Address, $http, $ionicLoading, $ionicNavBarDelegate, $ionicModal, $ionicPopup, $location, $timeout, $rootScope, $stateParams, Wallet) {
+bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T, BitShares, Scanner, $http, $ionicLoading, $ionicNavBarDelegate, $ionicModal, $ionicPopup, $location, $timeout, $rootScope, $stateParams, Wallet) {
 
   $scope.callbackMethod = function (query) {
     return [  {id:'1', name:'recipient1', is_lime:true}, 
@@ -10,7 +10,7 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
   }
 
 
-  $scope.data = {address_book:[], is_btc:false};
+  $scope.data = {is_btc:false};
   
   $scope.data_btc = {
     bitcoin_address:    '', //BweMQsJqRdmncwagPiYtANrNbApcRvEV77 'msmmBfcvrdG2yZiUQQ21phPkbw966f8nbb',
@@ -56,15 +56,16 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
   } 
   
   var address = '';
-  if (!angular.isUndefined($stateParams.address))
+  if (!angular.isUndefined($stateParams.address) && $stateParams.address.length>0)
     address = $stateParams.address;
 
-  var is_btc = false;
-  if (!angular.isUndefined($stateParams.is_btc))
-    is_btc = $stateParams.is_btc;
+  var is_btc = true;
+  if (!angular.isUndefined($stateParams.is_btc) && ['1', 'true', 'yes'].indexOf($stateParams.is_btc)>0)
+    is_btc = true;
 
+  //console.log('Send Controller. is_btc? ='+is_btc);
   // Hack! Let's think a better way to initialize controller!!
-  if(is_btc==='true'){
+  if(is_btc==true){
     $scope.data.is_btc              = true;
     $scope.data_btc.bitcoin_address = address;
     $scope.data_btc.amount_btc      = amount;
