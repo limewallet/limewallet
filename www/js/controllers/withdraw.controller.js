@@ -1,5 +1,5 @@
 bitwallet_controllers
-.controller('WithdrawCtrl', function($translate, T, Address, Account, Wallet, BitShares, $scope, $rootScope, $http, $timeout, $ionicActionSheet, $ionicPopup, $cordovaClipboard, $ionicLoading, $timeout, BitShares, $state, $ionicModal, $q, Setting) {
+.controller('WithdrawCtrl', function($translate, T, Account, Wallet, BitShares, $scope, $rootScope, $http, $timeout, $ionicActionSheet, $ionicPopup, $cordovaClipboard, $ionicLoading, $timeout, BitShares, $state, $ionicModal, $q, Setting) {
 
 // Bitcoin Address:
 // msmmBfcvrdG2yZiUQQ21phPkbw966f8nbb
@@ -8,6 +8,10 @@ bitwallet_controllers
 // bitcoin:BweMQsJqRdmncwagPiYtANrNbApcRvEV77?amount=1.1
   
   $scope.data = {
+    input_amount      : 0, 
+    input_curr        : 'BTC', 
+    input_in_btc      : true,
+
     bitcoin_address:    '', //C4hJYM1NYgjqszEnqA9qr6QSAQLQvywnfk', //'BweMQsJqRdmncwagPiYtANrNbApcRvEV77', //'msmmBfcvrdG2yZiUQQ21phPkbw966f8nbb',
     
     amount_usd:         undefined,
@@ -34,6 +38,18 @@ bitwallet_controllers
     from_in_progress:   false
   }
   
+  $scope.toggleInputCurrency = function(){
+    $scope.data.input_in_btc = $scope.data.input_in_btc?false:true;
+    $scope.data.input_amount=0;
+    if($scope.data.input_in_btc==false){
+      $scope.data.input_curr=wallet.asset.symbol;
+    }
+    else{
+      $scope.data.input_curr='BTC';
+    }
+    console.log('$scope.data.input_curr: '+$scope.data.input_curr);
+  }
+    
   // Disable and enable form handlers
   // $scope.data   = {from_in_progress:false};
   $scope.formInProgress = function(){
@@ -249,16 +265,15 @@ bitwallet_controllers
 
           var prom = [];
           angular.forEach(r.required_signatures, function(req_addy) {
-            var p = Address.by_address(req_addy)
-              .then(function(addy) {
-                return BitShares.compactSignatureForHash(r.to_sign, addy.privkey)
-                  .then(function(compact){
-                    // console.log(addy.address);
-                    r.tx.signatures.push(compact);
-                    // console.log(compact);
-                  })
-              });
-            prom.push(p);
+            // Address????
+            // var p = Address.by_address(req_addy)
+            //   .then(function(addy) {
+            //     return BitShares.compactSignatureForHash(r.to_sign, addy.privkey)
+            //       .then(function(compact){
+            //         r.tx.signatures.push(compact);
+            //       })
+            //   });
+            // prom.push(p);
           });
 
           $q.all(prom).then(function() {

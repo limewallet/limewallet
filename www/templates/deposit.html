@@ -13,8 +13,8 @@
               <div class="amount_container">
                 <label class="item item-input pmd">
                   <!--span class="input-label pmd">{{'g.amount'|translate}}</span -->
-                  <input numbers-only-key-press required name="transactionAmount" type="number" class="full_width input_amount big pmd" style="padding-right:60px;" ng-model="data.input_amount" />
-                  <i class="pmd icon placeholder-icon" style="margin-right: 0px;">{{data.input_curr}}</i>
+                  <input numbers-only-key-press required name="transactionAmount" type="number" class="full_width input_amount big pmd" ng-model="data.input_amount" />
+                  <i class="pmd icon placeholder-icon">{{data.input_curr}}</i>
                 </label>
                 <button ng-click="toggleInputCurrency()" class="button button-icon icon ion-arrow-swap base-color toggle_curr">
                 </button>
@@ -55,35 +55,35 @@
         </div>
         
         <div class="step2" ng-show="data.step==2">
-          <div class="register_container energized_bg register_color">
+          <div class="deposit_confirm base-color">
             <p ng-bind-html="'g.please_send_btc_to'|translate:{amount:(data.tx.cl_pay|number:8), addy:data.tx.cl_pay_addr}">
             </p>
           </div>
           <div class="list settings" id="quote_ttl">
             <div class="item">
               <div class="qr_container">
-                <img ng-src="{{data.deposit_qrcode}}" style="width:100%;height:auto;" id="qr_image" imageonload ng-click="copyUri()" />
+                <img ng-src="{{data.deposit_qrcode}}" class="w100_hauto" id="qr_image" imageonload ng-click="copyUri()" />
               </div>
-              <span style="font-size:14px;" class="input-label">{{'g.tap_copy_btc_uri'|translate}}</span>
+              <span class="input-label deposit_qr_hint">{{'g.tap_copy_btc_uri'|translate}}</span>
             </div>
           </div>
         </div>
       <!-- /ion-scroll -->
       
-      <div style="clear:both;position: absolute;bottom:0px;display:block;width:100%;">
+      <div class="bottom_bar">
         <fieldset ng-disabled="data.from_in_progress">
           <button ng-click="next()" ng-show="data.step==1" class="button button-block button-energized no-margin hide-on-keyboard-open button_taller dock_bottom">
             {{'g.next'|translate|uppercase}}
           </button>
           
-          <div style="height:67px;" class="dock_bottom hide-on-keyboard-open" ng-show="data.step==2">
+          <div class="h67" class="dock_bottom hide-on-keyboard-open" ng-show="data.step==2">
             <div ng-show="data.timer.expired ==true">
               <button ng-click="alreadyPaid()" class="button button-block button-stable no-margin button_taller" >
                 {{'g.already_paid'|translate|uppercase}}
               </button>
             </div>
-            <div ng-show="data.timer.expired==false" style="display:block;">
-              <a class="button button-block button-energized no-margin button_taller" ng-click="window.open('{{data.deposit_short_uri}}', '_system', 'location=yes');" hrefNOT="{{data.deposit_short_uri}}" target="_system">
+            <div ng-show="data.timer.expired==false">
+              <a class="button button-block button-energized no-margin button_taller" ng-click="window.open('{{data.deposit_short_uri}}', '_system', 'location=yes');" target="_system">
                 {{'g.pay'|translate|uppercase}}
               </a>
             </div>

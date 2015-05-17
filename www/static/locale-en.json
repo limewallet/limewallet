@@ -1,5 +1,11 @@
 {
   "g" : {
+    "global_items_label"            : "Global directory",
+    "local_items_label"             : "Local address book",
+    "your_search"                   : "Your search",
+    "search_recipient"              : "Enter recipient name or address...",
+    "bitcoin_address"               : "Bitcoin<br/>address",
+    "you_withdraw"                  : "You withdraw",
     "you_pay"                       : "You pay",
     "you_receive"                   : "You receive",
     "cur_rate"                      : "Current rate",
@@ -31,7 +37,7 @@
     "accept_tx_process"   : "Accept transaction process...",
     "deposit_paragraph"   : "You can load your wallet by converting bitcoin into your preferred bitasset.<br/>Type the amount of <b>bit{{asset.symbol}}</b> you want to load and get a quote for each bitcoin, and vice versa.",  
     "deposit_title"       : "Deposit BITCOIN and get <b>bit{{asset.symbol}}</b>",
-    "please_send_btc_to"  : "Please send <b>{{amount}}</b> BTC to <b>{{addy}}</b>",
+    "please_send_btc_to"  : "Please send <b>{{amount}}</b> BTC to <strong class=\"wrap_text\">{{addy}}</strong>",
     "tap_copy_btc_uri"    : "Tap to copy Bitcoin payment URI",
     "already_paid"        : "Already paid",
     "instant_quote"       : "Instant quote",

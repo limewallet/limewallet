@@ -11,10 +11,13 @@ angular.module('ion-autocomplete', []).directive('ionAutocomplete', [
             template: '<input type="text" readonly="readonly" class="ion-autocomplete" autocomplete="off">',
             replace: true,
             scope: {
-                placeholder: '@',
+                placeholder_: '@',
                 cancelLabel: '@',
                 selectItemsLabel: '@',
+                searchQueryItemHint: '@',
                 selectedItemsLabel: '@',
+                localLabel: '@',
+                globalLabel: '@',
                 templateUrl: '@',
                 itemsMethod: '&',
                 itemsMethod2: '&',
@@ -31,7 +34,10 @@ angular.module('ion-autocomplete', []).directive('ionAutocomplete', [
                 if (!ngModel) return;
 
                 // set the default values of the passed in attributes
-                scope.placeholder = !scope.placeholder ? 'Click to enter a value...' : scope.placeholder;
+                scope.localLabel    = !scope.localLabel ? '' : scope.localLabel;
+                scope.globalLabel   = !scope.globalLabel ? '' : scope.globalLabel;
+                scope.searchQueryItemHint = !scope.searchQueryItemHint ? '' : scope.searchQueryItemHint;
+                scope.placeholder_ = !scope.placeholder_ ? 'Click to enter a value...' : scope.placeholder_;
                 scope.cancelLabel = !scope.cancelLabel ? scope.multipleSelect === "true" ? 'Done' : 'Cancel' : scope.cancelLabel;
                 scope.selectItemsLabel = !scope.selectItemsLabel ? 'Select an item...' : scope.selectItemsLabel;
                 scope.selectedItemsLabel = !scope.selectedItemsLabel ? 'Selected items:' : scope.selectedItemsLabel;
@@ -67,7 +73,7 @@ angular.module('ion-autocomplete', []).directive('ionAutocomplete', [
                             return $parse(key)(item);
                         }
                     }
-                    console.log('ion autocomplete mostrando item:'+item);
+                    // console.log('ion autocomplete mostrando item:'+item);
                     return item;
                 };
 
@@ -77,7 +83,7 @@ angular.module('ion-autocomplete', []).directive('ionAutocomplete', [
                     '<div class="bar bar-header item-input-inset">',
                     '<label class="item-input-wrapper">',
                     '<i class="icon ion-ios7-search placeholder-icon"></i>',
-                    '<input type="search" class="ion-autocomplete-search" ng-model="searchQuery" placeholder="{{placeholder}}"/>',
+                    '<input type="search" class="ion-autocomplete-search" ng-model="searchQuery" placeholder="{{placeholder_}}"/>',
                     '</label>',
                     '<button class="ion-autocomplete-cancel button button-clear">{{cancelLabel}}</button>',
                     '</div>',
@@ -98,35 +104,35 @@ angular.module('ion-autocomplete', []).directive('ionAutocomplete', [
                     // '{{getItemValue(item, itemViewValueKey)}}',
                     // '</ion-item>',
                     
-                    '<ion-item item-height="55" item-width="100%" style="color:#888888;" ng-show="searchQuery.length>0" type="item-text-wrap" ng-click="selectItem(getSearchQueryItem())">',
+                    '<ion-item item-height="55" item-width="100%" class="search" ng-show="searchQuery.length>0" type="item-text-wrap" ng-click="selectItem(getSearchQueryItem())">',
                     '{{searchQuery}}',
+                    '<p ng-show="searchQueryItemHint.length>0">{{searchQueryItemHint}}</p>',
                     '</ion-item>',
                     
 
                     '<div class="collection-repeat-container">',
                     '<ion-item type="item-text-wrap" class="item-divider item-icon-right" ng-show="items.length > 0">',
-                    'Local address book',
+                    '{{localLabel}}',
                     '<i class="icon ion-ios-people"></i>',
                     '</ion-item>',
 
-                    '<ion-item ng-repeat="item in items" item-height="55" item-width="100%" style="color:#00FF00;" type="item-text-wrap" ng-click="selectItem(item)">',
-                    //'{{item}}',
+                    '<ion-item ng-repeat="item in items" item-height="55" item-width="100%" class="local" type="item-text-wrap" ng-click="selectItem(item)">',
                     '{{getItemValue(item, itemViewValueKey)}}',
                     '</ion-item>',
                     '</div>',
 
                     '<div class="collection-repeat-container">',
                     '<ion-item type="item-text-wrap" class="item-divider item-icon-right" ng-show="items2.length > 0">',
-                    'Global directory',
+                    '{{globalLabel}}',
                     '<i class="icon ion-earth""></i>',
                     '</ion-item>',
                     
                     '<ion-item item-height="55" item-width="100%" ng-show="cerda_" type="item-text-wrap" >',
-                    '<i class="icon ion-load-c" data-tags="spinner, waiting, refresh, animation" data-animation="true" ></i>',
+                    '<ion-spinner icon="android"></ion-spinner>',
                     '</ion-item>',
 
 
-                    '<ion-item ng-repeat="item in items2" item-height="55" item-width="100%" style="color:#0000FF;" type="item-text-wrap" ng-click="selectItem(item)">',
+                    '<ion-item ng-repeat="item in items2" item-height="55" item-width="100%" class="global" type="item-text-wrap" ng-click="selectItem(item)">',
                     //'{{item.name}}',
                     '{{getItemValue(item, itemViewValueKey)}}',
                     '</ion-item>',

@@ -16,7 +16,7 @@ bitwallet_controllers
         quoting_btc_error:  undefined,
         quoting_usd_error:  undefined,
 
-        step:               2,
+        step:               1, // HACK UI: PONELE 2 y ves la pantalla del qr
         timer:              {options:{}, remaining:undefined, percent:undefined, start:0, stop:0, expired:0, waiting:0},
         
         deposit_uri:        undefined,
@@ -31,12 +31,12 @@ bitwallet_controllers
         from_in_progress:   false
   }
   
-  // testing for UI
+  // HACK UI: for testing
   $scope.data.tx              = {cl_pay:22.15, cl_pay_addr: 'Bso7DduduMapkTDW7HNWXf5dMCcYcNdpXi'}
   $scope.data.deposit_uri     = 'bitcoin://Bso7DduduMapkTDW7HNWXf5dMCcYcNdpXi?amount=22.15&label=bitwallet_deposit&message=convert_btc_to_bitasset';
   $scope.data.deposit_qrcode    = 'http://zxing.org/w/chart?chs=300x300&cht=qr&choe=UTF-8&chld=L|1&chl=7'+encodeURIComponent($scope.data.deposit_uri);
 
-
+  
   $scope.toggleInputCurrency = function(){
     $scope.data.input_in_btc = $scope.data.input_in_btc?false:true;
     $scope.data.input_amount=0;
@@ -183,7 +183,7 @@ bitwallet_controllers
   }
   
   $scope.next = function(){
-    
+
     if(!$scope.data.signature || !$scope.data.quote)
     {
       $scope.showAlert('err.no_quote', 'err.no_quote_input_val');
