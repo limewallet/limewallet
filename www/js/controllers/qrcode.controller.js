@@ -1,5 +1,5 @@
 bitwallet_controllers
-.controller('ReceiveQrcodeCtrl', function($scope, $ionicHistory, $rootScope, T, $cordovaClipboard, $cordovaSocialSharing, Address, $stateParams, $http, $ionicNavBarDelegate, $location, $ionicLoading, $timeout, $ionicModal, $ionicPopup) {
+.controller('ReceiveQrcodeCtrl', function($scope, $ionicHistory, $rootScope, T, $cordovaClipboard, $cordovaSocialSharing, $stateParams, $http, $ionicNavBarDelegate, $location, $ionicLoading, $timeout, $ionicModal, $ionicPopup) {
   
   $scope.address    = $stateParams.address;
   $scope.amount     = $stateParams.amount;

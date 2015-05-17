@@ -6,11 +6,13 @@
     </ion-nav-buttons>
     
     <ion-content class="has-header">
-      <form novalidate name="receiveForm">
+      <form novalidate name="receiveForm" class="send_form">
         <div class="list">
-          <label class="item item-input">
-            <i class="icon fa20 fa {{wallet.asset.symbol_ui_class}} placeholder-icon">{{wallet.asset.symbol_ui_text}}</i>
-            <input numbers-only-key-press old-numbers-only-inputNOT required name="transactionAmount" ng-model="transaction.amount" type="number" placeholder="{{'g.amount'|translate}}" class="input_amount big big_placeholder" ng-class="{'error':receiveForm.transactionAmount.$error.number}">
+
+          <label class="item item-input pmd">
+            <span ng-class="{ 'has-error' : transaction.amount.$invalid}" class="input-label pmd">{{'g.amount'|translate}}</span>
+            <input numbers-only-key-press required name="transactionAmount" ng-model="transaction.amount" type="number" class="input_amount big pmd"> 
+            <i class="pmd icon placeholder-icon">$</i>
             <br/>
           </label>
           <span class="error input" ng-show="receiveForm.transactionAmount.$error.number">{{'err.enter_valid_amount'|translate}}</span>
@@ -22,7 +24,7 @@
           <i class=" fa20 fa fa-qrcode"></i>
         </button>
       </div -->
-      <button ng-click="doGenerateQRCodeRecvPayment()" class="button button-block button-balanced no-margin hide-on-keyboard-open button_taller dock_bottom">
+      <button ng-click="doGenerateQRCodeRecvPayment()" classAAAA="button button-block button-balanced no-margin hide-on-keyboard-open button_taller dock_bottom" class="button button-block button no-margin hide-on-keyboard-open button_taller dock_bottom bgcolor_white send_form_button">
           <i class=" fa20 fa fa-qrcode"></i>
       </button>
     </ion-content>

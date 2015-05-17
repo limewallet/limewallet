@@ -1,5 +1,5 @@
 bitwallet_controllers
-.controller('ReceiveCtrl', function($scope, $rootScope, T, Address, $http, $ionicNavBarDelegate, $ionicModal, $ionicPopup, $location, $state) {
+.controller('ReceiveCtrl', function($scope, $rootScope, T, $http, $ionicNavBarDelegate, $ionicModal, $ionicPopup, $location, $state) {
   
   $scope.doGenerateQRCodeRecvPayment = function(){
     var amount = parseInt(parseFloat(receiveForm.transactionAmount.value)*$scope.wallet.asset.precision);
@@ -12,11 +12,15 @@ bitwallet_controllers
       return;
     }
 
-    Address.getDefault().then(function(address) {
-      var amount = receiveForm.transactionAmount.value;
-      $state.go('app.receive_qrcode', {address:address.address, amount:amount});
-    });
+    var amount = receiveForm.transactionAmount.value;
+    $state.go('app.receive_qrcode', {address:'ESSSSTA', amount:amount});
+
+    // Address.getDefault().then(function(address) {
+    //   var amount = receiveForm.transactionAmount.value;
+    //   $state.go('app.receive_qrcode', {address:address.address, amount:amount});
+    // });
 
   }
+
 });
 

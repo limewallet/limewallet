@@ -252,7 +252,7 @@ EXPIRED                 = 'EX'
 .no_transactions{width:100%;color:#c1c1c1;text-align:center;font-size:1.2em; height:100%;}
 .no_transactions i.icon{font-size:30px!important;}
 
-.action_container{display:block;width:100%;height:67px;position:absolute;bottom:0;}
+.action_container{display:block;width:100%;height:67px;position:absolute;bottom:0;z-index:5;}
 .action_container2{display:block;width:100%;height:87px;}
 .action_container .one_of_two_buttons , .action_container2 .one_of_two_buttons {width:50%;float:left;}
 .action_container .one_of_three_buttons{width:33%;float:left;}
@@ -1021,7 +1021,10 @@ input.pmd {font-size:16px!important;  color:#fff;border-top:none; border-left:no
 .send_form .recipient_container label.pmd{width:320px!important;float:left;}
 .send_form .recipient_container button{position: absolute;right: 5px;color:#eaeaea!important;top:6px;}
 
-.send_form_button {color: #8ec919!important;font-weight: bold;}
+.send_form_button {color: #8ec919!important;font-weight: bold;
+    border-left:none!important;
+    border-right:none!important;
+    border-bottom:none!important;}
 .bold {font-weight: bold!important;}
 .color_white {color:#fff!important;}
 .bgcolor_white {background-color:#fff!important;}
@@ -1080,3 +1083,9 @@ input.pmd {font-size:16px!important;  color:#fff;border-top:none; border-left:no
 .ion-autocomplete-container .item .global {font-size:12px!important;}
 .ion-autocomplete-container .item .spinner {stroke: #5f7381;  fill: #5f7381;}
 .ion-autocomplete-container label.item-input-wrapper {background-color:#eaeaea!important;}
+
+/*.card, .list-inset */
+.receive_qr {margin:0!important;}
+.receive_qr h1, .receive_qr h2, .receive_qr h4 {text-align:center;}
+.action_container .one_of_two_buttons .button.border_top_left {border-left:1px solid #b2b2b2!important;}
+.action_container .one_of_two_buttons .button{border-top:1px solid #b2b2b2!important;font-size:26px;}

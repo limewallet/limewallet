@@ -7,10 +7,11 @@
     </ion-nav-buttons>
     
     <ion-content class="has-header">
-      <div class="list card">
+      <div class="list card receive_qr">
 
         <div class="item">
-          <h2>{{'g.amount'|translate}}: <i class="icon fa16 {{wallet.asset.symbol_ui_class}} placeholder-icon">{{wallet.asset.symbol_ui_text}}</i>{{amount}} </h2>
+          <!-- {{'g.amount'|translate}}:  -->
+          <h1>{{wallet.asset.symbol_ui_text}} {{amount}}</h1>
           <h4>{{address}}</h4>
         </div>
 
@@ -20,13 +21,14 @@
       </div>
       <div class="action_container">
         <div class="one_of_two_buttons">
-          <button class="button button-balanced button_taller button-block" ng-click="doShareRecvPayment()">
-            <i class="fa20 fa fa-share-square-o"></i>
+
+          <button class="border_top button-block button no-margin button_taller bgcolor_white send_form_button button-icon ion-share" ng-click="doShareRecvPayment()">
+            
           </button>
         </div>
         <div class="one_of_two_buttons">
-          <button class="button button-balanced button_taller button-block" ng-click="doCopyRecvPayment()">
-            <i class="fa20 fa fa-copy"></i>
+          <button class="border_top_left button-block button no-margin button_taller bgcolor_white send_form_button button-icon ion-ios-copy" ng-click="doCopyRecvPayment()">
+            
           </button>
         </div>
       </div>
