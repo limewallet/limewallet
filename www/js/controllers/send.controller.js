@@ -59,7 +59,7 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
   if (!angular.isUndefined($stateParams.address) && $stateParams.address.length>0)
     address = $stateParams.address;
 
-  var is_btc = false; //HACK
+  var is_btc = $scope.data.is_btc; 
   if (!angular.isUndefined($stateParams.is_btc) && ['1', 'true', 'yes'].indexOf($stateParams.is_btc)>0)
     is_btc = true;
 
@@ -87,6 +87,8 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
   
   
   $scope.scanQR = function() {
+    // $scope.data.is_btc = $scope.data.is_btc==true?false:true;
+    // return;
     Scanner.scan()
     .then(function(result) {
       if( !result.cancelled ) {

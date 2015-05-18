@@ -184,6 +184,10 @@ bitwallet_controllers
   
   $scope.next = function(){
 
+    // HACK
+    $scope.data.step=2;
+    return;
+
     if(!$scope.data.signature || !$scope.data.quote)
     {
       $scope.showAlert('err.no_quote', 'err.no_quote_input_val');

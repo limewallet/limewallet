@@ -197,6 +197,12 @@ h2 .transactions .sent_ex, h2 .transactions .received_ex, h2 .transactions .self
 .lime_icon.navicon_w { background-image: url(../img/icons/menu-white.svg)!important ;}
 .lime_icon.qr i      { font-size:20px!important; /*background-image: url(../img/icons/ico-qr.svg) !important ;*/}
 
+.lime_settings_icon           { background-size: 16px 16px !important; 
+                                background-position:center center!important;
+                                background-repeat: no-repeat!important;}
+.lime_settings_icon.logout    { background-image: url(../img/icons/ico-logout_gray.svg);}
+.lime_settings_icon.settings  { background-image: url(../img/icons/ico-settings_gray.svg);}
+
 .pending_text {
   float:right;font-size:0.7em;
   position: absolute;
@@ -293,6 +299,9 @@ input.big {
 /* MENU **********/
 /*****************/
 
+.menu_bg {background: -webkit-linear-gradient(33deg, rgba(26,66,84,1) 0%, rgba(26,67,86,1) 100%);background: -o-linear-gradient(33deg, rgba(26,66,84,1) 0%, rgba(26,67,86,1) 100%);background: linear-gradient(123deg, rgba(26,66,84,1) 0%, rgba(26,67,86,1) 100%); }
+.transparent_bg {background-color:transparent!important;}
+
 .menu div.list{height:100%!important;}
 .list .dock_bottom, .dock_bottom{
   position: absolute!important;
@@ -304,56 +313,66 @@ input.big {
 .bar.bar-dark.menu_header {border-color:transparent!important;}   
 .menu .menu_header{
   background-image:none!important; 
-  /*background-color:#363636!important;
-  border-bottom: solid 1px #000000;*/
   border-color: #000000;
   }  
-.menu  {background-color: #363636!important;}
-.menu .item, 
-  .menu .item-complex .item-content{
+.menu  {background-color:  transparent!important; /* #363636!important;*/}
+.menu .item, .menu .item-complex .item-content{
   border-color: #4c4c4c!important;
-  background-color: #363636!important;
-  color: #d4d4d4!important;
-  /*font-size: 14px;*/
+  background-color: transparent!important; /*#363636!important;*/
+  color: #ececec!important;
+  font-size: 12px;
 }
-.menu .item.wallet a{background-color: #222222!important}
+.menu .item.wallet a{background-color: transparent; /*#222222!important;*/}
 .menu .list .item_first{ border-top:none;}
 
-.menu .menu_header{height:132px!important;}
-.menu .scroll-content.has-header{top:132px!important;}
+.menu .menu_header{height:267px!important;}           /* 132 */
+.menu .scroll-content.has-header{top:267px!important;}  /* 132 */
  
 .platform-ios .menu .menu_header{height:152px!important;}
 .platform-ios .menu .scroll-content.has-header{top:152px!important;}
 
 .menu  .menu_container{
-  padding:16px;
+  padding:45px 16px 16px 16px;
   height: 100%!important;
   width:100%;
   margin-bottom: 0px;
 }
 .menu  .menu_container .menu_avatar{
-  height: 56px;
+  height: 80px;
+  text-align:center;
 }
 .menu  .menu_container .menu_avatar img{
   /*position: absolute;
   top: 10px;*/
   left: 0px;
-  width: 56px;
-  height: 56px;
-  border-radius: 28px;
-  
+  width: 80px;
+  height: 80px;
+  border-radius: 40px;
   background-color: whitesmoke;
   }
   
 .menu  .menu_container .menu_name{
-  height: 28px;
-  padding-top: 16px;
+  height: auto;line-height: 18px;
+  padding-top: 18px;display:block;width:100%;text-align:center;
 }
 
 .menu  .menu_container .menu_name label{
   font-size:16px!important;
+  color:#f3f5f6;
 }
 
+.menu  .menu_container .menu_balance{
+  height: auto;line-height: 24px;
+  padding-top: 18px;display:block;width:100%;text-align:center;
+}
+.menu  .menu_container .menu_balance label{
+  font-size:24px!important;
+}
+
+.menu  .menu_container .c {align-items:center;display:flex;}
+.menu  .menu_container .c1{width:50px;float:left;text-align:right;}
+.menu  .menu_container .c2{width:133px;float:left;}
+.menu  .menu_container .c3{width:50px;float:left;text-align:left;}
 /* END MENU ****/
 
 /* Overwrites-fixes ionic header for ios6 */
@@ -1028,7 +1047,7 @@ input.pmd {font-size:16px!important;  color:#fff;border-top:none; border-left:no
 .bold {font-weight: bold!important;}
 .color_white {color:#fff!important;}
 .bgcolor_white {background-color:#fff!important;}
-
+.send_form_button.bgcolor_white.activated{background-color:#d3eb00!important; color:#fff!important;}
 .send_form .item.pmd {border-color: transparent!important;
   margin: 0px!important;
   padding: 16px;

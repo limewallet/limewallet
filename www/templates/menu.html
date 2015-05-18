@@ -1,45 +1,50 @@
 <ion-side-menus>
-  <!--ion-pane ion-side-menu-content-->
   <ion-side-menu-content>
     <ion-nav-bar class="light_navbar nav-title-slide-ios7">
     </ion-nav-bar>
     <ion-nav-view name="menuContent" animation="slide-left-right"></ion-nav-view>
   </ion-side-menu-content>
-  <ion-side-menu side="left">
-    <ion-header-bar class="bar bar-header bar-dark menu_header ">
-      <!-- h1 class="title" style="text-align:left;"><i class="icon fa18 fa fa-gears"></i>&nbsp;&nbsp;{{'menu.settings'|translate}}</h1 -->
+  <ion-side-menu side="left" class="menu_bg">
+    <ion-header-bar class="bar bar-header menu_header transparent_bg"> <!-- bar-dark -->
       <div class="menu_container" nav-clear menu-close ng-click="goTo('app.account')">
-        <div class="menu_avatar"> <img src="{{wallet.account.photo}}" alt="" /> </div>
-        <div class="menu_name"> <label><i>{{wallet.account.name}}</i></label></div>
+        <div class="c">
+          <div class="c1">
+           <a  href="#/app/settings" class="button button-icon icon lime_settings_icon logout"></a>
+          </div>
+          <div class="c2">
+            <div class="menu_avatar"> <img src="{{wallet.account.photo}}" alt="" /> </div>
+          </div>
+          <div class="c3">
+            <button class="button button-icon icon lime_settings_icon settings"></button>
+          </div>
+        </div>
+        <div class="menu_name"> <label><i>name: {{wallet.account.name}}</i></label></div>
+        <div class="menu_balance lime"> <label>$2.013,45</label></div>
       </div>
     </ion-header-bar>
-    <ion-content class="has-header dark" has-bouncing="false">
+    <ion-content class="has-header transparent_bg" has-bouncing="false"> <!-- dark -->
       <ion-list class="menu">
-        <ion-item nav-clear menu-close href="#/app/home" class="item-icon-right item_first">
+        <ion-item nav-clear menu-close href="#/app/home" class="item-icon-left item_first">
+          <i class="icon fa18 fa fa-home lime"></i>
           {{'menu.home'|translate}} 
-          <i class="icon fa18 fa fa-home"></i>
         </ion-item>
-        <ion-item nav-clear menu-close href="#/app/address_book" class="item-icon-right">
+        <ion-item nav-clear menu-close href="#/app/address_book" class="item-icon-left">
+          <i class="icon fa18 fa fa-book lime"></i>
           {{'menu.address_book'|translate}}
-          <i class="icon fa18 fa fa-book"></i>
         </ion-item>
-        <ion-item nav-clear menu-close href="#/app/assets" class="item-icon-right">
+        <ion-item nav-clear menu-close href="#/app/assets" class="item-icon-left">
+          <i class="icon fa18 fa fa-bank lime"></i>
           {{'menu.assets'|translate}}
-          <i class="icon fa18 fa fa-bank"></i>
+          
         </ion-item>
         
-        <ion-item nav-clear menu-close href="#/app/deposit" class="item-icon-right top_border_on">
+        <ion-item nav-clear menu-close href="#/app/deposit" class="item-icon-left top_border_on">
+          <i class="icon ion-ios-plus-outline icon26 lime"></i> <!-- ion-log-in rotate90 -->
           {{'menu.deposit'|translate}}
-          <i class="icon ion-ios-plus-outline icon26"></i> <!-- ion-log-in rotate90 -->
         </ion-item>
-        <ion-item nav-clear menu-close href="#/app/withdraw" class="item-icon-right">
+        <ion-item nav-clear menu-close href="#/app/withdraw" class="item-icon-left">
+          <i class="icon ion-ios-minus-outline icon26 lime"></i> <!-- ion-log-out rotate270 -->
           {{'menu.withdraw'|translate}}
-          <i class="icon ion-ios-minus-outline icon26"></i> <!-- ion-log-out rotate270 -->
-        </ion-item>
-        
-        <ion-item nav-clear menu-close href="#/app/settings" class="item-icon-right wallet dock_bottom">
-          {{'menu.settings'|translate}}
-          <i class="icon fa18 fa fa-gears"></i>
         </ion-item>
       </ion-list>
     </ion-content>

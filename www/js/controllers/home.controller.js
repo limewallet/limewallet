@@ -2,9 +2,9 @@ bitwallet_controllers
 .controller('HomeCtrl', function(T, Wallet, Scanner, $ionicActionSheet, $scope, $state, $http, $ionicModal, $rootScope, $ionicPopup, $timeout, $location, BitShares, $q, $ionicLoading) {
   
   // For testing purposes, remove on prod.
-  $timeout(function(){
-    $state.go('app.receive');
-  }, 3000);
+  // $timeout(function(){
+  //   $state.go('app.receive');
+  // }, 3000);
 
   // $scope.$on( '$ionicView.beforeEnter', function(){
   //   if(!$scope || !$scope.wallet || !$scope.wallet.ui)
