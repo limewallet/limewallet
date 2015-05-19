@@ -25,25 +25,27 @@
     <ion-content class="has-header transparent_bg" has-bouncing="false"> <!-- dark -->
       <ion-list class="menu">
         <ion-item nav-clear menu-close href="#/app/home" class="item-icon-left item_first">
-          <i class="icon fa18 fa fa-home lime"></i>
+          <i class="icon fa16 fa fa-home lime"></i>
           {{'menu.home'|translate}} 
         </ion-item>
+        <ion-item class="line-divider"></ion-item>
         <ion-item nav-clear menu-close href="#/app/address_book" class="item-icon-left">
-          <i class="icon fa18 fa fa-book lime"></i>
+          <i class="icon fa16 fa fa-book lime"></i>
           {{'menu.address_book'|translate}}
         </ion-item>
+        <ion-item class="line-divider"></ion-item>
         <ion-item nav-clear menu-close href="#/app/assets" class="item-icon-left">
-          <i class="icon fa18 fa fa-bank lime"></i>
+          <i class="icon lime_settings_icon assets"></i>
           {{'menu.assets'|translate}}
-          
         </ion-item>
-        
-        <ion-item nav-clear menu-close href="#/app/deposit" class="item-icon-left top_border_on">
-          <i class="icon ion-ios-plus-outline icon26 lime"></i> <!-- ion-log-in rotate90 -->
+        <ion-item class="line-divider"></ion-item>
+        <ion-item nav-clear menu-close href="#/app/deposit" class="item-icon-left">
+          <i class="icon lime_settings_icon deposit"></i>
           {{'menu.deposit'|translate}}
         </ion-item>
+        <ion-item class="line-divider"></ion-item>
         <ion-item nav-clear menu-close href="#/app/withdraw" class="item-icon-left">
-          <i class="icon ion-ios-minus-outline icon26 lime"></i> <!-- ion-log-out rotate270 -->
+          <i class="icon lime_settings_icon withdraw"></i>
           {{'menu.withdraw'|translate}}
         </ion-item>
       </ion-list>

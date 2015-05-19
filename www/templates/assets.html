@@ -1,14 +1,20 @@
 <ion-view class="dark" title="{{'menu.assets'|translate}}">
     <ion-nav-buttons side="left">
-      <button ng-click="goHome()" class="button button-icon icon ion-ios-arrow-back"></button>
+      <button ng-click="goHome()" class="button button-icon icon ion-ios-arrow-back base-color"></button>
     </ion-nav-buttons>
     
-    <ion-content class="has-header assets" has-bouncing="false">
+    <ion-content class="has-header assets base-color_bg padding" has-bouncing="false">
     
       <div class="list balances">
-          <div ng-repeat="obj in assets" class="item">
-            <div class="asset_data energized"><b>{{obj.asset.symbol}}</b>
-              <span class="asset_balance"> <span class="balance_amount">{{obj.asset.amount | number : 2}}</span>&nbsp;{{obj.asset.unit}}</span>
+          <div class="item item-divider lime_bg base-color">
+            <span>Asset</span> <span class="ta_right">Balance</span>
+          </div>
+          <div ng-repeat="obj in data.balances" class="item base-color">
+            <div class="asset_data">
+              <strong>{{wallet.assets[obj.asset_id].symbol}}</strong>
+              <span class="asset_balance"> 
+                <span class="balance_amount">{{obj.amount | number : 2}}</span>&nbsp;{{wallet.assets[obj.asset_id].unit}}
+              </span>
             </div>  
           </div>
       </div>

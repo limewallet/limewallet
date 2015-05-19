@@ -1,6 +1,8 @@
 bitwallet_controllers
-.controller('AssetsCtrl', function($translate, T, Wallet, BitShares, $scope, $rootScope, $http, $timeout, $ionicActionSheet, $ionicPopup, $cordovaClipboard, $ionicLoading) {
+.controller('AssetsCtrl', function($translate, T, Balance, Wallet, BitShares, $scope, $rootScope, $http, $timeout, $ionicActionSheet, $ionicPopup, $cordovaClipboard, $ionicLoading) {
   
+  $scope.data = {balances : []}
+
   $scope.showLoading = function(){
     $ionicLoading.show({
       template     : '<i class="icon ion-looping"></i> ' + T.i('g.loading'),
@@ -16,23 +18,16 @@ bitwallet_controllers
   }
 
   $scope.loadData = function(){
-    $scope.assets      = [];
-    angular.forEach( Object.keys($scope.wallet.assets), function(asset_id) {
-      var items = []
-      angular.forEach(Object.keys($scope.wallet.addresses), function(addy) {
-        var amount = 0;
-        if( asset_id in $scope.wallet.addresses[addy].balances )
-          amount = $scope.wallet.addresses[addy].balances[asset_id];
+    // Balance.add({asset_id:27, amount:12, address:'my_little_fucking_addy'}).then(function(){
+    //   Balance.add({asset_id:28, amount:1200, address:'my_little_fucking_addy'}).then(function(){
+        Balance.all().then(function(res){
+          $scope.data.balances = res;
+        }, function(err){
 
-        items.push({addy:$scope.wallet.addresses[addy], balance:amount});
-      });
-
-      $scope.assets.push({
-        asset    : $scope.wallet.assets[asset_id],
-        items    : items
-      });
-
-    });
+        });  
+    //   })
+    // })
+    
   }
   
   $scope.loadData();
