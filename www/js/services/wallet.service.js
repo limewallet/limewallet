@@ -3,6 +3,8 @@ bitwallet_services
     var self = this;
 
     self.data = {
+      mpk               : undefined,
+      seed              : undefined,
       assets            : {},
       asset             : {},
       transactions      : [1],
@@ -148,19 +150,28 @@ bitwallet_services
         self.data.assets[asset.id]  = asset;
       });
 
+      var keys = {}; 
+      keys[Setting.DEFAULT_ASSET]         = ENVIRONMENT.default_asset;
+      keys[Setting.UI_HIDE_BALANCE]       = false;
+      keys[Setting.UI_ALLOW_HIDE_BALANCE] = false;
+      keys[Setting.SEED]                  = '';
+      keys[Setting.MPK]                   = '';
+
       var proms = {
-        'default_asset' : Setting.get(Setting.DEFAULT_ASSET, ENVIRONMENT.default_asset),
-        'hide_balance'  : Setting.get(Setting.UI_HIDE_BALANCE, false),
-        'allow_hide'    : Setting.get(Setting.UI_ALLOW_HIDE_BALANCE, false),
-        'account'       : Account.active()
+        'setting' : Setting.getMany(keys),
+        'account' : Account.active()
       }
 
       $q.all(proms).then(function(res) {
-        self.data.asset                 = self.data.assets[res.default_asset.value];
-        self.data.ui.balance.allow_hide = res.allow_hide.value;
-        self.data.ui.balance.hidden     = res.hide_balance.value;
+
         self.data.account               = res.account;
+        self.data.asset                 = self.data.assets[res.setting.default_asset];
+        self.data.ui.balance.allow_hide = res.setting.allow_hide_balance;
+        self.data.ui.balance.hidden     = res.setting.hide_balance;
+        self.data.seed                  = !res.setting.seed ? {} : JSON.parse(res.setting.seed);
+        self.data.mpk                   = !res.setting.mpk  ? {} : JSON.parse(res.setting.mpk); 
         self.data.initialized           = true;
+
 
         self.connectToBackend(ENVIRONMENT.wsurl);
 
@@ -228,7 +239,6 @@ bitwallet_services
       });
 
       if( Object.keys(proms).length == 0 ) {
-        console.log('No hay nada para buscar genio y genio');
         deferred.resolve();
         return deferred.promise;
       }

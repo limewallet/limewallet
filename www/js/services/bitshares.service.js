@@ -46,6 +46,65 @@ bitwallet_services
       return deferred.promise;
     };
 
+    self.computeMemo = function(from, message, destination, mpk, account_mpk, memo_mpk, memo_index) {
+
+      //console.log('-----computeMemo');
+      //console.log(from); 
+      //console.log(message); 
+      //console.log(destination); 
+      //console.log(mpk); 
+      //console.log(account_mpk); 
+      //console.log(memo_mpk); 
+      //console.log(memo_index);
+
+      var deferred = $q.defer();
+
+      if(!message) {
+        deferred.resolve();
+        return deferred.promise;
+      }
+
+      self.isValidPubkey(destination).then(function(res) {
+
+        self.derivePrivate(mpk, account_mpk, memo_mpk, memo_index).then(function(child) {
+
+          self.createMemo(from, destination, message, child.privkey).then(function(memo) {
+            deferred.resolve(memo);
+          }, function(err) {
+            deferred.reject(err);
+          });
+
+        }, function(err) {
+          deferred.reject(err);
+        });
+
+      }, function(err) {
+        deferred.resolve();
+      });
+
+      return deferred.promise;
+    }
+
+    self.createMemo = function(fromPubkey, destPubkey, message, oneTimePriv) {
+
+      var deferred = $q.defer();
+
+      window.plugins.BitsharesPlugin.createMemo(
+        function(memo){
+          deferred.resolve(memo);
+        },
+        function(err){
+          deferred.reject(err);
+        },
+        fromPubkey,
+        destPubkey,
+        message,
+        oneTimePriv
+      );
+    
+      return deferred.promise;
+    };
+
     self.decryptMemo = function(oneTimeKey, encryptedMemo, privKey) {
 
       var deferred = $q.defer();
@@ -144,7 +203,7 @@ bitwallet_services
       return deferred.promise;
     };
 
-    self.extractDataFromKey = function(parent, key) {
+    self.extractDataFromKey = function(grandParent, parent, key) {
       var deferred = $q.defer();
 
       window.plugins.BitsharesPlugin.extractDataFromKey(
@@ -154,23 +213,7 @@ bitwallet_services
         function(error){
           deferred.reject(error);
         },
-        parent,
-        key
-      );
-
-      return deferred.promise;
-    };
-
-    self.extendedPublicFromPrivate = function(parent, key) {
-      var deferred = $q.defer();
-
-      window.plugins.BitsharesPlugin.extendedPublicFromPrivate(
-        function(data){
-          deferred.resolve(data.extendedPublicKey);
-        },
-        function(error){
-          deferred.reject(error);
-        },
+        grandParent,
         parent,
         key
       );
@@ -212,7 +255,23 @@ bitwallet_services
       return deferred.promise;
     };
 
-    self.isValidKey = function(parent, key) {
+    self.isValidPubkey = function(pubKey) {
+      var deferred = $q.defer();
+
+      window.plugins.BitsharesPlugin.btsIsValidPubkey(
+        function(data){
+          deferred.resolve(true);
+        },
+        function(error){
+          deferred.reject(error);
+        },
+        pubKey
+      );
+
+      return deferred.promise;
+    };
+
+    self.isValidKey = function(grandParent, parent, key) {
       var deferred = $q.defer();
 
       window.plugins.BitsharesPlugin.isValidKey(
@@ -222,6 +281,7 @@ bitwallet_services
         function(error){
           deferred.reject(error);
         },
+        grandParent,
         parent,
         key
       );
@@ -245,16 +305,17 @@ bitwallet_services
       return deferred.promise;
     };
 
-    self.derivePrivate = function(parent, key, deriv) {
+    self.derivePrivate = function(grandParent, parent, key, deriv) {
       var deferred = $q.defer();
       
       window.plugins.BitsharesPlugin.derivePrivate(
         function(data){
-          deferred.resolve(data.extendedPrivateKey);
+          deferred.resolve(data);
         },
         function(error){
           deferred.reject(error);
         }
+        , grandParent
         , parent
         , key
         , deriv
@@ -370,7 +431,6 @@ bitwallet_services
     };
 
     self.urlPath = function(url) {
-      //console.log('URLPATH: ' + url);
       if(url[0] == '/') return url;
       return url.substr(url.indexOf('/', url.indexOf('://')+3));
     }
@@ -415,17 +475,10 @@ bitwallet_services
       }
 
       req.success(function(res) {
-        //console.log('vuelve APICALL ' + JSON.stringify(res));
         if(!angular.isUndefined(res.error))
-        {
-          //console.log('APICALLSTUB: RESUELVO CON ERROR');
           deferred.reject(res.error);
-        }
         else
-        {
-          //console.log('APICALLSTUB: RESUELVO OK');
           deferred.resolve(res);
-        }
       })
       .error(function(data, status, headers, config) {
         deferred.reject();
@@ -588,21 +641,22 @@ bitwallet_services
       return self.apiCall(undefined, ENVIRONMENT.apiurl('/addrs/'+address+filter));
     }
     
-    self.prepareSendAsset = function(asset, from, to, amount) {
-      var url = ENVIRONMENT.apiurl('/txs/new');
-      var my_asset = asset;
+    self.new_ = function(from, to, amount, asset, memo) {
 
-      if (asset.indexOf('bit')!=0)
-        my_asset = 'bit'+asset;
+      var url = ENVIRONMENT.apiurl('/txs/new');
 
       var payload = JSON.stringify({
-        "asset" : my_asset, 
+        "asset" : asset,
         "from"  : from,
         "to"    : [{
             "address" : to, 
             "amount"  : amount
         }]
       });
+
+      if ( memo !== undefined ) {
+        payload.to[0].memo = memo;
+      }
 
       return self.apiCall(undefined, url, payload);
     }

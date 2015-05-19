@@ -59,7 +59,7 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
   if (!angular.isUndefined($stateParams.address) && $stateParams.address.length>0)
     address = $stateParams.address;
 
-  var is_btc = $scope.data.is_btc; 
+  var is_btc = false; //HACK
   if (!angular.isUndefined($stateParams.is_btc) && ['1', 'true', 'yes'].indexOf($stateParams.is_btc)>0)
     is_btc = true;
 
@@ -87,8 +87,6 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
   
   
   $scope.scanQR = function() {
-    // $scope.data.is_btc = $scope.data.is_btc==true?false:true;
-    // return;
     Scanner.scan()
     .then(function(result) {
       if( !result.cancelled ) {
@@ -137,8 +135,56 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
       $scope.validateSend();
     }
   }
-  
+
+  $scope.sendError = function(err) {
+
+    $ionicPopup.alert({
+      title    : 'Error',
+      template : err.msg,
+      okType   : 'button-assertive', 
+    });
+
+    $scope.formDone();
+  }
+
+
   $scope.validateSend = function(transaction) {
+
+    Wallet.data.account.memo_index =  0;
+
+    BitShares.computeMemo(
+      Wallet.data.account.pubkey,
+      'Hola como va',
+      'DVS8cozCxTkFrGCdTqVTci4R3iDiXj1ucAHCWUKuFmmv7gSWgQAfE',
+      Wallet.data.mpk.mpk,
+      Wallet.data.account.account_mpk,
+      Wallet.data.account.memo_mpk,
+      Wallet.data.account.memo_index
+    ).then(function(res) {
+      console.log('OK -> ' + JSON.stringify(res));
+    }, function(err) {
+      console.log('ERR ->' + JSON.stringify(err));
+    });
+
+    //$scope.formInProgress();
+
+    //$scope.computeMemo
+
+    //BitShares.new_(
+      //Wallet.account.pubkey,
+      //$scope.transaction.address,
+      //$scope.transaction.amount,
+      //'bit' + Wallet.asset.symbol,
+      //memo       
+    //).then(function(res) {
+
+    //}, function(err) {
+      //$scope.sendError(err);
+    //});
+
+  }
+  
+  $scope.validateSendOld = function(transaction) {
     
     $scope.formInProgress();
     var amount = parseInt(parseFloat($scope.transaction.amount)*$scope.wallet.asset.precision);

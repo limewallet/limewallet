@@ -28,43 +28,54 @@ bitwallet_controllers
 
     var deferred = $q.defer();
 
-    var proms = [BitShares.mnemonicToMasterKey(seed),  Account.count()];
+    var proms = {
+      'mpk' :   BitShares.mnemonicToMasterKey(seed),
+      'count':  Account.count()
+    };
+
     $q.all(proms).then(function(res){
 
-      var mpk    = res[0];
-      var number = res[1];
-      console.log('mnemonicToMasterKey > ' + mpk + ' // ' + number);
-      BitShares.derivePrivate("", mpk, number).then(function(intermediateKey){
+      var mpk    = res.mpk;
+      var number = res.count;
+
+      console.log('mnemonicToMasterKey mpk=> ' + mpk + ' // ' + number);
+      BitShares.derivePrivate("", "", mpk, number).then(function(accountMpk){
         
-        console.log('mnemonicToMasterKey > ' + intermediateKey );
-        var proms = [ BitShares.derivePrivate(mpk, intermediateKey, 0), BitShares.derivePrivate(mpk, intermediateKey, 1) ];
+        console.log('mnemonicToMasterKey accountMpk > ' + JSON.stringify(accountMpk));
+        var proms = { 
+          'send_mpk' : BitShares.derivePrivate("", mpk, accountMpk.extendedPrivateKey, 0), 
+          'memo_mpk' : BitShares.derivePrivate("", mpk, accountMpk.extendedPrivateKey, 1) 
+        };
         
         $q.all(proms).then(function(keys) {
 
-          BitShares.extractDataFromKey(intermediateKey, keys[0]).then( function(keyInfo) {
-            
-            proms = [ $scope.encrypt(keyInfo.privkey, password), $scope.encrypt(keys[1], password) ];
-            $q.all(proms).then(function(encryptedData) {
+          proms = { 
+            'mpk'         : $scope.encrypt(mpk, password),
+            'account_mpk' : $scope.encrypt(accountMpk.extendedPrivateKey, password),
+            'privkey'     : $scope.encrypt(keys.send_mpk.privkey, password)
+          };
 
-              keyInfo.privkey = encryptedData[0];
-              keys[1]         = encryptedData[1];
-        
-              deferred.resolve({ 
-                  'pubkey'        : keyInfo.pubkey,
-                  'address'       : keyInfo.address,
-                  'priv_account'  : keyInfo.privkey,
-                  'priv_memos'    : keys[1],
-                  'encrypted'     : password != '' ? 1 : 0,
-                  'number'        : number 
-              });
+          $q.all(proms).then(function(encryptedKeys) {
 
-            }, function(err) {
-              deferred.reject('addNewAccount 1' + err);
+            keys.send_mpk.privkey         = encryptedKeys.privkey;
+            accountMpk.extendedPrivateKey = encryptedKeys.account_mpk;
+            mpk                           = encryptedKeys.mpk;
+      
+            deferred.resolve({ 
+              'mpk'           : mpk,
+              'account_mpk'   : accountMpk.extendedPrivateKey,
+              'pubkey'        : keys.send_mpk.pubkey,
+              'privkey'       : keys.send_mpk.privkey,
+              'address'       : keys.send_mpk.address,
+              'memo_mpk'      : keys.memo_mpk.extendedPrivateKey,
+              'encrypted'     : password != '' ? 1 : 0,
+              'number'        : number 
             });
 
           }, function(err) {
-            deferred.reject('addNewAccount 2' + err);
+            deferred.reject('addNewAccount 1' + err);
           });
+
 
         }, function(err) {
           deferred.reject('addNewAccount 3' + err);
@@ -94,17 +105,21 @@ bitwallet_controllers
 
     $scope.addNewAccount($scope.init.seed, $scope.data.password).then(function(accountInfo){
 
-      var tmp0 = Account._create(accountInfo.pubkey, accountInfo.address, accountInfo.number, accountInfo.priv_account, accountInfo.priv_memos, accountInfo.memo_index, accountInfo.encrypted);
+      var account_cmd = Account._create(accountInfo);
 
       $scope.encrypt($scope.init.seed, $scope.data.password).then(function(encryptedSeed) {
 
         var encrypted = $scope.data.password != '' ? 1 : 0;
-        var tmp1 = Setting._set(Setting.SEED, JSON.stringify({'seed':encryptedSeed, 'encrypted':encrypted}) );
+        var seed_cmd  = Setting._set(Setting.SEED, JSON.stringify({'seed':encryptedSeed, 'encrypted':encrypted}) );
+        var mpk_cmd   = Setting._set(Setting.MPK,  JSON.stringify({'mpk':accountInfo.mpk, 'encrypted':encrypted}) );
+
+        console.log(JSON.stringify(mpk_cmd));
 
         DB.db.transaction(function(transaction) {
 
-          transaction.executeSql(tmp0[0], tmp0[1]);
-          transaction.executeSql(tmp1[0], tmp1[1]);
+          transaction.executeSql(account_cmd.sql, account_cmd.params);
+          transaction.executeSql(seed_cmd.sql, seed_cmd.params);
+          transaction.executeSql(mpk_cmd.sql, mpk_cmd.params);
 
         }, function(err) {
           console.log('EGRRA:' +err);

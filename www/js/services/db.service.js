@@ -222,6 +222,46 @@ bitwallet_services
     self.UI_HIDE_BALANCE        = 'hide_balance';
     self.UI_ALLOW_HIDE_BALANCE  = 'allow_hide_balance';
     self.SEED                   = 'seed'; // json 
+    self.MPK                    = 'mpk'; // json 
+
+    self.getMany = function(keys) {
+
+      var ppp = Object.keys(keys);
+      console.log('PEZZZ     RESRESRESRES> ' + JSON.stringify(ppp));
+
+      var deferred = $q.defer();
+      //DB.query('SELECT name, value FROM setting where name in (?)', [ppp])
+      DB.query('SELECT name, value FROM setting', [])
+      .then(function(result) {
+        console.log('RESRESRESRES> ' + JSON.stringify(result));
+        var data = DB.fetchAll(result);
+
+        var values = {};
+        data.forEach(function(d) {
+          console.log('=====> ' + d.name + ':' + d.value);
+          values[d.name] = d.value;
+        });
+
+        console.log('XXXXXXXXXXXXXXXX ');
+        console.log(JSON.stringify(values));
+        console.log('XXXXXXXXXXXXXXXX ');
+
+        Object.keys(keys).forEach(function(k) {
+          if( k in values ) return;
+          values[k] = keys[k];
+        });
+        
+        console.log('XXXXXXXXXXXXXXXX ');
+        console.log(JSON.stringify(values));
+        console.log('XXXXXXXXXXXXXXXX ');
+        deferred.resolve(values);
+
+      }, function(err) {
+        deferred.reject(err);  
+      });
+
+      return deferred.promise;
+    }
     
     self.get = function(name, _default) {
         var deferred = $q.defer();
@@ -254,12 +294,12 @@ bitwallet_services
     };
 
     self.set = function(name, value) {
-        var res = self._set(name, value);
-        return DB.query(res[0], res[1]);
+        var cmd = self._set(name, value);
+        return DB.query(cmd.sql, cmd.params);
     };
 
     self._set = function(name, value) {
-        return ['INSERT or REPLACE into setting (name, value) values (?,?)', [name, value.toString()] ];
+        return {sql:'INSERT or REPLACE into setting (name, value) values (?,?)', params:[name, value.toString()] };
     };
     
     self.remove = function(name) {
@@ -296,16 +336,16 @@ bitwallet_services
       return deferred.promise;
     }
     
-    self.create = function(pubkey, address, number, priv_account, priv_memos, memo_index, encrypted) {
-      var res = self._create(pubkey, address, number, priv_account, priv_memos, memo_index, encrypted);
-      return DB.query(res[0], res[1]);
+    self.create = function(obj) {
+      var cmd = self._create(obj);
+      return DB.query(cmd.sql, cmd.params);
     }
 
-    self._create = function(pubkey, address, number, priv_account, priv_memos, memo_index, encrypted) {
-      var sql    = 'INSERT into account (pubkey, address, number, priv_account, priv_memos, memo_index, encrypted) values (?,?,?,?,?,?,?)';
-      var params = [pubkey, address, number, priv_account, priv_memos, memo_index, encrypted];
+    self._create = function(obj) {
+      var sql    = 'INSERT into account (account_mpk, pubkey, address, number, privkey, memo_mpk, memo_index, encrypted) values (?,?,?,?,?,?,?,?)';
+      var params = [obj.account_mpk, obj.pubkey, obj.address, obj.number, obj.privkey, obj.memo_mpk, obj.memo_index, obj.encrypted];
 
-      return [sql, params];
+      return {sql:sql, params:params};
     }
 
     self.count = function() {

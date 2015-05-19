@@ -8,28 +8,21 @@ bitwallet_config
             columns: [
                 { name : 'id',                type  : 'integer primary key'},
                 { name : 'name',              type  : 'text unique'},
-                
-                { name : 'pubkey',            type  : 'text'},
                 { name : 'address',           type  : 'text'},
-
-                { name : 'master_key',        type  : 'text'},
-
-                { name : 'priv_account',      type  : 'text'},
-                { name : 'priv_memos',        type  : 'text'},
-                { name : 'memo_index',        type  : 'text'},
-
-                { name : 'encrypted',         type  : 'integer'},
+                { name : 'pubkey',            type  : 'text'},
+                { name : 'privkey',           type  : 'text'},
 
                 { name : 'number',            type  : 'integer unique'},
-                { name : 'active',            type  : 'integer default 1'},
-                
-                { name : 'public_data',       type  : 'text'},
+                { name : 'account_mpk',       type  : 'text'},
+                { name : 'memo_mpk',          type  : 'text'},
+                { name : 'memo_index',        type  : 'text'},
+                { name : 'encrypted',         type  : 'integer'},
 
+                { name : 'active',            type  : 'integer default 1'},
+                { name : 'public_data',       type  : 'text'},
                 { name : 'registered',        type  : 'integer default 0'}, // -1:no, 1:yes, 0:unknown
-                
                 { name : 'access_key',        type  : 'text'},
                 { name : 'secret_key',        type  : 'text'},
-                
                 { name : 'created_at',        type  : 'datetime default CURRENT_TIMESTAMP'}
             ]
         },
