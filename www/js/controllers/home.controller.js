@@ -2,7 +2,7 @@ bitwallet_controllers
 .controller('HomeCtrl', function(T, Wallet, Scanner, $ionicActionSheet, $scope, $state, $http, $ionicModal, $rootScope, $ionicPopup, $timeout, $location, BitShares, $q, $ionicLoading) {
 
   $timeout(function () {
-    $rootScope.goTo('app.account');
+    $rootScope.goTo('app.settings');
   }, 2000); 
   
 

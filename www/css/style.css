@@ -377,10 +377,11 @@ input.big {
   font-size:24px!important;
 }
 
-.menu  .menu_container .c {align-items:center;display:flex;}
-.menu  .menu_container .c1{width:50px;float:left;text-align:right;}
-.menu  .menu_container .c2{width:133px;float:left;}
-.menu  .menu_container .c3{width:50px;float:left;text-align:left;}
+.menu  .menu_container .c {align-items:stretch;display:flex;}
+.menu  .menu_container .c1x{width:50px;}
+.menu  .menu_container .c2x{width:133px;}
+.menu  .menu_container .c3x{width:50px;}
+
 /* END MENU ****/
 
 /* Overwrites-fixes ionic header for ios6 */
@@ -528,6 +529,7 @@ img.i_centered {margin-left: auto;
 /*******************************/
 /* LISTS (Settings & balances) */
 /*******************************/
+.list.settings {padding: 25px 15px 15px 15px;}
 .list.settings .item span.addy{
   font-size:14px;
 }
@@ -537,6 +539,18 @@ img.i_centered {margin-left: auto;
   border-width: 0px; 
   /*border-style: solid; */
 }
+.list.settings .item, .list.settings .item .input-label  {
+    height: 72px;
+    align-items: center;
+    display: flex;
+    font-size:14px;}
+.list.settings .item.item-toggle .toggle        { top: 20px;}
+.list.settings .toggle.toggle-green input:checked + .track {
+  border-color: #93c91f;
+  background-color: #93c91f;}
+.list.settings .item.item-select:after          { color:#93c91f;}
+.list.settings .item.item-button-right > button {top:12px;}
+
 .main_transactions h2 , .main_transactions p {margin:0!important;}
 
 .list.settings .item .line-divider, .list.settings .line-divider, .main_transactions .line-divider{
@@ -640,7 +654,7 @@ img.i_centered {margin-left: auto;
   height:78px; 
   padding-left: 28px;
   padding-right: 28px;
-  font-size: 14px;}
+  font-size: 12px;}
 .list.balances .item .asset_data{
   /*margin-left: 72px;*/
   height: 56px;
@@ -1059,6 +1073,8 @@ input.pmd {font-size:16px!important;  color:#fff;border-top:none; border-left:no
     border-bottom:none!important;}
 .bold {font-weight: bold!important;}
 .color_white {color:#fff!important;}
+.green_bg       { background-color: #93c91f!important;}
+.green_color    { color: #93c91f!important;}
 .bgcolor_white {background-color:#fff!important;}
 .send_form_button.bgcolor_white.activated{background-color:#d3eb00!important; color:#fff!important;}
 .send_form .item.pmd {border-color: transparent!important;
@@ -1123,7 +1139,7 @@ input.pmd {font-size:16px!important;  color:#fff;border-top:none; border-left:no
 .action_container .one_of_two_buttons .button{border-top:1px solid #b2b2b2!important;font-size:26px;}
 
 .balances .item {}
-.vertical_align{
+.super_flex{
   display: -webkit-flex; /* Safari */
   -webkit-flex-flow: row wrap; /* Safari 6.1+ */
   /*-webkit-align-content: space-around;*/ /* Safari 7.0+ */
@@ -1132,3 +1148,7 @@ input.pmd {font-size:16px!important;  color:#fff;border-top:none; border-left:no
   /*align-content: space-around;*/
   height:100%;
 }
+
+.bar .title {font-size: 17px!important;}
+.bar .button.button-icon .icon:before, .bar .button.button-icon:before, .bar .button.button-icon.icon-left:before, .bar .button.button-icon.icon-right:before {
+  font-size: 26px!important;}

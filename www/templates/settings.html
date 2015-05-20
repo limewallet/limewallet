@@ -5,89 +5,49 @@
     
     <ion-content class="has-header" has-bouncing="false">
       <div class="list settings">
-        <div class="item item-divider">
-          {{'g.currency'|translate}}
-        </div>
+        <!-- div class="item item-divider">
+          {{'settings.default_currency'|translate}}
+        </div -->
         <label class="item item-input item-select">
-          <div class="input-label">
-            {{'g.default'|translate}}
+          <div class="input-label green_color">
+            {{'settings.default_currency'|translate}}
           </div>
           <select ng-model="data.selected_asset"
                 ng-options="opt as opt.label for opt in data.assets"
                 ng-change="assetChanged()">
-            </select>
+          </select>
+          <div class="line-divider"></div>  
         </label>
-        <div class="item item-divider">
+        <!-- div class="item item-divider">
           {{'g.balance'|translate}}
-        </div>
-        <div class="item item-toggle">
-           {{'settings.hide_balance'|translate}}
-           <label class="toggle toggle-balanced">
+        </div -->
+        <div class="item item-toggle green_color">
+           {{'settings.hide_balance_on_tap'|translate}}
+           <label class="toggle toggle-green">
              <input type="checkbox" ng-model="data.hide_balance" ng-checked="data.hide_balance"> <!--ng-model="wallet.ui.balance.allow_hide"-->
              <div class="track">
                <div class="handle"></div>
              </div>
            </label>
+           <div class="line-divider"></div>
         </div>
-        <div class="item item-divider">
+        <!-- div class="item item-divider">
           {{'g.address'|translate}}
         </div>
         <div class="item" ng-click="copyAddy()">
           <span class="addy">{{data.addy}}</span>
-        </div>
-        <!--div class="item item-divider">
-          {{'g.profile'|translate}}
-        </div>
-        <label class="item item-input item-floating-label">
-          <span class="input-label">{{'g.name'|translate}}</span>
-          <input type="text" placeholder="{{'g.name'|translate}}" ng-model="data.name" ng-disabled="data.initial_name.length>0">
-          <div class="line-divider"></div>
-        </label>
-        <div class="item item-image">
-          <span class="input-label" style="padding-left:16px;text-align:left;"></span>
-          <div style="width:100%;height:150px;">
-            <div style="width:150px;text-align:center;margin:0 auto;">
-              <img class="avatar_rounded" src="http://robohash.org/{{data.watch_name}}?size=150x150" ng-show="data.name && !data.use_gravatar" />
-              <img class="avatar_rounded" src="http://www.gravatar.com/avatar/{{data.gravatar_id}}?s=150" ng-show="data.use_gravatar" />
-              <img class="avatar_rounded" src="img/user_empty.png" ng-show="!data.use_gravatar && !data.name" />
-            </div>
-          </div>
-        </div>
-        <div class="item item-toggle">
-           {{'settings.use_gravatar'|translate}}
-           <label class="toggle toggle-balanced">
-             <input type="checkbox" ng-model="data.use_gravatar">
-             <div class="track">
-               <div class="handle"></div>
-             </div>
-           </label>
-        </div>
-        <label class="item item-input item-floating-label" style="padding-right: 16px!important;">
-          <span class="input-label">{{'settings.gravatar_email'|translate}}</span>
-          <input type="email" placeholder="{{'settings.gravatar_email'|translate}}" ng-model="data.gravatar_mail" ng-disabled="!data.use_gravatar">
-        </label>
-        <div class="item" style="padding:5px;" ng-show="data.profile_changed">
-          <button ng-click="updateProfile()" class="button button-block button-balanced" style="margin:0px;">
-            {{'settings.update_profile'|translate}}
-          </button>
         </div -->
-        <div class="item item-divider">
+        <!-- div class="item item-divider">
           {{'g.wallet'|translate}}
-        </div>
-        <div class="item item-button-right">
-          {{'g.backup'|translate}} 
-          <a class="button button-outline button-energized" href="#/app/settings/backup">
-            <!--i class="icon fa18 fa fa-cloud-upload"></i-->
-            <i class="icon ion-android-upload"></i>
-          </a>
+        </div -->
+        <div class="item item-button-right green_color ">
+          {{'g.backup_wallet'|translate}} 
+          <a class="button button-icon green_color icon ion-android-upload" href="#/app/settings/backup"></a>
           <div class="line-divider"></div>
         </div>
-        <div class="item item-button-right">
-          {{'g.restore'|translate}} 
-          <a class="button button-outline button-energized" href="#/app/settings/restore">
-            <!--i class="icon fa18 fa fa-cloud-download"></i -->
-            <i class="icon ion-android-download"></i>
-          </a>
+        <div class="item item-button-right green_color">
+          {{'g.restore_wallet'|translate}} 
+          <a class="button button-icon green_color icon ion-android-download" href="#/app/settings/restore"></a>
         </div>
       </div>
     </ion-content>

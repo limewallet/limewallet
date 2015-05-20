@@ -7,7 +7,7 @@
       <a ng-cloak ng-show="data.first_time==1" class="button icon-right button-clear" ng-click="goHome()">{{'g.later'|translate|uppercase}}</a>
     </ion-nav-buttons -->
     
-    <ion-content class="vertical_align" has-bouncing="false" scroll="false" overflow-scroll="false">
+    <ion-content class="super_flex" has-bouncing="false" scroll="false" overflow-scroll="false">
       <div class="register" style="align-self: flex-start;width: 100%;height:auto!important;">
         <!-- ion-scroll zooming="false" direction="y" class="register_details margin-bottom-buttonNOT" -->
             <h2 class="register_color"><b ng-show="wallet.account.registered!=0">{{wallet.account.name}} </b>{{(wallet.account.registered!=0)?('register.edit_account'|translate ):('register.create_account'|translate)}}</h2>
@@ -18,40 +18,6 @@
             <p ng-show="wallet.account.registered==1" ng-bind-html="'account.edit_photo'|translate">
             </p>
           </div -->
-
-
-          <div class="list settings" style="display:none;">
-            <label class="item item-input item-floating-label" ng-show="wallet.account.registered==0">
-              <span class="input-label">{{'g.name'|translate}}</span>
-              <input type="text" placeholder="{{'g.name'|translate}}" ng-model="data.name" ng-disabled="wallet.account.registered!=0">
-              <div class="line-divider"></div>
-            </label>
-            <div class="item item-image">
-              <span class="input-label" style="padding-left:16px;text-align:left;"></span>
-              <div style="width:100%;height:150px;">
-                <div style="width:150px;text-align:center;margin:0 auto;">
-                  <img class="avatar_rounded" src="http://robohash.org/{{data.watch_name}}?size=150x150" ng-show="data.name && !data.use_gravatar" />
-                  <img class="avatar_rounded" src="http://www.gravatar.com/avatar/{{data.gravatar_id}}?s=150" ng-show="data.use_gravatar" />
-                  <img class="avatar_rounded" src="img/user_empty.png" ng-show="!data.use_gravatar && !data.name" />
-                </div>
-              </div>
-            </div>
-            <div class="item item-toggle">
-               {{'settings.use_gravatar'|translate}}
-               <label class="toggle toggle-balanced">
-                 <input type="checkbox" ng-model="data.use_gravatar">
-                 <div class="track">
-                   <div class="handle"></div>
-                 </div>
-               </label>
-            </div>
-            <label class="item item-input item-floating-label" style="padding-right: 16px!important;">
-              <span class="input-label">{{'settings.gravatar_email'|translate}}</span>
-              <input type="email" placeholder="{{'settings.gravatar_email'|translate}}" ng-model="data.gravatar_mail" ng-disabled="!data.use_gravatar">
-            </label>
-          </div>
-        <!-- /ion-scroll -->
-      
         <div class="seed_container">
           <form novalidate name="encryptionForm" class="encryption_form">
             <label class="item item-input pmd">
@@ -64,7 +30,8 @@
               </div>
             </div>
              <div class="item item-image">
-              <img src="https://robohash.org/pepe" style="width:200px;height:auto;">
+              <canvas id="jdenticon_canvas" width="200" height="200" data-jdenticon-hash="{{data.hash_name}}"></canvas>
+              <!-- img src="https://robohash.org/pepe" style="width:200px;height:auto;" -->
             </div>
           </form>
         </div>

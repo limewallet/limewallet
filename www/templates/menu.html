@@ -6,17 +6,24 @@
   </ion-side-menu-content>
   <ion-side-menu side="left" class="menu_bg">
     <ion-header-bar class="bar bar-header menu_header transparent_bg"> <!-- bar-dark -->
-      <div class="menu_container" nav-clear menu-close ng-click="goTo('app.account')">
+      <div class="menu_container">
         <div class="c">
-          <div class="c1">
-           <a  href="#/app/settings" class="button button-icon icon lime_settings_icon logout"></a>
+          <a href="#/app/settings" nav-clear menu-close class="c1x button button-icon icon lime_settings_icon logout"></a>
+          <div class="menu_avatar c2x"> <img src="{{wallet.account.photo}}" alt="" /> </div>
+          <a href="#/app/settings" nav-clear menu-close class="c3x button button-icon icon lime_settings_icon settings"></a>
+          <!--div class="c1 super_flex">
+            <div class="cc">
+              <a href="#/app/settings" nav-clear menu-close class="button button-icon icon lime_settings_icon logout"></a>
+            </div> 
           </div>
-          <div class="c2">
+          <div class="c2" nav-clear menu-close ng-click="goTo('app.account')">
             <div class="menu_avatar"> <img src="{{wallet.account.photo}}" alt="" /> </div>
           </div>
-          <div class="c3">
-            <button class="button button-icon icon lime_settings_icon settings"></button>
-          </div>
+          <div class="c3 super_flex">
+            <div class="cc">
+              <a href="#/app/settings" nav-clear menu-close class="button button-icon icon lime_settings_icon settings"></a>
+            </div>
+          </div -->
         </div>
         <div class="menu_name"> <label><i>name: {{wallet.account.name}}</i></label></div>
         <div class="menu_balance lime"> <label>$2.013,45</label></div>

@@ -92,7 +92,9 @@
     "photo"                   : "Photo",
     "wallet"                  : "Wallet",
     "restore"                 : "Restore",
-    "backup"                  : "Backup"
+    "backup"                  : "Backup",
+    "restore_wallet"          : "Restore wallet",
+    "backup_wallet"           : "Backup wallet"
     
   },
 
@@ -289,6 +291,7 @@
   "settings": {
     "default_currency"        : "Default currency",
     "hide_balance"            : "Hide balance",
+    "hide_balance_on_tap"     : "Hide balance on tap",
     "account_name"            : "Account name",
     "use_gravatar"            : "Use Gravatar",
     "gravatar_email"          : "Gravatar email",

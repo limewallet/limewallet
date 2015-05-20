@@ -12,6 +12,7 @@ bitwallet_controllers.controller('AccountCtrl', function($translate, T, BitShare
                   use_gravatar    : !($scope.wallet.account.gravatar_id===undefined || $scope.wallet.account.gravatar_id==null || $scope.wallet.account.gravatar_id.length==0), 
                   initial_name    : $scope.wallet.account.is_default==0?$scope.wallet.account.name:'', 
                   watch_name      : $scope.wallet.account.is_default==0?$scope.wallet.account.name:'',  
+                  hash_name       : $scope.wallet.account.is_default==0?$scope.gravatarMD5($scope.wallet.account.name):'',  
                   gravatar_mail   : '', 
                   can_update      : false,
                   first_time      : 0};
@@ -43,8 +44,13 @@ bitwallet_controllers.controller('AccountCtrl', function($translate, T, BitShare
       name_timeout = undefined;
     }
     name_timeout = $timeout(function () {
-      $scope.data.watch_name = newValue;
+      $scope.data.watch_name  = newValue;
+      $scope.data.hash_name   = $scope.gravatarMD5(newValue);
+      //jdenticon($scope.data.hash_name);
       $timeout(function () {
+        console.log(' -- jdenticon fired!');
+        jdenticon();
+        console.log(' -- jdenticon finished!');
         $scope.data.can_update = true;
       }, 500);
     }, 500);

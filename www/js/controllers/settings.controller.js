@@ -2,7 +2,7 @@ bitwallet_controllers.controller('SettingsCtrl', function($scope, Wallet, Settin
   
   $scope.data = { assets            : []
                 , selected_asset    : {}
-                , hide_balance      : $scope.wallet.ui.balance.allow_hide
+                , hide_balance      : false //$scope.wallet.ui.balance.allow_hide
                 , addy              : '' 
     };
   
@@ -15,9 +15,9 @@ bitwallet_controllers.controller('SettingsCtrl', function($scope, Wallet, Settin
       if(wallet.asset.id == asset.id)
         $scope.data.selected_asset = $scope.data.assets[$scope.data.assets.length-1];
     });
-    $scope.data.hide_balance = $scope.wallet.ui.balance.allow_hide;
+    //$scope.data.hide_balance = $scope.wallet.ui.balance.allow_hide;
     console.log('$scope.data.hide_balance:'+$scope.data.hide_balance);
-    $scope.data.addy = Wallet.getMainAddress().address;
+    //$scope.data.addy = Wallet.getMainAddress().address;
   }
 
   // On asset change reload wallet asset.
