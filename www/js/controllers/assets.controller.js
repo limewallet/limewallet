@@ -18,15 +18,15 @@ bitwallet_controllers
   }
 
   $scope.loadData = function(){
-    // Balance.add({asset_id:27, amount:12, address:'my_little_fucking_addy'}).then(function(){
-    //   Balance.add({asset_id:28, amount:1200, address:'my_little_fucking_addy'}).then(function(){
+    //Balance.add({asset_id:27, amount:12, address:'my_little_fucking_addy'}).then(function(){
+      //Balance.add({asset_id:28, amount:12, address:'my_little_fucking_addy'}).then(function(){
         Balance.all().then(function(res){
           $scope.data.balances = res;
         }, function(err){
 
         });  
-    //   })
-    // })
+      //})
+    //})
     
   }
   

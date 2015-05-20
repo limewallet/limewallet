@@ -1,26 +1,26 @@
-<ion-view class="dark" title="{{'menu.account'|translate}}">
-    <ion-nav-title>
-    </ion-nav-title>
-    <ion-nav-buttons side="left">
-      <button ng-cloak ng-show="data.first_time==0" ng-click="goHome()" class="button button-icon icon ion-ios-arrow-back"></button>
+<ion-view title="{{'menu.account'|translate}}" hide-nav-bar="true" class="base-color_bg">
+    
+    <!-- ion-nav-buttons side="left">
+      <button ng-cloak ng-show="data.first_time==0" ng-click="goHome()" class="button button-icon icon ion-ios-arrow-back base-color"></button>
     </ion-nav-buttons>
     <ion-nav-buttons side="right" >
       <a ng-cloak ng-show="data.first_time==1" class="button icon-right button-clear" ng-click="goHome()">{{'g.later'|translate|uppercase}}</a>
-    </ion-nav-buttons>
+    </ion-nav-buttons -->
     
-    <ion-content class="has-header register" has-bouncing="false" scroll="false" overflow-scroll="false">
-        <ion-scroll zooming="false" direction="y" class="register_details margin-bottom-buttonNOT">
-          <div class="energized_bg register_container">
-            <h4 class="register_color"><b ng-show="wallet.account.registered!=0">{{wallet.account.name}} </b>{{(wallet.account.registered!=0)?('register.edit_account'|translate ):('register.create_account'|translate)}}</h4>
+    <ion-content class="vertical_align" has-bouncing="false" scroll="false" overflow-scroll="false">
+      <div class="register" style="align-self: flex-start;width: 100%;height:auto!important;">
+        <!-- ion-scroll zooming="false" direction="y" class="register_details margin-bottom-buttonNOT" -->
+            <h2 class="register_color"><b ng-show="wallet.account.registered!=0">{{wallet.account.name}} </b>{{(wallet.account.registered!=0)?('register.edit_account'|translate ):('register.create_account'|translate)}}</h2>
           
-          </div>
-          <div class="register_container energized_bg register_color">
+          <!-- div class="register_container energized_bg register_color">
             <p ng-show="wallet.account.registered!=1" ng-bind-html="'account.type_name'|translate">
             </p>
             <p ng-show="wallet.account.registered==1" ng-bind-html="'account.edit_photo'|translate">
             </p>
-          </div>
-          <div class="list settings">
+          </div -->
+
+
+          <div class="list settings" style="display:none;">
             <label class="item item-input item-floating-label" ng-show="wallet.account.registered==0">
               <span class="input-label">{{'g.name'|translate}}</span>
               <input type="text" placeholder="{{'g.name'|translate}}" ng-model="data.name" ng-disabled="wallet.account.registered!=0">
@@ -50,11 +50,29 @@
               <input type="email" placeholder="{{'settings.gravatar_email'|translate}}" ng-model="data.gravatar_mail" ng-disabled="!data.use_gravatar">
             </label>
           </div>
-        </ion-scroll>
+        <!-- /ion-scroll -->
       
-        <button ng-disabled="!data.can_update" ng-click="updateOrRegisterAccount()" class="button button-block button-energized no-margin hide-on-keyboard-open button_taller dock_bottom">
-          {{(wallet.account.registered!=0)?('g.update'|translate|uppercase):('g.register'|translate|uppercase)}}
-        </button>
+        <div class="seed_container">
+          <form novalidate name="encryptionForm" class="encryption_form">
+            <label class="item item-input pmd">
+              <input type="text" placeholder="{{'g.name'|translate}}" ng-model="data.name" class="pmd big big_placeholder">
+              <br/>
+            </label>
+            <div class="column">
+              <div class="row" ng-show="data.error!=''">
+                <span class="assertive bold" style="width:100%;">{{data.error}}</span>
+              </div>
+            </div>
+             <div class="item item-image">
+              <img src="https://robohash.org/pepe" style="width:200px;height:auto;">
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="hide-on-keyboard-open" style="align-self: flex-end;width: 100%;">   
+        <a ng-disabled="!data.can_update" ng-click="updateOrRegisterAccount()" class="button button-block button_taller button-outline base-color lime_border lime_bg">{{(wallet.account.registered!=0)?('g.update'|translate|uppercase):('g.register'|translate|uppercase)}}</a>
+      </div>
+      
     </ion-content>
   </ion-view>
   

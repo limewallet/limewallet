@@ -949,7 +949,7 @@ fieldset {
   border: none!important;
 }
 
-.successful, .welcome, .create_account, .create_account_passsword {
+.register, .successful, .welcome, .create_account, .create_account_passsword {
     position:relative; padding-top:88px;padding-left:55px;color:#fff;padding-right:44px;
     height:100%!important;}
 .successful h2 {color:#fff;}
@@ -963,7 +963,7 @@ fieldset {
 .successful p.white {color:#ECF0F1;}
 .successful p.bigger {color:#2C3E50;font-size: 16px;}
 
-.welcome .bottom_bar, .create_account .bottom_bar, .create_account_passsword .bottom_bar{
+.welcome .bottom_bar, .create_account .bottom_bar, .create_account_passsword .bottom_bar, .register .bottom_bar{
   position: absolute;
   bottom: 44px;
   width: 100%;
@@ -1123,3 +1123,12 @@ input.pmd {font-size:16px!important;  color:#fff;border-top:none; border-left:no
 .action_container .one_of_two_buttons .button{border-top:1px solid #b2b2b2!important;font-size:26px;}
 
 .balances .item {}
+.vertical_align{
+  display: -webkit-flex; /* Safari */
+  -webkit-flex-flow: row wrap; /* Safari 6.1+ */
+  /*-webkit-align-content: space-around;*/ /* Safari 7.0+ */
+  display: flex;
+  flex-flow: row wrap;
+  /*align-content: space-around;*/
+  height:100%;
+}
