@@ -1,9 +1,9 @@
 bitwallet_controllers
 .controller('HomeCtrl', function(T, Wallet, Scanner, $ionicActionSheet, $scope, $state, $http, $ionicModal, $rootScope, $ionicPopup, $timeout, $location, BitShares, $q, $ionicLoading) {
 
-  $timeout(function () {
-    $rootScope.goTo('app.settings');
-  }, 2000); 
+  // $timeout(function () {
+  //   $rootScope.goTo('app.settings');
+  // }, 2000); 
   
 
   // For testing purposes, remove on prod.
@@ -57,7 +57,7 @@ bitwallet_controllers
 
   $scope.showLoading = function(text){
     $ionicLoading.show({
-      template     : '<i class="icon ion-looping"></i> ' + text,
+      template     : '<ion-spinner icon="android"></ion-spinner> ' + text,
       animation    : 'fade-in',
       showBackdrop : true,
       maxWidth     : 200,

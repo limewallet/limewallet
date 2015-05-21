@@ -317,6 +317,11 @@ bitwallet_services
       var deferred = $q.defer();
       DB.query('SELECT * FROM account where active != 0 limit 1', [])
       .then(function(result){
+          
+          // test tuti init wallet
+          // deferred.resolve(undefined);
+          // return
+
           var account = DB.fetch(result);
           
           //TODO: BORRAR!!

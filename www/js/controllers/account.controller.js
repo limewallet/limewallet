@@ -117,7 +117,7 @@ bitwallet_controllers.controller('AccountCtrl', function($translate, T, BitShare
     
   $scope.showLoading = function(){
     $ionicLoading.show({
-      template     : '<i class="icon ion-looping"></i> ' + T.i($scope.wallet.account.registered==0?'g.registering':'g.updating'),
+      template     : '<ion-spinner icon="android"></ion-spinner> ' + T.i($scope.wallet.account.registered==0?'g.registering':'g.updating'),
       animation    : 'fade-in',
       showBackdrop : true,
       maxWidth     : 200,
@@ -328,6 +328,10 @@ bitwallet_controllers.controller('AccountCtrl', function($translate, T, BitShare
       }
     )
     return deferred.promise;
+  }
+
+  $scope.skip = function(){
+    $scope.goTo('app.home');
   }
 });
 

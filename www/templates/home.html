@@ -42,7 +42,7 @@
     <div ng-show="!wallet.transactions.length" class="index_transactions">
       <div class="display_table no_transactions"> 
         <span ng-show="refresh_status==0" class="display_table_cell vmiddle" style="text-align:center;">{{'home.no_txs' | translate}}</span>
-        <span ng-show="refresh_status==1" class="display_table_cell vmiddle" style="text-align:center;"><i class="icon ion-looping"></i></span>
+        <span ng-show="refresh_status==1" class="display_table_cell vmiddle" style="text-align:center;"><ion-spinner icon="android"></ion-spinner><!--i class="icon ion-looping"></i--></span>
         <span ng-show="refresh_status==-1" class="display_table_cell vmiddle" style="text-align:center;"><a ng-click="doRefresh()">{{'home.tap_to_refresh'|translate}}</a></i></span>
       </div>
     </div> 

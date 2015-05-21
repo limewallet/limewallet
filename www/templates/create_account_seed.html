@@ -1,23 +1,23 @@
-<ion-view hide-nav-bar="true" title="{{'g.create_account'|translate}}">
-    <ion-content has-bouncing="false" class="create_account_bg">
+<ion-view hide-nav-bar="true" title="{{'g.create_wallet'|translate}}">
+    <ion-content has-bouncing="false" class="create_account_bg ">
       <div class="create_account">
-        <h3 class="lime">{{'g.create_account'|translate}}</h3>
-        <br/>
-        <p>{{'create_account.type_seed'|translate}}</p>
-        <div class="seed_container">
-          <textarea ng-model="data.retype_seed" style="padding:10px;" name="" id="" cols="27" rows="10"></textarea>  
-        </div>
-        <div class="column">
-          <div class="row" ng-show="data.error!=''">
-            <span class="assertive bold" style="font-size:18px;width:100%;">{{data.error}}</span>
+        <div class="create_account_content">
+          <h3 class="lime">{{'g.create_wallet'|translate}}</h3>
+          <br/>
+          <p>{{'create_account.type_seed'|translate}}</p>
+          <div class="seed_input_container">
+            <textarea ng-model="data.retype_seed" class="pmd" name="" id="" cols="30" rows="10"></textarea>  
+          </div>
+          <div class="column">
+            <div class="row" ng-show="data.error!=''">
+              <span class="assertive error">{{data.error}}</span>
+            </div>
           </div>
         </div>
-        <div class="bottom_bar hide-on-keyboard-open"> 
+        <div class="buttons_container hide-on-keyboard-open"> 
           <a ng-click="next()" class="float_right button button-outline lime lime_border">{{'g.next'|translate}}</a>
-        </div>  
+        </div>
       </div>
-
-      
     </ion-content>
   </ion-view>
   

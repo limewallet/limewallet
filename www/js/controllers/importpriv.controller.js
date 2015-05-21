@@ -6,7 +6,7 @@ bitwallet_controllers
   $scope.imported_pk  = [];
 
   $ionicLoading.show({
-    template      : '<i class="icon ion-looping"></i> ' + T.i('import_priv.loading_balance'),
+    template      : '<ion-spinner icon="android"></ion-spinner> ' + T.i('import_priv.loading_balance'),
     animation    : 'fade-in',
     showBackdrop : true,
     maxWidth     : 200

@@ -632,6 +632,17 @@ img.i_centered {margin-left: auto;
 /* *************** */
 /* REGISTER ********/
 /* *************** */
+.register {
+    align-self: flex-start;
+    width: 100%;
+    height:auto!important;
+    position:relative; 
+    color: #c0c0c0;
+    padding-top:88px!important;
+    /*padding-left:55px;
+    padding-right:44px;*/
+  }
+.register p{padding-top:20px;font-size:14px;}  
 .register .list.settings{margin-bottom:47px!important;}
 .register_container {
   padding: 10px 10px 10px 0px;
@@ -639,6 +650,8 @@ img.i_centered {margin-left: auto;
 .register_container h4{ padding-left:16px}
 .register_container p{ padding-left:16px}
 .register_container, .register_color{color:#fff!important;}
+.register .buttons_container {align-self: flex-end;width: 100%;}
+
 .no-margin {margin:0!important;}
 /*.register .list.settings {margin-bottom:67px!important;}*/
 /******************/
@@ -963,9 +976,40 @@ fieldset {
   border: none!important;
 }
 
-.register, .successful, .welcome, .create_account, .create_account_passsword {
-    position:relative; padding-top:88px;padding-left:55px;color:#fff;padding-right:44px;
+.welcome, .create_account, .register{
+    display: -webkit-flex; /* Safari */
+    -webkit-flex-flow: row wrap; /* Safari 6.1+ */
+    display: flex;
+    flex-flow: row wrap;
+    padding-left:33px!important;padding-right:33px!important;
+}
+.welcome, .create_account{
+    align-content: stretch;
+    height:100%;
+    -webkit-align-content: stretch; /* Safari 7.0+ */
+}
+.create_account                         { padding-top: 88px; width: 100%; color:#c0c0c0;}
+.create_account .create_account_content { display:block;width:100%;}
+
+.welcome .logo_container      { padding-top: 88px;
+                                /* padding-left: 44px; */
+                                color: #fff;
+                                /* padding-right: 44px; */
+                                text-align: center;
+                                width: 100%;}
+.welcome .logo_container img  { margin:0 auto;}
+.welcome .buttons_container, .create_account .buttons_container   { align-self:flex-end;width:100%;padding-bottom: 88px;}
+.create_account .buttons_container {padding-bottom: 33px!important;}
+button.centered_autow {width:auto!important;margin:0 auto;}
+.welcome .buttons_container a{text-transform: uppercase!important;}
+.successful {  /*.register, */
+    position:relative; 
+    padding-top:88px;
+    padding-left:55px;
+    color:#fff;
+    padding-right:44px;
     height:100%!important;}
+
 .successful h2 {color:#fff;}
 .successful a {width: 46px;
       height: 46px;
@@ -977,38 +1021,34 @@ fieldset {
 .successful p.white {color:#ECF0F1;}
 .successful p.bigger {color:#2C3E50;font-size: 16px;}
 
-.welcome .bottom_bar, .create_account .bottom_bar, .create_account_passsword .bottom_bar, .register .bottom_bar{
-  position: absolute;
-  bottom: 44px;
-  width: 100%;
-  padding-right: 88px;
-  text-align: center;
-  margin-left: -8px;
+.create_account_passsword .buttons_container {text-align:center;}
+.create_account_passsword .list_password .item.pmd.margin15 {margin-top:15px!important;}
+
+.balance_container_full, .register, .welcome, .welcome_bg, .create_account, .create_account_bg, .register_bg {
+  background: -moz-linear-gradient(123deg, rgba(26,66,84,1) 0%, rgba(26,67,86,1) 100%); /* ff3.6+ */
+  background: -webkit-gradient(linear, left top, right bottom, color-stop(0%, rgba(26,67,86,1)), color-stop(100%, rgba(26,66,84,1))); /* safari4+,chrome */
+  background: -webkit-linear-gradient(123deg, rgba(26,66,84,1) 0%, rgba(26,67,86,1) 100%); /* safari5.1+,chrome10+ */
+  background: -o-linear-gradient(123deg, rgba(26,66,84,1) 0%, rgba(26,67,86,1) 100%); /* opera 11.10+ */
+  background: -ms-linear-gradient(123deg, rgba(26,66,84,1) 0%, rgba(26,67,86,1) 100%); /* ie10+ */
+  background: linear-gradient(327deg, rgba(26,66,84,1) 0%, rgba(26,67,86,1) 100%); /* w3c */
 }
-.welcome .bottom_bar {padding-right:66px!important;margin-left: 0px!important;}
-.welcome{
-  padding-left:33px!important;padding-right:33px!important;
-}
 
-.create_account_passsword .bottom_bar
-{text-align:center;}
-
-.balance_container_full, .welcome, .welcome_bg, .create_account, .create_account_bg {background: -moz-linear-gradient(123deg, rgba(26,66,84,1) 0%, rgba(26,67,86,1) 100%); /* ff3.6+ */
-background: -webkit-gradient(linear, left top, right bottom, color-stop(0%, rgba(26,67,86,1)), color-stop(100%, rgba(26,66,84,1))); /* safari4+,chrome */
-background: -webkit-linear-gradient(123deg, rgba(26,66,84,1) 0%, rgba(26,67,86,1) 100%); /* safari5.1+,chrome10+ */
-background: -o-linear-gradient(123deg, rgba(26,66,84,1) 0%, rgba(26,67,86,1) 100%); /* opera 11.10+ */
-background: -ms-linear-gradient(123deg, rgba(26,66,84,1) 0%, rgba(26,67,86,1) 100%); /* ie10+ */
-background: linear-gradient(327deg, rgba(26,66,84,1) 0%, rgba(26,67,86,1) 100%); /* w3c */}
-
-.welcome a, .create_account a, .create_account_seed a, .create_account_password a  { 
+.create_account a, .create_account_seed a, .create_account_password a  { 
   font-size:13px; border-radius: 4px; text-transform:uppercase; max-height:47px;
   width: auto;display: block; min-width:100px;
 }
 
 a.w_126 {min-width:126px!important;}
 a.w_145 {min-width:145px!important;}
-.seed_container {margin:25px 0 25px 0;font-weight: bold; /*font-size:18px;*/}
+.seed_container {
+  width:100%;
+  margin:25px 0 25px 0;
+  /*padding:25px;*/
+  font-weight: bold; 
+  /*font-size:18px;*/
+}
 .seed_container p{font-size:18px;}
+.register .seed_container {margin:0px 0 25px 0!important;}
 
 a.button.lime_border.activated{background-color:#d3eb00!important; color:rgba(26,66,84,1)!important;}
 
@@ -1030,6 +1070,18 @@ input.pmd {font-size:16px!important;  color:#fff;border-top:none; border-left:no
 
 .seed_container input.pmd {font-size:16px!important;  color:#fff;border-top:none; border-left:none; border-right:none; border-bottom: 1px solid #d8d8d8 !important; background-color:transparent!important;}
 .seed_container input.pmd:focus {border-bottom: 1px solid #d3eb00 !important;color:#d3eb00 !important;}
+
+.seed_input_container {margin:25px 0 25px 0;}
+.seed_input_container textarea.pmd {font-size:16px!important;  color:#fff;
+      /*border-top:none; border-left:none; border-right:none; border-bottom:*/
+      border:1px solid #d8d8d8 !important; 
+      background-color:transparent!important;
+      padding:10px;}
+.seed_input_container textarea.pmd:focus {
+      /*border-bottom:*/ border:; 1px solid #d3eb00 !important;
+      color:#d3eb00 !important;}
+.seed_input_container span.error {font-size:14px;width:100%;text-align:right;}
+.seed_container span.error {font-size:14px;width:100%;text-align:right;}
 
 .send_form {padding-top: 10px;}
 .send_form .item-input-inset{padding:0px 8px 0px 0px!important}
@@ -1149,6 +1201,11 @@ input.pmd {font-size:16px!important;  color:#fff;border-top:none; border-left:no
   height:100%;
 }
 
+.bar_title_button {font-size: 17px!important;}
+.register .bar_title_button{
+    position: absolute;
+    right: 10px;
+    top: 10px;}
 .bar .title {font-size: 17px!important;}
 .bar .button.button-icon .icon:before, .bar .button.button-icon:before, .bar .button.button-icon.icon-left:before, .bar .button.button-icon.icon-right:before {
   font-size: 26px!important;}

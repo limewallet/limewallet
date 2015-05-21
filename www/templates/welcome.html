@@ -1,14 +1,16 @@
 <ion-view hide-nav-bar="true" title="{{'g.welcome'|translate}}">
     <ion-content has-bouncing="false" class="welcome_bg">
       <div class="welcome">
-        <!--h3 class="lime">Welcome to</h3-->
-        <br/><br/>
-        <img src="img/lime+logo.png" alt="" style="margin:0 auto;">
         
-        <!-- div style="position:absolute;bottom:132px;width:auto;margin:0 auto;" -->   
-        <div class="bottom_bar">   
-          <a ng-click="createWallet()" class="w_126 base-color float_left button lime_bg lime_border" ng-bind-html="'g.create_wallet_html'|translate"></a>
-          <a ng-click="recoverWallet()" class="w_145 float_right button energized_bg lime lime_border" ng-bind-html="'g.recover_wallet_html'|translate"></a>
+        <div class="logo_container">
+          <img src="img/lime+logo.png" alt="">
+        </div>
+        
+        <div class="buttons_container">   
+
+          <a ng-click="createWallet()" class="button-block dark_blue button lime_bg lime_border ng-binding" ng-bind-html="'g.create_wallet_html'|translate"></a>
+          <a ng-click="recoverWallet()" class="button-block button energized_bg lime lime_border ng-binding" ng-bind-html="'g.recover_wallet_html'|translate"></a>
+
         </div>  
       </div>
 

@@ -1,9 +1,24 @@
 bitwallet_controllers
-.controller('CreateAccountPwdCtrl', function(Account, Setting, BitShares, $q, $scope, $rootScope, $ionicNavBarDelegate, $stateParams, T, DB){
+.controller('CreateAccountPwdCtrl', function(Account, Setting, BitShares, $q, $scope, $rootScope, $ionicNavBarDelegate, $stateParams, T, DB, $ionicLoading, Wallet){
   
   $scope.data = { password:         '',
                   retype_password:  ''};
   
+  $scope.showLoading = function(){
+    $ionicLoading.show({
+      template     : '<ion-spinner icon="android"></ion-spinner> ' + T.i('g.creating_wallet'), 
+      //template     : '<i class="icon ion-looping"></i> ' + T.i('g.loading'), creating_wallet
+      animation    : 'fade-in',
+      showBackdrop : true,
+      maxWidth     : 300,
+      showDelay    : 10
+    }); 
+  }
+
+  $scope.hideLoading = function(){
+    $ionicLoading.hide();
+  }
+
   $scope.encrypt = function(plainData, password) {
 
     var deferred = $q.defer();
@@ -102,6 +117,7 @@ bitwallet_controllers
     }
 
     //Mostrar loading
+    $scope.showLoading();
 
     $scope.addNewAccount($scope.init.seed, $scope.data.password).then(function(accountInfo){
 
@@ -121,22 +137,24 @@ bitwallet_controllers
           transaction.executeSql(seed_cmd.sql, seed_cmd.params);
           transaction.executeSql(mpk_cmd.sql, mpk_cmd.params);
 
+
+          $scope.hideLoading();
+          Wallet.init();
+          window.plugins.toast.show( T.i('g.wallet_created'), 'long', 'bottom');
+          $scope.goTo('app.account');
         }, function(err) {
           console.log('EGRRA:' +err);
+          $scope.hideLoading();
         });
-
-        // DB.query(sql, params).then(function(res){
-        //     console.log('ORKOTT!!');
-        // }, function(err){
-        //   console.log(JSON.stringify(err));
-        // });
 
       }, function(err){
         console.log(JSON.stringify(err));
+        $scope.hideLoading();
       });
 
     }, function(err){
       console.log(JSON.stringify(err));
+      $scope.hideLoading();
     });
 
     //$scope.goHome();

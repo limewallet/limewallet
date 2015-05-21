@@ -14,7 +14,9 @@
     "welcome"                       : "Welcome",
     "create_wallet_html"            : "Create&nbsp;wallet",
     "recover_wallet_html"           : "Recover&nbsp;wallet",
-    "create_account"                : "Create Wallet",
+    "create_wallet"                 : "Create Wallet",
+    "creating_wallet"               : "Create Wallet",
+    "wallet_created"                : "Wallet created successfully!",
     "wait_for_notifications"        : "Please wait for notifications at home screen!",  
     "sure_cancel_operation"         : "Cancel operation",
     "sure_cancel_operation_msg"     :"Are you sure you want to cancel the operation?",
@@ -299,10 +301,12 @@
   },
   
   "register":{
-    "create_account"          : "Account registration",
-    "edit_account"            : "photo edition",
+    "create_account"          : "Register account globally",
+    "edit_account"            : "Edit account avatar",
     "account_updated"         : "Account updated successfully!",
-    "account_registered"      : "Account registered successfully!"
+    "account_registered"      : "Account registered successfully!",
+    "type_account_name"       : "Please type a name for your account",
+    "valid_name_chars"        : "Name must contain lowercase alphanumeric characters and dashes, must start with a letter and cannot end with a dash."
   },
   
   "deposit":{

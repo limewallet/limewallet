@@ -5,7 +5,7 @@ bitwallet_controllers
 
   $scope.showLoading = function(){
     $ionicLoading.show({
-      template     : '<i class="icon ion-looping"></i> ' + T.i('g.loading'),
+      template     : '<ion-spinner icon="android"></ion-spinner> ' + T.i('g.loading'),
       animation    : 'fade-in',
       showBackdrop : true,
       maxWidth     : 200,
