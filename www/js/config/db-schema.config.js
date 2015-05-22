@@ -15,7 +15,7 @@ bitwallet_config
                 { name : 'number',            type  : 'integer unique'},
                 { name : 'account_mpk',       type  : 'text'},
                 { name : 'memo_mpk',          type  : 'text'},
-                { name : 'memo_index',        type  : 'text'},
+                { name : 'memo_index',        type  : 'integer default 0'},
                 { name : 'encrypted',         type  : 'integer'},
 
                 { name : 'active',            type  : 'integer default 1'},
@@ -36,9 +36,10 @@ bitwallet_config
         {
             name: 'contact',
             columns: [
-                { name : 'id',                type  : 'text primary key'},
-                { name : 'name',              type  : 'text unique'}, 
-                { name : 'address',           type  : 'text unique'},
+                { name : 'id',                type  : 'integer primary key'},
+                { name : 'name',              type  : 'text unique not null'}, 
+                { name : 'is_pubkey',         type  : 'integer not null'},      
+                { name : 'address_or_pubkey', type  : 'text unique not null'},
                 { name : 'public_data',       type  : 'text'},
                 { name : 'source',            type  : 'text'},
                 { name : 'created_at',        type  : 'datetime default CURRENT_TIMESTAMP'}

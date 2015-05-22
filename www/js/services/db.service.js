@@ -197,10 +197,17 @@ bitwallet_services
         });
     };
 
-    self._add = function(id, name, address, public_data, source) {
-      var sql    = 'INSERT or REPLACE into contact (id, name, address, public_data, source) values (?,?,?,?,?)';
-      var params = [id, name, address, public_data, source];
+    self._add = function(id, name, address_or_pubkey, public_data, source) {
+      var sql    = 'INSERT or REPLACE into contact (id, name, address_or_pubkey, public_data, source) values (?,?,?,?,?)';
+      var params = [id, name, address_or_pubkey, public_data, source];
       return {sql:sql, params:params};
+    }
+
+    self.startsWith = function(prefix) {
+        return DB.query('SELECT * FROM contact where lower(name) like lower(?) order by name limit 5', [prefix+'%'])
+        .then(function(result){
+            return DB.fetchAll(result);
+        });
     }
 
     self.remove = function(id) {
@@ -328,7 +335,7 @@ bitwallet_services
           if( account !== undefined) {
             account.pubkey       = 'DVS6G3wqTYYt8Hpz9pFQiJYpxvUja8cEMNwWuP5wNoxr9NqhF8CLS';
             account.address      = 'DVSM5HFFtCbhuv3xPfRPauAeQ5GgW7y4UueL';
-            account.priv_account = '5HymcH7QHpzCZNZcKSbstrQc1Q5vcNjCLj9wBk5aqYZcHCR6SzN';
+            account.privkey      = '5HymcH7QHpzCZNZcKSbstrQc1Q5vcNjCLj9wBk5aqYZcHCR6SzN';
             account.access_key   = '7cMHdvnvhv8Q36c4Xf8HJQaibTi4kpANNaBQYhtzQ2M6';
             account.secret_key   = '7teitGUUbtaRJY6mnv3mB9d1VB3UggiBQf4kyiL2PaKB';
           }
@@ -347,8 +354,8 @@ bitwallet_services
     }
 
     self._create = function(obj) {
-      var sql    = 'INSERT into account (account_mpk, pubkey, address, number, privkey, memo_mpk, memo_index, encrypted) values (?,?,?,?,?,?,?,?)';
-      var params = [obj.account_mpk, obj.pubkey, obj.address, obj.number, obj.privkey, obj.memo_mpk, obj.memo_index, obj.encrypted];
+      var sql    = 'INSERT into account (account_mpk, pubkey, address, number, privkey, memo_mpk, encrypted) values (?,?,?,?,?,?,?)';
+      var params = [obj.account_mpk, obj.pubkey, obj.address, obj.number, obj.privkey, obj.memo_mpk, obj.encrypted];
 
       return {sql:sql, params:params};
     }

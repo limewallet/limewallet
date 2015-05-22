@@ -23,7 +23,7 @@
           <div class="recipient_container">
             <label class="item item-input pmd" ng-disabled="data.is_btc==true" ng-show="data.is_btc==false">
               <span class="input-label pmd">{{'send.recipient'|translate}}</span>
-              <ion-autocomplete item-view-value-key="name" name="transactionAddress" ng-model="transaction.address" items-method="callbackMethod(query)" items-method2="callbackMethod2(query)" class="big full_width pmd" placeholder_="{{'g.search_recipient'|translate}}" search-query-item-hint="{{'g.your_search'|translate}}" cancel-label="{{'g.cancel'|translate}}" local-label="{{'g.local_items_label'|translate}}" global-label="{{'g.global_items_label'|translate}}"></ion-autocomplete>
+              <ion-autocomplete item-view-value-key="name" name="transactionAddress" ng-model="transaction.destination" local-search="localSearch(query)" global-search="globalSearch(query)" is-selectable="isSelectable(query)" class="big full_width pmd" placeholder_="{{'g.search_recipient'|translate}}" search-query-item-hint="{{'g.tap_to_select'|translate}}" cancel-label="{{'g.cancel'|translate}}" local-label="{{'g.local_items_label'|translate}}" global-label="{{'g.global_items_label'|translate}}"></ion-autocomplete>
             </label>
             <button ng-click="clearAddress()" class="button button-icon icon ion-android-cancel">
             </button>
@@ -45,7 +45,7 @@
           
           <label class="item item-input pmd" ng-disabled="data.is_btc==false" ng-show="data.is_btc==true">
             <span class="input-label pmd">{{'send.recipient'|translate}}</span>
-            <input name="transactionAddress" ng-model="transaction.address" class="big full_width pmd" />
+            <input name="transactionAddress" ng-model="transaction.destination" class="big full_width pmd" />
           </label>
 
           

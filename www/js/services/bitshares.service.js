@@ -59,11 +59,6 @@ bitwallet_services
 
       var deferred = $q.defer();
 
-      if(!message) {
-        deferred.resolve();
-        return deferred.promise;
-      }
-
       self.isValidPubkey(destination).then(function(res) {
 
         self.derivePrivate(mpk, account_mpk, memo_mpk, memo_index).then(function(child) {
@@ -647,16 +642,17 @@ bitwallet_services
 
       var payload = JSON.stringify({
         "asset" : asset,
-        "from"  : from,
+        "from"  : [{
+            "address" : from
+        }],
         "to"    : [{
             "address" : to, 
-            "amount"  : amount
+            "amount"  : amount,
+            "memo"    : memo
         }]
       });
 
-      if ( memo !== undefined ) {
-        payload.to[0].memo = memo;
-      }
+      console.log(JSON.stringify(payload));
 
       return self.apiCall(undefined, url, payload);
     }

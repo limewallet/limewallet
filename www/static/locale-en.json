@@ -2,6 +2,7 @@
   "g" : {
     "global_items_label"            : "Global directory",
     "local_items_label"             : "Local address book",
+    "tap_to_select"                 : "Tap to select",
     "your_search"                   : "Your search",
     "search_recipient"              : "Enter recipient name or address...",
     "bitcoin_address"               : "Bitcoin<br/>address",

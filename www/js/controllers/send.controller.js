@@ -1,14 +1,29 @@
-bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T, BitShares, Scanner, $http, $ionicLoading, $ionicNavBarDelegate, $ionicModal, $ionicPopup, $location, $timeout, $rootScope, $stateParams, Wallet) {
+bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T, BitShares, Scanner, $http, $ionicLoading, $ionicNavBarDelegate, $ionicModal, $ionicPopup, $location, $timeout, $rootScope, $stateParams, Wallet, Contact) {
 
-  $scope.callbackMethod = function (query) {
-    return [  {id:'1', name:'recipient1', is_lime:true}, 
-              {id:'2', name:'recipient2', is_lime:true}];
+  $scope.isSelectable = function (query) {
+
+    var deferred = $q.defer();
+
+    BitShares.isValidPubkey(query).then(function(res) {
+      deferred.resolve(true);
+    }, function(err) {
+      BitShares.btsIsValidAddress(query).then(function(res) {
+        deferred.resolve(false);
+      }, function(err) {
+        deferred.reject();
+      });
+    });
+
+    return deferred.promise;
   }
 
-  $scope.callbackMethod2 = function (query) {
+  $scope.localSearch = function (query) {
+    return Contact.startsWith(query);
+  }
+
+  $scope.globalSearch = function (query) {
     return BitShares.searchAccount(query);
   }
-
 
   $scope.data = {is_btc:false};
   
@@ -76,7 +91,7 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
   }
   else{
     $scope.data.is_btc                = false;
-    $scope.transaction                = {message:'send.generating_transaction', amount:amount, address:address};
+    $scope.transaction                = {message:'send.generating_transaction', amount:amount, destination:address};
     sendForm.transactionAmount.value  = $scope.transaction.amount;
     sendForm.transactionAddress.value = $scope.transaction.address;
   }
@@ -124,23 +139,42 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
     });
   }
   
-  $scope.doSend = function(transaction) {
-    if($scope.data.is_btc==true)
-    {  
-      $scope.doSendBTC();
-      //console.log('doSendBTC()??');
-    }
-    else
-    {  
-      $scope.validateSend();
-    }
+  $scope.doSend = function(tx) {
+    $scope.formInProgress();
+
+    $scope.validateSend(tx).then(function(res) {
+      $scope.trySend(tx).then(function(res) {
+
+       $scope.formDone();
+
+      }, function(err) {
+
+       $ionicPopup.alert({
+         title    : 'Error',
+         template : err,
+         okType   : 'button-assertive', 
+       });
+
+       $scope.formDone();
+      });
+
+    }, function(err) {
+
+       $ionicPopup.alert({
+         title    : 'Error',
+         template : err,
+         okType   : 'button-assertive', 
+       });
+
+       $scope.formDone();
+    });
   }
 
-  $scope.sendError = function(err) {
+  $scope.sendError = function(err_msg) {
 
     $ionicPopup.alert({
       title    : 'Error',
-      template : err.msg,
+      template : err_msg,
       okType   : 'button-assertive', 
     });
 
@@ -148,40 +182,134 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
   }
 
 
-  $scope.validateSend = function(transaction) {
+  $scope.computeMemo = function(tx) {
+    var deferred = $q.defer();
 
-    Wallet.data.account.memo_index =  0;
+    if ( !tx.destination.is_pubkey ) {
+      console.log('No es para un pubkey, no hacemos memor');
+      deferred.resolve();
+      return deferred.promise;
+    }
 
     BitShares.computeMemo(
       Wallet.data.account.pubkey,
-      'Hola como va',
-      'DVS8cozCxTkFrGCdTqVTci4R3iDiXj1ucAHCWUKuFmmv7gSWgQAfE',
+      tx.memo.trim(),
+      tx.destination.address_or_pubkey,
       Wallet.data.mpk.mpk,
       Wallet.data.account.account_mpk,
       Wallet.data.account.memo_mpk,
       Wallet.data.account.memo_index
     ).then(function(res) {
       console.log('OK -> ' + JSON.stringify(res));
+      deferred.resolve(res);
     }, function(err) {
       console.log('ERR ->' + JSON.stringify(err));
+      deferred.reject();
     });
 
-    //$scope.formInProgress();
+    return deferred.promise;
+  }
 
-    //$scope.computeMemo
+  $scope.promptSend = function(asset, tx) {
 
-    //BitShares.new_(
-      //Wallet.account.pubkey,
-      //$scope.transaction.address,
-      //$scope.transaction.amount,
-      //'bit' + Wallet.asset.symbol,
-      //memo       
-    //).then(function(res) {
+    var symbol =  '<i class="'+asset.symbol_ui_class+'">'+asset.symbol_ui_text+'</i>';
+    return $ionicPopup.confirm({
+      title    : T.i('send.payment_confirm'),
+      template : T.i('send.are_you_sure', { 
+        symbol     : symbol,
+        amount     : tx.amount,
+        address    : tx.destination.name
+      })
+    });
 
-    //}, function(err) {
-      //$scope.sendError(err);
-    //});
+  }
 
+  $scope.signAll = function(to_sign, addys) {
+    var proms = [];
+    
+    addys.forEach(function(addy) {
+      //TODO: change privkey when sending from multiples accounts
+      proms.push(BitShares.compactSignatureForHash(to_sign, Wallet.data.account.privkey)) 
+    });
+    return $q.all(proms);
+  }
+
+
+  $scope.validateSend = function(tx) {
+    var deferred = $q.defer();
+
+    // Validate amount > 0
+    var amount = parseInt(parseFloat(tx.amount)*Wallet.data.asset.precision);
+    if ( isNaN(amount) || amount <= 0 ) {
+      deferred.reject('invalid_amount');
+    // Validate enough funds
+    } else if ( Wallet.canSend(amount) < 0 ) {
+      deferred.reject('no_funds');
+    // Validate destination
+    } else if ( tx.destination.is_pubkey === undefined ) {
+      deferred.reject('no_destination');
+    } else {
+      deferred.resolve();
+    }
+
+    return deferred.promise;
+  }
+
+  $scope.trySend = function(tx) {
+    var deferred = $q.defer();
+
+    tx.memo = tx.memo || '';
+
+    $scope.computeMemo(tx).then(function(memo) {
+
+      //console.log('------MEMO');
+      //console.log(JSON.stringify(memo));
+      BitShares.new_(Wallet.data.account.address, tx.destination.address_or_pubkey, tx.amount*Wallet.data.asset.precision, Wallet.data.asset.name, memo).then(function(new_tx) {
+
+        $scope.promptSend(Wallet.data.asset, tx).then(function(accept) {
+
+          if (!accept) {
+            deferred.reject();
+            return; 
+          }
+
+          $scope.signAll(new_tx.to_sign, new_tx.required_signatures).then( function(signatures) {
+            new_tx.tx.signatures = signatures;
+
+            console.log('---NEW TX');
+            console.log(JSON.stringify(new_tx));
+
+            BitShares.sendAsset(new_tx.tx, new_tx.secret).then(function(res) {
+
+            }, function(err) {
+              console.log(JSON.stringify(err));
+              deferred.reject(err);
+            });
+
+          }, function(err) {
+            console.log(JSON.stringify(err));
+            deferred.reject(err);
+          });
+
+          //BitShares.sendAsset(tx, secret);
+
+        });
+
+        //console.log(JSON.stringify(res));
+
+        //Prompt
+
+      }, function(err) {
+        console.log(JSON.stringify(err));
+        deferred.reject(err);
+      });
+
+    }, function(err) {
+      console.log(JSON.stringify(err));
+      deferred.reject(err);
+    });
+
+    return deferred.promise;
   }
   
   $scope.validateSendOld = function(transaction) {

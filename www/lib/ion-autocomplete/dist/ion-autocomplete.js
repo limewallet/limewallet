@@ -19,10 +19,11 @@ angular.module('ion-autocomplete', []).directive('ionAutocomplete', [
                 localLabel: '@',
                 globalLabel: '@',
                 templateUrl: '@',
-                itemsMethod: '&',
-                itemsMethod2: '&',
-                itemsMethodValueKey: '@',
-                itemsMethodValueKey2: '@',
+                isSelectable: '&',
+                localSearch: '&',
+                globalSearch: '&',
+                localValueKey: '@',
+                globalValueKey: '@',
                 itemValueKey: '@',
                 itemViewValueKey: '@',
                 multipleSelect: '@',
@@ -44,14 +45,16 @@ angular.module('ion-autocomplete', []).directive('ionAutocomplete', [
                 scope.templateUrl = !scope.templateUrl ? '' : scope.templateUrl;
 
                 // the items, selected items and the query for the list
-                scope.items = [];
-                scope.items2 = [];
-                scope.selectedItems = [];
-                scope.searchQuery = '';
-                scope.cerda_ = false;
+                scope.searchQuery     = '';
+                scope.enable_select   = false;
+                scope.local_contacts  = [];
+                scope.global_contacts = [];
+                scope.selectedItems   = [];
+                scope.show_loading    = false;
+                scope.selected_result = {};
 
                 scope.getSearchQueryItem = function(){
-                    return {id:0, name:scope.searchQuery, is_search_query:true};
+                  return scope.selected_result;
                 }
 
                 // returns the value of an item
@@ -104,35 +107,38 @@ angular.module('ion-autocomplete', []).directive('ionAutocomplete', [
                     // '{{getItemValue(item, itemViewValueKey)}}',
                     // '</ion-item>',
                     
-                    '<ion-item item-height="55" item-width="100%" class="search" ng-show="searchQuery.length>0" type="item-text-wrap" ng-click="selectItem(getSearchQueryItem())">',
+                    '<ion-item item-height="55" item-width="100%" class="search" ng-show="enable_select" type="item-text-wrap" ng-click="selectItem(getSearchQueryItem())">',
                     '{{searchQuery}}',
                     '<p ng-show="searchQueryItemHint.length>0">{{searchQueryItemHint}}</p>',
                     '</ion-item>',
                     
 
                     '<div class="collection-repeat-container">',
-                    '<ion-item type="item-text-wrap" class="item-divider item-icon-right" ng-show="items.length > 0">',
+                    '<ion-item type="item-text-wrap" class="item-divider item-icon-right" ng-show="local_contacts.length > 0">',
                     '{{localLabel}}',
                     '<i class="icon ion-ios-people"></i>',
                     '</ion-item>',
 
-                    '<ion-item ng-repeat="item in items" item-height="55" item-width="100%" class="local" type="item-text-wrap" ng-click="selectItem(item)">',
+                    '<ion-item ng-repeat="item in local_contacts" item-height="55" item-width="100%" class="local" type="item-text-wrap" ng-click="selectItem(item)">',
                     '{{getItemValue(item, itemViewValueKey)}}',
                     '</ion-item>',
                     '</div>',
 
                     '<div class="collection-repeat-container">',
-                    '<ion-item type="item-text-wrap" class="item-divider item-icon-right" ng-show="items2.length > 0">',
+                    '<ion-item type="item-text-wrap" class="item-divider item-icon-right" ng-show="global_contacts.length > 0 || global_error">',
                     '{{globalLabel}}',
                     '<i class="icon ion-earth""></i>',
                     '</ion-item>',
                     
-                    '<ion-item item-height="55" item-width="100%" ng-show="cerda_" type="item-text-wrap" >',
+                    '<ion-item item-height="55" item-width="100%" ng-show="show_loading" type="item-text-wrap" >',
                     '<ion-spinner icon="android"></ion-spinner>',
                     '</ion-item>',
 
+                    '<ion-item item-height="55" item-width="100%" ng-show="global_error" type="item-text-wrap" >',
+                    '<p> Error tap to retry </p>',
+                    '</ion-item>',
 
-                    '<ion-item ng-repeat="item in items2" item-height="55" item-width="100%" class="global" type="item-text-wrap" ng-click="selectItem(item)">',
+                    '<ion-item ng-repeat="item in global_contacts" item-height="55" item-width="100%" class="global" type="item-text-wrap" ng-click="selectItem(item)">',
                     //'{{item.name}}',
                     '{{getItemValue(item, itemViewValueKey)}}',
                     '</ion-item>',
@@ -221,40 +227,81 @@ angular.module('ion-autocomplete', []).directive('ionAutocomplete', [
                     // watcher on the search field model to update the list according to the input
                     compiledTemplate.scope.$watch('searchQuery', function (query) {
 
-                        // if the search query is empty, clear the items
-                        //if (query == '') {
-                            compiledTemplate.scope.items = [];
-                            compiledTemplate.scope.items2 = [];
-                        //}
+                        compiledTemplate.scope.enable_select   = false;
+                        compiledTemplate.scope.local_contacts  = [];
+                        compiledTemplate.scope.global_contacts = [];
 
-                        if (query && angular.isFunction(compiledTemplate.scope.itemsMethod)) {
+                        // Callback that determines if the input is an address or a pubkey
+                        if (query && angular.isFunction(compiledTemplate.scope.isSelectable)) {
 
-                            // convert the given function to a $q promise to support promises too
-                            var promise = $q.when(compiledTemplate.scope.itemsMethod({query: query}));
+                            var promise = $q.when(compiledTemplate.scope.isSelectable({query: query}));
+                            promise.then(function (is_pubkey) {
 
-                            promise.then(function (promiseData) {
-                                // set the items which are returned by the items method
-                                compiledTemplate.scope.items = compiledTemplate.scope.getItemValue(promiseData,
-                                    compiledTemplate.scope.itemsMethodValueKey);
+                              compiledTemplate.scope.enable_select   = true;
+                              compiledTemplate.scope.selected_result = {
+                                name              : compiledTemplate.scope.searchQuery,
+                                address_or_pubkey : compiledTemplate.scope.searchQuery,
+                                is_pubkey         : is_pubkey
+                              };
+
                             }, function (error) {
-                                // reject the error because we do not handle the error here
-                                return $q.reject(error);
+                              compiledTemplate.scope.enable_select   = false;
+                              compiledTemplate.scope.selected_result = {};
+                              return $q.reject(error);
                             });
                         }
 
-                        if (query && angular.isFunction(compiledTemplate.scope.itemsMethod2)) {
-                            scope.cerda_ = true;
+                        // Callback that searchs in global directory
+                        if (query && angular.isFunction(compiledTemplate.scope.globalSearch)) {
+                            scope.show_loading = true;
                             // convert the given function to a $q promise to support promises too
-                            var promise = $q.when(compiledTemplate.scope.itemsMethod2({query: query}));
+                            var promise = $q.when(compiledTemplate.scope.globalSearch({query: query}));
 
                             promise.then(function (promiseData) {
                                 // set the items which are returned by the items method
-                                compiledTemplate.scope.items2 = compiledTemplate.scope.getItemValue(promiseData,
-                                    compiledTemplate.scope.itemsMethodValueKey2);
-                                scope.cerda_ = false;
+                                var tmp = compiledTemplate.scope.getItemValue(promiseData, compiledTemplate.scope.globalValueKey);
+
+                                var global_contacts = [];
+                                tmp.forEach( function(contact) {
+                                  global_contacts.push({
+                                    name              : contact.name,
+                                    address_or_pubkey : contact.owner_key,
+                                    is_pubkey         : true
+                                  });
+                                });
+
+                                compiledTemplate.scope.global_contacts = global_contacts;
+                                scope.show_loading                     = false;
+
                             }, function (error) {
                                 // reject the error because we do not handle the error here
-                                scope.cerda_ = false;
+                                scope.show_loading = false;
+                                return $q.reject(error);
+                            });
+                        }
+                       
+                        // Callback that searchs in local directory
+                        if (query && angular.isFunction(compiledTemplate.scope.localSearch)) {
+                            // convert the given function to a $q promise to support promises too
+                            var promise = $q.when(compiledTemplate.scope.localSearch({query: query}));
+
+                            promise.then(function (promiseData) {
+                                // set the items which are returned by the items method
+                                var tmp = compiledTemplate.scope.getItemValue(promiseData, compiledTemplate.scope.localValueKey);
+
+                                var local_contacts = [];
+                                tmp.forEach( function(contact) {
+                                  local_contacts.push({
+                                    name              : contact.name,
+                                    address_or_pubkey : contact.address_or_pubkey,
+                                    is_pubkey         : contact.is_pubkey
+                                  });
+                                });
+
+                                compiledTemplate.scope.local_contacts = local_contacts;
+
+                            }, function (error) {
+                                // reject the error because we do not handle the error here
                                 return $q.reject(error);
                             });
                         }
@@ -297,7 +344,12 @@ angular.module('ion-autocomplete', []).directive('ionAutocomplete', [
                     // cancel handler for the cancel button which clears the search input field model and hides the
                     // search container and the ionic backdrop
                     compiledTemplate.element.find('button').bind('click', function (event) {
-                        compiledTemplate.scope.searchQuery = '';
+
+                        compiledTemplate.scope.searchQuery     = '';
+                        compiledTemplate.scope.enable_select   = false;
+                        compiledTemplate.scope.local_contacts  = [];
+                        compiledTemplate.scope.global_contacts = [];
+
                         $ionicBackdrop.release();
                         compiledTemplate.element.css('display', 'none');
                     });

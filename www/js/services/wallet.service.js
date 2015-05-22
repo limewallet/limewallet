@@ -71,6 +71,11 @@ bitwallet_services
         self.refreshBalance();
     };
 
+    self.canSend = function (amount) {
+      console.log('CANSEND: ' + self.data.asset.int_amount + ' - ' + amount );
+      return self.data.asset.int_amount - amount;
+    }
+
     self.onNotification = function (event) {
       //clearTimeout(self.timeout.ping);
       //self.timeout.ping = setTimeout( function() { self.ws.send('ping'); }, 10000);
@@ -165,6 +170,10 @@ bitwallet_services
       $q.all(proms).then(function(res) {
 
         self.data.account               = res.account;
+
+        console.log('DUMP DEFAULT ACCOUNT');
+        console.log(JSON.stringify(res.account));
+
         self.data.asset                 = self.data.assets[res.setting.default_asset];
         self.data.ui.balance.allow_hide = res.setting.allow_hide_balance;
         self.data.ui.balance.hidden     = res.setting.hide_balance;
@@ -295,11 +304,12 @@ bitwallet_services
 
       $q.all(proms).then(function(res) {
 
-        self.data.asset.amount = res.balance.amount/self.data.asset.precision;
+        self.data.asset.int_amount = res.balance.amount;
+        self.data.asset.amount     = res.balance.amount/self.data.asset.precision;
         
         proms = {};
         res.memo.forEach(function(m) {
-          proms[m.id] = BitShares.decryptMemo(m.one_time_key, m.memo, self.data.account.priv_account);
+          proms[m.id] = BitShares.decryptMemo(m.one_time_key, m.memo, self.data.account.privkey);
         });
  
         $q.all(proms).then(function(res) {
