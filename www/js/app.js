@@ -137,7 +137,7 @@ bitwallet_module
       }
     })
     
-    /*.state('app.register', {
+    .state('app.register', {
       cache:  false,
       url:    "/register",
       views: {
@@ -148,7 +148,6 @@ bitwallet_module
             }
       }
     })
-    */
     
     .state('app.account', {
       cache:  false,
@@ -323,11 +322,12 @@ bitwallet_module
         $rootScope.goTo('app.welcome');
         return;
       }
-
+      
       console.log(' -- -----------------  global_init response =>' + JSON.stringify(account));  
 
       Wallet.init().then(function() {
         $rootScope.goTo('app.home');
+        //$rootScope.goTo('app.account');
         Wallet.refreshBalance();
       }, function(err) {
 

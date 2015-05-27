@@ -116,6 +116,19 @@ bitwallet_services
       }
     }
 
+    self.getAccountAccessKeys = function() {
+      var keys = undefined;
+      
+      if (self.data.account.access_key !== undefined) {
+        keys = {
+          'akey' : self.data.account.access_key,
+          'skey' : self.data.account.secret_key
+        };
+      }
+
+      return keys;    
+    }
+    
     self.subscribeToNotifications = function() {
 
       var keys = undefined;

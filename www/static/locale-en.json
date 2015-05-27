@@ -85,6 +85,7 @@
     "updating"            : "Update in progress",
     "default"             : "Default",
     "asset"               : "Asset",
+    "done"                : "Done!",
     "register"            : "Register",
     "update"              : "Update",
     "later"               : "Later",
@@ -102,6 +103,8 @@
   },
 
   "err" : {
+    "no_active_account"         : "No active account",
+    "no_active_account_create"  : "There is no active account in your wallet. PLease create one.",
     "seed_copied"           : "Oops... Seed could not be copied!",
     "seed_equal_error"      : "Please retype seed.",
     "invalid_xtx_id"        : "Invalid transaction id",
@@ -130,10 +133,10 @@
     "quote_expired_retry" : "Please get a new quote.",
     "duplicate_key"       : "Are you restoring a wallet already registered? Remember name and master key are both unique in the network.<br/> If not, please try again.",
     "account_registration": "Account registration could not be completed. Please try again.",
-    "unavailable_name"    : "Chosen name unavailable",
+    "unavailable_name"    : "Chosen name is already taken.<br/> Please type another one.",
     "choose_another_name" : "Please type another name.",
-    "invalid_name"        : "Invalid name",
-    "enter_valid_name"    : "Please enter a valid name",
+    "invalid_name"        : "Invalid characters in name.",
+    "enter_valid_name"    : "Please enter a valid name.",
     "invalid_email"       : "Invalid email",
     "enter_valid_email"   : "Please enter a valid email",
     "valid_name_chars"    : "Name must contain lowercase alphanumeric characters and dashes, must start with a letter and cannot end with a dash.",
@@ -195,6 +198,7 @@
   },
 
   "menu" : {
+    "unregistered"   : "unregistered",
     "settings"       : "Settings",
     "home"           : "Home",
     "address_book"   : "Address Book",
@@ -302,10 +306,12 @@
   },
   
   "register":{
+    "type_new_name"           : "New name",
     "create_account"          : "Register account globally",
     "edit_account"            : "Edit account avatar",
     "account_updated"         : "Account updated successfully!",
     "account_registered"      : "Account registered successfully!",
+    "account_name_saved"      : "Account name stored successfully!",
     "type_account_name"       : "Please type a name for your account",
     "valid_name_chars"        : "Name must contain lowercase alphanumeric characters and dashes, must start with a letter and cannot end with a dash."
   },
@@ -351,7 +357,7 @@
   },
   
   "account":{
-    "type_name"     : "Please type the name for your account.<br/>This global unique name will be your identity in the network. You can later share it in order to receive payments.",
+    "type_name"     : "You can register your name in Bitshares network.<br/>This global unique name will be your identity in the network. You can later share it in order to receive payments.",
     "edit_photo"    : "You can change your photo.<br/>Options are robohash (default) and gravatar.<br/>You will be charged for this transaction."
    },
 

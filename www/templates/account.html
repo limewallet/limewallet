@@ -9,17 +9,8 @@
     
     <ion-content class="super_flex register_bg" has-bouncing="false" scroll="false" overflow-scroll="false">
       <div class="register">
-        <a ng-cloak class="button icon-right button-clear bar_title_button" ng-click="skip()">{{'g.later'|translate|uppercase}}</a>
-        <!-- ion-scroll zooming="false" direction="y" class="register_details margin-bottom-buttonNOT" -->
         <h3 class="lime">{{'register.type_account_name'|translate}}</h3>
-            <!--p ng-bind-html="'account.type_name'|translate"></p-->
         <p>{{'register.valid_name_chars'|translate}}</p>
-          <!-- div class="register_container energized_bg register_color">
-            <p ng-show="wallet.account.registered!=1" ng-bind-html="'account.type_name'|translate">
-            </p>
-            <p ng-show="wallet.account.registered==1" ng-bind-html="'account.edit_photo'|translate">
-            </p>
-          </div -->
         <div class="seed_container">
           <form novalidate name="encryptionForm" class="encryption_form">
             <label class="item item-input pmd">
@@ -37,7 +28,7 @@
           </form>
         </div>
         <div class="hide-on-keyboard-open buttons_container">   
-          <a ng-disabled="!data.can_update" ng-click="updateOrRegisterAccount()" class="button button-block button-outline lime lime_border">{{(wallet.account.registered!=0)?('g.update'|translate|uppercase):('g.register'|translate|uppercase)}}</a>
+          <a ng-disabled="!data.can_update" ng-click="saveProfile()" class="button button-block button-outline lime lime_border">{{'g.done'|translate|uppercase}}</a>
         </div>
       
       </div>

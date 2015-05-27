@@ -12,7 +12,7 @@ bitwallet_services
           });
         }
         //self.db = window.sqlitePlugin.openDatabase({name: DB_CONFIG.name});
-        self.db = window.sqlitePlugin.openDatabase({name: '/sdcard/peto.db'});
+        self.db = window.sqlitePlugin.openDatabase({name: '/sdcard/xxxxxx.db'});
         if( !check_tables )
           return;
 
@@ -325,13 +325,12 @@ bitwallet_services
       DB.query('SELECT * FROM account where active != 0 limit 1', [])
       .then(function(result){
           
-          // test tuti init wallet
-          // deferred.resolve(undefined);
-          // return
-
+          // if( result.rows.length == 0 ) {
+          //   deferred.resolve(undefined);
+          //   return;           
+          // }
           var account = DB.fetch(result);
-          
-          //TODO: BORRAR!!
+          console.log('Active account:: '+JSON.stringify(account));
           if( account !== undefined) {
             account.pubkey       = 'DVS6G3wqTYYt8Hpz9pFQiJYpxvUja8cEMNwWuP5wNoxr9NqhF8CLS';
             account.address      = 'DVSM5HFFtCbhuv3xPfRPauAeQ5GgW7y4UueL';
@@ -370,6 +369,18 @@ bitwallet_services
       });
 
       return deferred.promise;
+    }
+
+    self.setProfileInfo = function(obj) {
+      var cmd = self._setProfileInfo(obj);
+      return DB.query(cmd.sql, cmd.params);
+    }
+
+    self._setProfileInfo = function(obj) {
+      var sql    = 'UPDATE account set name=?, avatar_hash=? where id=?';
+      var params = [obj.name, obj.avatar_hash, obj.id];
+
+      return {sql:sql, params:params};
     }
 
     //self.register = function(address) {

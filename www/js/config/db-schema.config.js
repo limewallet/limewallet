@@ -19,6 +19,7 @@ bitwallet_config
                 { name : 'encrypted',         type  : 'integer'},
 
                 { name : 'active',            type  : 'integer default 1'},
+                { name : 'avatar_hash',       type  : 'text'},
                 { name : 'public_data',       type  : 'text'},
                 { name : 'registered',        type  : 'integer default 0'}, // -1:no, 1:yes, 0:unknown
                 { name : 'access_key',        type  : 'text'},

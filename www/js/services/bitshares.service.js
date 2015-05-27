@@ -2,6 +2,44 @@ bitwallet_services
 .service('BitShares', function($translate, $q, $http, $rootScope, Setting, ENVIRONMENT) {
     var self = this;
 
+    self.hashMD5 = function(value){
+      if(!value || value.length==0)
+      {
+        return '';
+      }
+      return md5(value.toLowerCase());
+    }
+
+    self.sha256 = function(value){
+      var deferred = $q.defer();
+
+      window.plugins.BitsharesPlugin.sha256(
+        function(data){
+          deferred.resolve(data.sha256);
+        },
+        function(error){
+          deferred.reject(error);
+        },
+        value
+      );
+    
+      return deferred.promise;
+    }
+    
+    self.isValidBTSName = function(name){
+      if(name===undefined || !name || name.length<1)
+      {
+        return {valid:false, title:'err.invalid_name', message:'err.enter_valid_name'};
+      }
+      // Check name is valid;
+      var match = String(name).match(/^[a-z][a-z0-9\-]*[^\-]/g); // (?<!\-)
+      if (!match || match.length==0 || match[0]!=name)
+      {
+        return {valid:false, title:'err.invalid_name', message:'err.valid_name_chars'};
+      }
+      return {valid:true};
+    }
+
     self.requestSignature = function(keys, url, _body) {
       var deferred = $q.defer();
 
@@ -694,17 +732,19 @@ bitwallet_services
       return self.apiCall(undefined, url, payload)
     }
 
-    self.registerAccount = function(keys, address, account) {
+    self.registerAccount = function(keys, account) {
       var url = ENVIRONMENT.apiurl('/account');
 
       var payload = JSON.stringify({
-        name       : account.name,
-        pubkey     : address.pubkey, 
-        gravatarId : account.gravatar_id,
-        token      : token
+        name        : account.name,
+        pubkey      : account.pubkey
+        //public_data : {avatar : account.avatar_hash}
       });
 
-      return self.apiCall(keys, url, payload);
+      var deferred = $q.defer();
+      deferred.resolve('essssssssta biennnnnnnn');
+      return deferred.promise;
+      //return self.apiCall(keys, url, payload);
     }
     
     self.updateAccount = function(keys, addys, assets, account) {
@@ -713,9 +753,8 @@ bitwallet_services
       var payload = JSON.stringify({
         pay_from      : addys,
         pay_in        : assets, 
-        name          : account.name,
-        public_data   : {gravatarId:account.gravatar_id},
-        token         : token
+        name          : account.name
+        //public_data   : {avatar : account.avatar_hash}
       });
 
       return self.apiCall(keys, url, payload);

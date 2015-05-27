@@ -1,4 +1,4 @@
-bitwallet_controllers.controller('AccountCtrl', function($translate, T, BitShares, $scope, $http, $timeout, $ionicPopup, $ionicLoading, $q, Account, Wallet, $interval, $stateParams) {
+bitwallet_controllers.controller('AccountCtrl', function($translate, T, BitShares, $scope, $timeout, $ionicPopup, $ionicLoading, $q, Account, Wallet, $interval) {
   
   $scope.recoverAccountData = function(){
     setTimeout(function() {
@@ -7,32 +7,10 @@ bitwallet_controllers.controller('AccountCtrl', function($translate, T, BitShare
     },100);
   }
 
-  $scope.data = { name            : $scope.wallet.account.is_default==0?$scope.wallet.account.name:'', //$scope.wallet.account.name 
-                  gravatar_id     : $scope.wallet.account.gravatar_id, 
-                  use_gravatar    : !($scope.wallet.account.gravatar_id===undefined || $scope.wallet.account.gravatar_id==null || $scope.wallet.account.gravatar_id.length==0), 
-                  initial_name    : $scope.wallet.account.is_default==0?$scope.wallet.account.name:'', 
-                  watch_name      : $scope.wallet.account.is_default==0?$scope.wallet.account.name:'',  
-                  hash_name       : $scope.wallet.account.is_default==0?$scope.gravatarMD5($scope.wallet.account.name):'',  
-                  gravatar_mail   : '', 
-                  can_update      : false,
-                  first_time      : 0};
-  
-  if (!angular.isUndefined($stateParams.first_time))
-  {
-    $scope.data.first_time = Number($stateParams.first_time);
-  }
-  console.log('$stateParams.first_time= ' + $stateParams.first_time);
-  console.log('$scope.data.first_time= ' + $scope.data.first_time);
-  
-  // Generate MD5 for gravatar email.
-  $scope.gravatarMD5 = function(value){
-    if(!value || value.length==0)
-    {
-      return '';
-    }
-    return md5(value.toLowerCase());
-  }
-  
+  $scope.data = { name            : '',
+                  watch_name      : '',  
+                  hash_name       : '',  
+                  can_update      : false};
   
   var name_timeout = undefined;
   $scope.$watch('data.name', function(newValue, oldValue, scope) {
@@ -45,79 +23,22 @@ bitwallet_controllers.controller('AccountCtrl', function($translate, T, BitShare
     }
     name_timeout = $timeout(function () {
       $scope.data.watch_name  = newValue;
-      $scope.data.hash_name   = $scope.gravatarMD5(newValue);
-      //jdenticon($scope.data.hash_name);
-      $timeout(function () {
-        console.log(' -- jdenticon fired!');
-        jdenticon();
-        console.log(' -- jdenticon finished!');
+      BitShares.sha256(newValue).then(function(hash){
+        console.log('BitShares.sha256('+newValue+') = '+ hash);
+        $scope.data.hash_name = hash;
+        $timeout(function () { jdenticon(); }, 250);
         $scope.data.can_update = true;
-      }, 500);
-    }, 500);
-  });
-  
-  var gravatar_timeout = undefined;
-  $scope.$watch('data.gravatar_mail', function(newValue, oldValue, scope) {
-    if(newValue===oldValue)
-      return;
-    if(gravatar_timeout)
-    {
-      $timeout.cancel(gravatar_timeout);
-      gravatar_timeout = undefined;
-    }
-    gravatar_timeout = $timeout(function () {
-      if($scope.data.gravatar_mail && $scope.data.gravatar_mail.length>0)
-        $scope.data.gravatar_id = $scope.gravatarMD5($scope.data.gravatar_mail);
-      else
-        $scope.data.gravatar_id = undefined;
+      }, function(err){
 
-      $timeout(function () {
-        $scope.data.can_update = true;
-      }, 500);
-    }, 500);
+        console.log('error sha256 account.constroller '+JSON.stringify(err));
+      })
+      //jdenticon($scope.data.hash_name);
+    }, 750);
   });
   
-  var use_gravatar_timeout = undefined;
-  $scope.$watch('data.use_gravatar', function(newValue, oldValue, scope) {
-    if(newValue===oldValue)
-      return;
-    if(use_gravatar_timeout)
-    {
-      $timeout.cancel(use_gravatar_timeout);
-      use_gravatar_timeout = undefined;
-    }
-    //if(!newValue && ($scope.wallet.account.gravatar_id===undefined || $scope.wallet.account.gravatar_id==null || $scope.wallet.account.gravatar_id.length<1))
-    //  return;
-    use_gravatar_timeout = $timeout(function () {
-      if(!$scope.data.use_gravatar)
-        $scope.data.gravatar_mail = undefined;
-      $scope.data.can_update = true;
-    }, 500);
-  });
-  
-  $scope.isNameAvailable = function(name) {
-    var deferred = $q.defer();
-    BitShares.getAccount($scope.data.name).then(
-      function(data){
-        console.log('isNameAvailable.ok:'+JSON.stringify(data));
-        deferred.reject('Name is not available');
-      },
-      function(error){
-        console.log('isNameAvailable.error:'+JSON.stringify(error));
-        if (error === undefined)
-        {
-          deferred.reject('Unknown Error - Check internet connection and try again later.');
-          return;
-        }
-        deferred.resolve();
-      }
-    )
-    return deferred.promise;
-  }
-    
   $scope.showLoading = function(){
     $ionicLoading.show({
-      template     : '<ion-spinner icon="android"></ion-spinner> ' + T.i($scope.wallet.account.registered==0?'g.registering':'g.updating'),
+      template     : '<ion-spinner icon="android" class="float_r"></ion-spinner> ' + T.i('g.updating'),
       animation    : 'fade-in',
       showBackdrop : true,
       maxWidth     : 200,
@@ -128,7 +49,64 @@ bitwallet_controllers.controller('AccountCtrl', function($translate, T, BitShare
   $scope.hideLoading = function(){
     $ionicLoading.hide();
   }
+
+
+  $scope.saveProfile = function(){
+    console.log(' Chosen name:'+$scope.data.name);
+    $scope.showLoading();
+    // Check name is not null or empty;
+    var is_valid_name = BitShares.isValidBTSName($scope.data.name);
+    if(!is_valid_name.valid)
+    {
+      $scope.hideLoading();
+      $scope.alert(is_valid_name);
+      return;
+    }
+
+    Account.active().then(function(account){
+      if(!account || account==undefined){
+        $scope.alert({title:'err.invalid_name', message:'err.valid_name_chars'});
+        $scope.hideLoading();
+        return;
+      }
+      account['name']         = $scope.data.name;
+      account['avatar_hash']  = $scope.data.hash_name;
+      
+      Account.setProfileInfo(account).then(function(res){
+        $scope.hideLoading();
+        window.plugins.toast.show( T.i('register.account_name_saved'), 'long', 'bottom');        
+        $scope.goTo('app.register');
+      }, function(error){
+        $scope.alert({title:'err.occurred', message:'err.account_registration'});
+        $scope.hideLoading();
+      });
+      
+
+    }, function(err){
+      $scope.alert({title:'err.no_active_account', message:'err.no_active_account_create'});
+      $scope.hideLoading();
+      return;
+    })
+
+  }
+
+  $scope.alert = function(error){
+    $ionicPopup.alert({
+      title    : T.i(error.title) + ' <i class="fa fa-warning float_right"></i>',
+      template : T.i(error.message),
+      okType   : 'button-assertive', 
+    });
+    return;
+  }
+  
+
+  // *********************
+  // Unused functions. Para despues.
+  // *********************
+  
    
+
+
   $scope.updateOrRegisterAccount = function(){
     if($scope.wallet.account.registered==0)
       $scope.registerAccount();
@@ -234,7 +212,7 @@ bitwallet_controllers.controller('AccountCtrl', function($translate, T, BitShare
       $scope.hideLoading();
       Wallet.loadAccount();
       $scope.goHome();
-      window.plugins.toast.show( T.i('register.account_registered'), 'long', 'bottom');
+      window.plugins.toast.show( T.i('register.account_registered'), 'long', 'bottom'); 
     }, function(error){
       $scope.hideLoading();
       $ionicPopup.alert({
@@ -330,8 +308,5 @@ bitwallet_controllers.controller('AccountCtrl', function($translate, T, BitShare
     return deferred.promise;
   }
 
-  $scope.skip = function(){
-    $scope.goTo('app.home');
-  }
 });
 
