@@ -10,6 +10,10 @@ bitwallet_services
       return md5(value.toLowerCase());
     }
 
+    self.pbkdf2 = function(value){
+      return self.sha256(value);
+    }
+    
     self.sha256 = function(value){
       var deferred = $q.defer();
 
@@ -709,16 +713,16 @@ bitwallet_services
     // *************************************************** //
     // Account Api Calls ********************************* //
     
+    self.getAccount = function(name) {
+      var url = ENVIRONMENT.apiurl('/account/'+name);
+      return self.apiCall(undefined, url);
+    }
+
     self.getSignupInfo = function() {
       var url = ENVIRONMENT.apiurl('/signup');
       return self.apiCall(undefined, url);
     }
     
-    self.getAccount = function(name) {
-      var url = ENVIRONMENT.apiurl('/account/'+name);
-      return self.apiCall(undefined, url);
-    }
-              
     self.pushSignupInfo = function(message, signature, pubkey) {
 
       var url = ENVIRONMENT.apiurl('/signup');
@@ -730,6 +734,56 @@ bitwallet_services
       });
 
       return self.apiCall(undefined, url, payload)
+    }
+
+    // password
+    self.signUp = function(account){
+      var deferred = $q.defer();
+
+      Account.active().then(function(account){
+        self.getSignupInfo().then(function(res) {
+          self.recoverPubkey(res.msg, res.signature).then(function(pubkey) {
+            //console.log(pubkey);
+            if( pubkey != ENVIRONMENT.apiPubkey ) {
+              deferred.reject('invalid pub key');
+              return;
+            }
+            self.compactSignatureForMessage(res.msg, address.privkey).then(function(signature) {
+
+              self.pushSignupInfo(res.msg, signature, address.pubkey).then(function(res) {
+
+                if( angular.isUndefined(res.access_key) || angular.isUndefined(res.secret_key) ) {
+                  deferred.reject('invalid keys');
+                  return;
+                }
+
+                Setting.set(Setting.BSW_TOKEN, [res.access_key, res.secret_key].join(';')).then(function() {
+                  console.log('BitShares.getBackendToken:'+res.access_key);
+                  deferred.resolve({akey:res.access_key,skey:res.secret_key});
+                }, function(err) {
+                  deferred.reject(err);
+                });
+
+              }, function(err) {
+                deferred.reject(err);
+              });
+
+            }, function(err) {
+              deferred.reject(err);
+            });
+
+          }, function(err) {
+            deferred.reject(err);
+          });
+
+        }, function(err) {
+          deferred.reject(err);
+        });
+      }, function(err){
+
+      })
+
+      return deferred.promise;
     }
 
     self.registerAccount = function(keys, account) {

@@ -3,6 +3,8 @@ bitwallet_services
     var self = this;
 
     self.data = {
+      password_required : undefined,
+      locked            : undefined,
       mpk               : undefined,
       seed              : undefined,
       assets            : {},
@@ -10,6 +12,7 @@ bitwallet_services
       transactions      : [1],
       ord_transactions  : {},
       account           : {},
+      accounts          : [],
       ui                : { balance:  { hidden:false, allow_hide:false  } },
       initialized       : false
     }
@@ -158,6 +161,84 @@ bitwallet_services
       });
     }
 
+    self.lock = function(){
+
+      if(!(self.data.password_required==1 && self.data.locked==0))
+      {
+        return;
+      }
+
+      for(var i=0; i<self.data.accounts.length;i++){
+        self.data.accounts[i].plain_memo_mpk  = undefined; 
+        self.data.accounts[i].account_mpk     = undefined;  
+        self.data.accounts[i].plain_privkey   = undefined;
+        self.data.accounts[i].encrypted       = 1;
+      }
+      self.data.seed.plain_value  = undefined;
+      self.data.mpk.plain_value   = undefined;
+      self.data.locked = 1;
+
+      return;
+    }
+
+    self.unlock = function(password) {
+      var deferred = $q.defer();
+      
+      if(!(self.data.password_required==1 && self.data.locked==1))
+      {
+        deferred.resolve();
+        return deferred.promise;
+      }
+
+      // chequeamos que el hash del password es la misma mierda que tenemos guardada, sino error.
+      var proms = {
+        'pbkdf2'          : BitShares.pbkdf2(password),
+        'hashed_password' : Setting.get(Setting.PASSWORD_HASH),
+        'mpk'             : Setting.get(Setting.MPK)
+      }
+
+      $q.all(proms).then(function(res) {
+
+        if(res.pbkdf2.key_hash != res.hashed_password.value)
+        {
+          deferred.reject(T.i('err.invalid_password'));
+          return;
+        }
+        
+        proms = [];
+        proms.push(BitShares.decryptString(self.data.seed.value, res.pbkdf2.key));
+        proms.push(BitShares.decryptString(self.data.mpk.value, res.pbkdf2.key));
+
+        // si es valido, penetramos al primer mundo  
+        self.data.accounts.forEach(function(account) {
+          proms.push(BitShares.decryptString(account.memo_mpk, res.pbkdf2.key));
+          proms.push(BitShares.decryptString(account.account_mpk, res.pbkdf2.key));
+          proms.push(BitShares.decryptString(account.privkey, res.pbkdf2.key));
+        });
+
+        $q.all(proms).then(function(res){
+          self.data.seed.plain_value  = res[0];
+          self.data.mpk.plain_value   = res[1];
+          for(var i=0; i<self.data.accounts.length;i++){
+            self.data.accounts[i].plain_memo_mpk  = res[2+i*3+0]; 
+            self.data.accounts[i].account_mpk     = res[2+i*3+1];  
+            self.data.accounts[i].plain_privkey   = res[2+i*3+2];
+            self.data.accounts[i].encrypted       = 0;
+          }
+          self.data.locked = 0;
+          deferred.resolve();
+        }, function(err){
+          deferred.reject(err);
+        })
+
+      }, function(err) {
+        deferred.reject(err);
+      });
+
+      return deferred.promise;
+
+    }
+
     self.init = function() {
 
       var deferred = $q.defer();
@@ -176,13 +257,30 @@ bitwallet_services
       keys[Setting.MPK]                   = '';
 
       var proms = {
-        'setting' : Setting.getMany(keys),
-        'account' : Account.active()
+        'setting'   : Setting.getMany(keys),
+        'accounts'  : Account.all()
       }
 
       $q.all(proms).then(function(res) {
 
-        self.data.account               = res.account;
+        res.accounts.forEach(function(account) {
+          account.plain_privkey  = undefined;
+          account.plain_memo_mpk = undefined; 
+          account.account_mpk    = undefined;
+
+          if(account.encrypted==0){
+            account.plain_privkey     = account.privkey;
+            account.plain_memo_mpk    = account.memo_mpk; 
+            account.plain_account_mpk = account.account_mpk; 
+          }
+
+          if(account.active==1){
+            self.data.account = account;
+          }
+          
+          self.data.accounts.push(account);
+        });
+
 
         console.log('DUMP DEFAULT ACCOUNT');
         console.log(JSON.stringify(res.account));
@@ -190,10 +288,25 @@ bitwallet_services
         self.data.asset                 = self.data.assets[res.setting.default_asset];
         self.data.ui.balance.allow_hide = res.setting.allow_hide_balance;
         self.data.ui.balance.hidden     = res.setting.hide_balance;
-        self.data.seed                  = !res.setting.seed ? {} : JSON.parse(res.setting.seed);
-        self.data.mpk                   = !res.setting.mpk  ? {} : JSON.parse(res.setting.mpk); 
+        
+        self.data.seed                  = JSON.parse(res.setting.seed); 
+        self.data.seed.plain_value      = undefined;
+        if( self.data.seed.encrypted==0)
+          self.data.seed.plain_value    = self.data.seed.value;
+        
+        self.data.mpk                   = JSON.parse(res.setting.mpk); 
+        self.data.mpk.plain_value       = undefined;
+        if( self.data.mpk.encrypted==0)
+          self.data.mpk.plain_value     = self.data.mpk.value;
+        
+        self.data.password_required     = self.data.mpk.encrypted;
+        self.data.locked                = self.data.password_required; // Si no tiene passwrd estamos desbloqueados!
+
         self.data.initialized           = true;
 
+        // estoy singupeado?
+        //  NO -> tengo passworD?
+        //    SI -> pido passworD?
 
         self.connectToBackend(ENVIRONMENT.wsurl);
 

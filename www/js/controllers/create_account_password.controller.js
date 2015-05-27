@@ -119,44 +119,72 @@ bitwallet_controllers
     //Mostrar loading
     $scope.showLoading();
 
-    $scope.addNewAccount($scope.init.seed, $scope.data.password).then(function(accountInfo){
+    var prom = $scope.addNewAccount($scope.init.seed, $scope.data.password).then(function(accountInfo){
 
       var account_cmd = Account._create(accountInfo);
 
       $scope.encrypt($scope.init.seed, $scope.data.password).then(function(encryptedSeed) {
 
-        var encrypted = $scope.data.password != '' ? 1 : 0;
-        var seed_cmd  = Setting._set(Setting.SEED, JSON.stringify({'seed':encryptedSeed, 'encrypted':encrypted}) );
-        var mpk_cmd   = Setting._set(Setting.MPK,  JSON.stringify({'mpk':accountInfo.mpk, 'encrypted':encrypted}) );
+        var hashed_password = undefined; 
+        var encrypted       = $scope.data.password != '' ? 1 : 0;
+        var prom            = undefined;
+        if(encrypted==1)
+        {
+          prom = BitShares.pbkdf2($scope.data.password).then(function(value){
+            hashed_password = value.key_hash;
+          }, function(err){
+            deferred.reject(err);
+            console.log('cant hash password:' +err);
+            $scope.hideLoading();  
+            return;
+          });
+        }
 
-        console.log(JSON.stringify(mpk_cmd));
+        $q.all(prom).then(function(){
 
-        DB.db.transaction(function(transaction) {
+          var seed_cmd          = Setting._set(Setting.SEED, JSON.stringify({'value':encryptedSeed, 'encrypted':encrypted}) );
+          var mpk_cmd           = Setting._set(Setting.MPK,  JSON.stringify({'value':accountInfo.mpk, 'encrypted':encrypted}) );
+          var password_hash_cmd = Setting._set(Setting.PASSWORD_HASH, hashed_password);
+          
+          DB.db.transaction(function(transaction) {
 
-          transaction.executeSql(account_cmd.sql, account_cmd.params);
-          transaction.executeSql(seed_cmd.sql, seed_cmd.params);
-          transaction.executeSql(mpk_cmd.sql, mpk_cmd.params);
+            transaction.executeSql(account_cmd.sql, account_cmd.params);
+            transaction.executeSql(seed_cmd.sql, seed_cmd.params);
+            transaction.executeSql(mpk_cmd.sql, mpk_cmd.params);
+            transaction.executeSql(password_hash_cmd.sql, password_hash_cmd.params);
 
+          }, function(err) {
+            deferred.reject(err);
+            console.log('EGRRA:' +err);
+            $scope.hideLoading();
+          });
 
-          $scope.hideLoading();
-          Wallet.init();
-          window.plugins.toast.show( T.i('g.wallet_created'), 'long', 'bottom');
-          $scope.goTo('app.account');
-        }, function(err) {
-          console.log('EGRRA:' +err);
-          $scope.hideLoading();
+        }, function(err){
+          deferred.reject(err);
+          console.log(JSON.stringify(err));
+          $scope.hideLoading();  
         });
 
       }, function(err){
+        deferred.reject(err);
         console.log(JSON.stringify(err));
         $scope.hideLoading();
       });
 
     }, function(err){
+      deferred.reject(err);
       console.log(JSON.stringify(err));
       $scope.hideLoading();
     });
+    
+    prom.then(function(){
+      $scope.hideLoading();
+      Wallet.init();
+      window.plugins.toast.show( T.i('g.wallet_created'), 'long', 'bottom');
+      $scope.goTo('app.account');
+    }, function(err){
 
+    })
     //$scope.goHome();
   }
 });

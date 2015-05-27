@@ -1,5 +1,7 @@
 {
   "g" : {
+    "wallet_unlocked"               : "Wallet unlocked" ,
+    "wallet_locked"                 : "Wallet locked" ,
     "global_items_label"            : "Global directory",
     "local_items_label"             : "Local address book",
     "tap_to_select"                 : "Tap to select",
@@ -103,6 +105,8 @@
   },
 
   "err" : {
+    "wallet_locked_title"       : "Wallet lock error" ,
+    "wallet_un_locked_title"    : "Wallet unlock error" ,
     "no_active_account"         : "No active account",
     "no_active_account_create"  : "There is no active account in your wallet. PLease create one.",
     "seed_copied"           : "Oops... Seed could not be copied!",

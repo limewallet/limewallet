@@ -1,0 +1,36 @@
+<ion-view title="{{'menu.account'|translate}}" hide-nav-bar="true">
+    
+    <!-- ion-nav-buttons side="left">
+      <button ng-cloak ng-show="data.first_time==0" ng-click="goHome()" class="button button-icon icon ion-ios-arrow-back base-color"></button>
+    </ion-nav-buttons>
+    <ion-nav-buttons side="right" >
+      <a ng-cloak ng-show="data.first_time==1" class="button icon-right button-clear" ng-click="goHome()">{{'g.later'|translate|uppercase}}</a>
+    </ion-nav-buttons -->
+    
+    <ion-content class="super_flex register_bg" has-bouncing="false" scroll="false" overflow-scroll="false">
+      <div class="register">
+        <a ng-cloak class="button button-outline button-small bar_title_button" ng-click="skip()">{{'g.later'|translate|uppercase}}</a>
+        <h3 class="lime">{{'register.create_account'|translate}}</h3>
+        <p ng-bind-html="'account.type_name'|translate"></p>
+        <div class="seed_container">
+          <form novalidate name="encryptionForm" class="encryption_form">
+            <label class="item item-input pmd" ng-show="data.valid_name==false">
+              <input type="text" placeholder="{{'register.type_new_name'|translate}}" ng-model="data.new_name" class="pmd big big_placeholder">
+              <br/>
+            </label>
+            <div class="column">
+              <div class="row" ng-show="data.error!=''">
+                <span class="assertive bold error" ng-bind-html="data.error"></span>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="hide-on-keyboard-open buttons_container">   
+          <a ng-click="register()" ng-disabled="!data.valid_name && data.new_name==''" class="button button-block button-outline lime lime_border">{{'g.register'|translate|uppercase}}</a>
+        </div>
+      
+      </div>
+      
+    </ion-content>
+  </ion-view>
+  

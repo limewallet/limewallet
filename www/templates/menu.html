@@ -8,7 +8,10 @@
     <ion-header-bar class="bar bar-header menu_header transparent_bg"> <!-- bar-dark -->
       <div class="menu_container">
         <div class="c">
-          <a href="#/app/settings" nav-clear menu-close class="c1x button button-icon icon lime_settings_icon logout"></a>
+          <a ng-click="lockWallet()"   ng-disabled="data.in_progress" ng-show="wallet.data.require_password==1 && wallet.data.locked==0" nav-clear menu-close class="c1x button button-icon icon ion-unlocked"></a>
+          <a ng-click="unLockWallet()" ng-disabled="data.in_progress" ng-show="wallet.data.require_password==1 &&wallet.data.locked==1" nav-clear menu-close class="c1x button button-icon icon ion-locked"></a>
+          <a href="#" ng-show="wallet.data.require_password==0" nav-clear menu-close class="c1x button button-icon icon ion-unlocked"></a>
+          <!-- lime_settings_icon logout -->
           <div class="menu_avatar c2x" nav-clear menu-close ng-click="goTo('app.account')"> 
             <canvas id="menu_jdenticon_canvas" width="80" height="80" data-jdenticon-hash="{{wallet.account.avatar_hash}}"></canvas>
             <!-- img src="{{wallet.account.photo}}" alt="" / --> 

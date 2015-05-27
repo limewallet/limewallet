@@ -12,7 +12,7 @@ bitwallet_services
           });
         }
         //self.db = window.sqlitePlugin.openDatabase({name: DB_CONFIG.name});
-        self.db = window.sqlitePlugin.openDatabase({name: '/sdcard/xxxxxx.db'});
+        self.db = window.sqlitePlugin.openDatabase({name: '/sdcard/cerda.db'});
         if( !check_tables )
           return;
 
@@ -230,6 +230,7 @@ bitwallet_services
     self.UI_ALLOW_HIDE_BALANCE  = 'allow_hide_balance';
     self.SEED                   = 'seed'; // json 
     self.MPK                    = 'mpk'; // json 
+    self.PASSWORD_HASH          = 'password_hash';
 
     self.getMany = function(keys) {
 
@@ -330,14 +331,14 @@ bitwallet_services
           //   return;           
           // }
           var account = DB.fetch(result);
-          console.log('Active account:: '+JSON.stringify(account));
-          if( account !== undefined) {
-            account.pubkey       = 'DVS6G3wqTYYt8Hpz9pFQiJYpxvUja8cEMNwWuP5wNoxr9NqhF8CLS';
-            account.address      = 'DVSM5HFFtCbhuv3xPfRPauAeQ5GgW7y4UueL';
-            account.privkey      = '5HymcH7QHpzCZNZcKSbstrQc1Q5vcNjCLj9wBk5aqYZcHCR6SzN';
-            account.access_key   = '7cMHdvnvhv8Q36c4Xf8HJQaibTi4kpANNaBQYhtzQ2M6';
-            account.secret_key   = '7teitGUUbtaRJY6mnv3mB9d1VB3UggiBQf4kyiL2PaKB';
-          }
+          // console.log('Active account:: '+JSON.stringify(account));
+          // if( account !== undefined) {
+          //   account.pubkey       = 'DVS6G3wqTYYt8Hpz9pFQiJYpxvUja8cEMNwWuP5wNoxr9NqhF8CLS';
+          //   account.address      = 'DVSM5HFFtCbhuv3xPfRPauAeQ5GgW7y4UueL';
+          //   account.privkey      = '5HymcH7QHpzCZNZcKSbstrQc1Q5vcNjCLj9wBk5aqYZcHCR6SzN';
+          //   account.access_key   = '7cMHdvnvhv8Q36c4Xf8HJQaibTi4kpANNaBQYhtzQ2M6';
+          //   account.secret_key   = '7teitGUUbtaRJY6mnv3mB9d1VB3UggiBQf4kyiL2PaKB';
+          // }
 
           deferred.resolve(account);
 
@@ -345,6 +346,13 @@ bitwallet_services
         deferred.reject(err);
       });
       return deferred.promise;
+    }
+
+    self.all = function() {
+      var query = 'SELECT * FROM account';
+      return DB.query(query).then(function(result){
+        return DB.fetchAll(result);
+      });
     }
     
     self.create = function(obj) {
