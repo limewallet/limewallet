@@ -6,17 +6,16 @@ bitwallet_config
         {
             name: 'account',
             columns: [
-                { name : 'id',                type  : 'integer primary key'},
-                { name : 'name',              type  : 'text unique'},
-                { name : 'address',           type  : 'text'},
-                { name : 'pubkey',            type  : 'text'},
-                { name : 'privkey',           type  : 'text'},
+                { name : 'name',              type  : 'text primary key'},
+                { name : 'address',           type  : 'text unique not null'},
+                { name : 'pubkey',            type  : 'text unique not null'},
+                { name : 'privkey',           type  : 'text unique not null'},
 
-                { name : 'number',            type  : 'integer unique'},
-                { name : 'account_mpk',       type  : 'text'},
-                { name : 'memo_mpk',          type  : 'text'},
-                { name : 'memo_index',        type  : 'integer default 0'},
-                { name : 'encrypted',         type  : 'integer'},
+                { name : 'number',            type  : 'integer unique not null'},
+                { name : 'account_mpk',       type  : 'text unique not null'},
+                { name : 'memo_mpk',          type  : 'text unique not null'},
+                { name : 'skip32_key',        type  : 'text unique not null'},
+                { name : 'encrypted',         type  : 'integer not null'},
 
                 { name : 'active',            type  : 'integer default 1'},
                 { name : 'avatar_hash',       type  : 'text'},
@@ -41,21 +40,20 @@ bitwallet_config
                 { name : 'name',              type  : 'text unique not null'}, 
                 { name : 'is_pubkey',         type  : 'integer not null'},      
                 { name : 'address_or_pubkey', type  : 'text unique not null'},
-                { name : 'public_data',       type  : 'text'},
                 { name : 'source',            type  : 'text'},
-                { name : 'created_at',        type  : 'datetime default CURRENT_TIMESTAMP'}
+                { name : 'created_at',        type  : 'datetime default CURRENT_TIMESTAMP'},
+                { name : 'backup',            type  : 'integer default 0'}
             ]
         },
         {
             name: 'memo',
             columns: [
                 { name : 'id',                  type  : 'text primary key'},
-                { name : 'account',             type  : 'integer'}, 
                 { name : 'encrypted',           type  : 'integer default 1'}, 
                 { name : 'memo',                type  : 'text'}, 
                 { name : 'one_time_key',        type  : 'text'}, 
                 { name : 'message',             type  : 'text'}, 
-                { name : 'pubkey',              type  : 'text'}
+                { name : 'pubkey',              type  : 'text'},
             ]
         },
         {
@@ -71,6 +69,7 @@ bitwallet_config
                 { name : 'amount'    , type: 'integer'},
                 { name : 'block'     , type: 'integer'},
                 { name : 'type'      , type: 'text'},
+                { name : 'slate'     , type: 'integer'}
             ],
             indexes: ['txid']
         },

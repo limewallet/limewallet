@@ -58,8 +58,9 @@ bitwallet_controllers
         
         console.log('mnemonicToMasterKey accountMpk > ' + JSON.stringify(accountMpk));
         var proms = { 
-          'send_mpk' : BitShares.derivePrivate("", mpk, accountMpk.extendedPrivateKey, 0), 
-          'memo_mpk' : BitShares.derivePrivate("", mpk, accountMpk.extendedPrivateKey, 1) 
+          'send_mpk'   : BitShares.derivePrivate("", mpk, accountMpk.extendedPrivateKey, 0), 
+          'memo_mpk'   : BitShares.derivePrivate("", mpk, accountMpk.extendedPrivateKey, 1),
+          'skip32_key' : BitShares.derivePrivate("", mpk, accountMpk.extendedPrivateKey, 2) 
         };
         
         $q.all(proms).then(function(keys) {
@@ -67,24 +68,29 @@ bitwallet_controllers
           proms = { 
             'mpk'         : $scope.encrypt(mpk, password),
             'account_mpk' : $scope.encrypt(accountMpk.extendedPrivateKey, password),
-            'privkey'     : $scope.encrypt(keys.send_mpk.privkey, password)
+            'privkey'     : $scope.encrypt(keys.send_mpk.privkey, password),
+            'skip32_key'  : $scope.encrypt(keys.skip32_key.privkey, password),
+            'memo_mpk'    : $scope.encrypt(keys.memo_mpk.extendedPrivateKey, password)
           };
 
           $q.all(proms).then(function(encryptedKeys) {
 
-            keys.send_mpk.privkey         = encryptedKeys.privkey;
-            accountMpk.extendedPrivateKey = encryptedKeys.account_mpk;
-            mpk                           = encryptedKeys.mpk;
+            keys.send_mpk.privkey            = encryptedKeys.privkey;
+            keys.memo_mpk.extendedPrivateKey = encryptedKeys.memo_mpk;
+            keys.skip32_key.privkey          = encryptedKeys.skip32_key;
+            accountMpk.extendedPrivateKey    = encryptedKeys.account_mpk;
+            mpk                              = encryptedKeys.mpk;
       
             deferred.resolve({ 
               'mpk'           : mpk,
               'account_mpk'   : accountMpk.extendedPrivateKey,
               'pubkey'        : keys.send_mpk.pubkey,
               'privkey'       : keys.send_mpk.privkey,
+              'skip32_key'    : keys.skip32_key.privkey,
               'address'       : keys.send_mpk.address,
               'memo_mpk'      : keys.memo_mpk.extendedPrivateKey,
               'encrypted'     : password != '' ? 1 : 0,
-              'number'        : number 
+              'number'        : number
             });
 
           }, function(err) {
@@ -125,66 +131,63 @@ bitwallet_controllers
 
       $scope.encrypt($scope.init.seed, $scope.data.password).then(function(encryptedSeed) {
 
-        var hashed_password = undefined; 
-        var encrypted       = $scope.data.password != '' ? 1 : 0;
-        var prom            = undefined;
-        if(encrypted==1)
-        {
-          prom = BitShares.pbkdf2($scope.data.password).then(function(value){
-            hashed_password = value.key_hash;
-          }, function(err){
-            deferred.reject(err);
-            console.log('cant hash password:' +err);
-            $scope.hideLoading();  
-            return;
-          });
-        }
+        var encrypted = $scope.data.password != '' ? 1 : 0;
 
-        $q.all(prom).then(function(){
+        BitShares.derivePassword($scope.data.password).then(function(derived_password){
 
           var seed_cmd          = Setting._set(Setting.SEED, JSON.stringify({'value':encryptedSeed, 'encrypted':encrypted}) );
           var mpk_cmd           = Setting._set(Setting.MPK,  JSON.stringify({'value':accountInfo.mpk, 'encrypted':encrypted}) );
-          var password_hash_cmd = Setting._set(Setting.PASSWORD_HASH, hashed_password);
+          var password_hash_cmd = Setting._set(Setting.PASSWORD_HASH, derived_password.key_hash);
           
-          DB.db.transaction(function(transaction) {
+          return DB.db.transaction(function(transaction) {
 
-            transaction.executeSql(account_cmd.sql, account_cmd.params);
-            transaction.executeSql(seed_cmd.sql, seed_cmd.params);
-            transaction.executeSql(mpk_cmd.sql, mpk_cmd.params);
-            transaction.executeSql(password_hash_cmd.sql, password_hash_cmd.params);
+            var proms = {
+              'account' :  transaction.executeSql(account_cmd.sql, account_cmd.params),
+              'seed'    :  transaction.executeSql(seed_cmd.sql, seed_cmd.params),
+              'mpk'     :  transaction.executeSql(mpk_cmd.sql, mpk_cmd.params),
+              'hash'    :  transaction.executeSql(password_hash_cmd.sql, password_hash_cmd.params)
+            }
+
+            $q.all(proms).then(function(res) {
+              console.log('TERMINO DB TXS OK');
+              $scope.hideLoading();
+              Wallet.init();
+              window.plugins.toast.show( T.i('g.wallet_created'), 'long', 'bottom');
+              $scope.goTo('app.account');
+            }, function(err) {
+              console.log('ERROR TERMINO DB TXS ' + JSON.stringify(err));
+              $scope.hideLoading();
+            });
+
 
           }, function(err) {
-            deferred.reject(err);
             console.log('EGRRA:' +err);
             $scope.hideLoading();
           });
 
         }, function(err){
-          deferred.reject(err);
           console.log(JSON.stringify(err));
           $scope.hideLoading();  
         });
 
       }, function(err){
-        deferred.reject(err);
         console.log(JSON.stringify(err));
         $scope.hideLoading();
       });
 
     }, function(err){
-      deferred.reject(err);
       console.log(JSON.stringify(err));
       $scope.hideLoading();
     });
     
-    prom.then(function(){
-      $scope.hideLoading();
-      Wallet.init();
-      window.plugins.toast.show( T.i('g.wallet_created'), 'long', 'bottom');
-      $scope.goTo('app.account');
-    }, function(err){
+    //prom.then(function(){
+      //$scope.hideLoading();
+      //Wallet.init();
+      //window.plugins.toast.show( T.i('g.wallet_created'), 'long', 'bottom');
+      //$scope.goTo('app.account');
+    //}, function(err){
 
-    })
+    //})
     //$scope.goHome();
   }
 });

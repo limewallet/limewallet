@@ -361,8 +361,8 @@ bitwallet_services
     }
 
     self._create = function(obj) {
-      var sql    = 'INSERT into account (account_mpk, pubkey, address, number, privkey, memo_mpk, encrypted) values (?,?,?,?,?,?,?)';
-      var params = [obj.account_mpk, obj.pubkey, obj.address, obj.number, obj.privkey, obj.memo_mpk, obj.encrypted];
+      var sql    = 'INSERT into account (account_mpk, pubkey, address, number, privkey, skip32_key, memo_mpk, encrypted) values (?,?,?,?,?,?,?,?)';
+      var params = [obj.account_mpk, obj.pubkey, obj.address, obj.number, obj.privkey, obj.skip32_key, obj.memo_mpk, obj.encrypted];
 
       return {sql:sql, params:params};
     }
@@ -460,14 +460,14 @@ bitwallet_services
     }
 
     self._add = function(obj) {
-      var sql    = 'INSERT into operation (block_id, timestamp, memo_hash, address, asset_id, fee, txid, amount, block, type) values(?,?,?,?,?,?,?,?,?,?)';
-      var params = [obj.block_id, obj.timestamp, obj.memo_hash, obj.address, obj.asset_id, obj.fee, obj.txid, obj.amount, obj.block, obj.type]
+      var sql    = 'INSERT into operation (block_id, timestamp, memo_hash, address, asset_id, fee, txid, amount, block, type, slate) values (?,?,?,?,?,?,?,?,?,?,?)';
+      var params = [obj.block_id, obj.timestamp, obj.memo_hash, obj.address, obj.asset_id, obj.fee, obj.txid, obj.amount, obj.block, obj.type, obj.slate]
       return {'sql':sql, 'params':params};
     }
    
     self.all = function() {
       var query = "SELECT * FROM ( \
-        SELECT o.timestamp*1000 as TS, IFNULL(m.encrypted,-1) encmsg, m.message, m.pubkey, c.name, \
+        SELECT o.timestamp*1000 as TS, o.slate, IFNULL(m.encrypted,-1) encmsg, m.message, m.pubkey, c.name, \
           IFNULL(et.extra_data, o.type) as ui_type, \
             o.*, et.* FROM operation o \
           LEFT JOIN exchange_transaction et \
@@ -477,7 +477,7 @@ bitwallet_services
           LEFT JOIN contact c \
             ON m.pubkey = c.id \
         UNION \
-          SELECT IFNULL(et.created_at*1000, et.quoted_at*1000) as TS, -1, NULL, NULL, NULL,  \
+          SELECT IFNULL(et.created_at*1000, et.quoted_at*1000) as TS, 0, -1, NULL, NULL, NULL,  \
             et.extra_data as ui_type, \
             o.*, et.* FROM exchange_transaction et  \
             LEFT JOIN operation o \
@@ -491,7 +491,7 @@ bitwallet_services
     }
     
     self.clear = function() {
-        return DB.query('DELETE from operation ', []);
+      return DB.query('DELETE from operation ', []);
     };
     
     self.lastUpdate = function(){

@@ -10,8 +10,33 @@ bitwallet_services
       return md5(value.toLowerCase());
     }
 
-    self.pbkdf2 = function(value){
-      return self.sha256(value);
+    self.derivePassword = function(password) {
+      if ( !password ) {
+        var deferred = $q.defer();
+        deferred.resolve({'key':'', 'key_hash':''});
+        return deferred.promise;
+      }
+      return self.pbkdf2(password, 'SALTEADO', 1000, 32);
+    }
+
+    self.pbkdf2 = function(password, salt, c, dkLen){
+
+      var deferred = $q.defer();
+
+      window.plugins.BitsharesPlugin.pbkdf2(
+        function(data){
+          deferred.resolve(data);
+        },
+        function(error){
+          deferred.reject(error);
+        },
+        password,
+        salt,
+        c,
+        dkLen
+      );
+    
+      return deferred.promise;
     }
     
     self.sha256 = function(value){
@@ -678,7 +703,7 @@ bitwallet_services
       return self.apiCall(undefined, ENVIRONMENT.apiurl('/addrs/'+address+filter));
     }
     
-    self.new_ = function(from, to, amount, asset, memo) {
+    self.new_ = function(from, to, amount, asset, memo, slate) {
 
       var url = ENVIRONMENT.apiurl('/txs/new');
 
@@ -690,7 +715,8 @@ bitwallet_services
         "to"    : [{
             "address" : to, 
             "amount"  : amount,
-            "memo"    : memo
+            "memo"    : memo,
+            "slate"   : slate
         }]
       });
 

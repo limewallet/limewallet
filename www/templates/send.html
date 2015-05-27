@@ -25,7 +25,7 @@
               <span class="input-label pmd">{{'send.recipient'|translate}}</span>
               <ion-autocomplete item-view-value-key="name" name="transactionAddress" ng-model="transaction.destination" local-search="localSearch(query)" global-search="globalSearch(query)" is-selectable="isSelectable(query)" class="big full_width pmd" placeholder_="{{'g.search_recipient'|translate}}" search-query-item-hint="{{'g.tap_to_select'|translate}}" cancel-label="{{'g.cancel'|translate}}" local-label="{{'g.local_items_label'|translate}}" global-label="{{'g.global_items_label'|translate}}"></ion-autocomplete>
             </label>
-            <button ng-click="clearAddress()" class="button button-icon icon ion-android-cancel">
+            <button ng-click="clearDestination()" class="button button-icon icon ion-android-cancel">
             </button>
           </div>
           
