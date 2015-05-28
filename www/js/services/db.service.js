@@ -391,6 +391,14 @@ bitwallet_services
       return {sql:sql, params:params};
     }
 
+    self.updateAccesKeys = function(obj) {
+      var sql    = 'UPDATE account set access_key=?, secret_key=? where id=?';
+      var params = [obj.access_key, obj.secret_key, obj.id];
+
+      return DB.query(sql, params);
+    }
+
+
     //self.register = function(address) {
       //var deferred = $q.defer();
       //console.log('Account::register');

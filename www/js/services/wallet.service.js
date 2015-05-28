@@ -134,14 +134,16 @@ bitwallet_services
     
     self.subscribeToNotifications = function() {
 
-      var keys = undefined;
+      // var keys = undefined;
       
-      if (self.data.account.access_key !== undefined) {
-        keys = {
-          'akey' : self.data.account.access_key,
-          'skey' : self.data.account.secret_key
-        };
-      }
+      // if (self.data.account.access_key !== undefined) {
+      //   keys = {
+      //     'akey' : self.data.account.access_key,
+      //     'skey' : self.data.account.secret_key
+      //   };
+      // }
+
+      var keys = self.self.getAccountAccessKeys();
 
       var cmd = {
         cmd     : 'sub',
@@ -236,8 +238,14 @@ bitwallet_services
       });
 
       return deferred.promise;
-
     }
+
+    // self.signup = function(){
+    //   // signup
+    //   if(self.data.locked==0 && !self.getAccountAccessKeys())
+    //     BitShares.signup(self.data.account);
+
+    // }
 
     self.init = function() {
 
@@ -281,7 +289,8 @@ bitwallet_services
           self.data.accounts.push(account);
         });
 
-
+        //self.signup();
+        
         console.log('DUMP DEFAULT ACCOUNT');
         console.log(JSON.stringify(res.account));
 

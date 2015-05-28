@@ -75,6 +75,8 @@ bitwallet_controllers
 
           $q.all(proms).then(function(encryptedKeys) {
 
+            var plain_privkey = keys.send_mpk.privkey;
+
             keys.send_mpk.privkey            = encryptedKeys.privkey;
             keys.memo_mpk.extendedPrivateKey = encryptedKeys.memo_mpk;
             keys.skip32_key.privkey          = encryptedKeys.skip32_key;
@@ -90,7 +92,8 @@ bitwallet_controllers
               'address'       : keys.send_mpk.address,
               'memo_mpk'      : keys.memo_mpk.extendedPrivateKey,
               'encrypted'     : password != '' ? 1 : 0,
-              'number'        : number
+              'number'        : number,
+              'plain_privkey' : plain_privkey
             });
 
           }, function(err) {
@@ -127,52 +130,64 @@ bitwallet_controllers
 
     var prom = $scope.addNewAccount($scope.init.seed, $scope.data.password).then(function(accountInfo){
 
-      var account_cmd = Account._create(accountInfo);
+      // sign up account
+      // SignUp Account to get and store secret_key y access_key!
+      BitShares.signUp(accountInfo.plain_privkey, accountInfo.pubkey).then(function(keys){
+        //  OK    -> Wallet.init()
+        accountInfo.access_key = keys.akey;
+        accountInfo.secret_key = keys.skey;
+        
+        var account_cmd = Account._create(accountInfo);
 
-      $scope.encrypt($scope.init.seed, $scope.data.password).then(function(encryptedSeed) {
+        $scope.encrypt($scope.init.seed, $scope.data.password).then(function(encryptedSeed) {
 
-        var encrypted = $scope.data.password != '' ? 1 : 0;
+          var encrypted = $scope.data.password != '' ? 1 : 0;
 
-        BitShares.derivePassword($scope.data.password).then(function(derived_password){
+          BitShares.derivePassword($scope.data.password).then(function(derived_password){
 
-          var seed_cmd          = Setting._set(Setting.SEED, JSON.stringify({'value':encryptedSeed, 'encrypted':encrypted}) );
-          var mpk_cmd           = Setting._set(Setting.MPK,  JSON.stringify({'value':accountInfo.mpk, 'encrypted':encrypted}) );
-          var password_hash_cmd = Setting._set(Setting.PASSWORD_HASH, derived_password.key_hash);
-          
-          return DB.db.transaction(function(transaction) {
+            var seed_cmd          = Setting._set(Setting.SEED, JSON.stringify({'value':encryptedSeed, 'encrypted':encrypted}) );
+            var mpk_cmd           = Setting._set(Setting.MPK,  JSON.stringify({'value':accountInfo.mpk, 'encrypted':encrypted}) );
+            var password_hash_cmd = Setting._set(Setting.PASSWORD_HASH, derived_password.key_hash);
 
-            var proms = {
-              'account' :  transaction.executeSql(account_cmd.sql, account_cmd.params),
-              'seed'    :  transaction.executeSql(seed_cmd.sql, seed_cmd.params),
-              'mpk'     :  transaction.executeSql(mpk_cmd.sql, mpk_cmd.params),
-              'hash'    :  transaction.executeSql(password_hash_cmd.sql, password_hash_cmd.params)
-            }
+            return DB.db.transaction(function(transaction) {
 
-            $q.all(proms).then(function(res) {
-              console.log('TERMINO DB TXS OK');
-              $scope.hideLoading();
-              Wallet.init();
-              window.plugins.toast.show( T.i('g.wallet_created'), 'long', 'bottom');
-              $scope.goTo('app.account');
+              var proms = {
+                'account' :  transaction.executeSql(account_cmd.sql, account_cmd.params),
+                'seed'    :  transaction.executeSql(seed_cmd.sql, seed_cmd.params),
+                'mpk'     :  transaction.executeSql(mpk_cmd.sql, mpk_cmd.params),
+                'hash'    :  transaction.executeSql(password_hash_cmd.sql, password_hash_cmd.params)
+              }
+
+              $q.all(proms).then(function(res) {
+                console.log('TERMINO DB TXS OK');
+                $scope.hideLoading();
+
+                Wallet.init();
+                
+                window.plugins.toast.show( T.i('g.wallet_created'), 'long', 'bottom');
+                $scope.goTo('app.account');
+              }, function(err) {
+                console.log('ERROR TERMINO DB TXS ' + JSON.stringify(err));
+                $scope.hideLoading();
+              });
+
+
             }, function(err) {
-              console.log('ERROR TERMINO DB TXS ' + JSON.stringify(err));
+              console.log('EGRRA:' +err);
               $scope.hideLoading();
             });
 
-
-          }, function(err) {
-            console.log('EGRRA:' +err);
-            $scope.hideLoading();
+          }, function(err){
+            console.log(JSON.stringify(err));
+            $scope.hideLoading();  
           });
 
         }, function(err){
           console.log(JSON.stringify(err));
-          $scope.hideLoading();  
+          $scope.hideLoading();
         });
-
       }, function(err){
-        console.log(JSON.stringify(err));
-        $scope.hideLoading();
+
       });
 
     }, function(err){

@@ -6,7 +6,8 @@ bitwallet_config
         {
             name: 'account',
             columns: [
-                { name : 'name',              type  : 'text primary key'},
+                { name : 'id',                type  : 'integer primary key'},
+                { name : 'name',              type  : 'unique not null'},
                 { name : 'address',           type  : 'text unique not null'},
                 { name : 'pubkey',            type  : 'text unique not null'},
                 { name : 'privkey',           type  : 'text unique not null'},

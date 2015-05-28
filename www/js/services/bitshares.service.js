@@ -500,6 +500,7 @@ bitwallet_services
     self.apiCall = function(keys, url, payload) {
 
       if (keys === undefined) {
+        console.log('BitShares.apiCall keys are NULL and url='+url);
         return self.apiCallStub(url, payload);
       }
 
@@ -533,7 +534,10 @@ bitwallet_services
         req = $http.post(url, payload ,{timeout:ENVIRONMENT.timeout, headers:headers});
       }
       else{
-        req = $http.get(url, {timeout:ENVIRONMENT.timeout, headers:headers});
+        if(headers=={})
+          req = $http.get(url, {timeout:ENVIRONMENT.timeout});
+        else
+          req = $http.get(url, {timeout:ENVIRONMENT.timeout, headers:headers});
       }
 
       req.success(function(res) {
@@ -543,7 +547,7 @@ bitwallet_services
           deferred.resolve(res);
       })
       .error(function(data, status, headers, config) {
-        deferred.reject();
+        deferred.reject({data:data, status:status, headers:headers, config:config});
       });
 
       return deferred.promise;
@@ -762,53 +766,78 @@ bitwallet_services
       return self.apiCall(undefined, url, payload)
     }
 
+    self.signing_up = false;
     // password
-    self.signUp = function(account){
+    self.signUp = function(privkey, pubkey){
       var deferred = $q.defer();
 
-      Account.active().then(function(account){
-        self.getSignupInfo().then(function(res) {
-          self.recoverPubkey(res.msg, res.signature).then(function(pubkey) {
-            //console.log(pubkey);
-            if( pubkey != ENVIRONMENT.apiPubkey ) {
-              deferred.reject('invalid pub key');
-              return;
-            }
-            self.compactSignatureForMessage(res.msg, address.privkey).then(function(signature) {
+      if(self.signing_up==true){
+        console.log('BitShares signup err  [singup in progress]');
+        deferred.reject('singup in progress');
+        return deferred.promise;
+      }
 
-              self.pushSignupInfo(res.msg, signature, address.pubkey).then(function(res) {
+      self.signing_up = true;
 
-                if( angular.isUndefined(res.access_key) || angular.isUndefined(res.secret_key) ) {
-                  deferred.reject('invalid keys');
-                  return;
-                }
+      self.getSignupInfo().then(function(res) {
+        self.recoverPubkey(res.msg, res.signature).then(function(pubkey) {
+          //console.log(pubkey);
+          if( pubkey != ENVIRONMENT.apiPubkey ) {
+            deferred.reject('invalid pub key');
+            console.log('BitShares signup err  [invalid pub key]');
+            self.signing_up = false;
+            return;
+          }
+          self.compactSignatureForMessage(res.msg, privkey).then(function(signature) {
 
-                Setting.set(Setting.BSW_TOKEN, [res.access_key, res.secret_key].join(';')).then(function() {
-                  console.log('BitShares.getBackendToken:'+res.access_key);
-                  deferred.resolve({akey:res.access_key,skey:res.secret_key});
-                }, function(err) {
-                  deferred.reject(err);
-                });
+            self.pushSignupInfo(res.msg, signature, pubkey).then(function(res) {
 
-              }, function(err) {
-                deferred.reject(err);
-              });
+              if( angular.isUndefined(res.access_key) || angular.isUndefined(res.secret_key) ) {
+                self.signing_up = false;
+                deferred.reject('invalid keys');
+                console.log('BitShares signup err  [invalid keys]');
+                return;
+              }
+
+              console.log('BitShares.signup:'+res.access_key);
+              deferred.resolve({akey:res.access_key,skey:res.secret_key});
+
+              self.signing_up = false;
+              // account.access_key = res.access_key;
+              // account.secret_key = res.secret_key;
+              // Account.updateAccesKeys(account).then(function() {
+              //   console.log('BitShares.getBackendToken:'+res.access_key);
+              //   self.signing_up = false;
+              //   deferred.resolve({akey:res.access_key,skey:res.secret_key});
+              // }, function(err) {
+              //   self.signing_up = false;
+              //   deferred.reject(err);
+              // });
 
             }, function(err) {
+              console.log('signup err#1 ' + JSON.stringify(err));
+              self.signing_up = false;
               deferred.reject(err);
             });
 
           }, function(err) {
+            console.log('signup err#2 ' + JSON.stringify(err));
+            self.signing_up = false;
             deferred.reject(err);
           });
 
         }, function(err) {
+          console.log('signup err#3 ' + JSON.stringify(err));
+          self.signing_up = false;
           deferred.reject(err);
         });
-      }, function(err){
 
-      })
-
+      }, function(err) {
+        console.log('signup err#4 ' + JSON.stringify(err));
+        self.signing_up = false;
+        deferred.reject(err);
+      });
+      
       return deferred.promise;
     }
 
