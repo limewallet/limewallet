@@ -76,6 +76,8 @@ bitwallet_services
       var path  = self.urlPath(url);
       var nonce = Math.floor(Date.now()/1000);
 
+      console.log('MENSAJE A LABURAR [' + body + '][' + path + '][' + nonce + ']');
+
       window.plugins.BitsharesPlugin.requestSignature(
         function(data){
           var headers = {
@@ -493,6 +495,7 @@ bitwallet_services
     };
 
     self.urlPath = function(url) {
+      console.log('LLAMAN a urlPath ' + url);
       if(url[0] == '/') return url;
       return url.substr(url.indexOf('/', url.indexOf('://')+3));
     }
@@ -541,6 +544,7 @@ bitwallet_services
       }
 
       req.success(function(res) {
+        //console.log('REQ.SUC ' + JSON.stringify(res));
         if(!angular.isUndefined(res.error))
           deferred.reject(res.error);
         else

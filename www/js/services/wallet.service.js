@@ -143,7 +143,7 @@ bitwallet_services
       //   };
       // }
 
-      var keys = self.self.getAccountAccessKeys();
+      var keys = self.getAccountAccessKeys();
 
       var cmd = {
         cmd     : 'sub',
@@ -288,6 +288,14 @@ bitwallet_services
           
           self.data.accounts.push(account);
         });
+
+        //HACK:
+        self.data.account.pubkey       = 'DVS6G3wqTYYt8Hpz9pFQiJYpxvUja8cEMNwWuP5wNoxr9NqhF8CLS';
+        self.data.account.address      = 'DVSM5HFFtCbhuv3xPfRPauAeQ5GgW7y4UueL';
+        self.data.account.privkey      = '5HymcH7QHpzCZNZcKSbstrQc1Q5vcNjCLj9wBk5aqYZcHCR6SzN';
+        self.data.account.skip32_priv  = '0102030405060708090A';
+        self.data.account.access_key   = '7cMHdvnvhv8Q36c4Xf8HJQaibTi4kpANNaBQYhtzQ2M6';
+        self.data.account.secret_key   = '7teitGUUbtaRJY6mnv3mB9d1VB3UggiBQf4kyiL2PaKB';
 
         console.log('DUMP DEFAULT ACCOUNT');
         console.log(JSON.stringify(res.account));
@@ -515,6 +523,8 @@ bitwallet_services
           'skey' : self.data.account.secret_key
         }
 
+        console.log('KEYS a USAR ' + JSON.stringify(keys));
+
         proms = { 
           'ops'  : BitShares.getBalance(self.data.account.address, res.block_id, self.data.asset.id),
           'xtxs' : BitShares.listExchangeTxs(keys, res.last_xtx, self.data.asset.id)
@@ -593,12 +603,13 @@ bitwallet_services
             deferred.reject(err);
           });
 
-
         }, function(err){
+          console.log('TOMA EL ERROR' + JSON.stringify(err));
           deferred.reject(err);
         });
 
       }, function(err){
+        console.log(JSON.stringify(err));
         deferred.reject(err);
       });
 

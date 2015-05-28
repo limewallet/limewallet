@@ -361,8 +361,8 @@ bitwallet_services
     }
 
     self._create = function(obj) {
-      var sql    = 'INSERT into account (account_mpk, pubkey, address, number, privkey, skip32_key, memo_mpk, encrypted) values (?,?,?,?,?,?,?,?)';
-      var params = [obj.account_mpk, obj.pubkey, obj.address, obj.number, obj.privkey, obj.skip32_key, obj.memo_mpk, obj.encrypted];
+      var sql    = 'INSERT into account (name, account_mpk, access_key, secret_key, pubkey, address, number, privkey, skip32_key, memo_mpk, encrypted) values (?,?,?,?,?,?,?,?,?,?,?)';
+      var params = [obj.name, obj.account_mpk, obj.access_key, obj.secret_key, obj.pubkey, obj.address, obj.number, obj.privkey, obj.skip32_key, obj.memo_mpk, obj.encrypted];
 
       return {sql:sql, params:params};
     }

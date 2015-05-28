@@ -11,7 +11,7 @@ bitwallet_config
   ],
   apiurl : function(path) {
     //var url = 'http://bsw-test.latincoin.com/api/v2';
-    var url = 'http://192.168.42.42:8100/api';
+    var url = 'http://192.168.42.42:8100/api/v2';
     return url + path;
   },
   wsurl : 'ws://bswws-test.latincoin.com/events',

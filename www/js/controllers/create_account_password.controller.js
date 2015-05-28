@@ -69,7 +69,7 @@ bitwallet_controllers
             'mpk'         : $scope.encrypt(mpk, password),
             'account_mpk' : $scope.encrypt(accountMpk.extendedPrivateKey, password),
             'privkey'     : $scope.encrypt(keys.send_mpk.privkey, password),
-            'skip32_key'  : $scope.encrypt(keys.skip32_key.privkey, password),
+            'skip32_key'  : $scope.encrypt(keys.skip32_key.privkey_hex, password),
             'memo_mpk'    : $scope.encrypt(keys.memo_mpk.extendedPrivateKey, password)
           };
 
@@ -79,7 +79,7 @@ bitwallet_controllers
 
             keys.send_mpk.privkey            = encryptedKeys.privkey;
             keys.memo_mpk.extendedPrivateKey = encryptedKeys.memo_mpk;
-            keys.skip32_key.privkey          = encryptedKeys.skip32_key;
+            keys.skip32_key.privkey_hex      = encryptedKeys.skip32_key;
             accountMpk.extendedPrivateKey    = encryptedKeys.account_mpk;
             mpk                              = encryptedKeys.mpk;
       
@@ -88,7 +88,7 @@ bitwallet_controllers
               'account_mpk'   : accountMpk.extendedPrivateKey,
               'pubkey'        : keys.send_mpk.pubkey,
               'privkey'       : keys.send_mpk.privkey,
-              'skip32_key'    : keys.skip32_key.privkey,
+              'skip32_key'    : keys.skip32_key.privkey_hex,
               'address'       : keys.send_mpk.address,
               'memo_mpk'      : keys.memo_mpk.extendedPrivateKey,
               'encrypted'     : password != '' ? 1 : 0,
@@ -136,8 +136,11 @@ bitwallet_controllers
         //  OK    -> Wallet.init()
         accountInfo.access_key = keys.akey;
         accountInfo.secret_key = keys.skey;
+        accountInfo.name       = 'guest'+accountInfo.number;
         
         var account_cmd = Account._create(accountInfo);
+
+        console.log(JSON.stringify(account_cmd));
 
         $scope.encrypt($scope.init.seed, $scope.data.password).then(function(encryptedSeed) {
 
@@ -162,7 +165,7 @@ bitwallet_controllers
                 console.log('TERMINO DB TXS OK');
                 $scope.hideLoading();
 
-                Wallet.init();
+                //Wallet.init();
                 
                 window.plugins.toast.show( T.i('g.wallet_created'), 'long', 'bottom');
                 $scope.goTo('app.account');

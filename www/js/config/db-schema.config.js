@@ -50,6 +50,7 @@ bitwallet_config
             name: 'memo',
             columns: [
                 { name : 'id',                  type  : 'text primary key'},
+                { name : 'account',             type  : 'integer not null'}, 
                 { name : 'encrypted',           type  : 'integer default 1'}, 
                 { name : 'memo',                type  : 'text'}, 
                 { name : 'one_time_key',        type  : 'text'}, 
