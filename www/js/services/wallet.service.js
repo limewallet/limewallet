@@ -289,8 +289,6 @@ bitwallet_services
           self.data.accounts.push(account);
         });
 
-        //self.signup();
-        
         console.log('DUMP DEFAULT ACCOUNT');
         console.log(JSON.stringify(res.account));
 

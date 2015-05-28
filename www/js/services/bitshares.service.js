@@ -557,6 +557,22 @@ bitwallet_services
       return self.apiCall(undefined, ENVIRONMENT.apiurl('/account/'+query+'?find=true') );
     }
 
+    self.recordAdd = function(keys, content) {
+      return self.apiCall(keys, ENVIRONMENT.apiurl('/record'), content);
+    }
+
+    self.recordList = function(keys, from) {
+      var params = {};
+      if( from !== undefined)
+        obj['from']=from;
+
+      var filter = '';
+      if( Object.keys(obj).length !== 0 )
+        filter = '?' + self.toQueryString(obj);
+
+      return self.apiCall(keys, ENVIRONMENT.apiurl('/record'+filter));
+    }
+
     // *************************************************** //
     // Exchange Service Api Calls ************************ //
     // *************************************************** //
@@ -780,9 +796,9 @@ bitwallet_services
       self.signing_up = true;
 
       self.getSignupInfo().then(function(res) {
-        self.recoverPubkey(res.msg, res.signature).then(function(pubkey) {
+        self.recoverPubkey(res.msg, res.signature).then(function(service_pubkey) {
           //console.log(pubkey);
-          if( pubkey != ENVIRONMENT.apiPubkey ) {
+          if( service_pubkey != ENVIRONMENT.apiPubkey ) {
             deferred.reject('invalid pub key');
             console.log('BitShares signup err  [invalid pub key]');
             self.signing_up = false;

@@ -1,4 +1,8 @@
 {
   "name": "Bitwallet",
-  "app_id": ""
+  "app_id": "",
+  "proxies": [{
+    "path": "/api",
+    "proxyUrl": "http://bsw-test.latincoin.com/api/v2"
+  }]
 }
