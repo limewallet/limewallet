@@ -22,8 +22,8 @@ bitwallet_config
                 { name : 'avatar_hash',       type  : 'text'},
                 { name : 'public_data',       type  : 'text'},
                 { name : 'registered',        type  : 'integer default 0'}, // -1:no, 1:yes, 0:unknown
-                { name : 'access_key',        type  : 'text'},
-                { name : 'secret_key',        type  : 'text'},
+                { name : 'access_key',        type  : 'text unique not null'},
+                { name : 'secret_key',        type  : 'text unique not null'},
                 { name : 'created_at',        type  : 'datetime default CURRENT_TIMESTAMP'}
             ]
         },
