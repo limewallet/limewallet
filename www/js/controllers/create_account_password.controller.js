@@ -84,6 +84,7 @@ bitwallet_controllers
             mpk                              = encryptedKeys.mpk;
       
             deferred.resolve({ 
+              'name'          : 'guest',
               'mpk'           : mpk,
               'account_mpk'   : accountMpk.extendedPrivateKey,
               'pubkey'        : keys.send_mpk.pubkey,
@@ -163,7 +164,7 @@ bitwallet_controllers
                 $scope.hideLoading();
 
                 Wallet.init();
-                
+
                 window.plugins.toast.show( T.i('g.wallet_created'), 'long', 'bottom');
                 $scope.goTo('app.account');
               }, function(err) {
