@@ -140,6 +140,7 @@ bitwallet_services
         self.data.accounts[i].plain_memo_mpk    = undefined; 
         self.data.accounts[i].plain_account_mpk = undefined;  
         self.data.accounts[i].plain_privkey     = undefined;
+        self.data.accounts[i].plain_skip32_key  = undefined;
         self.data.accounts[i].encrypted         = 1;
       }
       self.data.seed.plain_value  = undefined;
@@ -186,19 +187,22 @@ bitwallet_services
           console.log('Wallet.unlock: about to decrypt: account.memo_mpk: '+account.memo_mpk );
           console.log('Wallet.unlock: about to decrypt: account.account_mpk: '+account.account_mpk );
           console.log('Wallet.unlock: about to decrypt: account.privkey: '+account.privkey );
+          console.log('Wallet.unlock: about to decrypt: account.privkey: '+account.skip32_key );
 
           proms.push(BitShares.decryptString(account.memo_mpk, res.pbkdf2.key));
           proms.push(BitShares.decryptString(account.account_mpk, res.pbkdf2.key));
           proms.push(BitShares.decryptString(account.privkey, res.pbkdf2.key));
+          proms.push(BitShares.decryptString(account.skip32_key, res.pbkdf2.key));
         });
 
         $q.all(proms).then(function(res){
           self.data.seed.plain_value  = res[0];
           self.data.mpk.plain_value   = res[1];
           for(var i=0; i<self.data.accounts.length;i++){
-            self.data.accounts[i].plain_memo_mpk    = res[2+i*3+0]; 
-            self.data.accounts[i].plain_account_mpk = res[2+i*3+1];  
-            self.data.accounts[i].plain_privkey     = res[2+i*3+2];
+            self.data.accounts[i].plain_memo_mpk    = res[2+i*4+0]; 
+            self.data.accounts[i].plain_account_mpk = res[2+i*4+1];  
+            self.data.accounts[i].plain_privkey     = res[2+i*4+2];
+            self.data.accounts[i].plain_skip32_key  = res[2+i*4+3];
             self.data.accounts[i].encrypted         = 0;
           }
           self.data.locked = 0;
@@ -242,9 +246,10 @@ bitwallet_services
 
         res.accounts.forEach(function(account) {
           
-          account.plain_privkey  = undefined;
-          account.plain_memo_mpk = undefined; 
-          account.plain_account_mpk    = undefined;
+          account.plain_privkey     = undefined;
+          account.plain_memo_mpk    = undefined;
+          account.plain_account_mpk = undefined;
+          account.plain_skip32_key  = undefined;
 
           //HACK:
           //if(account.active==1) {
