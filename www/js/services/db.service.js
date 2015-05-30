@@ -332,13 +332,13 @@ bitwallet_services
           // }
           var account = DB.fetch(result);
           // console.log('Active account:: '+JSON.stringify(account));
-           if( account !== undefined) {
-             account.pubkey       = 'DVS6G3wqTYYt8Hpz9pFQiJYpxvUja8cEMNwWuP5wNoxr9NqhF8CLS';
-             account.address      = 'DVSM5HFFtCbhuv3xPfRPauAeQ5GgW7y4UueL';
-             account.privkey      = '5HymcH7QHpzCZNZcKSbstrQc1Q5vcNjCLj9wBk5aqYZcHCR6SzN';
-             account.access_key   = '7cMHdvnvhv8Q36c4Xf8HJQaibTi4kpANNaBQYhtzQ2M6';
-             account.secret_key   = '7teitGUUbtaRJY6mnv3mB9d1VB3UggiBQf4kyiL2PaKB';
-           }
+           // if( account !== undefined) {
+           //   account.pubkey       = 'DVS6G3wqTYYt8Hpz9pFQiJYpxvUja8cEMNwWuP5wNoxr9NqhF8CLS';
+           //   account.address      = 'DVSM5HFFtCbhuv3xPfRPauAeQ5GgW7y4UueL';
+           //   account.privkey      = '5HymcH7QHpzCZNZcKSbstrQc1Q5vcNjCLj9wBk5aqYZcHCR6SzN';
+           //   account.access_key   = '7cMHdvnvhv8Q36c4Xf8HJQaibTi4kpANNaBQYhtzQ2M6';
+           //   account.secret_key   = '7teitGUUbtaRJY6mnv3mB9d1VB3UggiBQf4kyiL2PaKB';
+           // }
 
           deferred.resolve(account);
 
@@ -361,8 +361,8 @@ bitwallet_services
     }
 
     self._create = function(obj) {
-      var sql    = 'INSERT into account (account_mpk, pubkey, address, number, privkey, skip32_key, memo_mpk, encrypted) values (?,?,?,?,?,?,?,?)';
-      var params = [obj.account_mpk, obj.pubkey, obj.address, obj.number, obj.privkey, obj.skip32_key, obj.memo_mpk, obj.encrypted];
+      var sql    = 'INSERT into account (name, account_mpk, access_key, secret_key, pubkey, address, number, privkey, skip32_key, memo_mpk, encrypted) values (?,?,?,?,?,?,?,?,?,?,?)';
+      var params = [obj.name, obj.account_mpk, obj.access_key, obj.secret_key, obj.pubkey, obj.address, obj.number, obj.privkey, obj.skip32_key, obj.memo_mpk, obj.encrypted];
 
       return {sql:sql, params:params};
     }

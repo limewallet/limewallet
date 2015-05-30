@@ -1,5 +1,5 @@
 bitwallet_services
-.service('Wallet', function($translate, $rootScope, $q, ENVIRONMENT, BitShares, ReconnectingWebSocket, DB, Memo, Setting, Account, Operation, ExchangeTransaction, Balance, Contact) {
+.service('Wallet', function($translate, T, $rootScope, $q, ENVIRONMENT, BitShares, ReconnectingWebSocket, DB, Memo, Setting, Account, Operation, ExchangeTransaction, Balance, Contact) {
     var self = this;
 
     self.data = {
@@ -58,7 +58,8 @@ bitwallet_services
     
     self.disconnect_count = 0;
     self.connectToBackend = function(backend_url) {
-      self.ws = new ReconnectingWebSocket(backend_url);
+      var _backend_url = backend_url || ENVIRONMENT.wsurl;
+      self.ws = new ReconnectingWebSocket(_backend_url);
       self.ws.onopen       = self.onConnectedToBackend;
       self.ws.onmessage    = self.onNotification;
       self.ws.onconnecting = self.onReconnect;
@@ -143,7 +144,7 @@ bitwallet_services
       //   };
       // }
 
-      var keys = self.self.getAccountAccessKeys();
+      var keys = self.getAccountAccessKeys();
 
       var cmd = {
         cmd     : 'sub',
@@ -167,12 +168,12 @@ bitwallet_services
 
       if(!(self.data.password_required==1 && self.data.locked==0))
       {
-        return;
+        return false;
       }
 
       for(var i=0; i<self.data.accounts.length;i++){
         self.data.accounts[i].plain_memo_mpk  = undefined; 
-        self.data.accounts[i].account_mpk     = undefined;  
+        self.data.accounts[i].plain_account_mpk     = undefined;  
         self.data.accounts[i].plain_privkey   = undefined;
         self.data.accounts[i].encrypted       = 1;
       }
@@ -180,10 +181,10 @@ bitwallet_services
       self.data.mpk.plain_value   = undefined;
       self.data.locked = 1;
 
-      return;
+      return true;
     }
 
-    self.unlock = function(password) {
+    self.unlock = function(password, password_hash) {
       var deferred = $q.defer();
       
       if(!(self.data.password_required==1 && self.data.locked==1))
@@ -191,10 +192,10 @@ bitwallet_services
         deferred.resolve();
         return deferred.promise;
       }
-
+      console.log('Wallet.unlock: ['+password+']');
       // chequeamos que el hash del password es la misma mierda que tenemos guardada, sino error.
       var proms = {
-        'pbkdf2'          : BitShares.pbkdf2(password),
+        'pbkdf2'          : BitShares.derivePassword(password),
         'hashed_password' : Setting.get(Setting.PASSWORD_HASH),
         'mpk'             : Setting.get(Setting.MPK)
       }
@@ -203,16 +204,24 @@ bitwallet_services
 
         if(res.pbkdf2.key_hash != res.hashed_password.value)
         {
+          console.log('Wallet unlock password = ' + res.pbkdf2.key_hash + '!='  + res.hashed_password.key_hash);
           deferred.reject(T.i('err.invalid_password'));
           return;
         }
         
+        console.log('Wallet.unlock: about to decrypt: self.data.seed.value: '+self.data.seed.value );
+        console.log('Wallet.unlock: about to decrypt: self.data.mpk.value: '+self.data.mpk.value );
+
         proms = [];
         proms.push(BitShares.decryptString(self.data.seed.value, res.pbkdf2.key));
         proms.push(BitShares.decryptString(self.data.mpk.value, res.pbkdf2.key));
 
         // si es valido, penetramos al primer mundo  
         self.data.accounts.forEach(function(account) {
+          console.log('Wallet.unlock: about to decrypt: account.memo_mpk: '+account.memo_mpk );
+          console.log('Wallet.unlock: about to decrypt: account.account_mpk: '+account.account_mpk );
+          console.log('Wallet.unlock: about to decrypt: account.privkey: '+account.privkey );
+
           proms.push(BitShares.decryptString(account.memo_mpk, res.pbkdf2.key));
           proms.push(BitShares.decryptString(account.account_mpk, res.pbkdf2.key));
           proms.push(BitShares.decryptString(account.privkey, res.pbkdf2.key));
@@ -222,33 +231,27 @@ bitwallet_services
           self.data.seed.plain_value  = res[0];
           self.data.mpk.plain_value   = res[1];
           for(var i=0; i<self.data.accounts.length;i++){
-            self.data.accounts[i].plain_memo_mpk  = res[2+i*3+0]; 
-            self.data.accounts[i].account_mpk     = res[2+i*3+1];  
-            self.data.accounts[i].plain_privkey   = res[2+i*3+2];
-            self.data.accounts[i].encrypted       = 0;
+            self.data.accounts[i].plain_memo_mpk    = res[2+i*3+0]; 
+            self.data.accounts[i].plain_account_mpk = res[2+i*3+1];  
+            self.data.accounts[i].plain_privkey     = res[2+i*3+2];
+            self.data.accounts[i].encrypted         = 0;
           }
           self.data.locked = 0;
           deferred.resolve();
         }, function(err){
+          console.log('Wallet.unlock error#1 '+JSON.stringify(err));
           deferred.reject(err);
         })
 
       }, function(err) {
+        console.log('Wallet.unlock error#2 '+JSON.stringify(err));
         deferred.reject(err);
       });
 
       return deferred.promise;
     }
 
-    // self.signup = function(){
-    //   // signup
-    //   if(self.data.locked==0 && !self.getAccountAccessKeys())
-    //     BitShares.signup(self.data.account);
-
-    // }
-
-    self.init = function() {
-
+    self.load = function(){
       var deferred = $q.defer();
 
       //Load Assets
@@ -257,6 +260,7 @@ bitwallet_services
         self.data.assets[asset.id]  = asset;
       });
 
+      //Load Settings & Accounts
       var keys = {}; 
       keys[Setting.DEFAULT_ASSET]         = ENVIRONMENT.default_asset;
       keys[Setting.UI_HIDE_BALANCE]       = false;
@@ -272,22 +276,31 @@ bitwallet_services
       $q.all(proms).then(function(res) {
 
         res.accounts.forEach(function(account) {
+          
           account.plain_privkey  = undefined;
           account.plain_memo_mpk = undefined; 
-          account.account_mpk    = undefined;
+          account.plain_account_mpk    = undefined;
 
           if(account.encrypted==0){
             account.plain_privkey     = account.privkey;
             account.plain_memo_mpk    = account.memo_mpk; 
             account.plain_account_mpk = account.account_mpk; 
           }
-
+          
           if(account.active==1){
             self.data.account = account;
           }
           
           self.data.accounts.push(account);
         });
+
+        //HACK:
+        // self.data.account.pubkey       = 'DVS6G3wqTYYt8Hpz9pFQiJYpxvUja8cEMNwWuP5wNoxr9NqhF8CLS';
+        // self.data.account.address      = 'DVSM5HFFtCbhuv3xPfRPauAeQ5GgW7y4UueL';
+        // self.data.account.privkey      = '5HymcH7QHpzCZNZcKSbstrQc1Q5vcNjCLj9wBk5aqYZcHCR6SzN';
+        // self.data.account.skip32_priv  = '0102030405060708090A';
+        // self.data.account.access_key   = '7cMHdvnvhv8Q36c4Xf8HJQaibTi4kpANNaBQYhtzQ2M6';
+        // self.data.account.secret_key   = '7teitGUUbtaRJY6mnv3mB9d1VB3UggiBQf4kyiL2PaKB';
 
         console.log('DUMP DEFAULT ACCOUNT');
         console.log(JSON.stringify(res.account));
@@ -314,11 +327,26 @@ bitwallet_services
         // estoy singupeado?
         //  NO -> tengo passworD?
         //    SI -> pido passworD?
-
-        self.connectToBackend(ENVIRONMENT.wsurl);
-
         deferred.resolve();
 
+      }, function(err) {
+        //TODO:
+        deferred.reject(err);
+      });
+
+      return deferred.promise;
+    }
+
+
+    self.init = function() { 
+    
+      var deferred = $q.defer();
+      
+      self.load().then(function(){
+      
+        self.connectToBackend(ENVIRONMENT.wsurl);
+        deferred.resolve();
+      
       }, function(err) {
         //TODO:
         deferred.reject(err);
@@ -428,7 +456,7 @@ bitwallet_services
       var deferred = $q.defer();
 
       //HACK:
-      self.data.account.encrypted = 0;
+      //self.data.account.encrypted = 0;
 
       var proms = {
         'balance' : Balance.forAsset(self.data.asset.id),
@@ -515,6 +543,8 @@ bitwallet_services
           'skey' : self.data.account.secret_key
         }
 
+        console.log('KEYS a USAR ' + JSON.stringify(keys));
+
         proms = { 
           'ops'  : BitShares.getBalance(self.data.account.address, res.block_id, self.data.asset.id),
           'xtxs' : BitShares.listExchangeTxs(keys, res.last_xtx, self.data.asset.id)
@@ -593,12 +623,13 @@ bitwallet_services
             deferred.reject(err);
           });
 
-
         }, function(err){
+          console.log('TOMA EL ERROR' + JSON.stringify(err));
           deferred.reject(err);
         });
 
       }, function(err){
+        console.log(JSON.stringify(err));
         deferred.reject(err);
       });
 

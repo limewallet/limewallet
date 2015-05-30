@@ -11,7 +11,7 @@ bitwallet_config
   ],
   apiurl : function(path) {
     //var url = 'http://bsw-test.latincoin.com/api/v2';
-    var url = 'http://192.168.57.1:8100/api';
+    var url = 'http://192.168.57.1:8100/api/v2';
     return url + path;
   },
   wsurl : 'ws://bswws-test.latincoin.com/events',
@@ -19,3 +19,20 @@ bitwallet_config
 });
 //DVS8m6y6QXLPbSZmKVmKJvvbjXVZX9vL2Mk38vHLSxKkLwjBxPwqz
 //DVS63cpRrsNQiusNfvh6BU2cx4Anb77J4S5PP42PitfCAxRjuodux
+
+/*
+
+c:\dago\wdir\bitshares.wallet\bitwallet>ionic run android -l -s -c
+Setup Live Reload
+Proxy added: /api/v2 => http://bsw-test.latincoin.com/api/v2
+Running dev server: http://192.168.57.1:8100
+running cordova run android
+Running live reload server: http://192.168.57.1:35729
+Watching : [ 'www/** / *', '!www/lib/** / *' ]
+Ionic server commands, enter:
+  restart or r to restart the client app from the root
+  goto or g and a url to have the app navigate to the given url
+  consolelogs or c to enable/disable console log output
+  serverlogs or s to enable/disable server log output
+  quit or q to shutdown the server and exit
+*/

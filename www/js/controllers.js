@@ -1,6 +1,6 @@
 var bitwallet_controllers = angular.module('bit_wallet.controllers', ['bit_wallet.services']);
 bitwallet_controllers
-.controller('AppCtrl', function($scope, $ionicSideMenuDelegate, $timeout, Wallet, $ionicPopup) {
+.controller('AppCtrl', function($scope, $ionicSideMenuDelegate, $timeout, Wallet, $ionicPopup, $rootScope, $translate, T) {
   
   $scope.$watch(function() { return $ionicSideMenuDelegate.isOpen(); }, function(isOpen) { 
     if(isOpen)
@@ -11,17 +11,22 @@ bitwallet_controllers
 
   $scope.lockWallet= function(){
     $scope.data.in_progress = true;
-    Wallet.lock().then(function(){
+    var locked = Wallet.lock();
+    if(locked=true)
+    {  
       window.plugins.toast.show( T.i('g.wallet_locked'), 'long', 'bottom'); 
       $scope.data.in_progress = false;
-    }, function(err){
+    }
+    else
+    {  
       $ionicPopup.alert({
         title    : T.i('err.wallet_locked_title') + ' <i class="fa fa-warning float_right"></i>',
-        template : T.i(err.message),
-        okType   : 'button-assertive', 
+        template : 'essta',
+        okType   : 'button-assertive'
       });
       $scope.data.in_progress = false;
-    });
+    }
+
   }
 
   $scope.unLockWallet= function(){
@@ -32,17 +37,17 @@ bitwallet_controllers
       inputPlaceholder : T.i('g.password'),
       inputType        : 'password',
     }).then(function(password) {
-      if(password === undefined){
+      if(!password){
         $scope.data.in_progress = false;
         return;
       }
-      Wallet.unLock(password).then(function(){
+      Wallet.unlock(password).then(function(){
         window.plugins.toast.show( T.i('g.wallet_unlocked'), 'long', 'bottom'); 
         $scope.data.in_progress = false;
       }, function(err){
         $ionicPopup.alert({
           title    : T.i('err.wallet_un_locked_title') + ' <i class="fa fa-warning float_right"></i>',
-          template : T.i(err.message),
+          template : err,
           okType   : 'button-assertive', 
         });
         $scope.data.in_progress = false;

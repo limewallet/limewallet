@@ -1218,9 +1218,21 @@ input.pmd {font-size:16px!important;  color:#fff;border-top:none; border-left:no
     right: 10px;
     top: 10px;}
 .bar .title {font-size: 17px!important;}
-.bar .button.button-icon .icon:before, .bar .button.button-icon:before, .bar .button.button-icon.icon-left:before, .bar .button.button-icon.icon-right:before {
+
+/*.bar .button.button-icon .icon:before, 
+  .bar .button.button-icon:before, */
+  .bar .button.button-icon.icon-left:before, 
+  .bar .button.button-icon.icon-right:before {
   font-size: 26px!important;}
 
 .loading-container .loading {display:flex;align-items:center;}
 .loading-container .loading ion-spinner {float:right;}
 .loading-container .loading ion-spinner {stroke:#d3eb00!important;} /*93c91f*/
+
+.lime_settings_ionicon {
+}
+.lime_settings_ionicon:before {
+  padding-top:23px!important;
+  color:#797778!important;
+  font-size:17px!important;
+  }

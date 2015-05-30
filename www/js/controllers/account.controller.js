@@ -187,12 +187,15 @@ bitwallet_controllers.controller('AccountCtrl', function($translate, T, BitShare
           BitShares.sendTx(result.secret, result.tx).then(function(result) {
             deferred.resolve(result);
           }, function(err) {
+            console.log('err.occurred #1' + JSON.stringify(err));
             deferred.reject({title:'err.occurred', message:err});
           });
         },function(error) {
+          console.log('err.occurred #2' + JSON.stringify(err));
           deferred.reject({title:'err.occurred', message:error});
         })
       },function(error){
+        console.log('err.occurred #3' + JSON.stringify(err));
         deferred.reject({title:'err.occurred', message:error});
         return;
       });
