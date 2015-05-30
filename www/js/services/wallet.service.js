@@ -80,78 +80,43 @@ bitwallet_services
     }
 
     self.onNotification = function (event) {
-      //clearTimeout(self.timeout.ping);
-      //self.timeout.ping = setTimeout( function() { self.ws.send('ping'); }, 10000);
       console.log(' ----------- onNotification Vino Evento ------ ')
-      console.log(' -- Event: '+JSON.stringify(event.data));
-      var json_event = undefined;
-      try {
-        json_event = JSON.parse(event.data);
-      }
-      catch(err) {
-        console.log('Error parsing json event :(');
-        return;
-      }
-      if(json_event === undefined)
-        return;
-      if(json_event.event=='bc'){
+      console.log(' -- Event: '+event.data);
+
+      ev = JSON.parse(event.data);
+
+      if( ev.name=='bc') {
         //Refresh balance in 100ms, if we get two notifications (Withdraw from two addresses) just refresh once.
         clearTimeout(self.timeout.refresh);
-        self.timeout.refresh = setTimeout( function() { self.refreshBalance(); }, 1000);
-        // self.buildTxList = function(event.data, self.data.asset.id) {
+        self.timeout.refresh = setTimeout( function() { 
+          console.log(' bc: wallet changed -> loadBalance()');
+          self.refreshBalance(); 
+        }, 1000);
       }
-      else if( json_event.event=='xu')
-      {
-        //  agarro la xtx y update or insert, luego llamo a loadBalance
-        if(json_event.data.id===undefined || !json_event.data.extra_data || json_event.data.extra_data.length<=0)
-        {
-          console.log(' evento de mierda!!!!!!!!!!!!');
-          return;
-        }
-        self.onNewXTx(json_event.data);
-        //self.loadBalance();
+      else if( ev.name=='xu') {
+        //self.onNewXTx(json_event.data);
         clearTimeout(self.timeout.load);
         self.timeout.load = setTimeout( function() { 
-            console.log(' wallet changed -> loadBalance()');
-            self.loadBalance(); 
-          }, 1000);
-        //self.loadBalance();
+          console.log(' xu: wallet changed -> loadBalance()');
+          self.loadBalance(); 
+        }, 1000);
       }
     }
 
     self.getAccountAccessKeys = function() {
-      var keys = undefined;
-      
-      if (self.data.account.access_key !== undefined) {
-        keys = {
-          'akey' : self.data.account.access_key,
-          'skey' : self.data.account.secret_key
-        };
+      return {
+        'akey' : self.data.account.access_key,
+        'skey' : self.data.account.secret_key
       }
-
-      return keys;    
     }
     
     self.subscribeToNotifications = function() {
-
-      // var keys = undefined;
-      
-      // if (self.data.account.access_key !== undefined) {
-      //   keys = {
-      //     'akey' : self.data.account.access_key,
-      //     'skey' : self.data.account.secret_key
-      //   };
-      // }
 
       var keys = self.getAccountAccessKeys();
 
       var cmd = {
         cmd     : 'sub',
         address : self.data.account.address
-      }
-
-      if( keys === undefined ) {
-        self.ws.send(JSON.stringify(cmd));
       }
 
       var to_sign = '/sub/' + self.data.account.address;
@@ -171,10 +136,10 @@ bitwallet_services
       }
 
       for(var i=0; i<self.data.accounts.length;i++){
-        self.data.accounts[i].plain_memo_mpk  = undefined; 
-        self.data.accounts[i].account_mpk     = undefined;  
-        self.data.accounts[i].plain_privkey   = undefined;
-        self.data.accounts[i].encrypted       = 1;
+        self.data.accounts[i].plain_memo_mpk    = undefined; 
+        self.data.accounts[i].plain_account_mpk = undefined;  
+        self.data.accounts[i].plain_privkey     = undefined;
+        self.data.accounts[i].encrypted         = 1;
       }
       self.data.seed.plain_value  = undefined;
       self.data.mpk.plain_value   = undefined;
@@ -272,14 +237,22 @@ bitwallet_services
       $q.all(proms).then(function(res) {
 
         res.accounts.forEach(function(account) {
-          account.plain_privkey  = undefined;
-          account.plain_memo_mpk = undefined; 
-          account.account_mpk    = undefined;
+
+          //HACK:
+          //if(account.active==1) {
+            //account.pubkey       = 'DVS6G3wqTYYt8Hpz9pFQiJYpxvUja8cEMNwWuP5wNoxr9NqhF8CLS';
+            //account.address      = 'DVSM5HFFtCbhuv3xPfRPauAeQ5GgW7y4UueL';
+            //account.privkey      = '5HymcH7QHpzCZNZcKSbstrQc1Q5vcNjCLj9wBk5aqYZcHCR6SzN';
+            //account.skip32_priv  = '0102030405060708090A';
+            //account.access_key   = '7cMHdvnvhv8Q36c4Xf8HJQaibTi4kpANNaBQYhtzQ2M6';
+            //account.secret_key   = '7teitGUUbtaRJY6mnv3mB9d1VB3UggiBQf4kyiL2PaKB';
+          //}
 
           if(account.encrypted==0){
             account.plain_privkey     = account.privkey;
             account.plain_memo_mpk    = account.memo_mpk; 
             account.plain_account_mpk = account.account_mpk; 
+            account.plain_skip32_key  = account.skip32_key; 
           }
 
           if(account.active==1){
@@ -289,16 +262,8 @@ bitwallet_services
           self.data.accounts.push(account);
         });
 
-        //HACK:
-        self.data.account.pubkey       = 'DVS6G3wqTYYt8Hpz9pFQiJYpxvUja8cEMNwWuP5wNoxr9NqhF8CLS';
-        self.data.account.address      = 'DVSM5HFFtCbhuv3xPfRPauAeQ5GgW7y4UueL';
-        self.data.account.privkey      = '5HymcH7QHpzCZNZcKSbstrQc1Q5vcNjCLj9wBk5aqYZcHCR6SzN';
-        self.data.account.skip32_priv  = '0102030405060708090A';
-        self.data.account.access_key   = '7cMHdvnvhv8Q36c4Xf8HJQaibTi4kpANNaBQYhtzQ2M6';
-        self.data.account.secret_key   = '7teitGUUbtaRJY6mnv3mB9d1VB3UggiBQf4kyiL2PaKB';
-
         console.log('DUMP DEFAULT ACCOUNT');
-        console.log(JSON.stringify(res.account));
+        console.log(JSON.stringify(self.data.account));
 
         self.data.asset                 = self.data.assets[res.setting.default_asset];
         self.data.ui.balance.allow_hide = res.setting.allow_hide_balance;
@@ -323,6 +288,7 @@ bitwallet_services
         //  NO -> tengo passworD?
         //    SI -> pido passworD?
 
+        self.loadBalance();
         self.connectToBackend(ENVIRONMENT.wsurl);
 
         deferred.resolve();
@@ -377,32 +343,33 @@ bitwallet_services
       d.reject(err); 
     }
 
-    self.lookupContacts = function(ops) {
+    self.lookupContacts = function(ops, to_search) {
 
       var deferred = $q.defer();
+      to_search = to_search || [];
 
-      var proms = {};
       ops.forEach(function(o) {
-        if(o.pubkey != null && o.name == null) {
-          proms[o.pubkey] = BitShares.getAccount(o.pubkey);
+        if(o.pubkey != null && o.name == null && to_search.indexOf(o.pubkey) == -1) {
+          to_search.push(o.pubkey);
         }  
       });
 
-      if( Object.keys(proms).length == 0 ) {
-        deferred.resolve();
+      console.log('CTOSEARCH ' + JSON.stringify(to_search));
+
+      if( to_search.length == 0 ) {
+        deferred.resolve(0);
         return deferred.promise;
       }
 
       var sql_cmd    = [];
       var sql_params = [];
 
-      $q.all(proms).then(function(res) {
-
+      BitShares.getAccount(to_search.join(',')).then(function(res) {
         proms = [];
-        Object.keys(res).forEach(function(pubkey) {
-          if( res[pubkey].error !== undefined ) return;
-          var p = BitShares.btsPubToAddress(pubkey).then(function(addy) {
-            var tmp = Contact._add(pubkey, res[pubkey].name, addy, JSON.stringify(res[pubkey].public_data), 'transfer');
+        Object.keys(res).forEach(function(k) {
+          if( res[k].error !== undefined ) return;
+          var p = BitShares.btsPubToAddress(res[k].owner_key).then(function(addy) {
+            var tmp = Contact._add(res[k].name, addy, res[k].owner_key, JSON.stringify(res[k].public_data), 'transfer');
             sql_cmd.push(tmp.sql);
             sql_params.push(tmp.params);
           }, function(err) {
@@ -413,8 +380,9 @@ bitwallet_services
         });
 
         $q.all(proms).then(function() {
+          console.log('VOY A METER ' + JSON.stringify(sql_cmd) + '-' + JSON.stringify(sql_params));
           DB.queryMany(sql_cmd, sql_params).then(function() {
-            deferred.resolve();
+            deferred.resolve(sql_cmd.length);
           }, function(err) {
             console.log( 'lookupContacts err1:' + JSON.stringify(err) );
             deferred.reject(err);
@@ -432,11 +400,54 @@ bitwallet_services
       return deferred.promise;
     }
 
+    self.getPrivateKeyForMemo = function(memo) {
+      var deferred = $q.defer();
+
+      //console.log('MEMO INOUT ' + JSON.stringify(memo));
+      if( memo.in_out == 0 ) {
+        //console.log('RESUELVO CON LA ACCUONT PRIV');
+        deferred.resolve(self.data.account.plain_privkey);
+        return deferred.promise;
+      }
+
+      //null, undefined or 0
+      if(!memo.slate || memo.slate==821) {
+        //console.log('NULL UNDEFINED OR ZERO');
+        deferred.resolve();
+        return deferred.promise;
+      }
+
+      BitShares.skip32(memo.slate, self.data.account.plain_skip32_key, false).then(function(slate) {
+
+        //console.log('DERIVO PRIVADA INDICE '+ memo.slate + '=>' + slate);
+
+        BitShares.derivePrivate(
+          self.data.mpk.plain_value, 
+          self.data.account.plain_account_mpk, 
+          self.data.account.plain_memo_mpk,
+          slate
+        ).then(function(res) {
+          deferred.resolve(res.privkey);
+        }, function(err) {
+          console.log('ERRGPK1 ' + JSON.stringify(err));
+          deferred.resolve();
+        });
+
+      }, function(err) {
+        console.log('ERRGPK2 ' + JSON.stringify(err));
+        deferred.resolve();
+      });
+
+      return deferred.promise;
+    }
+
     self.loadBalance = function() {
       var deferred = $q.defer();
 
       //HACK:
       self.data.account.encrypted = 0;
+
+      var to_search = [];
 
       var proms = {
         'balance' : Balance.forAsset(self.data.asset.id),
@@ -449,15 +460,46 @@ bitwallet_services
         self.data.asset.amount     = res.balance.amount/self.data.asset.precision;
         
         proms = {};
+
         res.memo.forEach(function(m) {
-          proms[m.id] = BitShares.decryptMemo(m.one_time_key, m.memo, self.data.account.privkey);
+          //if(m.id != 'dce718a423ee9898526b416215b108633b067ed111de6e58279138fb81fb26bb') return;
+
+          proms[m.id] = self.getPrivateKeyForMemo(m).then(function(pk) {
+            //console.log('KEY FOR MEMO ' + m.id + ' => ' + pk);
+            if(!pk) return; 
+
+            //Entrada: uso mi PK y la otk
+            if( m.in_out == 0 )
+              return BitShares.decryptMemo(m.one_time_key, m.memo, pk);
+          
+            //Salida: uso la PK derivada y la publica del destino
+            if( m.to_pubkey )
+              return BitShares.decryptMemo(m.to_pubkey, m.memo, pk);
+
+            //TODO: send to address, guardo mi memo
+            //Si llego aca, es de salida, pero no tengo la pubkey destino .. 
+            //tengo que ir a buscar este contacto
+
+            console.log('ESTOY EN LA TWILAAA ZONE ' + m.address);
+            to_search.push(m.address);
+
+          }, function(err) {
+            deferred.reject();
+          });
         });
  
         $q.all(proms).then(function(res) {
 
           var sql_cmd    = [];
           var sql_params = [];
+
           Object.keys(proms).forEach(function(mid) {
+
+            if(!res[mid]) {
+              //console.log('Not trying to decrypt memo ...');
+              return;
+            } 
+
             if(!res[mid].error) {
               var tmp = Memo._decrypt(mid, res[mid].message, res[mid].from);
               sql_cmd.push(tmp.sql);
@@ -473,7 +515,13 @@ bitwallet_services
           Operation.all().then(function(ops) {
 
             self.data.ord_transactions = self.orderTransactions(ops);
-            self.lookupContacts(ops);
+            self.lookupContacts(ops, to_search).then(function(n) {
+              if( n > 0 ) {
+                self.loadBalance();
+              }  
+            }, function(err) {
+              
+            });
 
           }, function(err) {
             console.log( 'loadBalance err0:' + JSON.stringify(err) );
@@ -555,7 +603,10 @@ bitwallet_services
                 id           : op.memo_hash,
                 account      : self.data.account.id,
                 memo         : op.memo,
-                one_time_key : op.one_time_key
+                one_time_key : op.one_time_key,
+                in_out       : op.type == 'received' || op.type == 'deposit' ? 0 : 1,
+                slate        : op.slate,
+                address      : op.address      
               }
             }
           });
@@ -566,21 +617,17 @@ bitwallet_services
             sql_params.push(tmp.params);
           });
 
-          //console.log('VAMOS POR ACA');
-
           Memo.in( Object.keys(memos) ).then(function(memos_in) {
 
-            //memos_in.forEach(function(m) {
-              //delete memos[m.id];
-            //});
+            //console.log('XXXX => ' + JSON.stringify(memos_in));
 
             Object.keys(memos).forEach(function(mid){
-              //console.log('VAMOS POR ACA 3 ' + JSON.stringify(mid));
+              if ( memos_in.indexOf(mid) != -1 ) return;
 
               var tmp = Memo._add(memos[mid]);
-              //console.log('VAMOS POR ACA 4 ' + tmp.sql);
               sql_cmd.push(tmp.sql);
               sql_params.push(tmp.params);
+              console.log('Voy a meter memo ID ' + mid);
             });
 
             DB.queryMany(sql_cmd, sql_params).then(function(res) {
@@ -604,7 +651,7 @@ bitwallet_services
           });
 
         }, function(err){
-          console.log('TOMA EL ERROR' + JSON.stringify(err));
+          console.log('TOMA EL ERROR ' + JSON.stringify(err));
           deferred.reject(err);
         });
 

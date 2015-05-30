@@ -145,6 +145,16 @@ bitwallet_services
 
         return output;
     };
+
+    self.fetchOneColumn = function(result, col) {
+        var output = [];
+
+        for (var i = 0; i < result.rows.length; i++) {
+            output.push(result.rows.item(i)[col]);
+        }
+
+        return output;
+    };
  
     self.fetch = function(result) {
         return result.rows.item(0);
@@ -158,15 +168,18 @@ bitwallet_services
     var self = this;
 
     self.in = function(ids) {
-      return DB.query('SELECT id FROM memo where id in (?)', [ids])
+      var pp = [];
+      for(var i=0;i<ids.length; i++) pp.push('?');
+      return DB.query('SELECT id FROM memo where id in ('+pp.join(',')+')' , ids)
       .then(function(result){
-          return DB.fetchAll(result);
+          //console.log('MEMOINNNNN SQL ' + JSON.stringify(result) + ' ' + JSON.stringify(ids));
+          return DB.fetchOneColumn(result, 'id');
       });
     } 
 
     self._add = function(obj) {
-      var sql    = 'INSERT or REPLACE INTO memo (id, account, memo, one_time_key) VALUES (?,?,?,?)';
-      var params = [obj.id, obj.account, obj.memo, obj.one_time_key];
+      var sql    = 'INSERT or REPLACE INTO memo (id, account, memo, one_time_key, in_out, slate, address) VALUES (?,?,?,?,?,?,?)';
+      var params = [obj.id, obj.account, obj.memo, obj.one_time_key, obj.in_out, obj.slate, obj.address];
       return {'sql':sql, 'params':params};
     } 
 
@@ -177,7 +190,7 @@ bitwallet_services
     } 
 
     self.to_decrypt = function(account) {
-      return DB.query('SELECT id, memo, one_time_key FROM memo WHERE account=? and encrypted != 0', [account])
+      return DB.query('SELECT m.id, memo, one_time_key, slate, in_out, c.pubkey to_pubkey, m.address FROM memo m LEFT JOIN contact c on m.address=c.address WHERE account=? and encrypted != 0', [account])
       .then(function(result){
           return DB.fetchAll(result);
       });
@@ -197,14 +210,16 @@ bitwallet_services
         });
     };
 
-    self._add = function(id, name, address_or_pubkey, public_data, source) {
-      var sql    = 'INSERT or REPLACE into contact (id, name, address_or_pubkey, public_data, source) values (?,?,?,?,?)';
-      var params = [id, name, address_or_pubkey, public_data, source];
+    self._add = function(name, address, pubkey, public_data, source) {
+      address = address || null;
+      pubkey  = pubkey  || null;
+      var sql    = 'INSERT or REPLACE into contact (name, address, pubkey, public_data, source) values (?,?,?,?,?)';
+      var params = [name, address, pubkey, public_data, source];
       return {sql:sql, params:params};
     }
 
     self.startsWith = function(prefix) {
-        return DB.query('SELECT * FROM contact where lower(name) like lower(?) order by name limit 5', [prefix+'%'])
+        return DB.query('SELECT * FROM contact where lower(name) like lower(?) and source != \'transfer\' order by name limit 5', [prefix+'%'])
         .then(function(result){
             return DB.fetchAll(result);
         });
@@ -332,13 +347,13 @@ bitwallet_services
           // }
           var account = DB.fetch(result);
           // console.log('Active account:: '+JSON.stringify(account));
-           if( account !== undefined) {
-             account.pubkey       = 'DVS6G3wqTYYt8Hpz9pFQiJYpxvUja8cEMNwWuP5wNoxr9NqhF8CLS';
-             account.address      = 'DVSM5HFFtCbhuv3xPfRPauAeQ5GgW7y4UueL';
-             account.privkey      = '5HymcH7QHpzCZNZcKSbstrQc1Q5vcNjCLj9wBk5aqYZcHCR6SzN';
-             account.access_key   = '7cMHdvnvhv8Q36c4Xf8HJQaibTi4kpANNaBQYhtzQ2M6';
-             account.secret_key   = '7teitGUUbtaRJY6mnv3mB9d1VB3UggiBQf4kyiL2PaKB';
-           }
+           //if( account !== undefined) {
+             //account.pubkey       = 'DVS6G3wqTYYt8Hpz9pFQiJYpxvUja8cEMNwWuP5wNoxr9NqhF8CLS';
+             //account.address      = 'DVSM5HFFtCbhuv3xPfRPauAeQ5GgW7y4UueL';
+             //account.privkey      = '5HymcH7QHpzCZNZcKSbstrQc1Q5vcNjCLj9wBk5aqYZcHCR6SzN';
+             //account.access_key   = '7cMHdvnvhv8Q36c4Xf8HJQaibTi4kpANNaBQYhtzQ2M6';
+             //account.secret_key   = '7teitGUUbtaRJY6mnv3mB9d1VB3UggiBQf4kyiL2PaKB';
+           //}
 
           deferred.resolve(account);
 
@@ -475,7 +490,7 @@ bitwallet_services
    
     self.all = function() {
       var query = "SELECT * FROM ( \
-        SELECT o.timestamp*1000 as TS, o.slate, IFNULL(m.encrypted,-1) encmsg, m.message, m.pubkey, c.name, \
+        SELECT o.timestamp*1000 as TS, o.slate, IFNULL(m.encrypted,-1) encmsg, m.message, m.pubkey pubkey, c.name, m.address, \
           IFNULL(et.extra_data, o.type) as ui_type, \
             o.*, et.* FROM operation o \
           LEFT JOIN exchange_transaction et \
@@ -483,9 +498,9 @@ bitwallet_services
           LEFT JOIN memo m \
             ON o.memo_hash = m.id \
           LEFT JOIN contact c \
-            ON m.pubkey = c.id \
+            ON (m.in_out = 0 and m.pubkey = c.pubkey) or (m.in_out = 1 and m.address = c.address) \
         UNION \
-          SELECT IFNULL(et.created_at*1000, et.quoted_at*1000) as TS, 0, -1, NULL, NULL, NULL,  \
+          SELECT IFNULL(et.created_at*1000, et.quoted_at*1000) as TS, 0, -1, NULL, NULL, NULL, NULL,  \
             et.extra_data as ui_type, \
             o.*, et.* FROM exchange_transaction et  \
             LEFT JOIN operation o \
