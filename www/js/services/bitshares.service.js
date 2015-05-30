@@ -38,6 +38,44 @@ bitwallet_services
     
       return deferred.promise;
     }
+
+    self.randomInteger = function(){
+      var deferred = $q.defer();
+
+      window.plugins.BitsharesPlugin.randomInteger(
+        function(data){
+          deferred.resolve(data.int);
+        },
+        function(error){
+          deferred.reject(error);
+        }
+      );
+    
+      return deferred.promise;
+    }
+
+    self.skip32 = function(value, key, encrypt){
+      var deferred = $q.defer();
+
+      //console.log('---skip32');
+      //console.log(value);
+      //console.log(key);
+      //console.log(encrypt);
+
+      window.plugins.BitsharesPlugin.skip32(
+        function(data){
+          deferred.resolve(data.skip32);
+        },
+        function(error){
+          deferred.reject(error);
+        },
+        value,
+        key,
+        encrypt
+      );
+    
+      return deferred.promise;
+    }
     
     self.sha256 = function(value){
       var deferred = $q.defer();
@@ -133,6 +171,7 @@ bitwallet_services
         self.derivePrivate(mpk, account_mpk, memo_mpk, memo_index).then(function(child) {
 
           self.createMemo(from, destination, message, child.privkey).then(function(memo) {
+            memo.memo_index = memo_index;
             deferred.resolve(memo);
           }, function(err) {
             deferred.reject(err);

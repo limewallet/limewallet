@@ -83,9 +83,9 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
   
   $scope.doSend = function(tx) {
 
-    $scope.formInProgress();
+    //$scope.formInProgress();
     if ( $scope.validateSend(tx) == false ) {
-      $scope.formDone();
+      //$scope.formDone();
       return;
     }
 
@@ -104,7 +104,7 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
         address   : tx.destination.address_or_pubkey,
         name      : tx.destination.name,
         message   : tx.memo,
-        amount    : tx.amount/Wallet.data.asset.precision,
+        amount    : tx.amount,
         state     : 'P',
         date      : new Date().getTime()
       });
@@ -112,7 +112,7 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
       $scope.goHome();
 
     }, function(err) {
-       $scope.formDone();
+       //$scope.formDone();
     });
   }
 
@@ -126,17 +126,42 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
       return deferred.promise;
     }
 
-    BitShares.computeMemo(
-      Wallet.data.account.pubkey,
-      tx.memo.trim(),
-      tx.destination.address_or_pubkey,
-      Wallet.data.mpk.mpk,
-      Wallet.data.account.account_mpk,
-      Wallet.data.account.memo_mpk,
-      Wallet.data.account.memo_index
-    ).then(function(res) {
-      console.log('OK -> ' + JSON.stringify(res));
-      deferred.resolve(res);
+    BitShares.randomInteger().then(function(rand_int) {
+
+      rand_int = (rand_int>>>0) & 0x7FFFFFFF;
+
+      BitShares.computeMemo(
+        Wallet.data.account.pubkey,
+        tx.memo.trim(),
+        tx.destination.address_or_pubkey,
+        Wallet.data.mpk.plain_value,
+        Wallet.data.account.plain_account_mpk,
+        Wallet.data.account.plain_memo_mpk,
+        rand_int
+      ).then(function(res) {
+        console.log('OK -> ' + JSON.stringify(res));
+
+        BitShares.skip32(rand_int, Wallet.data.account.plain_skip32_key, true).then(function(skip32_index) {
+
+          skip32_index = skip32_index>>>0;
+
+          console.log('%%%%%%%%%%%%%%%%%%%% => RANDINT ' + rand_int);
+          console.log('%%%%%%%%%%%%%%%%%%%% => SKIP32 ' + skip32_index);
+          console.log('%%%%%%%%%%%%%%%%%%%% => KEY ' + Wallet.data.account.plain_skip32_key);
+
+          res.skip32_index = skip32_index;
+          deferred.resolve(res);
+        }, function(err) {
+          console.log('ERR SKIP32->' + JSON.stringify(err));
+          deferred.reject();
+        }); 
+
+      }, function(err) {
+        console.log('ERR computeMemo->' + JSON.stringify(err));
+        deferred.reject();
+      });
+
+
     }, function(err) {
       console.log('ERR ->' + JSON.stringify(err));
       deferred.reject();
@@ -206,7 +231,15 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
 
     $scope.computeMemo(tx).then(function(memo) {
 
-      BitShares.new_(Wallet.data.account.address, tx.destination.address_or_pubkey, tx.amount*Wallet.data.asset.precision, Wallet.data.asset.name, memo).then(function(new_tx) {
+      var slate = undefined;
+      if ( memo !== undefined ) slate = memo.skip32_index;
+
+      BitShares.new_(
+        Wallet.data.account.address, 
+        tx.destination.address_or_pubkey, 
+        tx.amount*Wallet.data.asset.precision, 
+        Wallet.data.asset.name, 
+        memo, slate).then(function(new_tx) {
 
         $scope.promptSend(Wallet.data.asset, tx).then(function(accept) {
 
@@ -249,7 +282,7 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
     // Destroy timers
     //console.log('SendCtrl.ionicView.beforeLeave killing timers.');
     $scope.stopTimer(false);
-    $scope.formDone();
+    //$scope.formDone();
   });
 
   /*********************************************************/
@@ -356,14 +389,14 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
     if(!$scope.data_btc.signature || !$scope.data_btc.quote)
     {
       $scope.showAlert('err.no_quote', 'err.no_quote_input_val');
-      $scope.formDone();
+      //$scope.formDone();
       return;
     }
     
     if(!$scope.data_btc.bitcoin_address || $scope.data_btc.bitcoin_address.length<1)
     {
       $scope.showAlert('err.btc_addr_error', 'err.btc_addr_error_input');
-      $scope.formDone();
+      //$scope.formDone();
       return;
     }
     
@@ -374,7 +407,7 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
         if(!result.tx || !result.tx.cl_pay_addr)
         {
           $scope.showAlert('err.occurred', 'err.please_retry');
-          $scope.formDone();
+          //$scope.formDone();
           return;
         }
         
@@ -397,7 +430,7 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
             .then(function() {
               $scope.sending_modal.hide();
             });
-            $scope.formDone();
+            //$scope.formDone();
             return;
           }
 
@@ -439,7 +472,7 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
               $scope.goHome();
               window.plugins.toast.show( T.i('send.transaction_sent'), 'long', 'bottom');
               
-              $scope.formDone();
+              //$scope.formDone();
               
             }, function(){
                 var alertPopup = $ionicPopup.alert({
@@ -450,7 +483,7 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
                 .then(function() {
                   $scope.sending_modal.hide();
                 });
-                $scope.formDone();
+                //$scope.formDone();
             });
              
           });
@@ -464,7 +497,7 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
             .then(function() {
               $scope.sending_modal.hide();
             });
-            $scope.formDone();
+            //$scope.formDone();
         });
  
       }, function(error){
@@ -472,7 +505,7 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
         if(error=='auth_failed')
           Setting.remove(Setting.BSW_TOKEN);
         $scope.showAlert('err.cant_accept', 'err.cant_accept_retry');
-        $scope.formDone();
+        //$scope.formDone();
         return;
       });
     }, function(error){
