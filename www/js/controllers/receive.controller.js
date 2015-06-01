@@ -5,7 +5,7 @@ bitwallet_controllers
     var amount = parseInt(parseFloat(receiveForm.transactionAmount.value)*$scope.wallet.asset.precision);
     if( isNaN(amount) || amount <= 0 ) {
       $ionicPopup.alert({
-        title    : T.i('err.invalid_amount')+' <i class="fa fa-warning float_right"></i>',
+        title    : T.i('err.invalid_amount'),
         template : T.i('err.enter_valid_amount'),
         okType   : 'button-assertive',
       });

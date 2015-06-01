@@ -24,7 +24,7 @@
           <label>{{wallet.account.name}}</label>
           <label ng-show="wallet.account.registered!=1" style="color:#b0b0b0;font-size:13px!important;font-weight:300;font-style:italic;"><br/>{{'menu.unregistered'|translate}}</label>
         </div>
-        <div class="menu_balance lime"> <label>$2.013,45</label></div>
+        <div class="menu_balance lime"> <label>{{wallet.asset.symbol_ui_text}} {{wallet.asset.amount | number : 2}}</label></div>
       </div>
     </ion-header-bar>
     <ion-content class="has-header transparent_bg" has-bouncing="false"> <!-- dark -->

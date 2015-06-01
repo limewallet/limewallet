@@ -1237,3 +1237,25 @@ input.pmd {font-size:16px!important;  color:#fff;border-top:none; border-left:no
   color:#797778!important;
   font-size:17px!important;
   }
+
+.encryption_form .checkbox-icon:before {
+  display: table!important;
+  /*width: 100%!important;
+  height: 100%!important;*/
+  border-width: 1px!important;
+  border-style: solid!important;
+  border-radius: 28px!important;
+  background: rgb(192, 192, 192)!important;
+  content: ' ';
+}
+.encryption_form .checkbox-icon{ font-size:20px!important;}
+.encryption_form .checkbox input:checked:before, .encryption_form .checkbox input:checked + .checkbox-icon:before {
+  background: #d3eb00!important;
+  border-color: #d3eb00!important;}
+.encryption_form label.item-checkbox {color:rgb(192, 192, 192)!important;}
+.encryption_form .item-checkbox.pmd .checkbox {
+  left:initial!important;
+  right:0px!important;}
+.encryption_form .item-checkbox.pmd div.item-content{
+  text-align: right!important;
+  padding-right: 30px!important;}

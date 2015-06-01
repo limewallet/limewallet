@@ -354,7 +354,6 @@ bitwallet_services
              //account.access_key   = '7cMHdvnvhv8Q36c4Xf8HJQaibTi4kpANNaBQYhtzQ2M6';
              //account.secret_key   = '7teitGUUbtaRJY6mnv3mB9d1VB3UggiBQf4kyiL2PaKB';
            //}
-
           deferred.resolve(account);
 
       }, function(err) {
@@ -400,7 +399,7 @@ bitwallet_services
     }
 
     self._setProfileInfo = function(obj) {
-      var sql    = 'UPDATE account set name=?, avatar_hash=? where id=?';
+      var sql    = 'UPDATE account set name=?, avatar_hash=?, registered=? where id=?';
       var params = [obj.name, obj.avatar_hash, obj.id];
 
       return {sql:sql, params:params};

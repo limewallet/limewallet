@@ -123,6 +123,38 @@ bitwallet_controllers
 
   }
 
+  $scope.getInfoIfRecovering = function(pubkey){
+    var deferred = $q.defer();
+    
+    // if($scope.isCreateInitMode()==false)
+    // {
+    //   BitShares.isNameAvailable($scope.data.name).then(function(){
+    //     var keys = Wallet.getAccountAccessKeys();
+    //     if (!keys)
+    //     {
+    //       deferred.reject(T.i('err.no_active_account'));
+    //       // $scope.alert({title:'err.no_active_account', message:'err.no_active_account_create'});
+    //       // $scope.hideLoading();
+    //       return;
+    //     }
+    //     BitShares.registerAccount(keys, name, pubkey).then(function(result) {
+    //       deferred.resolve();
+    //       return;
+    //     }, function(error){
+    //       deferred.reject(error);
+    //       return;
+    //     });  
+    //   }, function(err){
+    //     deferred.reject(T.i(err));
+    //     return;
+    //   });
+    // }
+    // else{
+    //   deferred.resolve();
+    // }
+    return deferred.promise;
+  }
+
   $scope.createWallet = function() {
 
     if($scope.data.password != $scope.data.retype_password)
@@ -138,8 +170,8 @@ bitwallet_controllers
       var password = derived_password.key;
       var prom = $scope.addNewAccount($scope.init.seed, password).then(function(accountInfo){
 
-        // sign up account
-        // SignUp Account to get and store secret_key y access_key!
+        // Is recovering wallet? Then check blockchain registration data!
+        
         BitShares.signUp(accountInfo.plain_privkey, accountInfo.pubkey).then(function(keys){
           //  OK    -> Wallet.init()
           accountInfo.access_key = keys.akey;

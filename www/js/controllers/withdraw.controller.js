@@ -185,7 +185,7 @@ bitwallet_controllers
   
   $scope.showAlert = function(title, message){
     $ionicPopup.alert({
-       title    : T.i(title) + ' <i class="fa fa-warning float_right"></i>',
+       title    : T.i(title),
        template : T.i(message),
        okType   : 'button-assertive', 
      });
@@ -244,7 +244,7 @@ bitwallet_controllers
           if(r.error !== undefined) {
             console.log('There where errors ' + r.error);
             var alertPopup = $ionicPopup.alert({
-               title: T.i('err.unable_to_create_tx') + ' <i class="fa fa-warning float_right"></i>',
+               title: T.i('err.unable_to_create_tx'),
                template: r.error,
                okType: 'button-assertive', 
             })
@@ -295,7 +295,7 @@ bitwallet_controllers
                 console.log(JSON.stringify(error));
                 $scope.sending_modal.hide();
                 var alertPopup = $ionicPopup.alert({
-                   title: T.i('err.unable_to_send_tx') + ' <i class="fa fa-warning float_right"></i>',
+                   title: T.i('err.unable_to_send_tx'),
                    template: T.i('err.server_error'),
                    okType: 'button-assertive', 
                 })
@@ -327,7 +327,7 @@ bitwallet_controllers
             console.log(JSON.stringify(error));
             $scope.sending_modal.hide();    
             var alertPopup = $ionicPopup.alert({
-              title: T.i('err.unable_to_send_tx') + ' <i class="fa fa-warning float_right"></i>',
+              title: T.i('err.unable_to_send_tx'),
               template: T.i('err.server_error'),
               okType: 'button-assertive', 
             })

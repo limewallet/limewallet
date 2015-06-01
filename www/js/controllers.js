@@ -20,7 +20,7 @@ bitwallet_controllers
     else
     {  
       $ionicPopup.alert({
-        title    : T.i('err.wallet_locked_title') + ' <i class="fa fa-warning float_right"></i>',
+        title    : T.i('err.wallet_locked_title'),
         template : 'essta',
         okType   : 'button-assertive'
       });
@@ -46,7 +46,7 @@ bitwallet_controllers
         $scope.data.in_progress = false;
       }, function(err){
         $ionicPopup.alert({
-          title    : T.i('err.wallet_un_locked_title') + ' <i class="fa fa-warning float_right"></i>',
+          title    : T.i('err.wallet_un_locked_title'),
           template : err,
           okType   : 'button-assertive', 
         });

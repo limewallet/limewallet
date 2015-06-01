@@ -17,13 +17,14 @@
               <input type="text" placeholder="{{'g.name'|translate}}" ng-model="data.name" class="pmd big big_placeholder">
               <br/>
             </label>
+            <ion-checkbox class="pmd" ng-model="data.do_register" ng-checked="data.do_register" >{{'register.register_account_globally'|translate}}</ion-checkbox>
             <div class="column">
               <div class="row" ng-show="data.error!=''">
                 <span class="assertive bold error">{{data.error}}</span>
               </div>
             </div>
              <div class="item item-image">
-              <canvas id="jdenticon_canvas" width="150" height="150" data-jdenticon-hash="{{data.hash_name}}"></canvas>
+              <canvas id="jdenticon_canvas" width="110" height="110" data-jdenticon-hash="{{data.hash_name}}"></canvas>
             </div>
           </form>
         </div>

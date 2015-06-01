@@ -8,7 +8,7 @@ bitwallet_controllers
 
   $scope.recoverWallet = function(){
     $rootScope.setInitMode($scope.INIT_MODE_RECOVER_WALLET);
-    $scope.goTo('app.recover_wallet');
+    $scope.goTo('app.create_wallet_seed');
   }
   
 });

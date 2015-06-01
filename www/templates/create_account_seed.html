@@ -2,9 +2,16 @@
     <ion-content has-bouncing="false" class="create_account_bg ">
       <div class="create_account">
         <div class="create_account_content">
-          <h3 class="lime">{{'g.create_wallet'|translate}}</h3>
-          <br/>
-          <p>{{'create_account.type_seed'|translate}}</p>
+          <div ng-show="isCreateInitMode()==true">
+            <h3 class="lime">{{'g.create_wallet'|translate}}</h3>
+            <br/>
+            <p>{{'create_account.type_seed'|translate}}</p>
+          </div>
+          <div ng-show="isCreateInitMode()==false">
+            <h3 class="lime">{{'g.recover_wallet'|translate}}</h3>
+            <br/>
+            <p>{{'create_account.type_seed'|translate}}</p>
+          </div>
           <div class="seed_input_container">
             <textarea ng-model="data.retype_seed" class="pmd" name="" id="" cols="30" rows="10"></textarea>  
           </div>

@@ -220,6 +220,14 @@ bitwallet_services
       return deferred.promise;
     }
 
+    // HACKO!
+    self.updateActiveAccount = function(name, registered){
+      if(!self.data.account)
+        return;
+      self.data.account.name = name;
+      self.data.account.registered = registered;
+    }
+    
     self.load = function(){
       var deferred = $q.defer();
 
@@ -271,7 +279,6 @@ bitwallet_services
           if(account.active==1){
             self.data.account = account;
           }
-          
           self.data.accounts.push(account);
         });
 

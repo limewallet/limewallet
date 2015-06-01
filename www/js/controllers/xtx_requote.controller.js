@@ -50,7 +50,7 @@ $scope.data = {   xtx           : undefined,
 
   $scope.showAlert = function(title, message){
     $ionicPopup.alert({
-       title    : T.i(title) + ' <i class="fa fa-warning float_right"></i>',
+       title    : T.i(title),
        template : T.i(message),
        okType   : 'button-assertive', 
      });

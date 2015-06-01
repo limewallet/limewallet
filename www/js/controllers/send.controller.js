@@ -423,7 +423,7 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
           if(r.error !== undefined) {
             console.log('There where errors ' + r.error);
             var alertPopup = $ionicPopup.alert({
-               title: T.i('err.unable_to_create_tx') + ' <i class="fa fa-warning float_right"></i>',
+               title: T.i('err.unable_to_create_tx'),
                template: r.error,
                okType: 'button-assertive', 
             })
@@ -476,7 +476,7 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
               
             }, function(){
                 var alertPopup = $ionicPopup.alert({
-                   title: T.i('err.unable_to_send_tx') + ' <i class="fa fa-warning float_right"></i>',
+                   title: T.i('err.unable_to_send_tx'),
                    template: T.i('err.server_error'),
                    okType: 'button-assertive', 
                 })
@@ -490,7 +490,7 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
 
         }, function(error){
            var alertPopup = $ionicPopup.alert({
-                title: T.i('err.unable_to_send_tx') + ' <i class="fa fa-warning float_right"></i>',
+                title: T.i('err.unable_to_send_tx'),
                 template: T.i('err.server_error'),
                 okType: 'button-assertive', 
              })

@@ -90,7 +90,7 @@ bitwallet_controllers
     console.log($scope.imported_pk.amount + ' => ' + amount);
     if ( isNaN(amount) || amount <= 0 ) {
        $ionicPopup.alert({
-         title    : T.i('err.empty_paper_wallet') + ' <i class="fa fa-warning float_right"></i>',
+         title    : T.i('err.empty_paper_wallet'),
          template : T.i('err.paper_no_balance'),
          okType   : 'button-assertive', 
        });
@@ -126,7 +126,7 @@ bitwallet_controllers
         if(r.error !== undefined) {
           console.log('There where errors ' + r.error);
           var alertPopup = $ionicPopup.alert({
-             title: T.i('err.unable_to_create_tx') + ' <i class="fa fa-warning float_right"></i>',
+             title: T.i('err.unable_to_create_tx'),
              template: r.error,
              okType: 'button-assertive', 
           })
@@ -176,7 +176,7 @@ bitwallet_controllers
           .error(function(data, status, headers, config) {
              console.log('error...: '+status);
               var alertPopup = $ionicPopup.alert({
-                 title: T.i('err.unable_to_send_tx') + ' <i class="fa fa-warning float_right"></i>',
+                 title: T.i('err.unable_to_send_tx'),
                  template: T.i('err.server_error'),
                  okType: 'button-assertive', 
               })
@@ -192,7 +192,7 @@ bitwallet_controllers
       .error(function(data, status, headers, config) {
          console.log('error...: '+status);
            var alertPopup = $ionicPopup.alert({
-              title: T.i('err.unable_to_send_tx') + ' <i class="fa fa-warning float_right"></i>',
+              title: T.i('err.unable_to_send_tx'),
               template: T.i('err.server_error'),
               okType: 'button-assertive', 
            })

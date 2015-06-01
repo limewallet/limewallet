@@ -17,6 +17,7 @@
     "welcome"                       : "Welcome",
     "create_wallet_html"            : "Create&nbsp;wallet",
     "recover_wallet_html"           : "Recover&nbsp;wallet",
+    "recover_wallet"                : "Recover wallet",
     "create_wallet"                 : "Create Wallet",
     "creating_wallet"               : "Create Wallet",
     "wallet_created"                : "Wallet created successfully!",
@@ -105,6 +106,7 @@
   },
 
   "err" : {
+    "unknown"                   : "Unknown Error - Check internet connection and try again later.",
     "wallet_locked_title"       : "Wallet lock error" ,
     "wallet_un_locked_title"    : "Wallet unlock error" ,
     "no_active_account"         : "No active account",
@@ -137,7 +139,7 @@
     "quote_expired_retry" : "Please get a new quote.",
     "duplicate_key"       : "Are you restoring a wallet already registered? Remember name and master key are both unique in the network.<br/> If not, please try again.",
     "account_registration": "Account registration could not be completed. Please try again.",
-    "unavailable_name"    : "Chosen name is already taken.<br/> Please type another one.",
+    "unavailable_name"    : "Chosen name is already taken. Please type another one.",
     "choose_another_name" : "Please type another name.",
     "invalid_name"        : "Invalid characters in name.",
     "enter_valid_name"    : "Please enter a valid name.",
@@ -313,7 +315,7 @@
   
   "register":{
     "type_new_name"           : "New name",
-    "create_account"          : "Register account globally",
+    "register_account_globally" : "Register account globally",
     "edit_account"            : "Edit account avatar",
     "account_updated"         : "Account updated successfully!",
     "account_registered"      : "Account registered successfully!",

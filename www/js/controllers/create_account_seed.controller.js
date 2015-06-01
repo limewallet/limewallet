@@ -6,6 +6,7 @@ bitwallet_controllers
   $scope.next = function(){
     $scope.data.error = '';
     console.log('$scope.init.mode = ' + $scope.init.mode);
+    // Validate seed if creating wallet.
     if($scope.isCreateInitMode())
     {
       // Check if seed was retyped correctly
@@ -16,6 +17,7 @@ bitwallet_controllers
         return;
       }
     }
+
     console.log('Lets set password :)');
     $rootScope.goTo('app.create_wallet_password');
   }

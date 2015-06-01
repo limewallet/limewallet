@@ -802,6 +802,25 @@ bitwallet_services
     // *************************************************** //
     // Account Api Calls ********************************* //
     
+    self.isNameAvailable = function(name) {
+      var deferred = $q.defer();
+
+      self.getAccount(name).then(
+        function(data){
+          if( data[name].error === undefined ) {
+            deferred.reject('err.unavailable_name');
+            return;
+          }
+
+          deferred.resolve();
+        },
+        function(error){
+          deferred.reject('err.unknown');
+        }
+      )
+      return deferred.promise;
+    }
+
     self.getAccount = function(name) {
       var url = ENVIRONMENT.apiurl('/account/'+name);
       return self.apiCall(undefined, url);
@@ -900,12 +919,12 @@ bitwallet_services
       return deferred.promise;
     }
 
-    self.registerAccount = function(keys, account) {
+    self.registerAccount = function(keys, name, pubkey) {
       var url = ENVIRONMENT.apiurl('/account');
 
       var payload = JSON.stringify({
-        name        : account.name,
-        pubkey      : account.pubkey
+        name        : name,
+        pubkey      : pubkey
       });
 
       console.log('register account ' + JSON.stringify(payload));

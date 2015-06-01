@@ -21,7 +21,7 @@ bitwallet_controllers
 
   $scope.alert = function(error){
     $ionicPopup.alert({
-      title    : T.i(error.title) + ' <i class="fa fa-warning float_right"></i>',
+      title    : T.i(error.title),
       template : T.i(error.message),
       okType   : 'button-assertive', 
     });
@@ -54,7 +54,7 @@ bitwallet_controllers
     }
 
     // Is available at BitShares Network?
-    $scope.isNameAvailable(name).then(function(){
+    BitShares.isNameAvailable(name).then(function(){
       
       var keys = Wallet.getAccountAccessKeys();
       if (!keys)
@@ -73,7 +73,7 @@ bitwallet_controllers
         BitShares.sha256(name).then(function(hash){
           account.avatar_hash = hash;
 
-          BitShares.registerAccount(keys, account).then(function(result) {
+          BitShares.registerAccount(keys, name, pubkey).then(function(result) {
             Account.setProfileInfo(account).then(function(res){
               $scope.hideLoading();
               window.plugins.toast.show( T.i('register.account_registered'), 'long', 'bottom');        
@@ -106,23 +106,6 @@ bitwallet_controllers
     })
   }
   
-  $scope.isNameAvailable = function(name) {
-    var deferred = $q.defer();
-
-    BitShares.getAccount(name).then(
-      function(data){
-        if( data[name].error === undefined ) {
-          deferred.reject('Name is not available');
-          return;
-        }
-
-        deferred.resolve();
-      },
-      function(error){
-        deferred.reject('Unknown Error - Check internet connection and try again later.');
-      }
-    )
-    return deferred.promise;
-  }
+  
 });
 
