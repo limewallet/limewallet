@@ -42,7 +42,7 @@ bitwallet_controllers
     $scope.data.input_in_btc = $scope.data.input_in_btc?false:true;
     $scope.data.input_amount=0;
     if($scope.data.input_in_btc==false){
-      $scope.data.input_curr=wallet.asset.symbol;
+      $scope.data.input_curr=$scope.wallet.asset.symbol;
     }
     else{
       $scope.data.input_curr='BTC';

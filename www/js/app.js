@@ -76,6 +76,16 @@ bitwallet_module
         }
       }
     })
+
+    .state('app.contacts', {
+      url: "/contacts",
+      views: {
+        'menuContent' :{
+          templateUrl: "templates/contacts.html",
+          controller: 'ContactsCtrl'
+        }
+      }
+    })
     
     .state('app.receive', {
       url: "/receive",

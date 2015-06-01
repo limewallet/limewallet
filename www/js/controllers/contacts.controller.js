@@ -1,20 +1,9 @@
 bitwallet_controllers
-.controller('AddressBookCtrl', function($scope, $state, Wallet, T, $ionicHistory, $ionicPopup, $ionicActionSheet, AddressBook, $rootScope, $ionicNavBarDelegate, $stateParams){
+.controller('ContactsCtrl', function($scope, $state, Wallet, T, $ionicHistory, $ionicPopup, $ionicActionSheet, $rootScope, $ionicNavBarDelegate, $stateParams){
   
   $scope.data = {addys : []};
   $scope.loadViewData = function() {
-    var addys = [];
-    //console.log('Object.keys($scope.wallet.address_book)' + Object.keys($scope.wallet.address_book).length);
-    angular.forEach( Object.keys($scope.wallet.address_book), function(addy) {
-      addys.push($scope.wallet.address_book[addy]);
-    });
-    $scope.data.addys = addys;
   }
-  
-  $scope.loadViewData();
-  $rootScope.$on('address-book-changed', function(event, data) {
-    $scope.loadViewData();
-  });
   
   $scope.showActionSheet = function(addr){
     var fav_text = 'book.add_to_fav';
