@@ -189,7 +189,7 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
     
     addys.forEach(function(addy) {
       //TODO: change privkey when sending from multiples accounts
-      proms.push(BitShares.compactSignatureForHash(to_sign, Wallet.data.account.privkey)) 
+      proms.push(BitShares.compactSignatureForHash(to_sign, Wallet.data.account.plain_privkey)) 
     });
     return $q.all(proms);
   }

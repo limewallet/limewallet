@@ -68,30 +68,35 @@ bitwallet_controllers
       // console.log(' xxx wallet_name? ['+$scope.wallet.account.name+']');
       // return;
       
-      var account = Account.active(); // $scope.wallet.account; 
-      account.name        = name;
-      BitShares.sha256(name).then(function(hash){
-        account.avatar_hash = hash;
+      Account.active().then(function(account) {
+        account.name        = name;
+        BitShares.sha256(name).then(function(hash){
+          account.avatar_hash = hash;
 
-        BitShares.registerAccount(keys, account).then(function(result) {
-          Account.setProfileInfo(account).then(function(res){
-            $scope.hideLoading();
-            window.plugins.toast.show( T.i('register.account_registered'), 'long', 'bottom');        
-            //$scope.goTo('app.register');
-            $scope.goHome();
-          }, function(error){
+          BitShares.registerAccount(keys, account).then(function(result) {
+            Account.setProfileInfo(account).then(function(res){
+              $scope.hideLoading();
+              window.plugins.toast.show( T.i('register.account_registered'), 'long', 'bottom');        
+              //$scope.goTo('app.register');
+              $scope.goHome();
+            }, function(error){
+              $scope.alert({title:'err.occurred', message:'err.account_registration'});
+              $scope.hideLoading();
+            });  
+          }, function(err) {
             $scope.alert({title:'err.occurred', message:'err.account_registration'});
             $scope.hideLoading();
-          });  
-        }, function(err) {
-          $scope.alert({title:'err.occurred', message:'err.account_registration'});
+          });
+          
+        }, function(err){
+          $scope.data.error = T.i('err.occurred') + T.i('err.please_retry');
           $scope.hideLoading();
+          console.log('error sha256 account.constroller');
         });
-        
-      }, function(err){
+      }, function(err) {
         $scope.data.error = T.i('err.occurred') + T.i('err.please_retry');
         $scope.hideLoading();
-        console.log('error sha256 account.constroller');
+        console.log('error active account.constroller');
       });
 
     }, function(err){
@@ -106,18 +111,15 @@ bitwallet_controllers
 
     BitShares.getAccount(name).then(
       function(data){
-        // por aca vino data de nisman
-        //console.log(' Name is not available '+JSON.stringify(data));
-        deferred.reject('Name is not available');
-      },
-      function(error){
-        //console.log('isNameAvailable.error: '+JSON.stringify(error));
-        if (error === undefined)
-        {
-          deferred.reject('Unknown Error - Check internet connection and try again later.');
+        if( data[name].error === undefined ) {
+          deferred.reject('Name is not available');
           return;
         }
+
         deferred.resolve();
+      },
+      function(error){
+        deferred.reject('Unknown Error - Check internet connection and try again later.');
       }
     )
     return deferred.promise;

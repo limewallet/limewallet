@@ -906,13 +906,14 @@ bitwallet_services
       var payload = JSON.stringify({
         name        : account.name,
         pubkey      : account.pubkey
-        //public_data : {avatar : account.avatar_hash}
       });
 
-      var deferred = $q.defer();
-      deferred.resolve('essssssssta biennnnnnnn');
-      return deferred.promise;
-      //return self.apiCall(keys, url, payload);
+      console.log('register account ' + JSON.stringify(payload));
+
+      //var deferred = $q.defer();
+      //deferred.resolve('essssssssta biennnnnnnn');
+      //return deferred.promise;
+      return self.apiCall(keys, url, payload);
     }
     
     self.updateAccount = function(keys, addys, assets, account) {
