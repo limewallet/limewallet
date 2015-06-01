@@ -375,8 +375,8 @@ bitwallet_services
     }
 
     self._create = function(obj) {
-      var sql    = 'INSERT into account (name, account_mpk, access_key, secret_key, pubkey, address, number, privkey, skip32_key, memo_mpk, encrypted) values (?,?,?,?,?,?,?,?,?,?,?)';
-      var params = [obj.name, obj.account_mpk, obj.access_key, obj.secret_key, obj.pubkey, obj.address, obj.number, obj.privkey, obj.skip32_key, obj.memo_mpk, obj.encrypted];
+      var sql    = 'INSERT into account (name, account_mpk, access_key, secret_key, pubkey, address, number, privkey, skip32_key, memo_mpk, encrypted, registered, avatar_hash) values (?,?,?,?,?,?,?,?,?,?,?,?,?)';
+      var params = [obj.name, obj.account_mpk, obj.access_key, obj.secret_key, obj.pubkey, obj.address, obj.number, obj.privkey, obj.skip32_key, obj.memo_mpk, obj.encrypted, obj.registered, obj.avatar_hash];
 
       return {sql:sql, params:params};
     }
@@ -400,7 +400,7 @@ bitwallet_services
 
     self._setProfileInfo = function(obj) {
       var sql    = 'UPDATE account set name=?, avatar_hash=?, registered=? where id=?';
-      var params = [obj.name, obj.avatar_hash, obj.id];
+      var params = [obj.name, obj.avatar_hash, obj.registered, obj.id];
 
       return {sql:sql, params:params};
     }

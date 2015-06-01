@@ -7,7 +7,7 @@ bitwallet_controllers.controller('AccountCtrl', function($translate, T, BitShare
   //   },100);
   // }
 
-  $scope.data = { name            : '',
+  $scope.data = { name            : $scope.wallet.account.name,
                   watch_name      : '',  
                   hash_name       : '',
                   do_register     : true,
@@ -84,6 +84,11 @@ bitwallet_controllers.controller('AccountCtrl', function($translate, T, BitShare
   }
 
   $scope.saveProfile = function(){
+
+    if($scope.wallet.account.registered==1)
+    {
+      return;
+    }
     console.log(' Chosen name:'+$scope.data.name);
     $scope.showLoading();
     // Check name is not null or empty;
@@ -109,7 +114,7 @@ bitwallet_controllers.controller('AccountCtrl', function($translate, T, BitShare
         Account.setProfileInfo(account).then(function(res){
           $scope.hideLoading();
           window.plugins.toast.show( T.i('register.account_name_saved'), 'long', 'bottom');        
-          Wallet.updateActiveAccount(account['name'], account['registered']);
+          Wallet.updateActiveAccount(account['name'], account['registered'], account['avatar_hash']);
           $scope.goTo('app.home');
         }, function(error){
           $scope.alert({title:'err.occurred', message:'err.account_registration'});

@@ -221,11 +221,16 @@ bitwallet_services
     }
 
     // HACKO!
-    self.updateActiveAccount = function(name, registered){
+    self.updateActiveAccount = function(name, registered, avatar_hash){
       if(!self.data.account)
+      {
+        console.log(' -- Wallet.updateActiveAccount cannot update active account!')
         return;
+      }
       self.data.account.name = name;
       self.data.account.registered = registered;
+      self.data.account.avatar_hash = avatar_hash;
+      console.log(' ++ Wallet.updateActiveAccount active account updated !')
     }
     
     self.load = function(){

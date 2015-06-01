@@ -17,6 +17,9 @@ bitwallet_controllers
         return;
       }
     }
+    else{
+      $scope.setSeed($scope.data.retype_seed);
+    }
 
     console.log('Lets set password :)');
     $rootScope.goTo('app.create_wallet_password');

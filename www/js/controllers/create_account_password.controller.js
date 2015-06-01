@@ -87,7 +87,6 @@ bitwallet_controllers
             
             console.log('AddAccount :: encrypted? ->' + ((password != '') ? '1' : '0'));
             deferred.resolve({ 
-              'name'                : 'guest',
               'mpk'                 : mpk,
               'account_mpk'         : accountMpk.extendedPrivateKey,
               'pubkey'              : keys.send_mpk.pubkey,
@@ -100,6 +99,7 @@ bitwallet_controllers
               'plain_privkey'       : plain_privkey,
               'plain_memo_mpk'      : keys.memo_mpk.extendedPrivateKey,
               'plain_account_mpk'   : accountMpk.extendedPrivateKey,              
+              'registered'          : 0
             });
 
           }, function(err) {
@@ -126,32 +126,36 @@ bitwallet_controllers
   $scope.getInfoIfRecovering = function(pubkey){
     var deferred = $q.defer();
     
-    // if($scope.isCreateInitMode()==false)
-    // {
-    //   BitShares.isNameAvailable($scope.data.name).then(function(){
-    //     var keys = Wallet.getAccountAccessKeys();
-    //     if (!keys)
-    //     {
-    //       deferred.reject(T.i('err.no_active_account'));
-    //       // $scope.alert({title:'err.no_active_account', message:'err.no_active_account_create'});
-    //       // $scope.hideLoading();
-    //       return;
-    //     }
-    //     BitShares.registerAccount(keys, name, pubkey).then(function(result) {
-    //       deferred.resolve();
-    //       return;
-    //     }, function(error){
-    //       deferred.reject(error);
-    //       return;
-    //     });  
-    //   }, function(err){
-    //     deferred.reject(T.i(err));
-    //     return;
-    //   });
-    // }
-    // else{
-    //   deferred.resolve();
-    // }
+    if($scope.isCreateInitMode()==false)
+    {
+      BitShares.getAccount(pubkey).then(function(res){
+        if( res.error !== undefined ) 
+        {
+          //deferred.reject(err);
+          console.log('#-# getInfoIfRecovering error #1 '+JSON.stringify(res.error));
+          deferred.resolve(undefined);
+          return;
+        }
+        console.log(' #*# getInfoIfRecovering OK #1 '+JSON.stringify(res));
+        var name = res[pubkey]['name'];
+        BitShares.sha256(name).then(function(hash){
+          deferred.resolve({'name':name, 'avatar_hash':hash});
+        }, function (err){
+          //deferred.reject(err);
+          deferred.resolve(undefined);
+        });
+        
+      }, function(err){
+        //deferred.reject(err);
+        console.log(' #-# getInfoIfRecovering error #2 '+JSON.stringify(res.err));
+        deferred.resolve(undefined);
+        return;
+      });
+    }
+    else{
+      console.log(' #-# getInfoIfRecovering NOT RECOVERING :(');
+      deferred.resolve(undefined);
+    }
     return deferred.promise;
   }
 
@@ -171,28 +175,34 @@ bitwallet_controllers
       var prom = $scope.addNewAccount($scope.init.seed, password).then(function(accountInfo){
 
         // Is recovering wallet? Then check blockchain registration data!
-        
-        BitShares.signUp(accountInfo.plain_privkey, accountInfo.pubkey).then(function(keys){
-          //  OK    -> Wallet.init()
-          accountInfo.access_key = keys.akey;
-          accountInfo.secret_key = keys.skey;
+        $scope.getInfoIfRecovering(accountInfo.pubkey).then(function(recovered_data){
           accountInfo.name       = 'guest'+accountInfo.number;
-          
-          var account_cmd = Account._create(accountInfo);
+          if(recovered_data)
+          {
+            accountInfo.name        = recovered_data.name;
+            accountInfo.avatar_hash = recovered_data.avatar_hash;
+            accountInfo.registered  = 1;
+          }
+          console.log(' -- call getInfoIfRecovering return: '+accountInfo.name);
 
-          console.log(JSON.stringify(account_cmd));
+          BitShares.signUp(accountInfo.plain_privkey, accountInfo.pubkey).then(function(keys){
+            accountInfo.access_key = keys.akey;
+            accountInfo.secret_key = keys.skey;
+            
+            
+            var account_cmd = Account._create(accountInfo);
 
-          $scope.encrypt($scope.init.seed, password).then(function(encryptedSeed) {
+            console.log(JSON.stringify(account_cmd));
 
-            var encrypted = ($scope.data.password != '') ? 1 : 0;
+            $scope.encrypt($scope.init.seed, password).then(function(encryptedSeed) {
 
-            //BitShares.derivePassword($scope.data.password).then(function(derived_password){
+              var encrypted = ($scope.data.password != '') ? 1 : 0;
 
               var seed_cmd          = Setting._set(Setting.SEED, JSON.stringify({'value':encryptedSeed, 'encrypted':encrypted}) );
               var mpk_cmd           = Setting._set(Setting.MPK,  JSON.stringify({'value':accountInfo.mpk, 'encrypted':encrypted}) );
               var password_hash_cmd = Setting._set(Setting.PASSWORD_HASH, derived_password.key_hash);
 
-              return DB.db.transaction(function(transaction) {
+              DB.db.transaction(function(transaction) {
 
                 var proms = {
                   'account' :  transaction.executeSql(account_cmd.sql, account_cmd.params),
@@ -207,10 +217,20 @@ bitwallet_controllers
 
                   Wallet.load().then(function(){
                     Wallet.unlock($scope.data.password).then(function(){
+                      
                       Wallet.connectToBackend();
                       console.log('Create account completed papa!!!!!');
-                      window.plugins.toast.show( T.i('g.wallet_created'), 'long', 'bottom');
-                      $scope.goTo('app.account');
+                      Wallet.refreshBalance();
+
+                      if($scope.isCreateInitMode()){
+                        window.plugins.toast.show( T.i('g.wallet_created'), 'long', 'bottom');
+                        $scope.goTo('app.account');
+                      }
+                      else{
+                        window.plugins.toast.show( T.i('g.wallet_recovered'), 'long', 'bottom');
+                        $scope.goTo('app.home');
+                      }
+                      
 
                     }, function(err){
                       console.log('Wallet.unlock error ' + JSON.stringify(err));
@@ -229,25 +249,26 @@ bitwallet_controllers
 
 
               }, function(err) {
-                console.log('EGRRA:' +err);
+                console.log('EGRRA:' +JSON.stringify(err));
                 $scope.hideLoading();
               });
 
-            // }, function(err){
-            //   console.log(JSON.stringify(err));
-            //   $scope.hideLoading();  
-            // });
-
+            }, function(err){
+              console.log( ' -- encrypt error: ' +JSON.stringify(err));
+              $scope.hideLoading();
+            });
           }, function(err){
-            console.log(JSON.stringify(err));
+            console.log(' signup error :' +JSON.stringify(err));
             $scope.hideLoading();
           });
-        }, function(err){
 
+        }, function(err){
+          console.log(' getInfoIfRecovering error: '+JSON.stringify(err));
+          $scope.hideLoading();
         });
 
       }, function(err){
-        console.log(JSON.stringify(err));
+        console.log(' derivePassword error: '+JSON.stringify(err));
         $scope.hideLoading();
       });
     

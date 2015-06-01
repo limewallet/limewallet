@@ -9,15 +9,16 @@
     
     <ion-content class="super_flex register_bg" has-bouncing="false" scroll="false" overflow-scroll="false">
       <div class="register">
+        <a ng-show="wallet.account.registered==1" class="button button-small bar_title_button button-icon icon ion-ios-close" ng-click="goHome()"></a>
         <h3 class="lime">{{'register.type_account_name'|translate}}</h3>
         <p>{{'register.valid_name_chars'|translate}}</p>
         <div class="seed_container">
           <form novalidate name="encryptionForm" class="encryption_form">
             <label class="item item-input pmd">
-              <input type="text" placeholder="{{'g.name'|translate}}" ng-model="data.name" class="pmd big big_placeholder">
+              <input type="text" placeholder="{{'g.name'|translate}}" ng-model="data.name" class="pmd big big_placeholder" ng-disabled="wallet.account.registered==1">
               <br/>
             </label>
-            <ion-checkbox class="pmd" ng-model="data.do_register" ng-checked="data.do_register" >{{'register.register_account_globally'|translate}}</ion-checkbox>
+            <ion-checkbox class="pmd" ng-model="data.do_register" ng-checked="data.do_register" ng-disabled="wallet.account.registered==1">{{(wallet.account.registered==1?'register.already_registered':'register.register_account_globally')|translate }}</ion-checkbox>
             <div class="column">
               <div class="row" ng-show="data.error!=''">
                 <span class="assertive bold error">{{data.error}}</span>
@@ -28,7 +29,7 @@
             </div>
           </form>
         </div>
-        <div class="hide-on-keyboard-open buttons_container">   
+        <div ng-show="wallet.account.registered!=0" class="hide-on-keyboard-open buttons_container">   
           <a ng-disabled="!data.can_update" ng-click="saveProfile()" class="button button-block button-outline lime lime_border">{{'g.done'|translate|uppercase}}</a>
         </div>
       
