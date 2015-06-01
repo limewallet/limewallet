@@ -215,7 +215,8 @@
     "deposit"        : "Deposit",
     "withdraws"      : "Withdraws",
     "deposits"       : "Deposits",
-    "rate_changed"   : "Rate changed"
+    "rate_changed"   : "Rate changed",
+    "contacts"       : "Contacts"
   },
 
   "receive" : {
@@ -271,7 +272,8 @@
     "set_label"       : "Set Label",
     "copy_address"    : "Copy Address",
     "copy_public_key" : "Copy Public Key",
-    "no_addys"        : "No address added yet"
+    "no_addys"        : "No address added yet",
+    "no_contacts"     : "No contacts added yet"
   },
 
   "book" : {

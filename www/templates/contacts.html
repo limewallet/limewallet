@@ -1,22 +1,35 @@
-<ion-view class="dark" view-title="{{'menu.address_book'|translate}}">
+<ion-view class="dark" view-title="{{'menu.contacts'|translate}}">
     <ion-nav-buttons side="left">
       <button ng-click="goHome()" class="button button-icon icon ion-ios-arrow-back"></button>
     </ion-nav-buttons>
     
-    <ion-content class="has-header" has-bouncing="false">
-      <div ng-show="!data.addys || data.addys.length<1" class="addys_empty">
+    <ion-content class="has-header assets base-color_bg padding" has-bouncing="false">
+      <div ng-show="!data.contacts || data.contacts.length<1" class="addys_empty">
         <div class="display_table no_transactions"> 
-          <span class="display_table_cell vmiddle" style="text-align:center;">{{'addys.no_addys' | translate}}</span>
+          <span class="display_table_cell vmiddle" style="text-align:center;">{{'addys.no_contacts' | translate}}</span>
         </div>
       </div> 
-      <ion-list>
+
+      <div class="list balances contacts">
+          <div ng-repeat="contact in data.contacts" class="item base-color">
+            <div class="asset_data">
+              <strong>{{contact.name}}</strong>
+              <br/>
+              <span> 
+                {{contact.address}}
+              </span>
+            </div>  
+          </div>
+      </div>
+
+      <!--ion-list>
         <ion-item ng-repeat="addr in data.addys">
           <a ng-click="showActionSheet(addr)">
             <h3 class="calm">{{addr.name}}</h3>
             <h4><span ng-if="addr.is_favorite==1" class="float_left"> <i style="color:#5abb5c;" class="fa fa-check"></i></span>&nbsp;{{addr.address}} </h4>
           </a>
         </ion-item>
-      </ion-list>
+      </ion-list -->
     </ion-content>
   </ion-view>
   

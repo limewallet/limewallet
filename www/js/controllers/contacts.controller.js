@@ -1,9 +1,10 @@
 bitwallet_controllers
 .controller('ContactsCtrl', function($scope, $state, Wallet, T, $ionicHistory, $ionicPopup, $ionicActionSheet, $rootScope, $ionicNavBarDelegate, $stateParams){
   
-  $scope.data = {addys : []};
-  $scope.loadViewData = function() {
-  }
+  $scope.data = {contacts : [ {name:'pepe', address:'addy1'}
+                           , {name:'dengra', address:'addy2'}
+                           , {name:'aristides', address:'addy3'} ]};
+  
   
   $scope.showActionSheet = function(addr){
     var fav_text = 'book.add_to_fav';
