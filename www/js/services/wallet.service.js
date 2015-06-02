@@ -63,6 +63,11 @@ bitwallet_services
       self.ws.onopen       = self.onConnectedToBackend;
       self.ws.onmessage    = self.onNotification;
       self.ws.onconnecting = self.onReconnect;
+      self.ws.onerror      = self.onError;
+    }
+
+    self.onError = function(err) {
+      console.log("WS ERR:" + JSON.stringify(err));
     }
 
     self.onReconnect = function() {
@@ -658,6 +663,8 @@ bitwallet_services
             }
           });
           
+
+          console.log('MIRA LAS XTXS ' + JSON.stringify(res.xtxs.txs));
           res.xtxs.txs.forEach(function(xtx){
             var tmp = ExchangeTransaction._add(xtx);
             sql_cmd.push(tmp.sql);

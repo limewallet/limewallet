@@ -111,6 +111,8 @@ bitwallet_controllers.controller('AccountCtrl', function($translate, T, BitShare
         account['avatar_hash']  = $scope.data.hash_name;
         account['registered']   = $scope.data.do_register?1:0;
 
+        console.log('doregister: '+JSON.stringify(account));
+
         Account.setProfileInfo(account).then(function(res){
           $scope.hideLoading();
           window.plugins.toast.show( T.i('register.account_name_saved'), 'long', 'bottom');        

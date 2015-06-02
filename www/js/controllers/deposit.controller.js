@@ -1,56 +1,45 @@
 bitwallet_controllers
-.controller('DepositCtrl', function($translate, T, Wallet, BitShares, $scope, $rootScope, $http, $timeout, $ionicActionSheet, $ionicPopup, $cordovaClipboard, $ionicLoading, $timeout, BitShares, Setting) {
-  
-  // python send_btc.py BzxyUCprnJWYXmQ6gGwREFPboTxhU1JB3E CCDVYmCptt5b3HnxPwHgdKZ8zXEywMB1Rb 0.05 yes
-  // bitcoin://CCDVYmCptt5b3HnxPwHgdKZ8zXEywMB1Rb?amount=0.10000000?label=bitwallet_deposit?message=convert_btc_to_bitasset
-  
-  $scope.data = {
-        input_amount      : 0, 
-        input_curr        : 'BTC', 
-        input_in_btc      : true,
-
-        amount_usd:         undefined,
-        amount_btc:         undefined,
-        quoting_usd:        false,
-        quoting_btc:        false,
-        quoting_btc_error:  undefined,
-        quoting_usd_error:  undefined,
-
-        step:               1, // HACK UI: PONELE 2 y ves la pantalla del qr
-        timer:              {options:{}, remaining:undefined, percent:undefined, start:0, stop:0, expired:0, waiting:0},
-        
-        deposit_uri:        undefined,
-        deposit_qrcode:     undefined,
-        deposit_short_uri:  undefined,  
-        
-        quote:              undefined,
-        quote_timestamp:    0, 
-        signature:          undefined,
-        tx:                 undefined,
-
-        from_in_progress:   false
-  }
+.controller('DepositCtrl', function($translate, T, ExchangeTransaction, Wallet, BitShares, $scope, $rootScope, $http, $timeout, $ionicActionSheet, $ionicPopup, $cordovaClipboard, $ionicLoading, $timeout, BitShares, Setting) {
   
   // HACK UI: for testing
-  $scope.data.tx              = {cl_pay:22.15, cl_pay_addr: 'Bso7DduduMapkTDW7HNWXf5dMCcYcNdpXi'}
-  $scope.data.deposit_uri     = 'bitcoin://Bso7DduduMapkTDW7HNWXf5dMCcYcNdpXi?amount=22.15&label=bitwallet_deposit&message=convert_btc_to_bitasset';
-  $scope.data.deposit_qrcode    = 'http://zxing.org/w/chart?chs=300x300&cht=qr&choe=UTF-8&chld=L|1&chl=7'+encodeURIComponent($scope.data.deposit_uri);
-
+  //$scope.data.tx              = {cl_pay:22.15, cl_pay_addr: 'Bso7DduduMapkTDW7HNWXf5dMCcYcNdpXi'}
+  //$scope.data.deposit_uri     = 'bitcoin://Bso7DduduMapkTDW7HNWXf5dMCcYcNdpXi?amount=22.15&label=bitwallet_deposit&message=convert_btc_to_bitasset';
+  //$scope.data.deposit_qrcode    = 'http://zxing.org/w/chart?chs=300x300&cht=qr&choe=UTF-8&chld=L|1&chl=7'+encodeURIComponent($scope.data.deposit_uri);
+  // python send_btc.py BzxyUCprnJWYXmQ6gGwREFPboTxhU1JB3E CCDVYmCptt5b3HnxPwHgdKZ8zXEywMB1Rb 0.05 yes
+  // bitcoin://CCDVYmCptt5b3HnxPwHgdKZ8zXEywMB1Rb?amount=0.10000000?label=bitwallet_deposit?message=convert_btc_to_bitasset
+  // HACK UI : PONELE 2 y ves la pantalla del qr 
+  
+  $scope.data = {
+    from_in_progress : false,
+    valid_quote      : false,
+    quoting          : false,
+    input_timeout    : undefined,
+    input_in_btc     : false,
+    input_amount     : undefined,
+    input_curr       : 'USD',
+    other_amount     : undefined,
+    other_curr       : 'BTC',
+    step             : 1,
+    timer:           { 
+      options   : {},
+      remaining : undefined,
+      percent   : undefined,
+      start     : 0,
+      stop      : 0,
+      expired   : 0,
+      waiting   : 0
+    }
+  }
   
   $scope.toggleInputCurrency = function(){
-    $scope.data.input_in_btc = $scope.data.input_in_btc?false:true;
-    $scope.data.input_amount=0;
-    if($scope.data.input_in_btc==false){
-      $scope.data.input_curr='USD';
-    }
-    else{
-      $scope.data.input_curr='BTC';
-    }
-    console.log('$scope.data.input_curr: '+$scope.data.input_curr);
-  }
+    $scope.data.input_in_btc = !$scope.data.input_in_btc;
 
-  // Disable and enable form handlers
-  // $scope.data   = {from_in_progress:false};
+    $scope.data.input_amount = undefined;
+    $scope.data.input_curr   = !$scope.data.input_in_btc ? Wallet.data.asset.symbol : 'BTC';
+
+    $scope.data.other_curr   = !$scope.data.input_in_btc ? 'BTC' : Wallet.data.asset.symbol;
+    $scope.data.other_amount = undefined;
+  }
 
   $scope.formInProgress = function(){
     $scope.data.from_in_progress = true;
@@ -62,83 +51,48 @@ bitwallet_controllers
     console.log(' -- DepositCtrl Form ENABLED!!!!');
   }
 
-  $scope.default_data = {};
-  angular.copy($scope.data, $scope.default_data);
+  //$scope.default_data = {};
+  //angular.copy($scope.data, $scope.default_data);
   
-  $scope.quote_data = { 'quote_curr'     : $scope.wallet.asset.x_symbol+'_BTC'
-                        , 'quote_btc'    : 'BTC_'+$scope.wallet.asset.x_symbol};
+  //$scope.quote_data = { 'quote_curr'     : $scope.wallet.asset.x_symbol+'_BTC'
+                        //, 'quote_btc'    : 'BTC_'+$scope.wallet.asset.x_symbol};
   
-  var usd_timeout = undefined;
-  $scope.$watch('data.amount_usd', function(newValue, oldValue, scope) {
+  //$scope.usd_timeout = undefined;
+  $scope.$watch('data.input_amount', function(newValue, oldValue, scope) {
     if(newValue===oldValue)
       return;
-    $scope.clearErrors();
-    if(usd_timeout)
-    {
-      $timeout.cancel(usd_timeout);
-      usd_timeout = undefined;
-      $scope.data.quoting_btc = false;
+    //$scope.clearErrors();
+    $scope.data.valid_quote  = false;
+    $scope.data.other_amount = undefined;
+
+    $timeout.cancel($scope.input_timeout);
+
+    if(!$scope.data.input_amount) {
+      $scope.data.quoting = false;
+      return;
     }
-    console.log('$scope.data.quoting_usd:'+$scope.data.quoting_usd);
-    if($scope.data.quoting_usd)
-      return;
-    usd_timeout = $timeout(function () {
-      $scope.data.quoting_btc = true;
-      $scope.data.amount_btc = undefined;
-      // Quote current request
-      BitShares.getBuyQuote($scope.quote_data.quote_curr, $scope.data.amount_usd).then(function(res){
-        $scope.data.amount_btc      = Number(res.quote.cl_pay);
-        $scope.data.quote           = res.quote;
-        // Set quote timestamp locally. It's not estrict.
-        $scope.data.quote_timestamp = parseInt((new Date()).getTime()); 
-        $scope.data.signature       = res.signature;
-        $timeout(function () {
-          $scope.data.quoting_btc   = false;
-        } , 10);
-        //console.log(res);
-      }, function(error){
-        //$scope.stopTimer();
-        $scope.data.quoting_btc     = false;
-        $scope.setMessageErr('BTC', error);
-        //console.log(error);
-        $scope.data.quote           = undefined;
-        $scope.data.signature       = undefined;
-      });
-    }, 750);
-  });
-  
-  var btc_timeout = undefined;
-  $scope.$watch('data.amount_btc', function(newValue, oldValue, scope) {
-    if(newValue===oldValue)
-      return;
-    $scope.clearErrors();
-    if(btc_timeout)
-    {
-      $timeout.cancel(btc_timeout);
-      btc_timeout = undefined;
-      $scope.data.quoting_usd = false;
-    }
-    console.log('$scope.data.quoting_btc:'+$scope.data.quoting_btc);
-    if($scope.data.quoting_btc)
-      return;
-    btc_timeout = $timeout(function () {
-      $scope.data.quoting_usd = true;
-      $scope.data.amount_usd = undefined;
-      BitShares.getSellQuote($scope.quote_data.quote_btc, $scope.data.amount_btc).then(function(res){
-        $scope.data.amount_usd  = Number(res.quote.cl_recv);
-        $scope.data.quote       = res.quote;
-        $scope.data.signature   = res.signature;
-        $timeout(function () {
-          $scope.data.quoting_usd = false;
-        } , 10);
-        //console.log(res);
-      }, function(error){
-        //$scope.stopTimer();
-        $scope.data.quoting_usd       = false;
-        $scope.setMessageErr('USD', error);
-        $scope.data.quote             = undefined;
-        $scope.data.signature         = undefined;
-        //console.log(error);
+
+    $scope.data.quoting = true;
+
+    $scope.input_timeout = $timeout(function () {
+
+      var prom;
+      if ( $scope.data.input_in_btc ) {
+        prom = BitShares.getQuote('sell', $scope.data.input_amount, 'BTC', Wallet.data.asset.name);
+      } else {
+        prom = BitShares.getQuote('buy', $scope.data.input_amount, Wallet.data.asset.name, 'BTC');
+      }
+
+      prom.then(function(res){
+
+        $scope.data.other_amount    = $scope.data.input_in_btc ? Number(res.quote.cl_recv) : Number(res.quote.cl_pay);
+        $scope.data.quote           = res;
+        $scope.data.quote_timestamp = parseInt((new Date()).getTime());
+        $scope.data.valid_quote     = true;
+        $scope.data.quoting         = false;
+      }, function(err){
+        console.log(err);
+        $scope.data.quoting = false;
       });
     }, 750);
   });
@@ -155,10 +109,10 @@ bitwallet_controllers
   };
         
         
-  $scope.clearErrors = function(){
-    $scope.data.quoting_btc_error = undefined;
-    $scope.data.quoting_usd_error = undefined;
-  };
+  //$scope.clearErrors = function(){
+    //$scope.data.quoting_btc_error = undefined;
+    //$scope.data.quoting_usd_error = undefined;
+  //};
   
   $scope.showLoading = function(message){
     $ionicLoading.show({
@@ -181,8 +135,48 @@ bitwallet_controllers
        okType   : 'button-assertive', 
      });
   }
+
+  $scope.next = function() {
+
+    if ( !$scope.data.valid_quote ) {
+      return;
+    }
+
+    var keys = Wallet.getAccountAccessKeys();
+
+    BitShares.acceptQuote(
+      $scope.data.quote.quote, 
+      $scope.data.quote.signature, 
+      keys, 
+      Wallet.data.account.address,
+      'deposit'
+    ).then(function(xtx) {
+      ExchangeTransaction.add(xtx.tx).then(function(res) {
+
+        var uri = 'bitcoin://'+ xtx.tx.cl_pay_addr +'?amount='+ xtx.tx.cl_pay +'&label=Lime%20Deposit&message=Deposit%20'+xtx.tx.cl_recv+' '+xtx.tx.cl_recv_curr;
+        var qrcode = new QRCode(document.getElementById("deposit_qrcode"), {
+          text         : uri,
+          width        : 256,
+          height       : 256,
+          colorDark    : "#000000",
+          colorLight   : "#ffffff",
+          correctLevel : QRCode.CorrectLevel.H
+        });
+
+        $scope.data.step=2;
+        Wallet.loadBalance();
+
+      }, function(err) {
+        console.log(err);
+      });
+
+    }, function(err) {
+      console.log(err);
+    });
+
+  }
   
-  $scope.next = function(){
+  $scope.next_2 = function(){
 
     // HACK
     $scope.data.step=2;

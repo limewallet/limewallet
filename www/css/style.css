@@ -847,6 +847,8 @@ span.quote_error{padding-left: 16px;}
   margin-right: auto;
 }
 
+#qrcode {width:100%!important; height:auto;display:block;}
+
 /* WITHDRAW */
 .withdraw div.bitcoin_address{width:100%!important;padding:0!important;}
 .withdraw div.bitcoin_address .line-divider{width:auto;right:65px!important;}

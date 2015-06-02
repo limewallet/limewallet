@@ -15,7 +15,9 @@ bitwallet_config
     //var url = 'http://192.168.42.42:8100/api/v2';
     return url + path;
   },
-  wsurl : 'ws://bswws-test.latincoin.com/events',
+  //wsurl : 'ws://bswws-test.latincoin.com/events',
+  wsurl : 'ws://54.187.196.240/events',
+  //
   apiPubkey : 'DVS6BaM6BKs9gBBEhZqmQj9KjAV8A8f23yeJXhnbWa4VpqEtyXHMq'
 });
 //DVS8m6y6QXLPbSZmKVmKJvvbjXVZX9vL2Mk38vHLSxKkLwjBxPwqz

@@ -12,19 +12,22 @@
             <div class="list">
               <div class="amount_container">
                 <label class="item item-input pmd">
-                  <!--span class="input-label pmd">{{'g.amount'|translate}}</span -->
                   <input numbers-only-key-press required name="transactionAmount" type="number" class="full_width input_amount big pmd" ng-model="data.input_amount" />
                   <i class="pmd icon placeholder-icon">{{data.input_curr}}</i>
                 </label>
+                <label class="item item-input pmd">
+                  <input disabled type="number" class="full_width input_amount big pmd" ng-model="data.other_amount"/>
+                  <i class="pmd icon placeholder-icon">{{data.other_curr}}</i>
+                </label>
                 <button ng-click="toggleInputCurrency()" class="button button-icon icon ion-arrow-swap base-color toggle_curr">
                 </button>
-                <br/>
-                <div class="deposit_rate">
-                  <div class="hint left" ng-show="data.input_in_btc==true">{{'g.you_receive'|translate}}:</div>
-                  <div class="hint right base-color padded_r" ng-show="data.input_in_btc==true"><strong>55.5</strong> USD</div>
-                  <div class="hint left" ng-show="data.input_in_btc==false">{{'g.you_pay'|translate}}:</div>
-                  <div class="hint right base-color padded_r" ng-show="data.input_in_btc==false"><strong>0.2</strong> BTC</div> <br/>
-                  <div class="hint left">{{'g.cur_rate'|translate}}:</div><div class="hint right base-color"><strong>251.8</strong> USD/BTC</div>
+
+                <div ng-show="data.quoting" class="deposit_rate" >
+                  <ion-spinner icon="android" ng-show="data.quoting"></ion-spinner>
+                </div>
+
+                <div ng-show="data.valid_quote" class="deposit_rate" >
+                  <div class="hint left">{{'g.cur_rate'|translate}}:</div><div class="hint right base-color"><strong>{{data.quote.quote.rate}}&nbsp;{{data.quote.quote.book}}</strong></div>
                 </div>
               </div>
             </div>
@@ -61,9 +64,7 @@
           </div>
           <div class="list settings" id="quote_ttl">
             <div class="item">
-              <div class="qr_container">
-                <img ng-src="{{data.deposit_qrcode}}" class="w100_hauto" id="qr_image" imageonload ng-click="copyUri()" />
-              </div>
+              <div id="deposit_qrcode" ng-click="copyUri()"></div>
               <span class="input-label deposit_qr_hint">{{'g.tap_copy_btc_uri'|translate}}</span>
             </div>
           </div>
@@ -77,12 +78,12 @@
           </button>
           
           <div class="h67" class="dock_bottom hide-on-keyboard-open" ng-show="data.step==2">
-            <div ng-show="data.timer.expired ==true">
+            <div ng-show="data.timer.expired">
               <button ng-click="alreadyPaid()" class="button button-block button-stable no-margin button_taller" >
                 {{'g.already_paid'|translate|uppercase}}
               </button>
             </div>
-            <div ng-show="data.timer.expired==false">
+            <div ng-show="!data.timer.expired">
               <a class="button button-block button-energized no-margin button_taller" ng-click="window.open('{{data.deposit_short_uri}}', '_system', 'location=yes');" target="_system">
                 {{'g.pay'|translate|uppercase}}
               </a>

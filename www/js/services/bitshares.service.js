@@ -638,18 +638,9 @@ bitwallet_services
       return self.apiCall(keys, ENVIRONMENT.apiurl('/xtxs/'+txid));
     }
     
-    self.getSellQuote = function(asset, amount) {
-      return self.getQuote('sell', asset, amount);
-    }
-    
-    self.getBuyQuote = function(asset, amount) {
-      return self.getQuote('buy', asset, amount);
-    }
-    
     // If xtx_id is defined, the rest of the parameters are useless.
-    self.getQuote = function(buy_sell, asset, amount) {
-      var assets    = asset.split('_');
-      var url       = ENVIRONMENT.apiurl('/'+buy_sell+'/'+amount+'/'+assets[0]+'/'+assets[1]);
+    self.getQuote = function(buy_sell, amount, asset1, asset2) {
+      var url       = ENVIRONMENT.apiurl('/'+buy_sell+'/'+amount+'/'+asset1+'/'+asset2);
       return self.apiCall(undefined, url);
     }
 

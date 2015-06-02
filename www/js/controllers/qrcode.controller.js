@@ -3,10 +3,7 @@ bitwallet_controllers
   
   $scope.address    = $stateParams.address;
   $scope.amount     = $stateParams.amount;
-  //$scope.asset_id   = $rootScope.asset_id;
-  $scope.request    = 'bts:'+$scope.address+'/transfer/amount/'+$scope.amount+'/asset/'+$scope.wallet.asset.symbol; //symbol or asset_id required -> ?USD?
-  //$scope.imgurl     = 'http://chart.apis.google.com/chart?cht=qr&chs=300x300&chl='+encodeURIComponent($scope.request)+'&chld=H|0'
-  $scope.imgurl     = 'http://zxing.org/w/chart?chs=300x300&cht=qr&choe=UTF-8&chld=L|1&chl=7'+encodeURIComponent($scope.request);
+  $scope.request    = 'bts:'+$scope.address+'/transfer/amount/'+$scope.amount+'/asset/'+$scope.wallet.asset.symbol;
         
   //console.log('request -> ' + $scope.request);
   //console.log('imgurl -> ' + $scope.imgurl);
@@ -24,8 +21,17 @@ bitwallet_controllers
   $scope.hideLoading = function(){
     $ionicLoading.hide();
   }
+
+  var qrcode = new QRCode(document.getElementById("qrcode"), {
+    text: $scope.request,
+    width: 256,
+    height: 256,
+    colorDark : "#000000",
+    colorLight : "#ffffff",
+    correctLevel : QRCode.CorrectLevel.H
+  });
   
-  $scope.showLoading();
+  //$scope.showLoading();
   
   $scope.doShareRecvPayment = function(){
     $cordovaSocialSharing
