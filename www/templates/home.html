@@ -56,10 +56,10 @@
           ng-repeat-start="box in wallet.ord_transactions.orderedKeys ">
           {{box|moment_separator}}
         </div>
-        <div ng-repeat="tx in wallet.ord_transactions[box]" class="item item-icon-left"> <!-- item-thumbnail-left -->
+        <div ng-repeat="tx in wallet.ord_transactions[box]" class="item item-icon-left">
           <a ng-click="showActionSheet(tx)">
             <div class="{{tx.ui_type}}">
-              <div ng-class="{true:'pending', false:''}[tx.state=='P' || tx.status=='WP']">
+              <div class="full_width" ng-class="{true:'pending', false:''}[tx.state=='P' || tx.status=='WP']">
                 <img class="{{tx.ui_type}}_ex icon tx_icon" src="{{tx|tx_icon_src}}"/>
                 <i ng-show="tx.state=='P'" ng-class="{true:'icon ion-loading-c'}[tx.state=='P']"></i> <!-- Send creada a manopla-->
                 <h2>
@@ -70,7 +70,7 @@
                   <span ng-if="tx|is_uncompleted_xtx" class="pending_text {{tx.status}}">{{('xchg.'+tx.status) | translate}}</span>
                 </h2>
                 <p>
-                  <span class="wrap_text" ng-if="tx.state=='P'|| tx.status=='WP'" ng-bind-html="tx|draw_pending_tx"></span>
+                  <!-- span class="wrap_text" ng-if="tx.state=='P'|| tx.status=='WP'" ng-bind-html="tx|draw_pending_tx"></span -->
                   <span class="deposit_ex wrap_text">{{tx.cl_pay|number:4}}&nbsp;{{tx.cl_pay_curr}}</span>
                   <span class="withdraw_ex wrap_text">{{tx.cl_recv|number:4}}&nbsp;{{tx.cl_recv_curr}}</span>
                   <span class="btc_pay_ex wrap_text">{{tx.cl_recv|number:4}}&nbsp;{{tx.cl_recv_curr}}</span>

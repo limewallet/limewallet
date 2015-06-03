@@ -1,0 +1,33 @@
+// add to ionic.scss -> "metronic/scss/font-awesome.scss",
+
+$light:                           #fff !default;
+$stable:                          #f8f8f8 !default;
+$positive:                        #4a87ee !default;
+$calm:                            #43cee6 !default;
+$balanced:                        #5abb5c !default; /*  CHANGED #79ca79 #66cc33 */
+$energized:                       #1b4356 !default; /* #01bbf4 CHANGED #01bbf4 #4fbaed #3d7de7 #f0b840 */ /* WARNING: if changed, modify www/img/triangle.png */
+$assertive:                       #e65f3f !default; /*  CHANGED #d97572 #ef4e3a */
+$royal:                           #71c671 !default; /*  CHANGED #8a6de9 */
+$dark:                            #444 !default; 
+
+.calm_bg { background-color: $calm !important;} 
+.balanced_bg { background-color: $balanced !important;} 
+.energized_bg { background-color: $energized !important;} 
+.energized_punta_bordercolor {border-color: $energized transparent transparent transparent;}
+.energized_bordercolor {border-color: $energized;}
+//.transactions .received h2, .transactions .received .iconNOT {color:$royal;}
+
+//$dark_blue:     #00365f!default;
+$dark_blue:     #2c3e50!default;
+.dark_blue      {color: $dark_blue;}
+.dark_blue_bg   {background-color: $dark_blue;}
+
+$base-color:    #5f7381 !default;
+
+.base-color     { color:$base-color!important;}
+.base-color_bg  { background-color:$base-color!important;}
+
+$lime:          #d3eb00 !default;
+.lime           { color:$lime!important;}
+.lime_bg        { background-color: $lime!important;} 
+.lime_border    { border: $lime 1px solid!important;}

@@ -1,51 +1,38 @@
 bitwallet_controllers
-.controller('TxCtrl', function($scope, $rootScope, $ionicNavBarDelegate, $stateParams, Operation){
+.controller('TxCtrl', function($scope, $rootScope, $ionicNavBarDelegate, $stateParams, Operation, T, $translate){
   
-  $scope.data = { ops         : [],
-                  tx_deposits : [],
-                  tx_withdraws: [],
+  $scope.data = { 
                   tx          : undefined, 
                   tx_id       : undefined,
-                  fee         : 0
-                }
+                  asset       : undefined,
+                  show_extra  : false };
                   
   if (!angular.isUndefined($stateParams.tx_id))
   {
     $scope.data.tx_id = $stateParams.tx_id;
     console.log('TxDetails for: '+$stateParams.tx_id);
-    // $scope.data.ops = RawOperation.allForTx($stateParams.tx_id).then(function(res){
-    //   $scope.data.ops           = res;
-    //   $scope.data.tx_withdraws  = $scope.getWithdraws();
-    //   $scope.data.tx_deposits   = $scope.getDeposits();
-    // }, function(error){
-    // }).then(function(){
-    //   Operation.byTxId($scope.data.tx_id).then(function(res){
-    //     $scope.data.tx    = res;
-    //     $scope.data.fee   = res.fee;
-    //   });
-    // });
+    Operation.byTxIdEx($scope.data.tx_id).then(function(res){
+        if(!res)
+        {
+          $scope.goHome();
+          window.plugins.toast.show( T.i('err.invalid_xtx_id'), 'long', 'bottom');
+          return;
+        }
+        $scope.data.tx        = res;
+        $scope.data.asset     = $scope.wallet.assets[$scope.data.tx.asset_id];
+        var original_amount   = $scope.data.tx.amount;
+        $scope.data.tx.amount = original_amount/$scope.data.asset.precision;
+        var original_fee      = $scope.data.tx.fee;
+        $scope.data.tx.fee    = original_fee/$scope.data.asset.precision;
+    }, function(error){
+      $scope.goHome();
+      window.plugins.toast.show( T.i('err.retrieving_tx'), 'long', 'bottom');
+      console.log('XTxCtrl ERROR 2 '); console.log(error);
+    });
   }
   else{
     $scope.goHome();
     window.plugins.toast.show( T.i('err.invalid_xtx_id'), 'long', 'bottom');
-  }
-
-  $scope.getWithdraws = function(){
-    var ops = [];
-    angular.forEach($scope.data.ops, function(op){
-      if(op.op_type=='w')
-        ops.push(op);
-    })
-    return ops;
-  }
-  
-  $scope.getDeposits = function(){
-    var ops = [];
-    angular.forEach($scope.data.ops, function(op){
-      if(op.op_type=='d')
-        ops.push(op);
-    })
-    return ops;
   }
 
 });

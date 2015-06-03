@@ -46,6 +46,7 @@
     "deposit_title"       : "Deposit BITCOIN and get <b>bit{{asset.symbol}}</b>",
     "please_send_btc_to"  : "Please send <b>{{amount}}</b> BTC to <strong class=\"wrap_text\">{{addy}}</strong>",
     "tap_copy_btc_uri"    : "Tap to copy Bitcoin payment URI",
+    "tap_launch_btc_wallet"   : "Tap to launch Bitcoin Wallet",
     "already_paid"        : "Already paid",
     "instant_quote"       : "Instant quote",
     "withdraw_address"    : "Withdraw address",
@@ -57,7 +58,6 @@
     "cancel"              : "Cancel",
     "self"                : "Received",
     "btc_pay"             : "Paid in BTC",
-    "withdrew"            : "Withdrew",
     "withdraw"            : "Withdraw",
     "deposit"             : "Deposit",
     "btc_pay"             : "Pay in bitcoin",
@@ -89,7 +89,7 @@
     "updating"            : "Update in progress",
     "default"             : "Default",
     "asset"               : "Asset",
-    "done"                : "Done!",
+    "done"                : "Done",
     "register"            : "Register",
     "update"              : "Update",
     "later"               : "Later",
@@ -107,6 +107,7 @@
   },
 
   "err" : {
+    "retrieving_tx"             : "Oops... An error occurred while retrieveng Tx.",
     "unknown"                   : "Unknown Error - Check internet connection and try again later.",
     "wallet_locked_title"       : "Wallet lock error" ,
     "wallet_un_locked_title"    : "Wallet unlock error" ,
@@ -115,6 +116,8 @@
     "seed_copied"           : "Oops... Seed could not be copied!",
     "seed_equal_error"      : "Please retype seed.",
     "invalid_xtx_id"        : "Invalid transaction id",
+    "invalid_quote"         : "Invalid quote",
+    "invalid_quote_msg"     : "Oops... There was an error. Please retype amount until get quote.",
     "cant_cancel"           : "Cancel failed",
     "cant_cancel_msg"       : "Oops.. We were not able to cancel the transaction due to state change",
     "cant_requote"          : "Invalid option",
@@ -343,7 +346,7 @@
   },
   
   "xchg":{
-    "WP"        : "WAITING PAYMENT",
+    "WP"        : "WAITING",
     "PP"        : "IN PROGRESS", 
     "PP_full"   : "PARTIALLY PAID",
     "FP"        : "IN PROGRESS", 
@@ -400,5 +403,12 @@
     "type_password1"    : "Please choose a password to encrypt your wallet keys.",
     "type_password2"    : "Leave these fields empty if you want to disable encryption.",
     "create_account_html" : "Create&nbsp;wallet"
+  },
+
+  "tx": {
+    "sent"        : "sent to",    
+    "received"    : "received from",    
+    "withdraw"    : "withdrawn",
+    "deposit"     : "deposited"
   }
 }

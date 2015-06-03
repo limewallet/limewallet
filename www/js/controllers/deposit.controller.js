@@ -32,6 +32,7 @@ bitwallet_controllers
   }
   
   $scope.toggleInputCurrency = function(){
+    
     $scope.data.input_in_btc = !$scope.data.input_in_btc;
 
     $scope.data.input_amount = undefined;
@@ -39,6 +40,8 @@ bitwallet_controllers
 
     $scope.data.other_curr   = !$scope.data.input_in_btc ? 'BTC' : Wallet.data.asset.symbol;
     $scope.data.other_amount = undefined;
+
+    console.log(' toggled deposit currency. INPUT CURR:'+$scope.data.input_curr);
   }
 
   $scope.formInProgress = function(){
@@ -91,7 +94,7 @@ bitwallet_controllers
         $scope.data.valid_quote     = true;
         $scope.data.quoting         = false;
       }, function(err){
-        console.log(err);
+        console.log(JSON.stringify(err));
         $scope.data.quoting = false;
       });
     }, 750);
@@ -139,6 +142,7 @@ bitwallet_controllers
   $scope.next = function() {
 
     if ( !$scope.data.valid_quote ) {
+      $scope.showAlert('err.invalid_quote', 'err.invalid_quote_msg');
       return;
     }
 
@@ -153,11 +157,15 @@ bitwallet_controllers
     ).then(function(xtx) {
       ExchangeTransaction.add(xtx.tx).then(function(res) {
 
-        var uri = 'bitcoin://'+ xtx.tx.cl_pay_addr +'?amount='+ xtx.tx.cl_pay +'&label=Lime%20Deposit&message=Deposit%20'+xtx.tx.cl_recv+' '+xtx.tx.cl_recv_curr;
+        //var uri = 'bitcoin://'+ xtx.tx.cl_pay_addr +'?amount='+ xtx.tx.cl_pay +'&label=Lime%20Deposit&message=Deposit%20'+xtx.tx.cl_recv+' '+xtx.tx.cl_recv_curr;
+        $scope.data.tx                = xtx.tx;
+        $scope.data.deposit_short_uri = 'bitcoin://'+xtx.tx.cl_pay_addr+'?amount='+xtx.tx.cl_pay;
+        $scope.data.deposit_uri       = $scope.data.deposit_short_uri+'&label=Lime%20Deposit&message=Deposit%20'+xtx.tx.cl_recv+'%20'+xtx.tx.cl_recv_curr;
+        
         var qrcode = new QRCode(document.getElementById("deposit_qrcode"), {
-          text         : uri,
-          width        : 256,
-          height       : 256,
+          text         : $scope.data.deposit_uri,
+          width        : 324,
+          height       : 324,
           colorDark    : "#000000",
           colorLight   : "#ffffff",
           correctLevel : QRCode.CorrectLevel.H
@@ -165,70 +173,16 @@ bitwallet_controllers
 
         $scope.data.step=2;
         Wallet.loadBalance();
+        //$scope.alreadyPaid();
 
       }, function(err) {
-        console.log(err);
+        console.log(JSON.stringify(err));
       });
 
     }, function(err) {
       console.log(err);
     });
 
-  }
-  
-  $scope.next_2 = function(){
-
-    // HACK
-    $scope.data.step=2;
-    return;
-
-    if(!$scope.data.signature || !$scope.data.quote)
-    {
-      $scope.showAlert('err.no_quote', 'err.no_quote_input_val');
-      return;
-    }
-
-    // Disable Form
-    $scope.formInProgress();
-
-    $scope.showLoading('g.accept_tx_process');
-    var addy = Wallet.getMainAddress();
-    BitShares.getBackendToken(addy).then(function(token) {
-      BitShares.acceptQuote($scope.data.quote, $scope.data.signature, token, addy.address, BitShares.X_DEPOSIT).then(function(result){
-        
-        console.log('BitShares.acceptQuote:'+JSON.stringify(result));
-        
-        $scope.data.tx                = result.tx;
-        $scope.data.deposit_short_uri = 'bitcoin://'+$scope.data.tx.cl_pay_addr+'?amount='+$scope.data.tx.cl_pay;
-        $scope.data.deposit_uri       = $scope.data.deposit_short_uri+'&label=bitwallet_deposit&message=convert_btc_to_bitasset';
-        //$scope.data.deposit_qrcode    = 'http://chart.apis.google.com/chart?cht=qr&chs=300x300&chl='+encodeURIComponent($scope.data.deposit_uri)+'&chld=H|0'
-        $scope.data.deposit_qrcode    = 'http://zxing.org/w/chart?chs=300x300&cht=qr&choe=UTF-8&chld=L|1&chl=7'+encodeURIComponent($scope.data.deposit_uri);
-        $scope.data.step = 2;
-        
-        Wallet.onNewXTx($scope.data.tx);
-        
-        $scope.alreadyPaid();
-
-        $scope.hideLoading();
-
-        // Enable form
-        $scope.formDone();
-      }, function(error){
-        if(error=='auth_failed')
-          Setting.remove(Setting.BSW_TOKEN);
-        $scope.hideLoading();
-        $scope.showAlert('err.cant_accept', 'err.cant_accept_retry');
-        // Enable form
-        $scope.formDone();
-      });
-    }, function(error){
-      $scope.hideLoading();
-      console.log(error);
-      $scope.showAlert('err.no_token', 'err.no_token_retry');
-      // Enable form
-      $scope.formDone();
-    });
-    
   }
   
   $scope.copyUri = function(){
@@ -243,12 +197,13 @@ bitwallet_controllers
       });
   }
   
-  $scope.requote = function(){
-    angular.copy($scope.default_data, $scope.data);
-  }
+  // $scope.requote = function(){
+  //   angular.copy($scope.default_data, $scope.data);
+  // }
   
   $scope.alreadyPaid = function(){
     
+    return;
     // Disable Form
     $scope.formInProgress();
 
@@ -264,69 +219,69 @@ bitwallet_controllers
   var w_ttl = 300;
   var w_counter_timeout = w_ttl;
   
-  $scope.startWaitingPayment = function() {
-    if($scope.nanobar===undefined)
-    {
-      var options3 = {
-        target: document.getElementById('quote_ttl'),
-        id: 'mynano3',
-        bg: '#5abb5c'
-      };
-      $scope.nanobar = new Nanobar( options3 );
-    }
-    $scope.data.timer.waiting = 1;
-    $timeout($scope.onWaitingPayment, 1000);
-  };
+  // $scope.startWaitingPayment = function() {
+  //   if($scope.nanobar===undefined)
+  //   {
+  //     var options3 = {
+  //       target: document.getElementById('quote_ttl'),
+  //       id: 'mynano3',
+  //       bg: '#5abb5c'
+  //     };
+  //     $scope.nanobar = new Nanobar( options3 );
+  //   }
+  //   $scope.data.timer.waiting = 1;
+  //   $timeout($scope.onWaitingPayment, 1000);
+  // };
   
-  $scope.stopWaitingPayment = function() {
-    w_counter_timeout = 0;
-    if($scope.nanobar)
-      $timeout(function(){
-          $scope.nanobar.go(0);
-        }, 1000);
-    // Enable Form
-    $scope.formDone();
-  }
+  // $scope.stopWaitingPayment = function() {
+  //   w_counter_timeout = 0;
+  //   if($scope.nanobar)
+  //     $timeout(function(){
+  //         $scope.nanobar.go(0);
+  //       }, 1000);
+  //   // Enable Form
+  //   $scope.formDone();
+  // }
   
-  $scope.onWaitingPayment = function() {
+  // $scope.onWaitingPayment = function() {
     
-    w_counter_timeout = w_counter_timeout - 1;
-    if(w_counter_timeout<=0)
-    {
-      $scope.stopWaitingPayment();
-      $scope.nanobar.go(100);
-      $scope.data.timer.waiting = 0;
-      return;
-    }
-    $scope.nanobar.go((w_ttl-w_counter_timeout)*100/w_ttl);
-    $timeout($scope.onWaitingPayment, 1000);
+  //   w_counter_timeout = w_counter_timeout - 1;
+  //   if(w_counter_timeout<=0)
+  //   {
+  //     $scope.stopWaitingPayment();
+  //     $scope.nanobar.go(100);
+  //     $scope.data.timer.waiting = 0;
+  //     return;
+  //   }
+  //   $scope.nanobar.go((w_ttl-w_counter_timeout)*100/w_ttl);
+  //   $timeout($scope.onWaitingPayment, 1000);
     
-    var addy = Wallet.getMainAddress();
-    BitShares.getBackendToken(addy).then(function(token) {
-      BitShares.getExchangeTx(token, $scope.data.tx.id).then(function(xtx){
-        //var my_xtx = Wallet.processXTx(xtx);
-        //console.log('DepositCtrl::WatingTx: ui_type='+xtx.ui_type);
-        if(BitShares.isXtxPartiallyOrFullyPaid(xtx))
-        {
-          $scope.stopWaitingPayment();
-          window.plugins.toast.show(T.i('deposit.deposit_successful'), 'long', 'bottom');
-          Wallet.onNewXTxAndLoad(xtx);
-          $scope.goHome();
-        }
-      }, function(error){
+  //   var addy = Wallet.getMainAddress();
+  //   BitShares.getBackendToken(addy).then(function(token) {
+  //     BitShares.getExchangeTx(token, $scope.data.tx.id).then(function(xtx){
+  //       //var my_xtx = Wallet.processXTx(xtx);
+  //       //console.log('DepositCtrl::WatingTx: ui_type='+xtx.ui_type);
+  //       if(BitShares.isXtxPartiallyOrFullyPaid(xtx))
+  //       {
+  //         $scope.stopWaitingPayment();
+  //         window.plugins.toast.show(T.i('deposit.deposit_successful'), 'long', 'bottom');
+  //         Wallet.onNewXTxAndLoad(xtx);
+  //         $scope.goHome();
+  //       }
+  //     }, function(error){
       
-      })
-    }, function(error){
+  //     })
+  //   }, function(error){
     
-    });
+  //   });
     
-  }
+  // }
   
   $scope.$on( '$ionicView.beforeLeave', function(){
     // Destroy timers
     console.log('DepositCtrl.ionicView.beforeLeave killing timers.');
     //w_counter_timeout=0;
-    $scope.stopWaitingPayment();
+    //$scope.stopWaitingPayment();
   });
 })
 

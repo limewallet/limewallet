@@ -136,11 +136,12 @@ bitwallet_controllers
       if(index==0) {
         if(is_xtx){
           // VIEW DETAILS XTx
-          $state.go('app.xtransaction_details', {x_id:tx['x_id']});
+          $state.go('app.xtransaction_details', {x_id:tx['id']});
         }
         else{
+          console.log('llamando a [app.transaction_details : '+tx['txid']+']');
           // View transaction details
-          $state.go('app.transaction_details', {tx_id:tx['tx_id']});
+          $state.go('app.transaction_details', {tx_id:tx['txid']});
         }
       }
       

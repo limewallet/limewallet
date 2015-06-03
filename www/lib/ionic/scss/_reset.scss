@@ -81,7 +81,7 @@ script {
 
 html {
   @include user-select(none);
-  font-family: sans-serif; /* 1 */
+  font-family: 'Roboto'; /* 1 */
   -webkit-text-size-adjust: 100%;
   -ms-text-size-adjust: 100%; /* 2 */
   -webkit-text-size-adjust: 100%; /* 2 */

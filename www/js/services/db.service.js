@@ -412,63 +412,6 @@ bitwallet_services
       return DB.query(sql, params);
     }
 
-
-    //self.register = function(address) {
-      //var deferred = $q.defer();
-      //console.log('Account::register');
-      //BitShares.getBackendToken(address).then(function(token) {
-        ////console.log('toma el token ' + token);
-        //self.get().then(function(account) {
-          //if(account===undefined || account.name.length<1)
-          //{
-            //deferred.reject('Account is undefined');
-            //return;
-          //}
-          //BitShares.registerAccount(token, address, account).then(function(result) {
-            ////console.log(JSON.stringify(result));
-            //deferred.resolve(result);
-            
-          //}, function(err) {
-            //deferred.reject(err);
-          //});
-        //}, function(err) {
-          //deferred.reject(err);
-        //});
-      //}, function(err) {
-        //deferred.reject(err);
-      //});
-
-      //return deferred.promise;
-    //}
-    
-    //self.update = function(address, addys, assets) {
-      //var deferred = $q.defer();
-      //console.log('Account::update');
-      //BitShares.getBackendToken(address).then(function(token) {
-        ////console.log('toma el token ' + token);
-        //self.get().then(function(account) {
-          //if(account===undefined || account.name.length<1)
-          //{
-            //deferred.reject('Account is undefined');
-            //return;
-          //}
-          //BitShares.updateAccount(token, addys, assets, account).then(function(result) {
-            ////console.log(JSON.stringify(result));
-            //deferred.resolve(result);
-            
-          //}, function(err) {
-            //deferred.reject(err);
-          //});
-        //}, function(err) {
-          //deferred.reject(err);
-        //});
-      //}, function(err) {
-        //deferred.reject(err);
-      //});
-
-      //return deferred.promise;
-    //}
-    
     return self;
 })
 
@@ -532,7 +475,7 @@ bitwallet_services
     
     self.byTxId = function(tx_id){
       var deferred = $q.defer();
-      DB.query('SELECT * FROM operation where tx_id = ? limit 1', [tx_id])
+      DB.query('SELECT * FROM operation where txid = ? limit 1', [tx_id])
         .then(function(result){
             if( result.rows.length == 0 ) {
               deferred.resolve(undefined);
@@ -544,6 +487,31 @@ bitwallet_services
       return deferred.promise;
     }
 
+    self.byTxIdEx = function(txid){
+      var deferred = $q.defer();
+      
+      var query = " \
+        SELECT o.timestamp*1000 as TS, o.slate, IFNULL(m.encrypted,-1) encmsg, m.message, m.pubkey pubkey, c.name, m.address, \
+          o.type as ui_type, \
+            o.* FROM operation o \
+          LEFT JOIN memo m \
+            ON o.memo_hash = m.id \
+          LEFT JOIN contact c \
+            ON (m.in_out = 0 and m.pubkey = c.pubkey) or (m.in_out = 1 and m.address = c.address) \
+          WHERE o.txid = ? \
+          ORDER BY TS DESC";
+  
+
+      DB.query(query, [txid]).then(function(result){
+          if( result.rows.length == 0 ) {
+            deferred.resolve(undefined);
+            return;
+          }
+          deferred.resolve(DB.fetch(result));
+          return;
+      });
+      return deferred.promise;
+    }
     return self;
 })
 
@@ -580,6 +548,30 @@ bitwallet_services
     self.byXId = function(x_id){
       var deferred = $q.defer();
       DB.query('SELECT * FROM exchange_transaction et LEFT JOIN operation o ON o.tx_id = et.cl_pay_tx OR o.tx_id = et.cl_recv_tx where x_id = ? limit 1', [x_id])
+        .then(function(result){
+            if( result.rows.length == 0 ) {
+              deferred.resolve(undefined);
+              return;
+            }
+            deferred.resolve(DB.fetch(result));
+            return;
+        });
+      return deferred.promise;
+    }
+
+    self.byXIdEx = function(x_id){
+      var deferred = $q.defer();
+      var query = "SELECT et.created_at*1000 as TS, o.slate, IFNULL(m.encrypted,-1) encmsg, m.message, m.pubkey pubkey, c.name, m.address, \
+          IFNULL(et.extra_data, o.type) as ui_type, \
+            et.*, o.* FROM exchange_transaction et \
+          LEFT JOIN operation o \
+            ON o.txid = et.cl_pay_tx OR o.txid = et.cl_recv_tx \
+          LEFT JOIN memo m \
+            ON o.memo_hash = m.id \
+          LEFT JOIN contact c \
+            ON (m.in_out = 0 and m.pubkey = c.pubkey) or (m.in_out = 1 and m.address = c.address) \
+          WHERE et.id = ? ";
+      DB.query( query, [x_id])
         .then(function(result){
             if( result.rows.length == 0 ) {
               deferred.resolve(undefined);

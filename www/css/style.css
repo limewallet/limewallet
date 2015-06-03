@@ -217,48 +217,43 @@ h2 .transactions .sent_ex, h2 .transactions .received_ex, h2 .transactions .self
 .lime_settings_icon.withdraw  { background-image: url(../img/icons/ico-withdraw_lime.svg); height:16px; width:32px; left:11px;}
 
 .pending_text {
-  float:right;font-size:0.7em;
+  float:right;
   position: absolute;
-  right: 15px;
+  font-size: 9px; /*font-size:0.7em;*/
+  /*right: 0px;*/ right: 15px;
+  /*top: 0px;*/
+
   padding:3px;
   color: #ededed!important;
-  background-color: #4fbaed!important;
+  background-color: #4fbaed!important;/*#3498DB!important;*/
 }
 
 /* semaforo verde amarillo rojo(gris) */
-.pending_text.WP_NOT_USED{background-color: #d23f31;}/*WAITING PAYMENT celeste*/
-.pending_text.PP{background-color: #F1C40F!important;}/*PARTIALY PAID*/         /* amarillo */
-.pending_text.FP{background-color: #F1C40F!important;}/*FULLY PAID*/            /* amarillo */
-.pending_text.WT{background-color: #F1C40F!important;}/*WAITING TRADES*/        /* amarillo */
-.pending_text.RC{background-color: #E74C3C!important;}/*RATE CHANGED*/          /* rojo */
-.pending_text.WC{background-color: #F1C40F!important;}/*WAITING CONFIRMATION*/  /* amarillo */
-.pending_text.PC{background-color: #2ECC71!important;}/*PAYMENT CONFIRMED*/               /* verde */
-.pending_text.TG{background-color: #2ECC71!important;}/*TRANSACTION GENERATED*/           /* verde */
-.pending_text.SC{background-color: #2ECC71!important;}/*SENT TO CLIENT*/                  /* verde */
-.pending_text.OK{background-color: #66cc33!important;}/*COMPLETED*/             /* verde */
-.pending_text.XX{background-color: #ECF0F1!important;color:#666666!important;}/*CANCELED*/ /* rojo (gris) */
-.pending_text.RR{background-color: #ECF0F1!important;color:#666666!important;}/*REFUNDING*/ /* rojo (gris) */
-.pending_text.RF{background-color: #ECF0F1!important;color:#666666!important;}/*REFUNDED*/ /* rojo (gris) */
+/*
+.pending_text.WP_NOT_USED{background-color: #d23f31;} 
+.pending_text.PP{background-color: #F1C40F!important;} 
+.pending_text.FP{background-color: #F1C40F!important;} 
+.pending_text.WT{background-color: #F1C40F!important;} 
+.pending_text.RC{background-color: #E74C3C!important;} 
+.pending_text.WC{background-color: #F1C40F!important;} 
+.pending_text.PC{background-color: #2ECC71!important;} 
+.pending_text.TG{background-color: #2ECC71!important;}
+.pending_text.SC{background-color: #2ECC71!important;}
+.pending_text.OK{background-color: #66cc33!important;}
+.pending_text.XX{background-color: #ECF0F1!important;color:#666666!important;} 
+.pending_text.RR{background-color: #ECF0F1!important;color:#666666!important;} 
+.pending_text.RF{background-color: #ECF0F1!important;color:#666666!important;} */
 
 .pending_text.EX{background-color: #ECF0F1!important;color:#666666!important;}/*EXPIRED*/ /* rojo (gris) */
-/*WAITING_PAYMENT         = 'WP'
-PARTIALY PAID           = 'PP'
-FULLY PAID              = 'FP'
-WAITING_TRADES          = 'WT'
-RATE_CHANGED            = 'RC'
-WAITING_CONFIRMATION    = 'WC'
-PAYMENT_CONFIRMED       = 'PC'
-TRANSACTION_GENERATED   = 'TG'
-SENT_TO_CLIENT          = 'SC'
-COMPLETED               = 'OK'
-CANCELED                = 'XX'
-REFUND_REQUESTED        = 'RR'
-REFUNDED                = 'RF'
 
-EXPIRED                 = 'EX'
-*/
-.transactions .pending h2, .transactions .pending .icon , .transactions .pending span, .transactions .pending p
-{color:#4fbaed;} /*c1c1c1 4fbaed*/
+.pending_text {background-color: transparent!important; color:#4fbaed!important;}
+.pending_text.XX, .pending_text.RR, .pending_text.RF {color:#BDC3C7!important;}
+/*.pending_text.WP { color:#4fbaed!important;}*/
+.pending_text.RC{color: #E74C3C!important;} 
+
+/*.transactions .pending h2, .transactions .pending .icon , .transactions .pending span, .transactions .pending p
+{color:#4fbaed;} */ /* HACKED */
+/*#3498DB*/
 
 .transactions p , .transactions span.tx_address {font-size:12px!important;}
 .transactions span.tx_amount{font-weight:700;font-size:16px!important;}
@@ -334,12 +329,14 @@ input.big {
   border: none!important;
   background-color: transparent!important; /*#363636!important;*/
   color: #ececec!important;
-  font-size: 12px;
+  font-size: 15px;
 }
 .menu .item.wallet a{background-color: transparent; /*#222222!important;*/}
 .menu .list .item_first{ border-top:none;}
 
-.menu .line-divider{padding: 0px;margin-left: 28px;margin-right: 28px;background-color: #2e444f!important;height: 1px;}
+.menu .line-divider{padding: 0px;margin-left: 28px;margin-right: 28px;
+    background-color: #42484d!important; /* #2e444f */
+    height: 1px;}
 
 .menu .menu_header{height:267px!important;}           /* 132 */
 .menu .scroll-content.has-header{top:267px!important;}  /* 132 */
@@ -373,7 +370,7 @@ input.big {
 }
 
 .menu  .menu_container .menu_name label{
-  font-size:16px!important;
+  font-size:19px!important;
   color:#f3f5f6;
 }
 
@@ -610,6 +607,8 @@ img.i_centered {margin-left: auto;
   min-height: 28px!important;
 }
 
+.index_transactions .item p {width:100%;}
+.index_transactions .item p {width:100%;}
 .index_transactions ._0_today {display:none!important;}
 
 .list.settings .input-label, .input-label, .list.settings .item.item-toggle{
@@ -699,81 +698,11 @@ img.i_centered {margin-left: auto;
 .list.balances .item.base-color:last-child{border-bottom-left-radius:4px;border-bottom-right-radius:4px;}
 .list.balances .item-divider {display:flex;align-items:center;border-top-left-radius:4px;border-top-right-radius:4px;}
 .list.balances .item-divider span {width:50%;}
-.fab {
-      position: relative;
-      display: inline-block;
-      width: 46px;
-      height: 46px;
-      border-radius: 50%;
-      color: #fff;
-      overflow: hidden;
-      transition: box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      transition-delay: 0.2s;
-      box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
-}
-/* 78 */
-.fab {
-    position: absolute;
-    top:16px;
-    left:16px;
-}      
-.fab.red {
-  background-color: #d23f31;
-}
-
-.fab.blue, .list.balances .item.active{
-  background-color:#2e99b7 /* ff8100 #007DC4 */; 
-}
-
-.deposits .fab  > i {
-  display:block;
-  margin: 13px 20px 21px 12px !important;
-}
-
-.list.balances .item.active .fab.blue{
-  background-color: #fff!important;
-  color:#2e99b7 /* ff8100 #007DC4 */; 
-}
-
-.fab.green {
-  background-color: #0f9d58;
-}
-
-.fab:active {
-  box-shadow: 0 8px 17px 0 rgba(0, 0, 0, 0.2);
-  transition-delay: 0s;
-}
-
-.fab > i {
-  margin: 15px 15px 21px 17px !important;
-}
-.fab > i.fa-btc {
-  margin: 14px 20px 20px 16px !important;
-}
-
-.fab > i.ozt {
-  display:block;
-  margin: 13px 20px 21px 12px !important;
-}
-.fab > i::shadow path {
-  fill: #fff;
-}
-
-.assets_by_address_title {
-  clear: both;
-  /*position: absolute;
-  bottom: 1px;*/
-  /*margin-left: 78px;*/
-  /* margin-left: 16px; */
+.list.balances .item-divider span.tx_desc {
   width: 100%;
-  /*height: 1px;*/
-  /*
-  color:#2e99b7; */
- padding:5px 5px 5px 16px;
-  border-top: #ddd solid 1px;
-  /*background-color:#2e99b7;*/
-  /*color:#fff;*/
-}
+  font-size: 17px;
+}  
+
 
 /******************************/
 /*DEPOSIT *********************/ 
@@ -785,7 +714,7 @@ img.i_centered {margin-left: auto;
   color: #999;
 }
 .button_taller {height:67px!important;line-height:67px!important;margin-top:0px!important;margin-bottom:0px!important;}
-/*.button.dock_bottom{ position:absolute;bottom:0px;}*/
+
 .button_taller i.icon {vertical-align: middle!important;}
 
 .rotate45{
@@ -989,13 +918,17 @@ fieldset {
   border: none!important;
 }
 
-.welcome, .create_account, .register{
+.deposit , .welcome, .create_account, .register{
     display: -webkit-flex; /* Safari */
     -webkit-flex-flow: row wrap; /* Safari 6.1+ */
     display: flex;
-    flex-flow: row wrap;
-    padding-left:33px!important;padding-right:33px!important;
+    flex-flow: row wrap;}
+
+.welcome, .create_account, .register{
+    padding-left:33px!important;
+    padding-right:33px!important;
 }
+
 .welcome, .create_account{
     align-content: stretch;
     height:100%;
@@ -1012,6 +945,7 @@ fieldset {
                                 width: 100%;}
 .welcome .logo_container img  { margin:0 auto;}
 .welcome .buttons_container, .create_account .buttons_container   { align-self:flex-end;width:100%;padding-bottom: 88px;}
+
 .create_account .buttons_container {padding-bottom: 33px!important;}
 button.centered_autow {width:auto!important;margin:0 auto;}
 .welcome .buttons_container a{text-transform: uppercase!important;}
@@ -1154,7 +1088,7 @@ input.pmd {font-size:16px!important;  color:#fff;border-top:none; border-left:no
     overflow: hidden;
     min-height: 25px;
     float:left;
-    color: #d8d8d8;
+    color: #d0d0d0; /*#d8d8d8;*/
     text-align: right;
     min-width: 140px;
     font-size:12px;
@@ -1167,19 +1101,29 @@ input.pmd {font-size:16px!important;  color:#fff;border-top:none; border-left:no
     min-height: 25px;
     margin-left: 10px;
     font-size:12px;
+    color:#d0d0d0!important;
 }
 .deposit_rate .hint.left{min-width: 80px!important;}
 .deposit_rate {clear:both;padding-left:71px;padding-right: 80px;margin-top: 40px;}
 .deposit_rate .hint.padded_r{padding-right:27px}
-
+.deposit .step2 {width:100%;}
+.deposit .list.qr_code .item{border:none!important;}
+.deposit_form .deposit_rate_loading {text-align:center;display: block;min-height: 28px;overflow: hidden;margin-top:40px;}
 .deposit_form .input_amount {padding-right:60px!important;}
-.deposit_form .amount_container {position:relative;display:block;width:100%;height:auto;padding-top:25px;}
+.deposit_form .amount_container {position:relative;display:block;width:100%;height:auto;padding-top:25px;overflow:hidden;}
 .deposit_form .amount_container label.pmd{width: 300px!important;float:left;} /*padding-left: 32px!important;*/
-.deposit_form .toggle_curr {top: 15px;right: 0px;color:#eaeaea!important;margin-right:5px;}
+.deposit_form .toggle_curr {top: 53px;right: 0px;/*color:#eaeaea!important;*/margin-right:5px;}
 .deposit_confirm {
   /*padding: 10px 10px 10px 0px;*/
   padding:30px 10px 0px 16px;
 }
+.deposit_form .pmd.input_curr input {color:#000;}
+/*.pmd.input_curr i.pmd {color:#000;}*/
+.deposit_form .pmd.other_curr input {color:#c0c0c0!important;}
+.deposit_form .pmd.other_curr i.pmd {color:#c0c0c0;}
+
+#deposit_qrcode {width:100%;height:auto;}
+
 .deposit_confirm p {margin:0!important;}
 .deposit_confirm p b{font-size:16px!important;}
 
@@ -1187,7 +1131,8 @@ input.pmd {font-size:16px!important;  color:#fff;border-top:none; border-left:no
 .w100_hauto{width:100%;height:auto;}
 .h67 {height:67px;}
 .deposit .deposit_qr_hint {float: right;font-size: 10px;padding-right: 30px!important;padding-top:0px;}
-.deposit .bottom_bar {clear:both;position: absolute;bottom:0px;display:block;width:100%;}
+/*.deposit .bottom_bar {clear:both;position: absolute;bottom:0px;display:block;width:100%;}*/
+.deposit .buttons_container{ align-self:flex-end;width:100%;}
 
 .ion-autocomplete-container .item-divider{color:#fff!important;font-size:14px;background-color:#546979!important;border:none;}
 .ion-autocomplete-container .item-divider.item-icon-right .icon:before{font-size:24px;}
@@ -1222,15 +1167,18 @@ input.pmd {font-size:16px!important;  color:#fff;border-top:none; border-left:no
     top: 10px;}
 .bar .title {font-size: 17px!important;}
 
-/*.bar .button.button-icon .icon:before, 
-  .bar .button.button-icon:before, */
+.bar .button.button-icon .icon:before, 
+  .bar .button.button-icon:before, 
   .bar .button.button-icon.icon-left:before, 
   .bar .button.button-icon.icon-right:before {
-  font-size: 26px!important;}
+  font-size: 26px;}
+
+.c1x.button-icon:before, .micro-icon:before {font-size:18px!important;}
 
 .loading-container .loading {display:flex;align-items:center;}
 .loading-container .loading ion-spinner {float:right;}
 .loading-container .loading ion-spinner {stroke:#d3eb00!important;} /*93c91f*/
+ion-spinner {stroke:#d3eb00!important;} /*93c91f*/
 
 .lime_settings_ionicon {
 }

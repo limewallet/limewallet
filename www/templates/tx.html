@@ -5,14 +5,117 @@
     <ion-nav-buttons side="right">
     </ion-nav-buttons>
     
-    <ion-content class="has-header" has-bouncing="false">
-      <div class="register_container energized_bg register_color padding">
-        <div class="padding wrap_text">
-          <b>{{data.tx.amount|number:2}}</b> {{wallet.assets[data.tx.asset_id].symbol}} {{(data.tx.sign>0?'g.received':'g.sent')|translate|lowercase}} {{'g.to'|translate|lowercase}}&nbsp;<b>{{data.tx.addr_name}}</b>
-          <br/>{{'home.on'|translate}} {{ data.tx.date|date:'medium'}}
+    <ion-content class="has-header assets base-color_bg padding" scroll="true" scrollbar-y="true" has-bouncing="false">
+    
+      <div class="list balances">
+        <div class="item item-divider green_bg color_white">
+          <span class="tx_desc">{{data.asset.symbol_ui_text}}{{data.tx.amount|number:2}} {{('tx.'+data.tx.ui_type)|translate}} {{data.tx.name}}</span> 
         </div>
+        <div class="item base-color">
+          <div class="asset_data">
+            <strong>Recipient</strong>
+            <br/>
+            <span> 
+              {{data.tx.name}}
+            </span>
+          </div>
+        </div>
+        <div class="item base-color">
+          <div class="asset_data">
+            <strong>Amount</strong>
+            <br/>
+            <span> 
+              {{data.asset.symbol_ui_text}}{{data.tx.amount|number:2}}
+            </span>
+          </div>
+        </div>
+        <div class="item base-color">
+          <div class="asset_data">
+            <strong>Fee</strong>
+            <br/>
+            <span> 
+              {{data.asset.symbol_ui_text}}{{data.tx.fee|number:2}}
+            </span>
+          </div>
+        </div>
+        
+        <div class="item base-color">
+          <div class="asset_data">
+            <strong>Note</strong>
+            <br/>
+            <span> 
+              {{data.tx.message}}
+            </span>
+          </div>
+        </div>
+
+        <div class="item base-color">
+          <div class="asset_data">
+            <strong>Date</strong>
+            <br/>
+            <span> 
+              {{(data.tx.timestamp*1000)|date:'medium'}}
+            </span>
+          </div>
+        </div>
+
+        <div class="item base-color" ng-show="data.show_extra==false">
+          <div class="asset_data text_centered">
+            <a ng-click="data.show_extra= (!data.show_extra)">More data...</a>
+          </div>
+        </div>
+        
+        <div class="item base-color" ng-show="data.show_extra==true">
+          <div class="asset_data" on-click="copy()">
+            <strong>Public key</strong>
+            <br/>
+            <span> 
+              {{data.tx.pubkey?data.tx.pubkey:'N/A'}}
+            </span>
+          </div>
+        </div>
+        
+        <div class="item base-color" ng-show="data.show_extra==true">
+          <div class="asset_data">
+            <strong>Address</strong>
+            <br/>
+            <span> 
+              {{data.tx.address}}
+            </span>
+          </div>
+        </div>
+
+        <div class="item base-color" ng-show="data.show_extra==true">
+          <div class="asset_data">
+            <strong>Asset</strong>
+            <br/>
+            <span> 
+              {{data.asset.symbol}} ({{data.asset.name}})
+            </span>
+          </div>
+        </div>
+
+        <div class="item base-color" ng-show="data.show_extra==true">
+          <div class="asset_data">
+            <strong>Transaction id</strong>
+            <br/>
+            <span> 
+              {{data.tx.txid}}
+            </span>
+          </div>
+        </div>
+
+        <div class="item base-color" ng-show="data.show_extra==true">
+          <div class="asset_data">
+            <strong>Bitshares Block (id)</strong>
+            <br/>
+            <span> 
+              {{data.tx.block}}<br/>({{data.tx.block_id}})
+            </span>
+          </div>
+        </div>
+
       </div>
-      <div ng-include src="'templates/tx.include.html'"></div>
     </ion-content>
   </ion-view>
   

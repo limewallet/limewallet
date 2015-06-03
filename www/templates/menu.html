@@ -9,9 +9,9 @@
       <div class="menu_container">
         <div class="c">
           <!-- nav-clear menu-close -->
-          <a ng-click="lockWallet()"   ng-disabled="data.in_progress" ng-show="wallet.password_required==1 && wallet.locked==0"  class="c1x lime_settings_ionicon button button-icon icon ion-unlocked"></a>
-          <a ng-click="unLockWallet()" ng-disabled="data.in_progress" ng-show="wallet.password_required==1 && wallet.locked==1"  class="c1x lime_settings_ionicon button button-icon icon ion-locked"></a>
-          <a href="#" ng-show="wallet.password_required==0" class="c1x lime_settings_ionicon button button-icon icon ion-unlocked"></a>
+          <a ng-click="lockWallet()"   ng-disabled="data.in_progress" ng-show="wallet.password_required==1 && wallet.locked==0"  class="c1x lime_settings_ionicon button button-icon icon ion-unlocked micro-icon"></a>
+          <a ng-click="unLockWallet()" ng-disabled="data.in_progress" ng-show="wallet.password_required==1 && wallet.locked==1"  class="c1x lime_settings_ionicon button button-icon icon ion-locked micro-icon"></a>
+          <a href="#" ng-show="wallet.password_required==0" class="c1x lime_settings_ionicon button button-icon icon ion-unlocked micro-icon"></a>
           <!-- lime_settings_icon logout -->
           <div class="menu_avatar c2x" nav-clear menu-close ng-click="goTo('app.account')"> 
             <canvas id="menu_jdenticon_canvas" width="80" height="80" data-jdenticon-hash="{{wallet.account.avatar_hash}}"></canvas>

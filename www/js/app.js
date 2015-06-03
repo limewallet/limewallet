@@ -307,7 +307,7 @@ bitwallet_module
 
 })
 
-.run(function(Account, DB, $state, $ionicHistory, $rootScope, $ionicPlatform, Wallet, Scanner, $q, BitShares, ENVIRONMENT, $cordovaGlobalization, $translate) {
+.run(function(Account, DB, $state, $ionicHistory, $rootScope, $ionicPlatform, Wallet, Scanner, $q, BitShares, ENVIRONMENT, $cordovaGlobalization, $translate, $state) {
 
   console.log(' app.js Init de .RUN !');
 
@@ -336,8 +336,9 @@ bitwallet_module
       console.log(' -- -----------------  global_init response =>' + JSON.stringify(account));  
 
       Wallet.init().then(function() {
+        //$state.go('app.xtransaction_details', {x_id:undefined});
+        //$state.go('app.transaction_details', {tx_id:'5394df9b7a4e1a9db60f576ad7e1a079b439a7e4'});
         $rootScope.goTo('app.home');
-        //$rootScope.goTo('app.account');
         Wallet.refreshBalance();
       }, function(err) {
 

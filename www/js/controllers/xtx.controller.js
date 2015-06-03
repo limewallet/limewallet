@@ -1,49 +1,36 @@
 bitwallet_controllers
 .controller('XTxCtrl', function($scope, $rootScope, $ionicNavBarDelegate, $stateParams, ExchangeTransaction){
   
-  $scope.data = { xtx         : undefined,
-                  x_id        : undefined,
-                  ops         : [],
-                  tx_deposits : [],
-                  tx_withdraws: [],
-                  fee         : 0}
+  $scope.data = { 
+                  tx          : undefined, 
+                  tx_id       : undefined,
+                  asset       : undefined,
+                  show_extra  : false };
                   
   if (!angular.isUndefined($stateParams.x_id))
   {
     $scope.data.x_id = $stateParams.x_id;
-    ExchangeTransaction.byXId($scope.data.x_id).then(function(res){
-      $scope.data.xtx    = res;
-      if($scope.data.xtx.tx_id===null)
-        return;
-      // $scope.data.ops = RawOperation.allForTx($scope.data.xtx.tx_id).then(function(res){
-      //   $scope.data.ops           = res;
-      //   $scope.data.tx_withdraws  = $scope.getWithdraws();
-      //   $scope.data.tx_deposits   = $scope.getDeposits();
-      // }, function(error){
-      //   console.log('XTxCtrl ERROR 1 '); console.log(error);
-      // });
+    ExchangeTransaction.byXIdEx($scope.data.x_id).then(function(res){
+       if(!res)
+        {
+          $scope.goHome();
+          window.plugins.toast.show( T.i('err.invalid_xtx_id'), 'long', 'bottom');
+          return;
+        }
+        $scope.data.tx        = res;
+        $scope.data.asset     = $scope.wallet.assets[$scope.data.tx.asset_id];
+        var original_amount   = $scope.data.tx.amount;
+        $scope.data.tx.amount = original_amount/$scope.data.asset.precision;
+        var original_fee      = $scope.data.tx.fee;
+        $scope.data.tx.fee    = original_fee/$scope.data.asset.precision;
     }, function(error){
+      $scope.goHome();
+      window.plugins.toast.show( T.i('err.retrieving_tx'), 'long', 'bottom');
       console.log('XTxCtrl ERROR 2 '); console.log(error);
     });
   }
   
-  $scope.getWithdraws = function(){
-    var ops = [];
-    angular.forEach($scope.data.ops, function(op){
-      if(op.op_type=='w')
-        ops.push(op);
-    })
-    return ops;
-  }
   
-  $scope.getDeposits = function(){
-    var ops = [];
-    angular.forEach($scope.data.ops, function(op){
-      if(op.op_type=='d')
-        ops.push(op);
-    })
-    return ops;
-  }
 });
 
 

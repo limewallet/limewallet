@@ -2,6 +2,10 @@
     <ion-nav-buttons side="left">
       <button ng-click="goHome()" class="button button-icon icon ion-ios-arrow-back base-color"></button>
     </ion-nav-buttons>
+
+    <ion-nav-buttons side="right">
+      <button ng-show="data.step==2" ng-click="copyUri()" class="button button-icon icon ion-ios-copy-outline base-color"></button>
+    </ion-nav-buttons>
     
     <ion-content class="has-header  deposit" has-bouncing="false" scroll="false" overflow-scroll="false">
       <!--ion-scroll zooming="false" direction="y" class="register_details margin-bottom-buttonNOT"-->
@@ -11,50 +15,26 @@
           <form novalidate name="sendForm" class="deposit_form send_form">
             <div class="list">
               <div class="amount_container">
-                <label class="item item-input pmd">
+                <label class="item item-input pmd input_curr">
                   <input numbers-only-key-press required name="transactionAmount" type="number" class="full_width input_amount big pmd" ng-model="data.input_amount" />
-                  <i class="pmd icon placeholder-icon">{{data.input_curr}}</i>
+                  <i class="pmd icon placeholder-icon base-color">{{data.input_curr}}</i>
                 </label>
-                <label class="item item-input pmd">
+                <label class="item item-input pmd other_curr">
                   <input disabled type="number" class="full_width input_amount big pmd" ng-model="data.other_amount"/>
                   <i class="pmd icon placeholder-icon">{{data.other_curr}}</i>
                 </label>
                 <button ng-click="toggleInputCurrency()" class="button button-icon icon ion-arrow-swap base-color toggle_curr">
                 </button>
+              </div>
+              <div ng-show="data.quoting" class="deposit_rate_loading" >
+                <ion-spinner icon="android"></ion-spinner>
+              </div>
 
-                <div ng-show="data.quoting" class="deposit_rate" >
-                  <ion-spinner icon="android" ng-show="data.quoting"></ion-spinner>
-                </div>
-
-                <div ng-show="data.valid_quote" class="deposit_rate" >
-                  <div class="hint left">{{'g.cur_rate'|translate}}:</div><div class="hint right base-color"><strong>{{data.quote.quote.rate}}&nbsp;{{data.quote.quote.book}}</strong></div>
-                </div>
+              <div ng-show="data.valid_quote" class="deposit_rate" >
+                <div class="hint left">{{'g.cur_rate'|translate}}:</div><div class="hint right base-color"><strong>{{data.quote.quote.rate}}&nbsp;{{data.quote.quote.book}}</strong></div>
               </div>
             </div>
           </form>
-
-          <div class="list settings quote ng-hide">
-            <div class="row">
-              <div class="col col-50">
-                <label class="item item-input item-floating-label">
-                  <span class="input-label">{{wallet.asset.symbol}}</span>
-                  <input type="number" placeholder="{{wallet.asset.symbol}}" ng-model="data.amount_usd">
-                  <i class="icon ion-loading-c" ng-show="data.quoting_usd"></i>
-                  <div class="line-divider"></div>            
-                </label>
-                <span class="quote_error assertive" ng-show="data.quoting_btc_error!==undefined">{{data.quoting_btc_error}}</span>
-              </div>
-              <div class="col col-50">
-                <label class="item item-input item-floating-label">
-                  <span class="input-label">BTC</span>
-                  <input type="number" placeholder="BTC" ng-model="data.amount_btc">
-                  <i class="icon ion-loading-c" ng-show="data.quoting_btc"> </i>
-                  <div class="line-divider"></div>   
-                </label>
-                <span class="quote_error assertive" ng-show="data.quoting_usd_error!==undefined">{{data.quoting_usd_error}}</span>
-              </div>
-            </div>
-          </div>
         </div>
         
         <div class="step2" ng-show="data.step==2">
@@ -62,22 +42,26 @@
             <p ng-bind-html="'g.please_send_btc_to'|translate:{amount:(data.tx.cl_pay|number:8), addy:data.tx.cl_pay_addr}">
             </p>
           </div>
-          <div class="list settings" id="quote_ttl">
+          <div class="list qr_code" id="quote_ttl">
             <div class="item">
-              <div id="deposit_qrcode" ng-click="copyUri()"></div>
-              <span class="input-label deposit_qr_hint">{{'g.tap_copy_btc_uri'|translate}}</span>
+              <div id="deposit_qrcode" ng-click="window.open('{{data.deposit_short_uri}}', '_system', 'location=yes');"></div>
+              <span class="input-label deposit_qr_hint">{{'g.tap_launch_btc_wallet'|translate}}</span>
             </div>
           </div>
         </div>
       <!-- /ion-scroll -->
       
-      <div class="bottom_bar">
+      <div class="buttons_container hide-on-keyboard-open">
         <fieldset ng-disabled="data.from_in_progress">
-          <button ng-click="next()" ng-show="data.step==1" class="button button-block button-energized no-margin hide-on-keyboard-open button_taller dock_bottom">
+          <button ng-click="next()" ng-show="data.step==1" class="button button-block button-energized no-margin button_taller">
             {{'g.next'|translate|uppercase}}
           </button>
           
-          <div class="h67" class="dock_bottom hide-on-keyboard-open" ng-show="data.step==2">
+          <button ng-click="goHome()" ng-show="data.step==2" class="button button-block button-energized no-margin button_taller">
+            {{'g.done'|translate|uppercase}}
+          </button>
+
+          <!--div class="h67" class="dock_bottom" ng-show="data.step==2">
             <div ng-show="data.timer.expired">
               <button ng-click="alreadyPaid()" class="button button-block button-stable no-margin button_taller" >
                 {{'g.already_paid'|translate|uppercase}}
@@ -88,7 +72,7 @@
                 {{'g.pay'|translate|uppercase}}
               </a>
             </div>
-          </div>
+          </div-->
         </fieldset>
       </div>
       
