@@ -929,7 +929,7 @@ fieldset {
     padding-right:33px!important;
 }
 
-.welcome, .create_account{
+.welcome, .create_account, .requote{
     align-content: stretch;
     height:100%;
     -webkit-align-content: stretch; /* Safari 7.0+ */
@@ -1209,3 +1209,7 @@ ion-spinner {stroke:#d3eb00!important;} /*93c91f*/
 .encryption_form .item-checkbox.pmd div.item-content{
   text-align: right!important;
   padding-right: 30px!important;}
+
+.item.larger{
+  height: auto!important;
+  min-height: 100px;}

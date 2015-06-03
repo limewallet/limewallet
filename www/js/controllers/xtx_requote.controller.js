@@ -31,6 +31,32 @@ $scope.data = {   xtx           : undefined,
     window.plugins.toast.show( T.i('err.invalid_xtx_id'), 'long', 'bottom');
   });
   
+  $scope.options = function() {
+
+   // Show the action sheet
+   var hideSheet = $ionicActionSheet.show({
+     buttons: [
+       { text: '<b>Get new quote</b>' },
+       { text: 'Refund' }
+     ],
+     /*destructiveText: 'Delete',*/
+     titleText: undefined,
+     cancelText: 'Cancel',
+     cancel: function() {
+        },
+     buttonClicked: function(index) {
+       return true;
+     }
+   });
+
+   // For example's sake, hide the sheet after two seconds
+   $timeout(function() {
+     hideSheet();
+   }, 2000);
+
+ };
+
+  /* *************************** */  
   
   $scope.showLoading = function(text_to_translate){
     $ionicLoading.show({

@@ -3,7 +3,64 @@
       <button ng-click="goHome()" class="button button-icon icon ion-ios-arrow-back"></button>
     </ion-nav-buttons>
     
-    <ion-content class="has-header register rate_changed energized_bgNOT" has-bouncing="false" scroll="false" overflow-scroll="false">
+    <ion-nav-buttons side="right">
+      <button ng-click="options()" class="button button-icon icon ion-android-more-vertical "></button>
+    </ion-nav-buttons>
+
+    <ion-content class="has-header requote" has-bouncing="false">
+      <div>
+        <div class="list balances">
+          <div class="item item-divider base-color larger bgcolor_white">
+            <span class="tx_desc wrap_text" ng-bind-html="'rate_changed.headline'|translate:{action:data.xtx.ui_type}"></span> 
+          </div>
+          <div class="item base-color">
+            <div class="asset_data">
+              <strong>New rate</strong>
+              <span class="asset_balance"> 
+                <span class="balance_amount">{{250 | number : 2}}</span>&nbsp;USD/BTC
+              </span>
+            </div>  
+          </div>
+          <div class="item base-color">
+            <div class="asset_data">
+              <strong>You already transfered</strong>
+              <span class="asset_balance"> 
+                <span class="balance_amount">{{0.56 | number : 2}}</span>&nbsp;BTC
+              </span>
+            </div>  
+          </div>
+          <div class="item base-color">
+            <div class="asset_data">
+              <strong>You will receive</strong>
+              <span class="asset_balance"> 
+                <span class="balance_amount">{{115 | number : 2}}</span>&nbsp;USD
+              </span>
+            </div>  
+          </div>
+          <div class="item" style="color:#cecece;">
+            <div class="asset_data">
+              <strong>Old rate</strong>
+              <span class="asset_balance"> 
+                <span class="balance_amount">{{255 | number : 2}}</span>&nbsp;USD/BTC
+              </span>
+            </div>  
+          </div>
+        </div>
+      </div>
+      
+      <div class="buttons_container hide-on-keyboard-open ">
+        <button ng-click="acceptReQuote()" class="button button-block button no-margin hide-on-keyboard-open button_taller dock_bottom button-energized  color_white">
+          {{'rate_changed.accept_requote'|translate|uppercase}}
+        </button>
+        <!-- 
+          {{'g.refund'|translate|uppercase}}
+          {{'g.requote'|translate|uppercase}}
+        -->
+      </div>
+    </ion-content>
+
+
+    <!-- ion-content class="has-header rate_changed energized_bgNOT" has-bouncing="false" scroll="false" overflow-scroll="false">
         <ion-scroll zooming="false" direction="y" class="register_details">
           <div class="energized_bg register_container">
             <h4 class="register_color" ng-bind-html="'rate_changed.headline'|translate:{action:data.xtx.tx_type}"></h4>
@@ -20,21 +77,13 @@
             <div class="col-20">&nbsp;BTC/{{wallet.asset.symbol}}</div>
           </div>
           <div class="row new_rate">
-            <div class="col-33">{{'rate_changed.you_deposited'|translate}}</div><div class="col-47 ta_right">{{data.amount_btc|number:5}}</div><div class="col-20">&nbsp;<!--BTC-->{{data.pay_curr}}</div>
+            <div class="col-33">{{'rate_changed.you_deposited'|translate}}</div><div class="col-47 ta_right">{{data.amount_btc|number:5}}</div><div class="col-20">&nbsp;{{data.pay_curr}}</div>
           </div>
           <div class="row new_rate">
-            <div class="col-33">{{'rate_changed.you_receive'|translate}}</div><div class="col-47 ta_right">{{data.amount_asset|number:5}} </div><div class="col-20">&nbsp;<!--wallet.asset.symbol-->{{data.recv_curr}}</div>
+            <div class="col-33">{{'rate_changed.you_receive'|translate}}</div><div class="col-47 ta_right">{{data.amount_asset|number:5}} </div><div class="col-20">&nbsp;{{data.recv_curr}}</div>
           </div>
         </ion-scroll>
-        <button ng-click="refund()" class="button button-block button-stable no-margin hide-on-keyboard-open " style="position:absolute;bottom:0px;">
-          {{'g.refund'|translate|uppercase}}
-        </button>
-        <button ng-click="acceptReQuote()" class="button button-block button-energized no-margin hide-on-keyboard-open button_taller" style="position:absolute;bottom:114px;">
-          {{'rate_changed.accept_requote'|translate|uppercase}}
-        </button>
-        <button ng-click="doReQuote()" class="button button-block button-light no-margin hide-on-keyboard-open" style="position:absolute;bottom:57px;">
-          {{'g.requote'|translate|uppercase}}
-        </button>
-    </ion-content>
+        
+    </ion-content -->
 
   </ion-view>
