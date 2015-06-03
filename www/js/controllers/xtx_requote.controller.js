@@ -1,5 +1,5 @@
 bitwallet_controllers
-.controller('XtxRequoteCtrl', function($stateParams, $translate, T, Address, Account, Wallet, BitShares, $scope, $rootScope, $http, $timeout, $ionicActionSheet, $ionicPopup, $cordovaClipboard, $ionicLoading, $timeout, BitShares, $state, $ionicModal, $q, ExchangeTransaction) {
+.controller('XtxRequoteCtrl', function($stateParams, $translate, T, Account, Wallet, BitShares, $scope, $rootScope, $http, $timeout, $ionicActionSheet, $ionicPopup, $cordovaClipboard, $ionicLoading, $timeout, BitShares, $state, $ionicModal, $q, ExchangeTransaction) {
 
 $scope.data = {   xtx           : undefined, 
                   xtx_id        : undefined,
@@ -20,11 +20,10 @@ $scope.data = {   xtx           : undefined,
 
   $scope.data.xtx_id = $stateParams.xtx_id;
   console.log(' --- XtxRequoteCtrl for: ' + $scope.data.xtx_id.toString());
-  ExchangeTransaction.byXId($scope.data.xtx_id).then(function(res){
+  ExchangeTransaction.byXIdEx($scope.data.xtx_id).then(function(res){
       $scope.data.xtx    = res;
       $timeout(function(){
-        // As xtx_id is defined, the rest of the parameters are useless, except first (buy|sell).
-        $scope.doReQuote();
+        //$scope.doReQuote(); HACK O
       }, 10);
   }, function(err){
     $scope.goHome();

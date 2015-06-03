@@ -5,7 +5,7 @@ bitwallet_controllers
                   tx          : undefined, 
                   tx_id       : undefined,
                   asset       : undefined,
-                  show_extra  : false };
+                  show_extra  : false}
                   
   if (!angular.isUndefined($stateParams.tx_id))
   {
@@ -27,7 +27,7 @@ bitwallet_controllers
     }, function(error){
       $scope.goHome();
       window.plugins.toast.show( T.i('err.retrieving_tx'), 'long', 'bottom');
-      console.log('XTxCtrl ERROR 2 '); console.log(error);
+      console.log('TxCtrl ERROR 2 '); console.log(error);
     });
   }
   else{

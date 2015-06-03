@@ -172,7 +172,7 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
 
   $scope.promptSend = function(asset, tx) {
 
-    var symbol =  '<i class="'+asset.symbol_ui_class+'">'+asset.symbol_ui_text+'</i>';
+    var symbol =  asset.symbol_ui_text;
     return $ionicPopup.confirm({
       title    : T.i('send.payment_confirm'),
       template : T.i('send.are_you_sure', { 

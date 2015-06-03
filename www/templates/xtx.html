@@ -9,42 +9,55 @@
     
       <div class="list balances">
         <div class="item item-divider green_bg color_white">
-          <span class="tx_desc">{{data.asset.symbol_ui_text}}{{data.tx.amount|number:2}} {{('tx.'+data.tx.ui_type)|translate}} {{data.tx.name}}</span> 
+          <span class="tx_desc">{{data.tx.amount_asset.symbol_ui_text}}{{data.tx.amount|number:2}} {{('tx.'+data.tx.ui_type)|translate}}</span> 
         </div>
-        <div class="item base-color">
-          <div class="asset_data">
-            <strong>Recipient</strong>
-            <br/>
-            <span> 
-              {{data.tx.name}}
-            </span>
-          </div>
-        </div>
+        
         <div class="item base-color">
           <div class="asset_data">
             <strong>Amount</strong>
             <br/>
             <span> 
-              {{data.asset.symbol_ui_text}}{{data.tx.amount|number:2}}
-            </span>
-          </div>
-        </div>
-        <div class="item base-color">
-          <div class="asset_data">
-            <strong>Fee</strong>
-            <br/>
-            <span> 
-              {{data.asset.symbol_ui_text}}{{data.tx.fee|number:2}}
+              {{data.tx.amount_asset.symbol_ui_text}}{{data.tx.amount|number:2}} ( {{data.tx.btc_amount|number:2}}BTC)
             </span>
           </div>
         </div>
         
         <div class="item base-color">
           <div class="asset_data">
-            <strong>Note</strong>
+            <strong>BTC</strong>
             <br/>
             <span> 
-              {{data.tx.message}}
+              {{data.tx.btc_amount|number:2}} BTC
+            </span>
+          </div>
+        </div>
+        
+        <div class="item base-color">
+          <div class="asset_data">
+            <strong>BTC rate</strong>
+            <br/>
+            <span> 
+              {{data.tx.rate|number:2}} {{data.tx.amount_asset.symbol}}/BTC
+            </span>
+          </div>
+        </div>
+
+        <div class="item base-color">
+          <div class="asset_data">
+            <strong>Transaction status</strong>
+            <br/>
+            <span> 
+              {{('xchg.'+data.tx.status)|translate}}
+            </span>
+          </div>
+        </div>
+        
+        <div class="item base-color">
+          <div class="asset_data">
+            <strong>Asset</strong>
+            <br/>
+            <span> 
+              {{data.tx.amount_asset.symbol}} ({{data.tx.amount_asset.name}})
             </span>
           </div>
         </div>
@@ -54,7 +67,7 @@
             <strong>Date</strong>
             <br/>
             <span> 
-              {{(data.tx.timestamp*1000)|date:'medium'}}
+              {{(data.tx.created_at*1000)|date:'medium'}}
             </span>
           </div>
         </div>
@@ -66,51 +79,21 @@
         </div>
         
         <div class="item base-color" ng-show="data.show_extra==true">
-          <div class="asset_data" on-click="copy()">
-            <strong>Public key</strong>
-            <br/>
-            <span> 
-              {{data.tx.pubkey?data.tx.pubkey:'N/A'}}
-            </span>
-          </div>
-        </div>
-        
-        <div class="item base-color" ng-show="data.show_extra==true">
           <div class="asset_data">
-            <strong>Address</strong>
+            <strong>Bitshares Transaction id</strong>
             <br/>
             <span> 
-              {{data.tx.address}}
+              {{data.tx.bitshares_txid?data.tx.bitshares_txid:'N/A'}}
             </span>
           </div>
         </div>
 
         <div class="item base-color" ng-show="data.show_extra==true">
           <div class="asset_data">
-            <strong>Asset</strong>
+            <strong>Bitcoin Transaction id</strong>
             <br/>
             <span> 
-              {{data.asset.symbol}} ({{data.asset.name}})
-            </span>
-          </div>
-        </div>
-
-        <div class="item base-color" ng-show="data.show_extra==true">
-          <div class="asset_data">
-            <strong>Transaction id</strong>
-            <br/>
-            <span> 
-              {{data.tx.txid}}
-            </span>
-          </div>
-        </div>
-
-        <div class="item base-color" ng-show="data.show_extra==true">
-          <div class="asset_data">
-            <strong>Bitshares Block (id)</strong>
-            <br/>
-            <span> 
-              {{data.tx.block}}<br/>({{data.tx.block_id}})
+              {{data.tx.bitcoin_txid?data.tx.bitcoin_txid:'N/A'}}
             </span>
           </div>
         </div>

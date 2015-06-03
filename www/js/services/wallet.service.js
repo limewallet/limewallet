@@ -238,6 +238,20 @@ bitwallet_services
       console.log(' ++ Wallet.updateActiveAccount active account updated !')
     }
     
+    self.assetByName = function(name){
+      if(!name || !self.data.assets)
+        return undefined;
+      var keys = Object.keys(self.data.assets);
+      for(var i=0; i<keys.length; i++){
+       if(self.data.assets[keys[i]].name == name)
+        {
+          console.log('')
+          return self.data.assets[keys[i]];
+        }
+      }
+      return undefined;
+    }
+
     self.load = function(){
       var deferred = $q.defer();
 
