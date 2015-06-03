@@ -47690,6 +47690,11 @@ function($scope, $element, $attrs, $compile, $timeout, $ionicNavBarDelegate, $io
     self.enable(showNavBar);
     var enteringHeaderBar = self.isInitialized ? getOffScreenHeaderBar() : getOnScreenHeaderBar();
     var leavingHeaderBar = self.isInitialized ? getOnScreenHeaderBar() : null;
+    
+    console.log(' showNavBar??: '+showNavBar);
+    console.log(' self.isInitialized??: '+self.isInitialized);
+    console.log(JSON.stringify(enteringHeaderBar));
+
     var enteringHeaderCtrl = enteringHeaderBar.controller();
 
     // update if the entering header should show the back button or not

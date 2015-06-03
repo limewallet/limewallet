@@ -1006,8 +1006,15 @@ a.button.lime_border.activated{background-color:#d3eb00!important; color:rgba(26
         padding: 6px 0 5px 16px; }
 
 /* Pseudo Material Design */
-.light_navbar {background-color: #fff!important;
+ion-nav-bar.light_navbar ion-header-bar { background-color: #fff!important;
                 box-shadow: 0px 0px 5px 0px #546979!important;}
+ion-nav-bar.light_navbar.darky ion-header-bar{
+  background-image:none!important;
+  color: #fff;
+  box-shadow: none!important;
+  background-color:#1b4356!important;
+}
+ion-nav-bar.light_navbar.darky .button.button-icon{color:#ffffff;}
 
 label.pmd {padding-left:0px!important;}
 input.pmd {font-size:16px!important;  color:#fff;border-top:none; border-left:none; border-right:none; border-bottom: 1px solid #d8d8d8 !important; background-color:transparent!important;}

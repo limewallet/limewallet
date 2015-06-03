@@ -18,6 +18,7 @@ bitwallet_module
   
   $ionicConfigProvider.views.maxCache(0);
   $ionicConfigProvider.navBar.alignTitle('left');
+  $ionicConfigProvider.navBar.transition('none');
   $translateProvider.useStaticFilesLoader({ prefix: 'static/locale-', suffix: '.json'});
 
   console.log(' app.js Init de .CONFIG !');
@@ -31,7 +32,6 @@ bitwallet_module
       
       resolve : {
         'InitDone' : function(T, Wallet, BitShares, $ionicPlatform, $cordovaSplashscreen, $cordovaGlobalization, $translate, DB, $rootScope) {
-
         } //InitDone
       } //resolve
       
@@ -297,9 +297,8 @@ bitwallet_module
       views: {
               'menuContent' :{
                 templateUrl: "templates/home.html",
-                controller: 'HomeCtrl'
-            }
-      }
+                controller: 'HomeCtrl'}}
+      , homeClass: 'darky'
     })
 
   // if none of the above states are matched, use this as the fallback
@@ -310,6 +309,21 @@ bitwallet_module
 .run(function(Account, DB, $state, $ionicHistory, $rootScope, $ionicPlatform, Wallet, Scanner, $q, BitShares, ENVIRONMENT, $cordovaGlobalization, $translate, $state) {
 
   console.log(' app.js Init de .RUN !');
+  
+  $rootScope.homeClass = 'darky';
+
+  $rootScope.$on('$stateChangeSuccess', function (evt, toState) {
+    console.log('stateChangeSuccess BEGIN');  
+    console.log(JSON.stringify(toState));
+    if (toState.homeClass) {
+      console.log(' -- stateChangeSuccess AT HOME!!!!');
+      $rootScope.homeClass = toState.homeClass;
+    } else {
+      console.log(' -- stateChangeSuccess NOT at home :(');
+      $rootScope.homeClass = '';
+    }
+    console.log('stateChangeSuccess END');
+  });
 
   $ionicPlatform.ready(function() {
     
@@ -337,10 +351,10 @@ bitwallet_module
 
       Wallet.init().then(function() {
         
-        $state.go('app.xtx_requote', {xtx_id:'13'});
+        //$state.go('app.xtx_requote', {xtx_id:'13'});
         //$state.go('app.xtransaction_details', {x_id:'10'});
         //$state.go('app.transaction_details', {tx_id:'5394df9b7a4e1a9db60f576ad7e1a079b439a7e4'});
-        //$rootScope.goTo('app.home');
+        $rootScope.goTo('app.home');
         Wallet.refreshBalance();
       }, function(err) {
 
@@ -441,43 +455,6 @@ bitwallet_module
     .then(function() {
       return Account.active();
     })
-    // .then(function(account) {
-    // },
-    // function(error) {
-      
-    // })
-    
-    //*****************
-    // Wallet init
-    //*****************
-    //.then(function() {
-      //return Wallet.init();
-    //})
-    //.then(function() {
-      //console.log('Wallet initialized OK');
-    //},
-    //function(error) {
-      //console.log('Unable to initialize Wallet:' + error);
-    //})
-    
-    //****************
-    //Refresh Balance
-    //****************
-    //.then(function() {
-      //console.log(' -- app.js call Wallet.refreshBalance()');
-      //Wallet.refreshBalance().then(function() {
-        //window.plugins.toast.show( T.i('g.updated'), 'short', 'bottom');
-      //}, function(err) {
-        //window.plugins.toast.show( T.i('g.unable_to_refresh'), 'long', 'bottom');
-      //});
-
-      //// Creo que NO es al pedo, pero por las dudas cerramos el splash.
-      //$cordovaSplashscreen.hide();
-        
-      //// FullScreen Config
-      //var showFullScreen = false, showStatusBar = true;
-      //ionic.Platform.fullScreen(showFullScreen, showStatusBar);
-    //});
   }
 
   $rootScope.refresh_status = 0;
