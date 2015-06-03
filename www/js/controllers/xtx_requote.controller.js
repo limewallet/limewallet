@@ -51,7 +51,7 @@ $scope.data = {   xtx           : undefined,
 
    // For example's sake, hide the sheet after two seconds
    $timeout(function() {
-     hideSheet();
+     //hideSheet();
    }, 2000);
 
  };
