@@ -11,13 +11,13 @@
       <div>
         <div class="list balances">
           <div class="item item-divider base-color larger bgcolor_white">
-            <span class="tx_desc wrap_text" ng-bind-html="'rate_changed.headline'|translate:{action:data.xtx.ui_type}"></span> 
+            <span class="tx_desc wrap_text" ng-bind-html="'rate_changed.headline'|translate:{action:data.xtx.extra_data}"></span> 
           </div>
           <div class="item base-color">
             <div class="asset_data">
               <strong>New rate</strong>
               <span class="asset_balance"> 
-                <span class="balance_amount">{{250 | number : 2}}</span>&nbsp;USD/BTC
+                <span class="balance_amount">{{data.quote.rate | currency : data.quote.book}}</span>&nbsp;{{data.quote.book | book2rate}}
               </span>
             </div>  
           </div>
@@ -25,7 +25,7 @@
             <div class="asset_data">
               <strong>You already transfered</strong>
               <span class="asset_balance"> 
-                <span class="balance_amount">{{0.56 | number : 2}}</span>&nbsp;BTC
+                <span class="balance_amount">{{data.quote.cl_pay | currency : data.quote.cl_pay_curr}}</span>&nbsp;{{data.quote.cl_pay_curr}}
               </span>
             </div>  
           </div>
@@ -33,7 +33,7 @@
             <div class="asset_data">
               <strong>You will receive</strong>
               <span class="asset_balance"> 
-                <span class="balance_amount">{{115 | number : 2}}</span>&nbsp;USD
+                <span class="balance_amount">{{data.quote.cl_recv | currency : data.quote.cl_recv_curr}}</span>&nbsp;{{data.quote.cl_recv_curr}}
               </span>
             </div>  
           </div>
@@ -41,7 +41,7 @@
             <div class="asset_data">
               <strong>Old rate</strong>
               <span class="asset_balance"> 
-                <span class="balance_amount">{{255 | number : 2}}</span>&nbsp;USD/BTC
+                <span class="balance_amount">{{data.xtx.rate | currency : data.xtx.book}}</span>&nbsp;{{data.xtx.book | book2rate}}
               </span>
             </div>  
           </div>
@@ -49,7 +49,7 @@
       </div>
       
       <div class="buttons_container hide-on-keyboard-open ">
-        <button ng-click="acceptReQuote()" class="button button-block button no-margin hide-on-keyboard-open button_taller dock_bottom button-energized  color_white">
+        <button ng-click="xxxx()" class="button button-block button no-margin hide-on-keyboard-open button_taller dock_bottom button-energized  color_white">
           {{'rate_changed.accept_requote'|translate|uppercase}}
         </button>
         <!-- 

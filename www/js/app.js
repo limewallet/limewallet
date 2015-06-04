@@ -171,7 +171,7 @@ bitwallet_module
     
     .state('app.deposit', {
       cache:  false,
-      url:    "/deposit",
+      url:    "/deposit/:xtx_id",
       views: {
               'menuContent' :{
                 templateUrl: "templates/deposit.html",
@@ -333,7 +333,6 @@ bitwallet_module
         //$state.go('app.transaction_details', {tx_id:'5394df9b7a4e1a9db60f576ad7e1a079b439a7e4'});
         //$state.go('app.receive_qrcode', {amount:150});
         $rootScope.goTo('app.home');
-        
         Wallet.refreshBalance();
       }, function(err) {
 

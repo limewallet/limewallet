@@ -526,8 +526,8 @@ bitwallet_services
     }
 
     self._add = function(obj) {
-      var sql    = 'insert or replace into exchange_transaction (id,asset_id,cl_pay,cl_pay_curr,cl_pay_addr,cl_pay_tx,cl_recv,cl_recv_curr,cl_recv_addr,cl_recv_tx,refund_tx,balance,rate,quoted_at,updated_at,status,extra_data,cl_cmd,created_at) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
-      var params = [obj.id, obj.asset_id, obj.cl_pay, obj.cl_pay_curr, obj.cl_pay_addr, obj.cl_pay_tx, obj.cl_recv, obj.cl_recv_curr, obj.cl_recv_addr, obj.cl_recv_tx, obj.refund_tx, obj.balance, obj.rate, obj.quoted_at, obj.updated_at, obj.status, obj.extra_data, obj.cl_cmd, obj.created_at];
+      var sql    = 'insert or replace into exchange_transaction (id,asset_id,cl_pay,cl_pay_curr,cl_pay_addr,cl_pay_tx,cl_recv,cl_recv_curr,cl_recv_addr,cl_recv_tx,refund_tx,balance,rate,book,quoted_at,updated_at,status,extra_data,cl_cmd,created_at) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
+      var params = [obj.id, obj.asset_id, obj.cl_pay, obj.cl_pay_curr, obj.cl_pay_addr, obj.cl_pay_tx, obj.cl_recv, obj.cl_recv_curr, obj.cl_recv_addr, obj.cl_recv_tx, obj.refund_tx, obj.balance, obj.rate, obj.book, obj.quoted_at, obj.updated_at, obj.status, obj.extra_data, obj.cl_cmd, obj.created_at];
       return {'sql':sql, 'params': params};
     }
 
@@ -547,7 +547,7 @@ bitwallet_services
     
     self.byXId = function(x_id){
       var deferred = $q.defer();
-      DB.query('SELECT * FROM exchange_transaction et LEFT JOIN operation o ON o.tx_id = et.cl_pay_tx OR o.tx_id = et.cl_recv_tx where x_id = ? limit 1', [x_id])
+      DB.query('SELECT * FROM exchange_transaction where id = ?', [x_id])
         .then(function(result){
             if( result.rows.length == 0 ) {
               deferred.resolve(undefined);

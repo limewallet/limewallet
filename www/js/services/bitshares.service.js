@@ -644,7 +644,7 @@ bitwallet_services
       return self.apiCall(undefined, url);
     }
 
-    self.getReQuote = function(keys, xtx_id) {
+    self.getRequote = function(keys, xtx_id) {
       return self.apiCall(keys, ENVIRONMENT.apiurl('/xtxs/' + xtx_id + '/requote'));
     }
     
@@ -652,9 +652,9 @@ bitwallet_services
     self.X_WITHDRAW   = 'withdraw';
     self.X_BTC_PAY    = 'btc_pay';
     
-    self.isDeposit      = function(ui_type){return ui_type==self.X_DEPOSIT;}
-    self.isWithdraw     = function(ui_type){return ui_type==self.X_WITHDRAW;}
-    self.isBtcPay       = function(ui_type){return ui_type==self.X_BTC_PAY;}
+    self.isDeposit      = function(tx){return tx.ui_type==self.X_DEPOSIT;}
+    self.isWithdraw     = function(tx){return tx.ui_type==self.X_WITHDRAW;}
+    self.isBtcPay       = function(tx){return tx.ui_type==self.X_BTC_PAY;}
     self.isXtx          = function(tx){return [self.X_DEPOSIT, self.X_WITHDRAW, self.X_BTC_PAY].indexOf(tx.ui_type)>=0;}
     
     self.isXtxCompleted = function(tx){
@@ -696,28 +696,19 @@ bitwallet_services
     // }
     
     self.acceptQuote = function(quote, signature, keys, address, extra_data) {
-      return self.acceptReQuote(quote, signature, keys, address, extra_data, undefined)
-    }
-
-    self.acceptReQuote = function(quote, signature, keys, address, extra_data, xtx_id) {
 
       var payload = JSON.stringify({
         quote       : quote,
         signature   : signature, 
         destination : address,
         extra_data  : extra_data,
-        xtx_id      : (xtx_id === undefined ? '' : xtx_id)
       });
 
       return self.apiCall(keys, ENVIRONMENT.apiurl('/accept'), payload);
     }
     
-    self.wakeupXTx = function(keys, txid) {
-      return self.apiCall(keys, ENVIRONMENT.apiurl('/xtxs/'+txid+'/wakeup'));
-    }
-
     self.cancelXTx = function(keys, txid) {
-      return self.apiCall(keys, ENVIRONMENT.apiurl('/xtxs/'+token+'/'+txid+'/cancel'));
+      return self.apiCall(keys, ENVIRONMENT.apiurl('/xtxs/'+txid+'/cancel'));
     }
     
     self.refundXTx = function(keys, txid, refund_address) {

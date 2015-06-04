@@ -8,7 +8,6 @@
     </ion-nav-buttons>
     
     <ion-content class="has-header  deposit" has-bouncing="false" scroll="false" overflow-scroll="false">
-      <!--ion-scroll zooming="false" direction="y" class="register_details margin-bottom-buttonNOT"-->
         
         <div class="step1" ng-show="data.step==1">
           
@@ -60,19 +59,6 @@
           <button ng-click="goHome()" ng-show="data.step==2" class="button button-block button-energized no-margin button_taller">
             {{'g.done'|translate|uppercase}}
           </button>
-
-          <!--div class="h67" class="dock_bottom" ng-show="data.step==2">
-            <div ng-show="data.timer.expired">
-              <button ng-click="alreadyPaid()" class="button button-block button-stable no-margin button_taller" >
-                {{'g.already_paid'|translate|uppercase}}
-              </button>
-            </div>
-            <div ng-show="!data.timer.expired">
-              <a class="button button-block button-energized no-margin button_taller" ng-click="window.open('{{data.deposit_short_uri}}', '_system', 'location=yes');" target="_system">
-                {{'g.pay'|translate|uppercase}}
-              </a>
-            </div>
-          </div-->
         </fieldset>
       </div>
       
