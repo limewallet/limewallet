@@ -45,6 +45,7 @@
     "deposit_paragraph"   : "You can load your wallet by converting bitcoin into your preferred bitasset.<br/>Type the amount of <b>bit{{asset.symbol}}</b> you want to load and get a quote for each bitcoin, and vice versa.",  
     "deposit_title"       : "Deposit BITCOIN and get <b>bit{{asset.symbol}}</b>",
     "please_send_btc_to"  : "Please send <b>{{amount}}</b> BTC to <strong class=\"wrap_text\">{{addy}}</strong>",
+    "tap_copy_bts_uri"    : "Tap to copy Bitshares payment URI",
     "tap_copy_btc_uri"    : "Tap to copy Bitcoin payment URI",
     "tap_launch_btc_wallet"   : "Tap to launch Bitcoin Wallet",
     "already_paid"        : "Already paid",

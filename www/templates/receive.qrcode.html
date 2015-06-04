@@ -1,36 +1,29 @@
 <ion-view class="dark" title="{{'receive.payment_request'|translate}}">
     
     <ion-nav-buttons side="left">
-      <button ng-click="goBack()" class="button button-icon icon ion-ios-arrow-back"></button>
+      <button ng-click="goBack()" class="button button-icon icon ion-ios-arrow-back base-color"></button>
     </ion-nav-buttons>
     <ion-nav-buttons side="right">
+      <button ng-click="doShareRecvPayment()" class="button button-icon icon ion-share base-color"></button>
     </ion-nav-buttons>
     
-    <ion-content class="has-header">
-      <div class="list card receive_qr">
+    <ion-content class="has-header receive_qr_content">
+      <div class="list receive_qr">
 
         <div class="item">
-          <!-- {{'g.amount'|translate}}:  -->
-          <h1>{{wallet.asset.symbol_ui_text}} {{amount}}</h1>
-          <h4>{{address}}</h4>
+          <h1>{{wallet.asset.symbol_ui_text}} {{data.amount}}</h1>
+          <!-- h4>{{data.name_or_pubkey}}</h4 -->
         </div>
 
-        <div class="item item-image">
-          <div id="qrcode"></div>
+        <div class="item padding_top_0">
+          <div id="qrcode" ng-click="doCopyRecvPayment()"></div>
+          <span class="input-label qr_hint">{{'g.tap_copy_bts_uri'|translate}}</span>
         </div>
       </div>
-      <div class="action_container">
-        <div class="one_of_two_buttons">
-
-          <button class="border_top button-block button no-margin button_taller bgcolor_white send_form_button button-icon ion-share" ng-click="doShareRecvPayment()">
-            
-          </button>
-        </div>
-        <div class="one_of_two_buttons">
-          <button class="border_top_left button-block button no-margin button_taller bgcolor_white send_form_button button-icon ion-ios-copy" ng-click="doCopyRecvPayment()">
-            
-          </button>
-        </div>
+      <div class="buttons_container">
+        <button ng-click="goHome()" class="button button-block button-energized no-margin button_taller">
+          {{'g.done'|translate|uppercase}}
+        </button>
       </div>
           
     </ion-content>

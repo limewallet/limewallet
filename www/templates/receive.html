@@ -1,11 +1,9 @@
 <ion-view class="dark" title="{{'receive.payment_request'|translate}}">
     <ion-nav-buttons side="left">
-      <button ng-click="goHome()" class="button button-icon icon ion-ios-arrow-back"></button>
+      <button ng-click="goHome()" class="button button-icon icon ion-ios-arrow-back base-color"></button>
     </ion-nav-buttons>
-    <ion-nav-buttons side="right">
-    </ion-nav-buttons>
-    
-    <ion-content class="has-header">
+   
+    <ion-content class="has-header receive">
       <form novalidate name="receiveForm" class="send_form">
         <div class="list">
 
@@ -19,13 +17,10 @@
         </div>
       </form>
       
-      <!--div class="action_container hide-on-keyboard-open padding">
-        <button class="button button-balanced" style="margin-right:7px;width:100%;" ng-click="doGenerateQRCodeRecvPayment()">
+      <div class="buttons_container hide-on-keyboard-open">
+        <button ng-click="doGenerateQRCodeRecvPayment()" class="button button-block button-energized no-margin button_taller"> 
           <i class=" fa20 fa fa-qrcode"></i>
         </button>
-      </div -->
-      <button ng-click="doGenerateQRCodeRecvPayment()" classAAAA="button button-block button-balanced no-margin hide-on-keyboard-open button_taller dock_bottom" class="button-block button no-margin hide-on-keyboard-open button_taller dock_bottom bgcolor_white send_form_button">
-          <i class=" fa20 fa fa-qrcode"></i>
-      </button>
+      </div>
     </ion-content>
   </ion-view>

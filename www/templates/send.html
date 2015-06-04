@@ -7,7 +7,7 @@
       <button class="button button-icon icon base-color" ng-click="scanQR()"><i class="fa fa-qrcode"></i></button>
     </ion-nav-buttons>
   
-    <ion-content class="has-header">
+    <ion-content class="has-header send">
       
       <form novalidate name="sendForm" class="send_form"> <!--ng-show="data.is_btc==false" -->
         <div class="list">
@@ -60,15 +60,10 @@
           <input type="hidden" name="transactionAssetId" ng-model="transaction.asset_id" />
         </div>
       </form>
-      <fieldset ng-disabled="data.from_in_progress"> 
-        <!--button ng-click="doSend(transaction)" class="button button-block button-assertive no-margin hide-on-keyboard-open button_taller dock_bottom">
-          {{'g.send'|translate|uppercase}} 
-        </button -->
-        <!-- button ng-click="doSend(transaction)" class="button button-block button no-margin hide-on-keyboard-open button_taller dock_bottom button-icon ion-ios-paperplane base-color_bg lime"> 
-        </button -->
-        <button ng-click="doSend(transaction)" class="button button-block button no-margin hide-on-keyboard-open button_taller dock_bottom bgcolor_white send_form_button"> {{'g.send'|translate|uppercase}} 
+      
+      <fieldset ng-disabled="data.from_in_progress" class="buttons_container hide-on-keyboard-open"> 
+        <button ng-click="doSend(transaction)" class="button button-block button-energized no-margin button_taller"> {{'g.send'|translate|uppercase}} 
         </button>
-        <!-- base-color lime_bg -->
       </fieldset> 
     </ion-content>
   </ion-view>

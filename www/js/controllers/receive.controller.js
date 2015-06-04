@@ -13,7 +13,7 @@ bitwallet_controllers
     }
 
     var amount = receiveForm.transactionAmount.value;
-    $state.go('app.receive_qrcode', {address:'ESSSSTA', amount:amount});
+    $state.go('app.receive_qrcode', {amount:amount});
 
     // Address.getDefault().then(function(address) {
     //   var amount = receiveForm.transactionAmount.value;

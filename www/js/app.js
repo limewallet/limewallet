@@ -98,7 +98,7 @@ bitwallet_module
     })
     
     .state('app.receive_qrcode', {
-      url: "/receive/qrcode/:address/:amount",
+      url: "/receive/qrcode/:amount",
       views: {
         'menuContent' :{
           templateUrl: "templates/receive.qrcode.html",
@@ -153,7 +153,6 @@ bitwallet_module
       views: {
               'menuContent' :{
                 templateUrl: "templates/register.html",
-                //templateUrl: "index.html",
                 controller: 'RegisterCtrl'
             }
       }
@@ -181,17 +180,6 @@ bitwallet_module
       }
     })
     
-    // .state('app.deposit_list', {
-    //   cache:  false,
-    //   url:    "/deposit_list",
-    //   views: {
-    //           'menuContent' :{
-    //             templateUrl: "templates/deposit_list.html",
-    //             controller: 'DepositListCtrl'
-    //         }
-    //   }
-    // })
-    
     .state('app.withdraw', {
       cache:  false,
       url:    "/withdraw",
@@ -199,17 +187,6 @@ bitwallet_module
               'menuContent' :{
                 templateUrl: "templates/withdraw.html",
                 controller: 'WithdrawCtrl'
-            }
-      }
-    })
-    
-    .state('app.withdraw_list', {
-      cache:  false,
-      url:    "/withdraw_list",
-      views: {
-              'menuContent' :{
-                templateUrl: "templates/withdraw_list.html",
-                controller: 'WithdrawListCtrl'
             }
       }
     })
@@ -313,16 +290,16 @@ bitwallet_module
   $rootScope.homeClass = 'darky';
 
   $rootScope.$on('$stateChangeSuccess', function (evt, toState) {
-    console.log('stateChangeSuccess BEGIN');  
-    console.log(JSON.stringify(toState));
+    // console.log('stateChangeSuccess BEGIN');  
+    // console.log(JSON.stringify(toState));
     if (toState.homeClass) {
-      console.log(' -- stateChangeSuccess AT HOME!!!!');
+      // console.log(' -- stateChangeSuccess AT HOME!!!!');
       $rootScope.homeClass = toState.homeClass;
     } else {
-      console.log(' -- stateChangeSuccess NOT at home :(');
+      // console.log(' -- stateChangeSuccess NOT at home :(');
       $rootScope.homeClass = '';
     }
-    console.log('stateChangeSuccess END');
+    // console.log('stateChangeSuccess END');
   });
 
   $ionicPlatform.ready(function() {
@@ -354,7 +331,9 @@ bitwallet_module
         //$state.go('app.xtx_requote', {xtx_id:'13'});
         //$state.go('app.xtransaction_details', {x_id:'10'});
         //$state.go('app.transaction_details', {tx_id:'5394df9b7a4e1a9db60f576ad7e1a079b439a7e4'});
+        //$state.go('app.receive_qrcode', {amount:150});
         $rootScope.goTo('app.home');
+        
         Wallet.refreshBalance();
       }, function(err) {
 
@@ -419,12 +398,12 @@ bitwallet_module
         var tmp = lang.value.slice(0,2);
         tmp = 'en';
         $translate.use(tmp);
-        moment.lang(tmp);
+        moment.locale(tmp);
       },
       function(error) {
         console.log('Unable to get preferred language');
         $translate.use('en');
-        moment.lang('en');
+        moment.locale('en');
     })
     
     //*****************
