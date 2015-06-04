@@ -72,201 +72,75 @@ bitwallet_controllers
   }
 
   $scope.showActionSheet = function(tx) {
-    
-    var opt_buttons = [];
-    var is_xtx = BitShares.isXtx(tx);
-    if(is_xtx){
-      
-      if(BitShares.hasXtxRateChanged(tx))
-      {
-        $state.go('app.xtx_requote', {xtx_id:tx['x_id']});
-        return;
-      }
 
-      if(BitShares.canCancelXTx(tx)){
-        opt_buttons = [
-          { text: T.i('home.view_details')      },
-          { text: T.i('home.refresh')           },
-          { text: '<span class="assertive">'+T.i('home.cancel_operation')+'</span>'  }];
-      }
-      else
-      opt_buttons = [
-        { text: T.i('home.view_details')  },
-        { text: T.i('home.refresh')       }];
-      // if(BitShares.hasXtxRateChanged(tx)){
-      //   opt_buttons = [
-      //     { text: T.i('home.view_details') }
-      //     , { text: T.i('home.refresh') }
-      //     , { text: T.i('home.requote') }
-      //     , { text: T.i('home.refund') }
-      //     /*, { text: '<span class="assertive">'+T.i('home.cancel_operation')+'</span>' }*/
-      //   ];
-      // }
-    }
-    else{
-      opt_buttons = [
-          //{ text: '<b>'+T.i('home.add_to_book')+'</b>' },
-          { text: T.i('home.view_details') }
-      ];
-    }
-
-    if($scope.homeActionSheet!==undefined)
+    if( BitShares.hasXtxRateChanged(tx) )
     {
-      console.log('showActionSheet: HIDE sheet!');
-      $scope.homeActionSheet();
+      $state.go('app.xtx_requote', {xtx_id:tx['id']});
+      return;
+    }
+    
+    var opt_buttons = [
+     { text: T.i('home.view_details') },
+    ];
+
+    if( BitShares.canCancelXTx(tx) ) {
+      opt_buttons.push({ text: '<span class="assertive">'+T.i('home.cancel_operation')+'</span>' });
     }
 
-    // Hack porque si no no se ve el dismiss!!!!
-    //$scope.cancelText = T.i('g.dismiss');
-    
-    console.log('showActionSheet: SHOW sheet!');
-    
+    //if($scope.homeActionSheet!==undefined)
+    //{
+      //console.log('showActionSheet: HIDE sheet!');
+      //$scope.homeActionSheet();
+    //}
+
     $scope.homeActionSheet = $ionicActionSheet.show({
-     buttons: opt_buttons,
-     titleText: T.i('home.transaction_options'),
-     cancelText: T.i('g.dismiss'),
-     cancel: function() {
-          // add cancel code..
-     },
-     // destructiveText: (BitShares.canCancelXTx(tx))?T.i('home.cancel_operation'):undefined,
-     // destructiveButtonClicked: function() {
-     //      console.log('te hago mierdaaaaaaaaaaaaaaaaaaaaaaa');
-     // },
+     buttons    : opt_buttons,
+     titleText  : T.i('home.transaction_options'),
+     cancelText : T.i('g.dismiss'),
+
      buttonClicked: function(index) {
       if(index==0) {
-        if(is_xtx){
-          // VIEW DETAILS XTx
-          $state.go('app.xtransaction_details', {x_id:tx['id']});
-        }
-        else{
-          console.log('llamando a [app.transaction_details : '+tx['txid']+']');
-          // View transaction details
+        if(BitShares.isXtx(tx)) {
+          console.log('ES XTX');
+          if(BitShares.isDeposit(tx)) {
+            console.log('ES DEPOSIT');
+            $state.go('app.deposit', {xtx_id:tx['id']});
+          } else { 
+            console.log('NO ES DEPOSIT');
+            $state.go('app.xtransaction_details', {x_id:tx['id']});
+          }
+        } else {
           $state.go('app.transaction_details', {tx_id:tx['txid']});
         }
       }
-      
-      else if(index==1) {
-        if(is_xtx){
-          // WAKEUP XTx
-          $scope.showLoading(T.i('home.refresh_in_progress'));
-          var addy = Wallet.getMainAddress();
-          BitShares.getBackendToken(addy).then(function(token) {
-            BitShares.wakeupXTx(token, tx.x_id).then(function(res){
-              $ionicLoading.hide();
-              window.plugins.toast.show( T.i('home.refresh_ok_wait'), 'long', 'bottom');
-              Wallet.onNewXTx(res);
-              Wallet.loadBalance();
-            }, function(error){
-              $ionicLoading.hide();
-              console.log('wakeup xtx error 1'); console.log(error);
-              //window.plugins.toast.show( T.i('err.cancel_failed'), 'long', 'bottom');
-            })
-          }, function(error){
-            $ionicLoading.hide();
-            console.log('wakeup xtx error 2'); console.log(error);
-            //window.plugins.toast.show( T.i('err.cancel_failed'), 'long', 'bottom');
-          });
-        }
-        else{
-          
-        } 
-      }
-      
-      else if(index==2) {
-        if(is_xtx){
-          if(!BitShares.canCancelXTx(tx))
-          {
-            $ionicPopup.alert({
-              title    : T.i('err.cant_cancel'),
-              template : T.i('err.cant_cancel_msg'),
-              okType   : 'button-assertive', 
-            });
-            return;
-          }
-          var confirmPopup = $ionicPopup.confirm({
-            title    : T.i('g.sure_cancel_operation'),
-            template : T.i('g.sure_cancel_operation_msg'),
-          }).then(function(res) {
-          if(!res)
-          {
+      else 
+      if(index==1) {
+        var confirmPopup = $ionicPopup.confirm({
+          title    : T.i('g.sure_cancel_operation'),
+          template : T.i('g.sure_cancel_operation_msg'),
+        }).then(function(res) {
+
+          if(!res) {
             console.log('User didnt want to cancel :(');
             return;
           }
-          console.log('User DID like quote :)');
-            // CANCEL XTx
-            $scope.showLoading(T.i('g.cancel_progress'));
-            var addy = Wallet.getMainAddress();
-            BitShares.getBackendToken(addy).then(function(token) {
-              BitShares.cancelXTx(token, tx.x_id).then(function(res){
-                $ionicLoading.hide();
-                Wallet.refreshBalance();
-                
-              }, function(error){
-                $ionicLoading.hide();
-                console.log('cancel xtx error 1'); console.log(JSON.stringify(error)); //console.log(error);
-                window.plugins.toast.show( T.i('err.requote_failed'), 'long', 'bottom');
-              })
-            }, function(error){
-              $ionicLoading.hide();
-              console.log('cancel xtx error 2'); console.log(error);
-              window.plugins.toast.show( T.i('err.requote_failed'), 'long', 'bottom');
-            });
-          });
-        }
-        else{
-          // NONE
-        } 
-      }
-      
-      else if(index==3) {
-        if(is_xtx){
-          // REFUND XTx
-          $scope.showLoading(T.i('g.refund_progress'));
-          var addy = Wallet.getMainAddress();
-          BitShares.getBackendToken(addy).then(function(token) {
-            BitShares.refundXTx(token, tx.x_id).then(function(res){
-              $ionicLoading.hide();
-              console.log('refund ret 1'); console.log(JSON.stringify(res)); //console.log(res);
-              window.plugins.toast.show( T.i('g.refund_ok'), 'long', 'bottom');
-              Wallet.refreshBalance();
-            }, function(error){
-              $ionicLoading.hide();
-              console.log('refund error 1'); console.log(error);
-              window.plugins.toast.show( T.i('err.refund_failed'), 'long', 'bottom');
-            })
-          }, function(error){
+
+          $scope.showLoading(T.i('g.cancel_progress'));
+          var keys = Wallet.getAccountAccessKeys();
+          BitShares.cancelXTx(keys, tx.id).then(function(res){
             $ionicLoading.hide();
-            console.log('refund error 2'); console.log(error);
-            window.plugins.toast.show( T.i('err.refund_failed'), 'long', 'bottom');
+            Wallet.refreshBalance();
+          }, function(error){
+            console.log(JSON.stringify(error));
+            $ionicLoading.hide();
+            window.plugins.toast.show( T.i('err.cant_cancel'), 'long', 'bottom');
           });
-          
-          // // CANCEL XTx
-          // $scope.showLoading(T.i('g.cancel_progress'));
-          // var addy = Wallet.getMainAddress();
-          // BitShares.getBackendToken(addy).then(function(token) {
-          //   BitShares.cancelXTx(token, tx.x_id).then(function(res){
-          //     $ionicLoading.hide();
-          //     console.log('cancel xtx ret 1'); console.log(JSON.stringify(res)); //consoleconsole.log(res);
-          //     window.plugins.toast.show( T.i('g.cancel_ok'), 'long', 'bottom');
-          //     Wallet.refreshBalance();
-          //   }, function(error){
-          //     $ionicLoading.hide();
-          //     console.log('cancel xtx error 1'); console.log(error);
-          //     window.plugins.toast.show( T.i('err.cancel_failed'), 'long', 'bottom');
-          //   })
-          // }, function(error){
-          //   $ionicLoading.hide();
-          //   console.log('cancel xtx error 2'); console.log(error);
-          //   window.plugins.toast.show( T.i('err.cancel_failed'), 'long', 'bottom');
-          // });
-        }
-        else{
-          // NONE
-        } 
+        });
       }
       return true;
      }
    });
+
   }
 
   $scope.go = function ( path ) {

@@ -1,30 +1,30 @@
 bitwallet_controllers
 .controller('XtxRequoteCtrl', function($stateParams, $translate, T, Account, Wallet, BitShares, $scope, $rootScope, $http, $timeout, $ionicActionSheet, $ionicPopup, $cordovaClipboard, $ionicLoading, $timeout, BitShares, $state, $ionicModal, $q, ExchangeTransaction) {
 
-$scope.data = {   xtx           : undefined, 
-                  xtx_id        : undefined,
-                  amount_btc    : 0,
-                  amount_asset  : 0,
-                  rate          : 0,
-                  quote         : undefined,
-                  signature     : undefined,
-                  pay_curr      : '',
-                  recv_curr     : '',
-                  show_inverse_rate : false }
-                  
-  if (angular.isUndefined($stateParams.xtx_id))
-  {
-    $scope.goHome();
-    window.plugins.toast.show( T.i('err.invalid_xtx_id'), 'long', 'bottom');
+  $scope.data = { 
+    xtx               : undefined,
+    quote             : undefined,
+    signature         : undefined
   }
 
-  $scope.data.xtx_id = $stateParams.xtx_id;
-  console.log(' --- XtxRequoteCtrl for: ' + $scope.data.xtx_id.toString());
-  ExchangeTransaction.byXIdEx($scope.data.xtx_id).then(function(res){
-      $scope.data.xtx    = res;
-      $timeout(function(){
-        //$scope.doReQuote(); HACK O
-      }, 10);
+  $scope.doRequote = function() {
+    $scope.showLoading('rate_changed.getting_quote');
+    var keys = Wallet.getAccountAccessKeys();
+    return BitShares.getRequote(keys, $scope.data.xtx.id).then(function(res){
+      $scope.hideLoading();
+      $scope.data.quote     = res.quote;
+      $scope.data.signature = res.signature;
+    }, function(error){
+      console.log(' --- XtxRequoteCtrl error ' + JSON.stringify(error));
+      $scope.hideLoading();
+      window.plugins.toast.show( T.i(error.error), 'long', 'bottom');
+    })
+  }
+
+  ExchangeTransaction.byXId($stateParams.xtx_id).then(function(xtx){
+    console.log('APENAS CARGO: ' + JSON.stringify(xtx));
+    $scope.data.xtx = xtx;
+    $scope.doRequote();
   }, function(err){
     $scope.goHome();
     console.log('XtxRequoteCtrl db error:' + JSON.stringify(err));
@@ -32,29 +32,31 @@ $scope.data = {   xtx           : undefined,
   });
   
   $scope.options = function() {
+    // Show the action sheet
+    var hideSheet = $ionicActionSheet.show({
+      buttons    : [ 
+        { text: '<b>Get new quote</b>' },
+        { text: 'Refund' }
+      ],
+      /*destructiveText: 'Delete',*/
+      titleText  : undefined,
+      cancelText : 'Cancel',
+      cancel     : function() {
 
-   // Show the action sheet
-   var hideSheet = $ionicActionSheet.show({
-     buttons: [
-       { text: '<b>Get new quote</b>' },
-       { text: 'Refund' }
-     ],
-     /*destructiveText: 'Delete',*/
-     titleText: undefined,
-     cancelText: 'Cancel',
-     cancel: function() {
-        },
-     buttonClicked: function(index) {
-       return true;
-     }
-   });
-
-   // For example's sake, hide the sheet after two seconds
-   $timeout(function() {
-     //hideSheet();
-   }, 2000);
-
- };
+      },
+      buttonClicked: function(index) {
+        if(index == 0) {
+          $scope.doRequote().finally(function() {
+            hideSheet();  
+          });
+        } else {
+          $scope.doRefund().finally(function() {
+            $scope.goHome(); 
+          });
+        }
+      }
+    });
+  };
 
   /* *************************** */  
   
@@ -81,89 +83,25 @@ $scope.data = {   xtx           : undefined,
      });
   }
 
-  $scope.doReQuote = function(){
+  $scope.xxxx = function() {
     
-    $scope.showLoading('rate_changed.getting_quote');
-    
-    var addy = Wallet.getMainAddress();
-    BitShares.getBackendToken(addy).then(function(token) {
-      BitShares.getReQuote(token, $scope.data.xtx_id).then(function(res){
-        $scope.hideLoading();
-        var cl_cmd                  = res.quote.cl_cmd.split(' ');
-        //sell 4.09200000 bitUSD BTC
-        if(cl_cmd[2]!='BTC')
-        {
-          $scope.data.rate            = Number(1/Number(res.quote.rate));
-          $scope.data.inverse_rate    = Number(res.quote.rate);
-        }
-        else
-        {  
-          $scope.data.rate            = Number(res.quote.rate);
-          $scope.data.inverse_rate    = Number(1/Number(res.quote.rate));
-        }
-        $scope.data.amount_asset    = (res.cl_pay_curr=='BTC')?Number(res.quote.cl_pay):Number(res.quote.cl_recv);
-        $scope.data.amount_btc      = (res.cl_pay_curr=='BTC')?Number(res.quote.cl_recv):Number(res.quote.cl_pay);
-        $scope.data.quote           = res.quote;
-        $scope.data.signature       = res.signature;
-        $scope.data.pay_curr        = (res.cl_pay_curr=='BTC')?'BTC':$scope.wallet.asset.symbol;
-        $scope.data.recv_curr       = (res.cl_pay_curr=='BTC')?$scope.wallet.asset.symbol:'BTC';
-      }, function(error){
-        console.log(' --- XtxRequoteCtrl error ' + JSON.stringify(error));
-        $scope.hideLoading();
-        $scope.data.quote           = undefined;
-        $scope.data.signature       = undefined;
-        window.plugins.toast.show( T.i(error.error), 'long', 'bottom');
-      })
-    }, function(error){
-        console.log(' --- XtxRequoteCtrl cant get token ' + JSON.stringify(error));
-        $scope.hideLoading();
-        $scope.data.quote           = undefined;
-        $scope.data.signature       = undefined;
-        window.plugins.toast.show( T.i(error.error), 'long', 'bottom');
-    })
-  }
+    console.log('doAcceptReQuote');
 
-  $scope.acceptReQuote = function(){
-    
-    var confirmPopup = $ionicPopup.confirm({
-       title    : T.i('rate_changed.accept_headline'),
-       template : T.i('rate_changed.accept_content'),
-     }).then(function(res) {
-      if(!res)
-      {
-        console.log('User didnt like quote :(');
-        return;
-      }
-      console.log('User DID like quote :)');
-      $scope.doAcceptReQuote();
-     });
-  }
-
-  $scope.doAcceptReQuote = function(){
     $scope.showLoading('g.accept_tx_process');
-    
-    var addy = Wallet.getMainAddress();
-    BitShares.getBackendToken(addy).then(function(token) {
-      BitShares.acceptReQuote($scope.data.quote, $scope.data.signature, token, addy.address, BitShares.X_DEPOSIT, $scope.data.xtx_id ).then(function(result){
-        
-        console.log('BitShares.acceptReQuote:'+JSON.stringify(result));
-        
-        //$scope.data.tx                = result.tx;
-        Wallet.onNewXTx(result.tx);
-        $scope.hideLoading();
-        $scope.startWaitingTx();
-      }, function(error){
-        if(error=='auth_failed')
-          Setting.remove(Setting.BSW_TOKEN);
-        $scope.hideLoading();
-        $scope.showAlert('err.cant_accept', 'err.cant_accept_retry');
-        return;
+
+    var keys = Wallet.getAccountAccessKeys();
+
+    BitShares.acceptQuote($scope.data.quote, $scope.data.signature, keys, $scope.data.xtx.cl_recv_addr, $scope.data.xtx.extra_data, $scope.data.xtx.id ).then(function(xtx){
+      console.log('BitShares.acceptReQuote:'+JSON.stringify(xtx));
+      ExchangeTransaction.add(xtx.tx).finally(function() {
+        Wallet.loadBalance().finally(function() {
+          $scope.hideLoading();
+          $scope.goHome();
+        });
       });
     }, function(error){
       $scope.hideLoading();
-      console.log(error);
-      $scope.showAlert('err.no_token', 'err.no_token_retry');
-      return;
+      $scope.showAlert('err.cant_accept', 'err.cant_accept_retry');
     });
   }
   

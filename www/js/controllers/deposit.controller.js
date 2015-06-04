@@ -1,5 +1,5 @@
 bitwallet_controllers
-.controller('DepositCtrl', function($translate, T, ExchangeTransaction, Wallet, BitShares, $scope, $rootScope, $http, $timeout, $ionicActionSheet, $ionicPopup, $cordovaClipboard, $ionicLoading, $timeout, BitShares, Setting) {
+.controller('DepositCtrl', function($translate, $stateParams, T, ExchangeTransaction, Wallet, BitShares, $scope, $rootScope, $http, $timeout, $ionicActionSheet, $ionicPopup, $cordovaClipboard, $ionicLoading, $timeout, BitShares, Setting) {
   
   // HACK UI: for testing
   //$scope.data.tx              = {cl_pay:22.15, cl_pay_addr: 'Bso7DduduMapkTDW7HNWXf5dMCcYcNdpXi'}
@@ -29,6 +29,30 @@ bitwallet_controllers
       expired   : 0,
       waiting   : 0
     }
+  }
+
+  $scope.buildQRCode = function (xtx) {
+
+    $scope.data.tx                = xtx;
+    $scope.data.deposit_short_uri = 'bitcoin://'+xtx.cl_pay_addr+'?amount='+xtx.cl_pay;
+    $scope.data.deposit_uri       = $scope.data.deposit_short_uri+'&label=Lime%20Deposit&message=Deposit%20'+xtx.cl_recv+'%20'+xtx.cl_recv_curr;
+    
+    var qrcode = new QRCode(document.getElementById("deposit_qrcode"), {
+      text         : $scope.data.deposit_uri,
+      width        : 324,
+      height       : 324,
+      colorDark    : "#000000",
+      colorLight   : "#ffffff",
+      correctLevel : QRCode.CorrectLevel.H
+    });
+
+  }
+
+  if($stateParams.xtx_id) {
+    ExchangeTransaction.byXId($stateParams.xtx_id).then(function(xtx) {
+      $scope.buildQRCode(xtx);
+      $scope.data.step=2;
+    });
   }
   
   $scope.toggleInputCurrency = function(){
@@ -157,21 +181,9 @@ bitwallet_controllers
     ).then(function(xtx) {
       ExchangeTransaction.add(xtx.tx).then(function(res) {
 
-        //var uri = 'bitcoin://'+ xtx.tx.cl_pay_addr +'?amount='+ xtx.tx.cl_pay +'&label=Lime%20Deposit&message=Deposit%20'+xtx.tx.cl_recv+' '+xtx.tx.cl_recv_curr;
-        $scope.data.tx                = xtx.tx;
-        $scope.data.deposit_short_uri = 'bitcoin://'+xtx.tx.cl_pay_addr+'?amount='+xtx.tx.cl_pay;
-        $scope.data.deposit_uri       = $scope.data.deposit_short_uri+'&label=Lime%20Deposit&message=Deposit%20'+xtx.tx.cl_recv+'%20'+xtx.tx.cl_recv_curr;
-        
-        var qrcode = new QRCode(document.getElementById("deposit_qrcode"), {
-          text         : $scope.data.deposit_uri,
-          width        : 324,
-          height       : 324,
-          colorDark    : "#000000",
-          colorLight   : "#ffffff",
-          correctLevel : QRCode.CorrectLevel.H
-        });
-
+        $scope.buildQRCode(xtx.tx);
         $scope.data.step=2;
+
         Wallet.loadBalance();
         //$scope.alreadyPaid();
 
@@ -279,7 +291,7 @@ bitwallet_controllers
   
   $scope.$on( '$ionicView.beforeLeave', function(){
     // Destroy timers
-    console.log('DepositCtrl.ionicView.beforeLeave killing timers.');
+    //console.log('DepositCtrl.ionicView.beforeLeave killing timers.');
     //w_counter_timeout=0;
     //$scope.stopWaitingPayment();
   });

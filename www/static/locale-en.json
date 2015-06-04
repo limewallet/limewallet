@@ -378,7 +378,7 @@
   "rate_changed":{
     "headline"              : "The exchange rate has changed. Please choose an option to continue processing the {{action}}",
     "headline2"             : "You can withdraw bitcoins from your wallet by converting your preferred bitasset into bitcoins.<br/>Type the destination bitcoin address and the amount you want to withdraw.",
-    "accept_requote"        : "Accept quote",
+    "accept_requote"        : "Accept new rate",
     "instant_rate"          : "Instant rate",
     "you_deposited"         : "You deposited",
     "you_receive"           : "You receive",

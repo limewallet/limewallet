@@ -151,6 +151,38 @@ bitwallet_filters.filter('draw_pending_tx', function(BitShares, $filter) {
   }
 });
 
+bitwallet_filters.filter('book2rate', function() {
+  return function(book) {
+    if(!book) return '';
+    return book.split('/').reverse().join('/');
+  }
+});
+
+bitwallet_filters.filter('currency', function($filter) {
+  return function(val, curr) {
+    if(!curr) return '';
+    
+    //Its a book (precision of the QUOTE currency)
+    if(curr.indexOf('/') != -1) curr = curr.split('/')[1];
+
+    if(curr == 'bitUSD' || curr == 'USD') { 
+      return $filter('number')(val, 2);
+    }
+
+    if(curr == 'bitCNY' || curr == 'CNY') {
+      return $filter('number')(val, 2);
+    }
+
+    if(curr == 'bitBTC' || curr == 'BTC') {
+      return $filter('number')(val, 8);
+    }
+
+    return $filter('number')(val, 4);
+  }
+});
+
+
+
 // angular.module('phonecatFilters', []).filter('checkmark', function() {
   // return function(input) {
     // return input ? '\u2713' : '\u2718';

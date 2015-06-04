@@ -95,6 +95,7 @@ bitwallet_config
                 { name : 'refund_tx',              type   : 'text'},
                 { name : 'balance',                type   : 'text'},
                 { name : 'rate',                   type   : 'text'},
+                { name : 'book',                   type   : 'text'},
                 { name : 'quoted_at',              type   : 'integer'},
                 { name : 'updated_at',             type   : 'integer'},
                 { name : 'status',                 type   : 'text'},
