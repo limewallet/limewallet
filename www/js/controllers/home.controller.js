@@ -1,5 +1,5 @@
 bitwallet_controllers
-.controller('HomeCtrl', function(T, Wallet, Scanner, $ionicActionSheet, $scope, $state, $http, $ionicModal, $rootScope, $ionicPopup, $timeout, $location, BitShares, $q, $ionicLoading) {
+.controller('HomeCtrl', function(T, Wallet, Scanner, $ionicHistory, $ionicActionSheet, $scope, $state, $http, $ionicModal, $rootScope, $ionicPopup, $timeout, $location, BitShares, $q, $ionicLoading) {
 
   // $timeout(function () {
   //   $rootScope.goTo('app.settings');
@@ -25,6 +25,9 @@ bitwallet_controllers
   
   //Wallet.refreshBalance(false);
 
+
+  
+  
   $scope.toggleBalance = function(){
     if($scope.wallet.ui.balance.allow_hide)
     {

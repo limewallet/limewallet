@@ -1,6 +1,10 @@
-<ion-side-menus>
+<ion-side-menus enable-menu-with-back-views="false">
   <ion-side-menu-content>
     <ion-nav-bar class="nav-title-slide-ios7 light_navbar {{homeClass}}">
+      <ion-nav-back-button class="button button-icon icon ion-ios-arrow-back base-color"></ion-nav-back-button>
+      <ion-nav-buttons side="left">
+        <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
+      </ion-nav-buttons>
     </ion-nav-bar>
     <ion-nav-view name="menuContent" animation="slide-left-right"></ion-nav-view>
   </ion-side-menu-content>
@@ -13,11 +17,11 @@
           <a ng-click="unLockWallet()" ng-disabled="data.in_progress" ng-show="wallet.password_required==1 && wallet.locked==1"  class="c1x lime_settings_ionicon button button-icon icon ion-locked micro-icon"></a>
           <a href="#" ng-show="wallet.password_required==0" class="c1x lime_settings_ionicon button button-icon icon ion-unlocked micro-icon"></a>
           <!-- lime_settings_icon logout -->
-          <div class="menu_avatar c2x" nav-clear menu-close ng-click="goTo('app.account')"> 
+          <div class="menu_avatar c2x" menu-close ng-click="goTo('app.account')"> 
             <canvas id="menu_jdenticon_canvas" width="80" height="80" data-jdenticon-hash="{{wallet.account.avatar_hash}}"></canvas>
             <!-- img src="{{wallet.account.photo}}" alt="" / --> 
           </div>
-          <a href="#/app/settings" nav-clear menu-close class="c3x button button-icon icon lime_settings_icon settings"></a>
+          <a href="#/app/settings" menu-close class="c3x button button-icon icon lime_settings_icon settings"></a>
 
         </div>
         <div class="menu_name"> 
@@ -29,27 +33,28 @@
     </ion-header-bar>
     <ion-content class="has-header transparent_bg menu_content" has-bouncing="false"> <!-- dark -->
       <ion-list class="menu_items">
-        <ion-item nav-clear menu-close href="#/app/home" class="item-icon-left item_first">
+        <ion-item menu-close href="#/app/home" class="item-icon-left item_first">
           <i class="icon fa16 fa fa-home lime"></i>
           {{'menu.home'|translate}} 
         </ion-item>
         <ion-item class="line-divider"></ion-item>
-        <ion-item nav-clear menu-close href="#/app/contacts" class="item-icon-left">
+        <ion-item menu-close href="#/app/contacts" class="item-icon-left">
           <i class="icon fa16 fa fa-book lime"></i>
           {{'menu.contacts'|translate}}
         </ion-item>
         <ion-item class="line-divider"></ion-item>
-        <ion-item nav-clear menu-close href="#/app/assets" class="item-icon-left">
+        <ion-item menu-close ng-click="goToState('app.assets')" class="item-icon-left">
           <i class="icon lime_settings_icon assets"></i>
           {{'menu.assets'|translate}}
         </ion-item>
         <ion-item class="line-divider"></ion-item>
-        <ion-item nav-clear menu-close href="#/app/deposit" class="item-icon-left">
+        <ion-item menu-close href="#/app/deposit" class="item-icon-left">
           <i class="icon lime_settings_icon deposit"></i>
           {{'menu.deposit'|translate}}
         </ion-item>
         <ion-item class="line-divider"></ion-item>
-        <ion-item nav-clear menu-close href="#/app/withdraw" class="item-icon-left">
+        <!-- ion-item menu-close href="#/app/withdraw" class="item-icon-left"-->
+        <ion-item menu-close ng-click="goToState('app.withdraw')" class="item-icon-left">
           <i class="icon lime_settings_icon withdraw"></i>
           {{'menu.withdraw'|translate}}
         </ion-item>

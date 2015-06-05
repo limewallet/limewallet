@@ -109,7 +109,15 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
         date      : new Date().getTime()
       });
 
-      $scope.goHome();
+
+      $scope.goToSuccess({  txid        : undefined
+                            , xtxid      : undefined
+                            , address   : tx.destination.address_or_pubkey
+                            , name      : tx.destination.name
+                            , message   : tx.memo
+                            , amount    : tx.amount
+                            , type      : 'send' });
+      //$scope.goHome();
 
     }, function(err) {
        //$scope.formDone();

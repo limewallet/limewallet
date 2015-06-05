@@ -1,16 +1,16 @@
 <ion-view class="dark" view-title="{{'menu.contacts'|translate}}">
-    <ion-nav-buttons side="left">
-      <button ng-click="goHome()" class="button button-icon icon ion-ios-arrow-back base-color"></button>
+    <ion-nav-buttons side="right">
+      <button ng-click="popover.show($event)" class="button button-icon icon ion-android-more-vertical base-color"></button>
     </ion-nav-buttons>
     
-    <ion-content class="has-header assets base-color_bg padding" has-bouncing="false">
+    <ion-content class="has-header contacts base-color_bg padding" has-bouncing="false">
       <div ng-show="!data.contacts || data.contacts.length<1" class="addys_empty">
         <div class="display_table no_transactions"> 
           <span class="display_table_cell vmiddle" style="text-align:center;">{{'addys.no_contacts' | translate}}</span>
         </div>
       </div> 
 
-      <div class="list balances contacts">
+      <!--div class="list balances contacts">
           <div ng-repeat="contact in data.contacts" class="item base-color">
             <div class="asset_data">
               <strong>{{contact.name}}</strong>
@@ -20,16 +20,42 @@
               </span>
             </div>  
           </div>
-      </div>
+      </div -->
+      
+      <div class="list">
+        
+          <a ng-repeat="contact in data.contacts" class="item base-color item-avatar" href="#">
+            <img src="http://ionicframework.com/img/docs/venkman.jpg">
 
-      <!--ion-list>
-        <ion-item ng-repeat="addr in data.addys">
-          <a ng-click="showActionSheet(addr)">
-            <h3 class="calm">{{addr.name}}</h3>
-            <h4><span ng-if="addr.is_favorite==1" class="float_left"> <i style="color:#5abb5c;" class="fa fa-check"></i></span>&nbsp;{{addr.address}} </h4>
+            <h2>{{contact.name}}</h2>
+            <p>{{contact.pubkey_or_address}}</p>
+
           </a>
-        </ion-item>
-      </ion-list -->
+        
+      </div>
+      
     </ion-content>
   </ion-view>
   
+  <script id="templates/contacts_popover.html" type="text/ng-template">
+    <ion-popover-view>
+      <ion-content>
+        <div class="list">
+          <a class="item" href="#" target="_blank">
+            Add new
+          </a>
+          <div class="item item-divider" style="border-width:0px;margin:0;height:2px;min-height:1px;background-color: #cecece!important;padding: 0;border: none;">
+          </div>
+          <a class="item" href="#" target="_blank">
+            Show local contacts
+          </a>
+          <a class="item" href="#" target="_blank">
+            Show global contacts
+          </a>
+          <a class="item" href="#" target="_blank">
+            Show all contacts
+          </a>
+        </div>
+      </ion-content>
+    </ion-popover-view>
+  </script>

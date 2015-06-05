@@ -16,9 +16,10 @@ bitwallet_module
 
 .config(function($ionicConfigProvider, $stateProvider, $urlRouterProvider, $translateProvider, ENVIRONMENT) {
   
-  $ionicConfigProvider.views.maxCache(0);
-  $ionicConfigProvider.navBar.alignTitle('left');
+  $ionicConfigProvider.views.maxCache(10); 
+  $ionicConfigProvider.views.transition('none');
   $ionicConfigProvider.navBar.transition('none');
+  $ionicConfigProvider.navBar.alignTitle('left');
   $translateProvider.useStaticFilesLoader({ prefix: 'static/locale-', suffix: '.json'});
 
   console.log(' app.js Init de .CONFIG !');
@@ -29,7 +30,7 @@ bitwallet_module
       abstract: true,
       templateUrl: "templates/menu.html",
       controller: 'AppCtrl',
-      
+      //cache: false,
       resolve : {
         'InitDone' : function(T, Wallet, BitShares, $ionicPlatform, $cordovaSplashscreen, $cordovaGlobalization, $translate, DB, $rootScope) {
         } //InitDone
@@ -39,6 +40,7 @@ bitwallet_module
 
     .state('app.backup', {
       url: "/settings/backup",
+      //cache: false,
       views: {
         'menuContent' :{
           templateUrl: "templates/settings.backup.html",
@@ -49,6 +51,7 @@ bitwallet_module
     
     .state('app.restore', {
       url: "/settings/restore",
+      //cache: false,
       views: {
         'menuContent' :{
           templateUrl: "templates/settings.restore.html",
@@ -58,6 +61,7 @@ bitwallet_module
     })
     
     .state('app.settings', {
+      //cache: false,
       url: "/settings",
       views: {
         'menuContent' :{
@@ -68,6 +72,7 @@ bitwallet_module
     })
     
     .state('app.assets', {
+      //cache: false,
       url: "/assets",
       views: {
         'menuContent' :{
@@ -79,6 +84,7 @@ bitwallet_module
 
     .state('app.contacts', {
       url: "/contacts",
+      //cache: false,
       views: {
         'menuContent' :{
           templateUrl: "templates/contacts.html",
@@ -89,6 +95,7 @@ bitwallet_module
     
     .state('app.receive', {
       url: "/receive",
+      //cache: false,
       views: {
         'menuContent' :{
           templateUrl: "templates/receive.html",
@@ -99,6 +106,7 @@ bitwallet_module
     
     .state('app.receive_qrcode', {
       url: "/receive/qrcode/:amount",
+      //cache: false,
       views: {
         'menuContent' :{
           templateUrl: "templates/receive.qrcode.html",
@@ -109,6 +117,7 @@ bitwallet_module
     
     .state('app.send', {
       url: "/send/:address/:amount/:asset_id/:is_btc",
+      cache: false,
       views: {
         'menuContent' :{
           templateUrl: "templates/send.html",
@@ -119,6 +128,7 @@ bitwallet_module
     
     .state('app.transaction_details', {
       url: "/transaction/:tx_id",
+      //cache: false,
       views: {
         'menuContent' :{
           templateUrl: "templates/tx.html",
@@ -129,6 +139,7 @@ bitwallet_module
     
     .state('app.xtransaction_details', {
       url: "/xtransaction/:x_id",
+      //cache: false,
       views: {
         'menuContent' :{
           templateUrl: "templates/xtx.html",
@@ -139,6 +150,7 @@ bitwallet_module
 
     .state('app.import_priv', {
       url: "/import_priv/:private_key",
+      //cache: false,
       views: {
         'menuContent' :{
           templateUrl: "templates/import_priv.html",
@@ -148,8 +160,8 @@ bitwallet_module
     })
     
     .state('app.register', {
-      cache:  false,
       url:    "/register",
+      //cache: false,
       views: {
               'menuContent' :{
                 templateUrl: "templates/register.html",
@@ -159,7 +171,7 @@ bitwallet_module
     })
     
     .state('app.account', {
-      cache:  false,
+      //cache:  false,
       url:    "/account/:first_time",
       views: {
               'menuContent' :{
@@ -170,7 +182,7 @@ bitwallet_module
     })
     
     .state('app.deposit', {
-      cache:  false,
+      //cache:  false,,
       url:    "/deposit/:xtx_id",
       views: {
               'menuContent' :{
@@ -181,7 +193,7 @@ bitwallet_module
     })
     
     .state('app.withdraw', {
-      cache:  false,
+      //cache:  false,,
       url:    "/withdraw",
       views: {
               'menuContent' :{
@@ -192,7 +204,7 @@ bitwallet_module
     })
     
     .state('app.xtx_requote', {
-      cache:  false,
+      //cache:  false,,
       url:    "/xtx_requote/:xtx_id",
       views: {
               'menuContent' :{
@@ -203,7 +215,7 @@ bitwallet_module
     })
 
     .state('app.refund', {
-      cache:  false,
+      //cache:  false,,
       url:    "/refund/:xtx_id",
       views: {
               'menuContent' :{
@@ -214,8 +226,8 @@ bitwallet_module
     })
 
     .state('app.successful', {
-      cache:  false,
-      url:    "/successful/:xtx_id/:oper_id",
+      //cache:  false,,
+      url:    "/successful/:txid/:xtxid/:address/:name/:message/:amount/:type",
       views: {
               'menuContent' :{
                 templateUrl: "templates/successful.html",
@@ -225,7 +237,7 @@ bitwallet_module
     })
 
     .state('app.welcome', {
-      cache:  false,
+      //cache:  false,,
       url:    "/welcome",
       views: {
               'menuContent' :{
@@ -236,7 +248,7 @@ bitwallet_module
     })
 
     .state('app.create_wallet', {
-      cache:  false,
+      //cache:  false,,
       url:    "/create_wallet",
       views: {
               'menuContent' :{
@@ -247,7 +259,7 @@ bitwallet_module
     })
 
     .state('app.create_wallet_seed', {
-      cache:  false,
+      //cache:  false,,
       url:    "/create_wallet_seed",
       views: {
               'menuContent' :{
@@ -258,7 +270,7 @@ bitwallet_module
     })
 
     .state('app.create_wallet_password', {
-      cache:  false,
+      //cache:  false,,
       url:    "/create_wallet_password",
       views: {
               'menuContent' :{
@@ -269,7 +281,7 @@ bitwallet_module
     })
 
     .state('app.home', {
-      cache:  false,
+      //cache:  false,
       url:    "/home",
       views: {
               'menuContent' :{
@@ -283,12 +295,53 @@ bitwallet_module
 
 })
 
-.run(function(Account, DB, $state, $ionicHistory, $rootScope, $ionicPlatform, Wallet, Scanner, $q, BitShares, ENVIRONMENT, $cordovaGlobalization, $translate, $state) {
+.run(function(Account, DB, $state, $ionicHistory, $ionicPopup,$rootScope, $ionicPlatform, Wallet, Scanner, $q, BitShares, ENVIRONMENT, $cordovaGlobalization, $translate, $state) {
 
   console.log(' app.js Init de .RUN !');
   
-  $rootScope.homeClass = 'darky';
+  $rootScope.homeClass = 'darky'; //darky
 
+
+
+  // // $ionicPlatform.onHardwareBackButton(function() {
+  // //    if(!$ionicHistory.backView() && $ionicHistory.currentStateName() !== 'app.home' ) {
+
+  // //       $state.go('app.home');
+  // //       e.prevent();
+  // //       console.log('NO HAY MAS');
+  // //    }
+  // //    //$ionicHistory.currentView().state
+     
+  // // });
+  
+  $ionicPlatform.registerBackButtonAction(function (event) {
+
+    // if(!$ionicHistory.backView() && $ionicHistory.currentStateName() !== 'app.home' ) {
+    //   $state.go('app.home');
+    //   $ionicHistory.clearHistory();
+    //   return;
+    // }
+
+    if($ionicHistory.currentStateName() == 'app.home')
+    {
+      var confirmPopup = $ionicPopup.confirm({
+        title: 'Exit door',
+        template: 'Are you sure you want to Leave?'
+      });
+     
+      confirmPopup.then(function(res) {
+        if(res) {
+          navigator.app.exitApp();
+        } else {
+         console.log('You are not sure');
+        }
+      });   
+    }
+    else{
+      $ionicHistory.goBack();
+    }
+  }, 100);
+  
   $rootScope.$on('$stateChangeSuccess', function (evt, toState) {
     // console.log('stateChangeSuccess BEGIN');  
     // console.log(JSON.stringify(toState));
@@ -301,7 +354,7 @@ bitwallet_module
     }
     // console.log('stateChangeSuccess END');
   });
-
+  
   $ionicPlatform.ready(function() {
     
     console.log(' app.js Platform Ready!');
@@ -332,6 +385,14 @@ bitwallet_module
         //$state.go('app.xtransaction_details', {x_id:'10'});
         //$state.go('app.transaction_details', {tx_id:'5394df9b7a4e1a9db60f576ad7e1a079b439a7e4'});
         //$state.go('app.receive_qrcode', {amount:150});
+        //$rootScope.goTo('app.contacts');
+        // $rootScope.goToSuccess({  txid        : undefined
+        //                     , xtxid      : undefined
+        //                     , address   : 'DVSNKLe7F5E7msNG5RnbdWZ7HDeHoxVrUMZo'
+        //                     , name      : undefined
+        //                     , message   : 'tomala, por el pete de ayer'
+        //                     , amount    : '69.3'
+        //                     , type      : 'send' });
         $rootScope.goTo('app.home');
         Wallet.refreshBalance();
       }, function(err) {
@@ -409,7 +470,7 @@ bitwallet_module
     //INIT DB
     //*****************
     .then(function() {
-      var db_init = window.localStorage['db_init'] || 'no';
+      var db_init = 'no'; window.localStorage['db_init'] || 'no';
       DB.init(false, db_init == 'no');
       
       if ( db_init == 'yes') {
@@ -442,9 +503,22 @@ bitwallet_module
     $ionicHistory.clearHistory();
     $ionicHistory.nextViewOptions({
       disableAnimate : true,
+      disableBack: true
     });
     console.log('clear history and go home!');
     $state.go('app.home');
+  }
+
+  $rootScope.goTo = function(param) {
+    $state.go(param);
+  }
+
+  $rootScope.goToEx = function(state, params) {
+    $state.go(state, params);
+  }
+
+  $rootScope.goToSuccess = function(params) {
+    $rootScope.goToEx('app.successful', params);
   }
 
   $rootScope.$on(Wallet.REFRESH_START, function(event, data) {
@@ -462,9 +536,6 @@ bitwallet_module
     console.log('Wallet refresh error');
   });
   
-  $rootScope.goTo = function(param) {
-    $state.go(param);
-  }
 
   /// transfer/amount/'+$scope.amount+'/asset/
   //  window.open('bts:DVSNKLe7F5E7msNG5RnbdWZ7HDeHoxVrUMZo/transfer/amount/1.1/asset/USD', '_system', 'location=yes');

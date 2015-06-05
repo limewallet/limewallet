@@ -82,8 +82,9 @@ bitwallet_filters.filter('is_uncompleted_xtx', function(BitShares, $filter) {
 });
 
 bitwallet_filters.filter('draw_op_amount', function(BitShares, $filter) {
-  return function(op, precision) {
-    return $filter('number')(parseFloat(op.amount)/precision, 2);
+  return function(op, precision, decimals) {
+    decimals = decimals || 2;
+    return $filter('number')(parseFloat(op.amount)/precision, decimals);
   }
 });
 
@@ -113,11 +114,11 @@ bitwallet_filters.filter('tx_icon', function(BitShares, $filter) {
 
 bitwallet_filters.filter('tx_icon_src', function(BitShares, $filter) {
   return function(tx) {
-    if(BitShares.isDeposit(tx.ui_type))
+    if(BitShares.isDeposit(tx))
       return 'img/icons/ico-deposit.svg';
-    if(BitShares.isWithdraw(tx.ui_type)) 
+    if(BitShares.isWithdraw(tx)) 
       return 'img/icons/ico-withdraw.svg';
-    if(BitShares.isBtcPay(tx.ui_type))
+    if(BitShares.isBtcPay(tx))
       return 'img/icons/ico-payments.svg';
     if(tx.ui_type=='sent')
       return 'img/icons/ico-sent.svg';

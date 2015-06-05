@@ -47691,8 +47691,8 @@ function($scope, $element, $attrs, $compile, $timeout, $ionicNavBarDelegate, $io
     var enteringHeaderBar = self.isInitialized ? getOffScreenHeaderBar() : getOnScreenHeaderBar();
     var leavingHeaderBar = self.isInitialized ? getOnScreenHeaderBar() : null;
     
-    console.log(' showNavBar??: '+showNavBar);
-    console.log(' self.isInitialized??: '+self.isInitialized);
+    // console.log(' showNavBar??: '+showNavBar);
+    // console.log(' self.isInitialized??: '+self.isInitialized);
     console.log(JSON.stringify(enteringHeaderBar));
 
     var enteringHeaderCtrl = enteringHeaderBar.controller();
@@ -47834,10 +47834,14 @@ function($scope, $element, $attrs, $compile, $timeout, $ionicNavBarDelegate, $io
 
 
   self.visibleBar = function(shouldShow) {
+    // console.log(' ******************* self.visibleBar');
+    // console.log(' ******************* shouldShow && !isVisible -> '+ (shouldShow && !isVisible));
+    // console.log(' ******************* shouldShow && !isVisible -> '+ (!shouldShow && isVisible));
     if (shouldShow && !isVisible) {
       $element.removeClass(CSS_HIDE);
       self.align();
-    } else if (!shouldShow && isVisible) {
+    } else if (!shouldShow && isVisible) { //HACKO
+    //} else if (!shouldShow) {
       $element.addClass(CSS_HIDE);
     }
     isVisible = shouldShow;
@@ -48307,8 +48311,10 @@ function($scope, $element, $attrs, $compile, $controller, $ionicNavBarDelegate, 
     var associatedNavBarCtrl = getAssociatedNavBarCtrl();
     if (associatedNavBarCtrl) {
       if (arguments.length) {
+        //console.log('??????????? associatedNavBarCtrl.showBar(val) val='+val);
         return associatedNavBarCtrl.showBar(val);
       }
+      //console.log('??????????? associatedNavBarCtrl.showBar()');
       return associatedNavBarCtrl.showBar();
     }
     return true;
@@ -50112,6 +50118,7 @@ function($scope, $element, $attrs, $compile, $rootScope) {
 
     if (isDefined($attrs.hideNavBar)) {
       deregisters.push($scope.$watch($attrs.hideNavBar, function(val) {
+        //console.log(' ???????????? navViewCtrl.showBar(!val); con val='+val);
         navViewCtrl.showBar(!val);
       }));
     }

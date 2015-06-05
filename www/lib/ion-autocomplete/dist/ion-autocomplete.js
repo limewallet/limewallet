@@ -120,7 +120,8 @@ angular.module('ion-autocomplete', []).directive('ionAutocomplete', [
                     '</ion-item>',
 
                     '<ion-item ng-repeat="item in local_contacts" item-height="55" item-width="100%" class="local" type="item-text-wrap" ng-click="selectItem(item)">',
-                    '{{getItemValue(item, itemViewValueKey)}}',
+                    '<h2>{{getItemValue(item, itemViewValueKey)}}</h2>',
+                    '<p>{{item.address_or_pubkey}}</p>',
                     '</ion-item>',
                     '</div>',
 
@@ -139,8 +140,8 @@ angular.module('ion-autocomplete', []).directive('ionAutocomplete', [
                     '</ion-item>',
 
                     '<ion-item ng-repeat="item in global_contacts" item-height="55" item-width="100%" class="global" type="item-text-wrap" ng-click="selectItem(item)">',
-                    //'{{item.name}}',
-                    '{{getItemValue(item, itemViewValueKey)}}',
+                    '<h2>{{getItemValue(item, itemViewValueKey)}}</h2>',
+                    '<p>{{item.address_or_pubkey}}</p>',
                     '</ion-item>',
                     '</div>',
 

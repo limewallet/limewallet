@@ -1,5 +1,5 @@
 bitwallet_controllers
-.controller('WithdrawCtrl', function($translate, T, Account, Wallet, BitShares, $scope, $rootScope, $http, $timeout, $ionicActionSheet, $ionicPopup, $cordovaClipboard, $ionicLoading, $timeout, BitShares, $state, $ionicModal, $q, Setting) {
+.controller('WithdrawCtrl', function($ionicHistory, $translate, T, Account, Wallet, BitShares, $scope, $rootScope, $http, $timeout, $ionicActionSheet, $ionicPopup, $cordovaClipboard, $ionicLoading, $timeout, BitShares, $state, $ionicModal, $q, Setting) {
 
 // Bitcoin Address:
 // msmmBfcvrdG2yZiUQQ21phPkbw966f8nbb
@@ -7,6 +7,9 @@ bitwallet_controllers
 // 92UK2S47eLEMPrstMfqD44UCLraQ99VSchwhj5VRCMe5X9zUJWe
 // bitcoin:BweMQsJqRdmncwagPiYtANrNbApcRvEV77?amount=1.1
   
+  console.log('WITHDRAW IN: ' + JSON.stringify($ionicHistory.viewHistory()))
+  
+
   $scope.data = {
     input_amount      : 0, 
     input_curr        : 'BTC', 

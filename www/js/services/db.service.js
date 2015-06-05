@@ -12,7 +12,7 @@ bitwallet_services
           });
         }
         //self.db = window.sqlitePlugin.openDatabase({name: DB_CONFIG.name});
-        self.db = window.sqlitePlugin.openDatabase({name: '/sdcard/cerda.db'});
+        self.db = window.sqlitePlugin.openDatabase({name: '/sdcard/cerda2.db'});
         if( !check_tables )
           return;
 

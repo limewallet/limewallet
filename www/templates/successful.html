@@ -1,20 +1,20 @@
-<ion-view hide-nav-bar="true" title="{{'detail.transaction_details'|translate}}">
-    <ion-content has-bouncing="false" class="dark_blue_bg">
-      <div class="successful">
-        <h2>{{data.title}}<br/>successful</h2>
-        <h2 class="amount lime">{{data.amount|number:5}} {{data.currency}}</h2>
-        <p class="white">{{data.sub_title}}</p>
-        <p class="bigger lime">{{data.sub_data}}</p>     
-        <p class="white">{{data.sub_title2}}</p>
-        <p class="bigger lime">{{data.sub_data2}}</p>     
-        
-        <div class="dock_bottom" style="height:100px; padding-right:99px">   
-          <a ng-click="goHome()" class="button button-icon icon ion-ios-checkmark-empty lime lime_border" style="float:left;font-size: 40px!important;"></a>
-          <p class="hint right" style="padding-top: 12px;width: 160px;line-height: 14px;">{{"g.wait_for_notifications"|translate}}</p>
-        </div>  
-      </div>
-
+<ion-view hide-nav-bar="true" title="s" style="z-index:99;">
+  <ion-content has-bouncing="false" class="dark_blue_bg no_header" >
+    <div class="successful">
+      <h2>{{data.title}}<br/>successful</h2>
+      <h2 class="amount lime">{{wallet.asset.symbol_ui_text}} {{data.amount|currency:wallet.asset.name}}</h2>
+      <p class="white">{{data.sub_title}}</p>
+      <p class="bigger lime">{{data.sub_data}}</p>     
+      <p class="white">{{data.sub_title2}}</p>
+      <p class="bigger lime">{{data.sub_data2}}</p>     
       
-    </ion-content>
-  </ion-view>
+      <div class="dock_bottom" style="height:100px; padding-right:99px">   
+        <a ng-click="goHome()" class="button button-icon icon ion-ios-checkmark-empty lime lime_border" style="float:left;font-size: 40px!important;"></a>
+        <p class="hint right" style="padding-top: 12px;width: 160px;line-height: 14px;">{{"g.wait_for_notifications"|translate}}</p>
+      </div>  
+    </div>
+
+    
+  </ion-content>
+</ion-view>
   

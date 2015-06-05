@@ -1,7 +1,4 @@
 <ion-view class="dark" title="{{'menu.assets'|translate}}">
-    <ion-nav-buttons side="left">
-      <button ng-click="goHome()" class="button button-icon icon ion-ios-arrow-back base-color"></button>
-    </ion-nav-buttons>
     
     <ion-content class="has-header assets base-color_bg padding" has-bouncing="false">
     
@@ -13,7 +10,7 @@
             <div class="asset_data">
               <strong>{{wallet.assets[obj.asset_id].symbol}}</strong>
               <span class="asset_balance"> 
-                <span class="balance_amount">{{obj.amount | number : 2}}</span>&nbsp;{{wallet.assets[obj.asset_id].unit}}
+                <span class="balance_amount">{{(obj.amount/wallet.assets[obj.asset_id].precision) | currency : wallet.assets[obj.asset_id].name}}</span>&nbsp;{{wallet.assets[obj.asset_id].unit}}
               </span>
             </div>  
           </div>

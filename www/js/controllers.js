@@ -1,6 +1,6 @@
 var bitwallet_controllers = angular.module('bit_wallet.controllers', ['bit_wallet.services']);
 bitwallet_controllers
-.controller('AppCtrl', function($scope, $ionicSideMenuDelegate, $timeout, Wallet, $ionicPopup, $rootScope, $translate, T) {
+.controller('AppCtrl', function($scope, $ionicSideMenuDelegate, $timeout, Wallet, $ionicPopup, $rootScope, $translate, $state, T) {
   
   $scope.$watch(function() { return $ionicSideMenuDelegate.isOpen(); }, function(isOpen) { 
     if(isOpen)
@@ -8,6 +8,12 @@ bitwallet_controllers
   });
 
   $scope.data = { in_progress : false};
+
+  $scope.goToState = function(state){
+    //$ionicHistory.clearHistory();
+    //$ionicHistory.
+    $state.go(state);
+  }
 
   $scope.lockWallet= function(){
     $scope.data.in_progress = true;
