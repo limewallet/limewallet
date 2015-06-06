@@ -3,7 +3,7 @@
       <form novalidate name="receiveForm" class="send_form">
         <div class="list">
 
-          <label class="item item-input pmd">
+          <label class="item item-input item-floating-label pmd">
             <span ng-class="{ 'has-error' : transaction.amount.$invalid}" class="input-label pmd">{{'g.amount'|translate}}</span>
             <input numbers-only-key-press required name="transactionAmount" ng-model="transaction.amount" type="number" class="input_amount big pmd"> 
             <i class="pmd icon placeholder-icon">$</i>

@@ -301,26 +301,7 @@ bitwallet_module
   
   $rootScope.homeClass = 'darky'; //darky
 
-
-
-  // // $ionicPlatform.onHardwareBackButton(function() {
-  // //    if(!$ionicHistory.backView() && $ionicHistory.currentStateName() !== 'app.home' ) {
-
-  // //       $state.go('app.home');
-  // //       e.prevent();
-  // //       console.log('NO HAY MAS');
-  // //    }
-  // //    //$ionicHistory.currentView().state
-     
-  // // });
-  
   $ionicPlatform.registerBackButtonAction(function (event) {
-
-    // if(!$ionicHistory.backView() && $ionicHistory.currentStateName() !== 'app.home' ) {
-    //   $state.go('app.home');
-    //   $ionicHistory.clearHistory();
-    //   return;
-    // }
 
     if($ionicHistory.currentStateName() == 'app.home')
     {
@@ -343,16 +324,11 @@ bitwallet_module
   }, 100);
   
   $rootScope.$on('$stateChangeSuccess', function (evt, toState) {
-    // console.log('stateChangeSuccess BEGIN');  
-    // console.log(JSON.stringify(toState));
     if (toState.homeClass) {
-      // console.log(' -- stateChangeSuccess AT HOME!!!!');
       $rootScope.homeClass = toState.homeClass;
     } else {
-      // console.log(' -- stateChangeSuccess NOT at home :(');
       $rootScope.homeClass = '';
     }
-    // console.log('stateChangeSuccess END');
   });
   
   $ionicPlatform.ready(function() {
@@ -393,6 +369,7 @@ bitwallet_module
         //                     , message   : 'tomala, por el pete de ayer'
         //                     , amount    : '69.3'
         //                     , type      : 'send' });
+        //$state.go('app.import_priv', {private_key:'ESSSSSSSSSTA'});
         $rootScope.goTo('app.home');
         Wallet.refreshBalance();
       }, function(err) {

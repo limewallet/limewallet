@@ -184,7 +184,7 @@ h2 .transactions .sent_ex, h2 .transactions .received_ex, h2 .transactions .self
 
 .transactions .withdraw .tx_address, .transactions .deposit .tx_address, .transactions .btc_pay .tx_address { display:none;}
 
-.tx_icon {  width: 24px ;}
+.tx_icon {  width: 24px ; left:15px!important;}
 .icon_receive   {background-image: url(../img/icons/ico-received.svg);}
 .icon_send      {background-image: url(../img/icons/ico-sent.svg);}
 .icon_self      {background-image: url(../img/icons/ico-received.svg);}
@@ -278,10 +278,14 @@ NOTtextarea.wallet_input{width:100%;height:100%; box-sizing: border-box;-moz-box
 .big_placeholder.right::-webkit-input-placeholder { text-align:right; }
 /* mozilla solution */
 .big_placeholder.right:-moz-placeholder { text-align:right; }
-input.big::-webkit-input-placeholder{font-size: 16px!important;}
-input.big:-moz-placeholder{font-size: 16px!important;}
-input.big::-moz-placeholder {font-size: 16px!important;}
-input.big:-ms-input-placeholder {font-size: 16px!important;}
+input.big::-webkit-input-placeholder{font-size: 24px!important;color:#eaeaea;}
+input.big:-moz-placeholder{font-size: 24px!important;color:#eaeaea;}
+input.big::-moz-placeholder {font-size: 24px!important;color:#eaeaea;}
+input.big:-ms-input-placeholder {font-size: 24px!important;color:#eaeaea;}
+textarea.big::-webkit-input-placeholder{font-size: 24px!important;color:#eaeaea;}
+textarea.big:-moz-placeholder{font-size: 24px!important;color:#eaeaea;}
+textarea.big::-moz-placeholder {font-size: 24px!important;color:#eaeaea;}
+textarea.big:-ms-input-placeholder {font-size: 24px!important;color:#eaeaea;}
 
 .input_amount{text-align:right;}
 .input_amount::-webkit-input-placeholder{text-align: left;}
@@ -537,7 +541,8 @@ img.i_centered {margin-left: auto;
 .list.settings .item, .list.balances .item, .list.addys_balances .item, .main_transactions .item{
   border-color:transparent!important;
   border:none;
-  border-width: 0px; 
+  border-width: 0px;
+  margin:0; 
   /*border-style: solid; */
 }
 .list.settings .item, .list.settings .item .input-label  {
@@ -1041,28 +1046,40 @@ input.pmd {font-size:16px!important;  color:#fff;border-top:none; border-left:no
 .send_form .item-input-inset{padding:0px 8px 0px 0px!important}
 
 .send_form input{color:#546979!important;}                      
-.send_form input.pmd {font-size:14px!important; line-height:14px!important;
+.send_form input.pmd { /*font-size:14px!important; line-height:14px!important;*/
     border-top:none; border-left:none; border-right:none; border-bottom: 1px solid #d8d8d8 !important; 
     background-color:transparent!important;
     padding-right: 0px;
-    margin-left: 8px;}
+    /*margin-left: 8px;*/}
 .send_form i.pmd{color:#eaeaea;font-size:32px!important; line-height:28px!important; position: absolute;top: 24px;right: 16px;}
 .send_form label.pmd button{position: absolute;top: 10px;right: 5px;color:#eaeaea!important;}
 
+.send_form .item-floating-label i.pmd{top: 44px;left:10px;}
+
 .button_taller.dock_bottom.button-icon.ion-ios-paperplane {font-size: 40px!important;/*color:#fff !important;*/}
 
-.send_form input.pmd.input_amount{font-size:32px!important; line-height:32px!important;padding-right: 25px; 
+.send_form input.pmd.input_amount{font-size:32px!important; line-height:32px!important;
+     padding-right: 70px!important; 
     height:44px!important;}
+.send_form .item-floating-label input.pmd.input_amount {padding-left: 25px;text-align: left;}
 .send_form input.pmd:focus {border-bottom: 1px solid #8ec919 !important;}    
-.send_form textarea.pmd {font-size:14px!important;border-top:none; border-left:none; border-right:none; 
-              border-bottom: 1px solid #d8d8d8 !important; background-color:transparent!important;margin-left: 8px;}
+.send_form textarea.pmd {font-size:14px!important;
+                        border-top:none; border-left:none; border-right:none; 
+                        border-bottom: 1px solid #d8d8d8 !important;
+                        background-color:transparent!important;
+                /*margin-left: 8px;*/}
 .send_form textarea.pmd:focus{border-bottom: 1px solid #8ec919 !important;}    
-.send_form .input-label.pmd {font-size:10px;color:#8ec919 !important;font-weight: bold;}
+.send_form .input-label.pmd {font-size:10px;
+          /*color:#8ec919 !important;
+          font-weight: 500; */
+          color:#546979 !important;
+          font-weight: 300;
+          text-transform: uppercase;}
 .send_form label.pmd {
     padding-left:14px!important; 
     position:relative;
     align-items: flex-start;}
-.send_form label.pmd span {width:52px;text-align:right;}
+.send_form label.pmd span {width:52px;text-align:left;} /* hacko para floating label, right*/
 .send_form .btc_amount_container{position:relative;display:block;width:100%;height:auto;}
 .send_form .button.icon.ion-arrow-swap:before{
   -webkit-transform: rotate(90deg);
@@ -1073,6 +1090,7 @@ input.pmd {font-size:16px!important;  color:#fff;border-top:none; border-left:no
 .send_form .recipient_container {position:relative;display:block;width:100%;height:auto;overflow: hidden;}
 .send_form .recipient_container label.pmd{width:320px!important;float:left;}
 .send_form .recipient_container button{position: absolute;right: 5px;color:#eaeaea!important;top:6px;}
+.send_form .recipient_container2 button {top:23px;}
 .send_form .recipient_container button.ion-android-cancel{right: 10px;}
 .send_form button.button-icon.icon.ion-android-cancel:before{font-size:24px!important;}
 .send_form_button {color: #8ec919!important;font-weight: bold;
@@ -1091,8 +1109,11 @@ input.pmd {font-size:16px!important;  color:#fff;border-top:none; border-left:no
     width:100%;}
 .send .buttons_container{ align-self:flex-end;width:100%;}
 
-.receive_qr.list {margin-bottom: 0px!important;}
-.receive_qr_content .scroll, .receive .scroll{
+.import_priv h1 {padding-top:44px;padding-bottom:22px;}
+.import_priv_content, .receive_qr_content {width:100%;}
+.import_priv.list, .receive_qr.list {margin-bottom: 0px!important;width:100%;}
+.import_priv.list .item{border:none;}
+.import_priv_content .scroll, .receive_qr_content .scroll, .receive .scroll{
      display: -webkit-flex; /* Safari */
     -webkit-flex-flow: row wrap; /* Safari 6.1+ */
     -webkit-align-content: strecht; /* Safari 7.0+ */
@@ -1101,8 +1122,8 @@ input.pmd {font-size:16px!important;  color:#fff;border-top:none; border-left:no
     align-content: strecht;
     height:100%;
     width:100%;}
-.receive_qr_content .buttons_container, .receive .buttons_container{ align-self:flex-end;width:100%;}
-.receive_qr h1, .receive_qr h2, .receive_qr h4 {text-align:center;font-weight: 300;}
+.import_priv_content .buttons_container, .receive_qr_content .buttons_container, .receive .buttons_container{ align-self:flex-end;width:100%;}
+.import_priv h1, .import_priv h2, .receive_qr h1, .receive_qr h2, .receive_qr h4 {text-align:center;font-weight: 300;}
 .receive_qr .qr_hint {float: right;font-size: 10px;padding-right: 0px!important;padding-top:0px;text-align: right;}
 
 .bold {font-weight: bold!important;}

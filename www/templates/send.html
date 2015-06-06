@@ -6,22 +6,21 @@
         <div class="list">
           
           <!-- BTS -->
-          <label class="item item-input pmd" ng-disabled="data.is_btc==true" ng-show="!data.is_btc">
-            <span ng-class="{ 'has-error' : transaction.amount.$invalid}" class="input-label pmd">{{'g.amount'|translate}}</span>
-            <input numbers-only-key-press required name="transactionAmount" ng-model="transaction.amount" type="number" class="input_amount big pmd"> 
-            <i class="pmd icon placeholder-icon">$</i>
-            <br/>
+          <label class="item item-input pmd item-floating-label" ng-disabled="data.is_btc==true" ng-show="!data.is_btc">
+            <span class="input-label pmd">{{'g.amount'|translate}}</span>
+            <input numbers-only-key-press required type="number" placeholder="{{'g.amount'|translate}}" ng-model="transaction.amount" class="input_amount big pmd">
+            <i class="pmd icon placeholder-icon">{{wallet.asset.symbol_ui_text}}</i>
           </label>
-          
-          <div class="recipient_container">
-            <label class="item item-input pmd" ng-disabled="data.is_btc==true" ng-show="!data.is_btc">
+
+          <div class="recipient_container recipient_container2">
+            <label class="item item-input pmd item-floating-label" ng-disabled="data.is_btc==true" ng-show="!data.is_btc">
               <span class="input-label pmd">{{'send.recipient'|translate}}</span>
-              <ion-autocomplete item-view-value-key="name" name="transactionAddress" ng-model="transaction.destination" local-search="localSearch(query)" global-search="globalSearch(query)" is-selectable="isSelectable(query)" class="big full_width pmd" placeholder_="{{'g.search_recipient'|translate}}" search-query-item-hint="{{'g.tap_to_select'|translate}}" cancel-label="{{'g.cancel'|translate}}" local-label="{{'g.local_items_label'|translate}}" global-label="{{'g.global_items_label'|translate}}"></ion-autocomplete>
+              <ion-autocomplete placeholder="{{'send.recipient'|translate}}" item-view-value-key="name" name="transactionAddress" ng-model="transaction.destination" local-search="localSearch(query)" global-search="globalSearch(query)" is-selectable="isSelectable(query)" class="big full_width pmd" placeholder_="{{'g.search_recipient'|translate}}" search-query-item-hint="{{'g.tap_to_select'|translate}}" cancel-label="{{'g.cancel'|translate}}" local-label="{{'g.local_items_label'|translate}}" global-label="{{'g.global_items_label'|translate}}"></ion-autocomplete>
             </label>
             <button ng-click="clearDestination()" class="button button-icon icon ion-android-cancel">
             </button>
           </div>
-          
+
           <!-- BTC -->
           <div class="btc_amount_container" ng-show="data.is_btc==true">
             <label class="item item-input pmd" ng-disabled="data.is_btc==false">
@@ -43,9 +42,9 @@
 
           
           <!-- BTS & BTC -->
-          <label class="item item-input pmd">
+          <label class="item item-input pmd item-floating-label">
             <span class="input-label pmd">{{'g.memo'|translate}}</span>
-            <textarea name="" id="" cols="30" rows="10"  name="transactionMemo" ng-model="transaction.memo"
+            <textarea name="" id="" cols="30" rows="5" placeholder="{{'g.memo'|translate}}" name="transactionMemo" ng-model="transaction.memo"
             class="big pmd base-color" ng-class="{'error':sendForm.transactionMemo.$error.number}"></textarea>  
             <br/>
           </label>
@@ -60,22 +59,3 @@
       </fieldset> 
     </ion-content>
   </ion-view>
-
-  <script id="sending-modal.html" type="text/ng-template">
-    <ion-modal-view>
-      <ion-header-bar align-title="middle" class="bar-energized nav-title-slide-ios7">
-        <div class="title">{{'send.sending_payment'|translate}}</div>
-      </ion-header-bar>
-      
-      <ion-content class="has-header">
-        <div class="row">
-          <div class="transaction_steps">
-            <h2 style="text-align:center;" class="step_doing positive">
-              {{transaction.message|translate}}<i class="ion-loading-a" data-pack="default" data-tags="spinner, waiting, refresh, animation" data-animation="true"></i>
-            </h2>
-          </div>
-        </div>
-      </ion-content>
-    </ion-modal-view>
-  </script>
-  

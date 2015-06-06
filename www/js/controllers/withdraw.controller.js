@@ -11,9 +11,11 @@ bitwallet_controllers
   
 
   $scope.data = {
-    input_amount      : 0, 
-    input_curr        : 'BTC', 
-    input_in_btc      : true,
+    input_in_btc     : false,
+    input_amount     : undefined,
+    input_curr       : 'USD',
+    other_amount     : undefined,
+    other_curr       : 'BTC',
 
     bitcoin_address:    '', //C4hJYM1NYgjqszEnqA9qr6QSAQLQvywnfk', //'BweMQsJqRdmncwagPiYtANrNbApcRvEV77', //'msmmBfcvrdG2yZiUQQ21phPkbw966f8nbb',
     
@@ -42,15 +44,16 @@ bitwallet_controllers
   }
   
   $scope.toggleInputCurrency = function(){
-    $scope.data.input_in_btc = $scope.data.input_in_btc?false:true;
-    $scope.data.input_amount=0;
-    if($scope.data.input_in_btc==false){
-      $scope.data.input_curr=$scope.wallet.asset.symbol;
-    }
-    else{
-      $scope.data.input_curr='BTC';
-    }
-    console.log('$scope.data.input_curr: '+$scope.data.input_curr);
+    
+    $scope.data.input_in_btc = !$scope.data.input_in_btc;
+
+    $scope.data.input_amount = undefined;
+    $scope.data.input_curr   = !$scope.data.input_in_btc ? Wallet.data.asset.symbol : 'BTC';
+
+    $scope.data.other_curr   = !$scope.data.input_in_btc ? 'BTC' : Wallet.data.asset.symbol;
+    $scope.data.other_amount = undefined;
+
+    console.log(' toggled deposit currency. INPUT CURR:'+$scope.data.input_curr);
   }
     
   // Disable and enable form handlers

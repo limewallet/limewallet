@@ -7,7 +7,8 @@
     "tap_to_select"                 : "Tap to select",
     "your_search"                   : "Your search",
     "search_recipient"              : "Enter recipient name or address...",
-    "bitcoin_address"               : "Bitcoin<br/>address",
+    "bitcoin_address_html"          : "Bitcoin<br/>address",
+    "bitcoin_address"               : "Bitcoin address",
     "you_withdraw"                  : "You withdraw",
     "you_pay"                       : "You pay",
     "you_receive"                   : "You receive",
@@ -291,6 +292,7 @@
   },
   
   "import_priv" : {
+    "available"               : "Balance available to sweep",
     "paper_wallet"            : "Import Paper Wallet",
     "sweep_balance"           : "Sweep balance",
     "invalid"                 : "Can't import invalid/empty private key",
