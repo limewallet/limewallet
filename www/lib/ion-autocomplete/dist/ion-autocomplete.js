@@ -60,6 +60,7 @@ angular.module('ion-autocomplete', []).directive('ionAutocomplete', [
                 // returns the value of an item
                 scope.getItemValue = function (item, key) {
 
+                    //console.log(' ???? scope.getItemValue: item:'+ JSON.stringify(item) + ' // key:' + key);
                     // if it's an array, go through all items and add the values to a new array and return it
                     if (angular.isArray(item)) {
                         var items = [];
@@ -70,13 +71,15 @@ angular.module('ion-autocomplete', []).directive('ionAutocomplete', [
                                 items.push(itemValue);
                             }
                         });
+                        //console.log(' retorna items????');
                         return items;
                     } else {
                         if (key && angular.isObject(item)) {
+                            //console.log(' retorna object????');
                             return $parse(key)(item);
                         }
                     }
-                    // console.log('ion autocomplete mostrando item:'+item);
+                    //console.log('ion autocomplete mostrando item:'+JSON.stringify(item));
                     return item;
                 };
 
@@ -181,7 +184,7 @@ angular.module('ion-autocomplete', []).directive('ionAutocomplete', [
                         compiledTemplate.scope.searchQuery = '';
 
                         // if multiple select is on store the selected items
-                        if (compiledTemplate.scope.multipleSelect === "true") {
+                        if (compiledTemplate.scope.multipleSelect === "trueLARIO") {
 
                             if (!isKeyValueInObjectArray(compiledTemplate.scope.selectedItems,
                                     compiledTemplate.scope.itemValueKey, scope.getItemValue(item, scope.itemValueKey))) {
@@ -193,6 +196,7 @@ angular.module('ion-autocomplete', []).directive('ionAutocomplete', [
                             ngModel.$setViewValue(compiledTemplate.scope.selectedItems);
                             ngModel.$render();
                         } else {
+                            console.log(' selectItem: '+JSON.stringify(item));
                             // set the view value and render it
                             ngModel.$setViewValue(item);
                             ngModel.$render();
@@ -364,12 +368,14 @@ angular.module('ion-autocomplete', []).directive('ionAutocomplete', [
 
                 // set the view value of the model
                 ngModel.$formatters.push(function (modelValue) {
+                    //console.log(' ???? scope.getItemValue(modelValue, scope.itemViewValueKey) : ' + scope.getItemValue(modelValue, scope.itemViewValueKey));
                     return scope.getItemValue(modelValue, scope.itemViewValueKey);
                 });
 
                 // set the model value of the model
                 ngModel.$parsers.push(function (viewValue) {
-                    return scope.getItemValue(viewValue, scope.itemValueKey);
+                    //console.log(' ???? scope.getItemValue(viewValue, scope.itemValueKey) : ' + scope.getItemValue(viewValue, scope.itemValueKey));
+                    return scope.getItemValue(viewValue, scope.itemValueKey);                   
                 });
 
             }

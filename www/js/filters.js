@@ -88,38 +88,23 @@ bitwallet_filters.filter('draw_op_amount', function(BitShares, $filter) {
   }
 });
 
-bitwallet_filters.filter('tx_icon', function(BitShares, $filter) {
-  return function(tx) {
-    if(BitShares.isDeposit(tx.ui_type))
-      //return 'icon ion-ios-plus-outline';
-      return 'icon icon_deposit';
-    if(BitShares.isWithdraw(tx.ui_type)) 
-      //return 'icon ion-ios-minus-outline';
-      return 'icon icon_withdraw';
-    if(BitShares.isBtcPay(tx.ui_type))
-      //return 'icon ion-social-bitcoin-outline';
-      return 'icon icon_btc_pay';
-    if(tx.ui_type=='sent')
-      //return 'icon ion-ios-upload-outline';
-      return 'icon icon_send';
-    if(tx.ui_type=='received')
-      //return 'icon ion-ios-download-outline';
-      return 'icon icon_receive';
-    if(tx.ui_type=='self')
-      //return 'icon ion-ios-refresh-outline';
-      return 'icon icon_self';
-    return '';
-  }
-});
-
+function getTxStatus(tx){
+  if (['RR', 'RF', 'XX'].indexOf(tx.status)>=0)
+    return '_gray';
+  if ('WP'==tx.status)
+    return '_waiting';
+  if ('RC'==tx.status)
+    return '_rate_changed';
+  return '';
+}
 bitwallet_filters.filter('tx_icon_src', function(BitShares, $filter) {
   return function(tx) {
     if(BitShares.isDeposit(tx))
-      return 'img/icons/ico-deposit.svg';
+      return 'img/icons/ico-deposit'+ getTxStatus(tx) +'.svg';
     if(BitShares.isWithdraw(tx)) 
-      return 'img/icons/ico-withdraw.svg';
+      return 'img/icons/ico-withdraw'+ getTxStatus(tx) +'.svg';
     if(BitShares.isBtcPay(tx))
-      return 'img/icons/ico-payments.svg';
+      return 'img/icons/ico-payments'+ getTxStatus(tx) +'.svg';
     if(tx.ui_type=='sent')
       return 'img/icons/ico-sent.svg';
     if(tx.ui_type=='received')
@@ -161,7 +146,7 @@ bitwallet_filters.filter('book2rate', function() {
 
 bitwallet_filters.filter('currency', function($filter) {
   return function(val, curr) {
-    if(!curr) return '';
+    if(!curr) return $filter('number')(val, 2);
     
     //Its a book (precision of the QUOTE currency)
     if(curr.indexOf('/') != -1) curr = curr.split('/')[1];

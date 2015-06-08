@@ -1,5 +1,5 @@
 bitwallet_controllers
-.controller('XtxRequoteCtrl', function($stateParams, $translate, T, Account, Wallet, BitShares, $scope, $rootScope, $http, $timeout, $ionicActionSheet, $ionicPopup, $cordovaClipboard, $ionicLoading, $timeout, BitShares, $state, $ionicModal, $q, ExchangeTransaction) {
+.controller('XtxRequoteCtrl', function($stateParams, $translate, T, Account, Wallet, BitShares, $scope, $rootScope, $http, $timeout, $ionicActionSheet, $ionicPopup, $cordovaClipboard, $ionicLoading, $timeout, BitShares, $state, $ionicModal, $q, ExchangeTransaction, $ionicPopover) {
 
   $scope.data = { 
     xtx               : undefined,
@@ -7,7 +7,24 @@ bitwallet_controllers
     signature         : undefined
   }
 
+  $ionicPopover.fromTemplateUrl('templates/rate_changed_popover.html', {
+    scope: $scope
+  }).then(function(popover) {
+    $scope.popover = popover;
+  });
+
+  $scope.openPopover = function($event) {
+    // document.body.classList.remove('platform-ios');
+    // document.body.classList.remove('platform-android');
+    // document.body.classList.add('platform-ionic');
+    $scope.popover.show($event);
+  };
+  $scope.closePopover = function() {
+    $scope.popover.hide();
+  };
+
   $scope.doRequote = function() {
+    $scope.closePopover();
     $scope.showLoading('rate_changed.getting_quote');
     var keys = Wallet.getAccountAccessKeys();
     return BitShares.getRequote(keys, $scope.data.xtx.id).then(function(res){
@@ -30,35 +47,6 @@ bitwallet_controllers
     console.log('XtxRequoteCtrl db error:' + JSON.stringify(err));
     window.plugins.toast.show( T.i('err.invalid_xtx_id'), 'long', 'bottom');
   });
-  
-  $scope.options = function() {
-    // Show the action sheet
-    var hideSheet = $ionicActionSheet.show({
-      buttons    : [ 
-        { text: '<b>Get new quote</b>' },
-        { text: 'Refund' }
-      ],
-      /*destructiveText: 'Delete',*/
-      titleText  : undefined,
-      cancelText : 'Cancel',
-      cancel     : function() {
-
-      },
-      buttonClicked: function(index) {
-        if(index == 0) {
-          $scope.doRequote().finally(function() {
-            hideSheet();  
-          });
-        } else {
-          $scope.doRefund().finally(function() {
-            $scope.goHome(); 
-          });
-        }
-      }
-    });
-  };
-
-  /* *************************** */  
   
   $scope.showLoading = function(text_to_translate){
     $ionicLoading.show({
@@ -106,11 +94,9 @@ bitwallet_controllers
   }
   
   $scope.refund = function(){
-    
-    $timeout(function(){
-      $state.go('app.refund', {xtx_id:$scope.data.xtx_id});
-    }, 10);
-    
+    $scope.closePopover();
+    console.log(' --- going to refund. xtx_id:' + $scope.data.xtx_id);
+    $state.go('app.refund', {xtx_id:$scope.data.xtx_id});
   }
 
   $scope.nanobar = undefined;
