@@ -95,8 +95,8 @@ bitwallet_controllers
   
   $scope.refund = function(){
     $scope.closePopover();
-    console.log(' --- going to refund. xtx_id:' + $scope.data.xtx_id);
-    $state.go('app.refund', {xtx_id:$scope.data.xtx_id});
+    console.log(' --- going to refund. xtx_id:' + $scope.data.xtx.id);
+    $state.go('app.refund', {xtx_id:$scope.data.xtx.id});
   }
 
   $scope.nanobar = undefined;

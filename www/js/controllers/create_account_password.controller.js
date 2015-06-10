@@ -170,122 +170,120 @@ bitwallet_controllers
     //Mostrar loading
     $scope.showLoading();
 
-    BitShares.derivePassword($scope.data.password).then(function(derived_password){
-      var password = derived_password.key;
-      var prom = $scope.addNewAccount($scope.init.seed, password).then(function(accountInfo){
+    BitShares.randomData(32).then(function(salt) {
 
-        // Is recovering wallet? Then check blockchain registration data!
-        $scope.getInfoIfRecovering(accountInfo.pubkey).then(function(recovered_data){
-          accountInfo.name       = 'guest'+accountInfo.number;
-          if(recovered_data)
-          {
-            accountInfo.name        = recovered_data.name;
-            accountInfo.avatar_hash = recovered_data.avatar_hash;
-            accountInfo.registered  = 1;
-          }
-          console.log(' -- call getInfoIfRecovering return: '+accountInfo.name);
+      BitShares.derivePassword($scope.data.password, salt).then(function(derived_password){
+        var password = derived_password.key;
+        var prom = $scope.addNewAccount($scope.init.seed, password).then(function(accountInfo){
 
-          BitShares.signUp(accountInfo.plain_privkey, accountInfo.pubkey).then(function(keys){
-            accountInfo.access_key = keys.akey;
-            accountInfo.secret_key = keys.skey;
-            
-            
-            var account_cmd = Account._create(accountInfo);
+          // Is recovering wallet? Then check blockchain registration data!
+          $scope.getInfoIfRecovering(accountInfo.pubkey).then(function(recovered_data){
+            accountInfo.name       = 'guest'+accountInfo.number;
+            if(recovered_data)
+            {
+              accountInfo.name        = recovered_data.name;
+              accountInfo.avatar_hash = recovered_data.avatar_hash;
+              accountInfo.registered  = 1;
+            }
+            console.log(' -- call getInfoIfRecovering return: '+accountInfo.name);
 
-            console.log(JSON.stringify(account_cmd));
+            BitShares.signUp(accountInfo.plain_privkey, accountInfo.pubkey).then(function(keys){
+              accountInfo.access_key = keys.akey;
+              accountInfo.secret_key = keys.skey;
+              
+              
+              var account_cmd = Account._create(accountInfo);
 
-            $scope.encrypt($scope.init.seed, password).then(function(encryptedSeed) {
+              console.log(JSON.stringify(account_cmd));
 
-              var encrypted = ($scope.data.password != '') ? 1 : 0;
+              $scope.encrypt($scope.init.seed, password).then(function(encryptedSeed) {
 
-              var seed_cmd          = Setting._set(Setting.SEED, JSON.stringify({'value':encryptedSeed, 'encrypted':encrypted}) );
-              var mpk_cmd           = Setting._set(Setting.MPK,  JSON.stringify({'value':accountInfo.mpk, 'encrypted':encrypted}) );
-              var password_hash_cmd = Setting._set(Setting.PASSWORD_HASH, derived_password.key_hash);
+                var encrypted = ($scope.data.password != '') ? 1 : 0;
 
-              DB.db.transaction(function(transaction) {
+                var seed_cmd  = Setting._set(Setting.SEED, JSON.stringify({'value':encryptedSeed, 'encrypted':encrypted}) );
+                var mpk_cmd   = Setting._set(Setting.MPK,  JSON.stringify({'value':accountInfo.mpk, 'encrypted':encrypted}) );
+                var salt_cmd  = Setting._set(Setting.SALT, salt);
 
-                var proms = {
-                  'account' :  transaction.executeSql(account_cmd.sql, account_cmd.params),
-                  'seed'    :  transaction.executeSql(seed_cmd.sql, seed_cmd.params),
-                  'mpk'     :  transaction.executeSql(mpk_cmd.sql, mpk_cmd.params),
-                  'hash'    :  transaction.executeSql(password_hash_cmd.sql, password_hash_cmd.params)
-                }
+                DB.db.transaction(function(transaction) {
 
-                $q.all(proms).then(function(res) {
-                  console.log('TERMINO DB TXS OK');
-                  $scope.hideLoading();
+                  var proms = {
+                    'account' :  transaction.executeSql(account_cmd.sql, account_cmd.params),
+                    'seed'    :  transaction.executeSql(seed_cmd.sql, seed_cmd.params),
+                    'mpk'     :  transaction.executeSql(mpk_cmd.sql, mpk_cmd.params),
+                    'salt'    :  transaction.executeSql(salt_cmd.sql, salt_cmd.params)
+                  }
 
-                  Wallet.load().then(function(){
-                    Wallet.unlock($scope.data.password).then(function(){
-                      
-                      Wallet.connectToBackend();
-                      console.log('Create account completed papa!!!!!');
-                      Wallet.refreshBalance();
+                  $q.all(proms).then(function(res) {
+                    console.log('TERMINO DB TXS OK');
+                    $scope.hideLoading();
 
-                      if($scope.isCreateInitMode()){
-                        window.plugins.toast.show( T.i('g.wallet_created'), 'long', 'bottom');
-                        $scope.goTo('app.account');
-                      }
-                      else{
-                        window.plugins.toast.show( T.i('g.wallet_recovered'), 'long', 'bottom');
-                        $scope.goTo('app.home');
-                      }
-                      
+                    Wallet.load().then(function(){
+                      Wallet.unlock($scope.data.password).then(function(){
+                        
+                        Wallet.connectToBackend();
+                        console.log('Create account completed papa!!!!!');
+                        Wallet.refreshBalance();
+
+                        if($scope.isCreateInitMode()){
+                          window.plugins.toast.show( T.i('g.wallet_created'), 'long', 'bottom');
+                          $scope.goTo('app.account');
+                        }
+                        else{
+                          window.plugins.toast.show( T.i('g.wallet_recovered'), 'long', 'bottom');
+                          $scope.goTo('app.home');
+                        }
+                        
+
+                      }, function(err){
+                        console.log('Wallet.unlock error ' + JSON.stringify(err));
+                        $scope.hideLoading();
+                      });
 
                     }, function(err){
-                      console.log('Wallet.unlock error ' + JSON.stringify(err));
+                      console.log('Wallet.load error ' + JSON.stringify(err));
                       $scope.hideLoading();
                     });
 
-                  }, function(err){
-                    console.log('Wallet.load error ' + JSON.stringify(err));
+                  }, function(err) {
+                    console.log('ERROR TERMINO DB TXS ' + JSON.stringify(err));
                     $scope.hideLoading();
                   });
 
+
                 }, function(err) {
-                  console.log('ERROR TERMINO DB TXS ' + JSON.stringify(err));
+                  console.log('EGRRA:' +JSON.stringify(err));
                   $scope.hideLoading();
                 });
 
-
-              }, function(err) {
-                console.log('EGRRA:' +JSON.stringify(err));
+              }, function(err){
+                console.log( ' -- encrypt error: ' +JSON.stringify(err));
                 $scope.hideLoading();
               });
-
             }, function(err){
-              console.log( ' -- encrypt error: ' +JSON.stringify(err));
+              console.log(' signup error :' +JSON.stringify(err));
               $scope.hideLoading();
             });
+
           }, function(err){
-            console.log(' signup error :' +JSON.stringify(err));
+            console.log(' getInfoIfRecovering error: '+JSON.stringify(err));
             $scope.hideLoading();
           });
 
         }, function(err){
-          console.log(' getInfoIfRecovering error: '+JSON.stringify(err));
+          console.log(' derivePassword error: '+JSON.stringify(err));
           $scope.hideLoading();
         });
-
+      
       }, function(err){
-        console.log(' derivePassword error: '+JSON.stringify(err));
+        console.log(JSON.stringify(err));
         $scope.hideLoading();
       });
-    
-    }, function(err){
+
+    }, function(err) {
       console.log(JSON.stringify(err));
       $scope.hideLoading();
     });
 
-    //prom.then(function(){
-      //$scope.hideLoading();
-      //Wallet.init();
-      //window.plugins.toast.show( T.i('g.wallet_created'), 'long', 'bottom');
-      //$scope.goTo('app.account');
-    //}, function(err){
-
-    //})
-    //$scope.goHome();
   }
 });
 

@@ -2,21 +2,13 @@ bitwallet_services
 .service('BitShares', function($translate, $q, $http, $rootScope, Setting, ENVIRONMENT) {
     var self = this;
 
-    self.hashMD5 = function(value){
-      if(!value || value.length==0)
-      {
-        return '';
-      }
-      return md5(value.toLowerCase());
-    }
-
-    self.derivePassword = function(password) {
+    self.derivePassword = function(password, salt) {
       if ( !password ) {
         var deferred = $q.defer();
         deferred.resolve({'key':'', 'key_hash':''});
         return deferred.promise;
       }
-      return self.pbkdf2(password, 'SALTEADO', 1000, 32);
+      return self.pbkdf2(password, salt, 1000, 32);
     }
 
     self.pbkdf2 = function(password, salt, c, dkLen){
@@ -34,6 +26,22 @@ bitwallet_services
         salt,
         c,
         dkLen
+      );
+    
+      return deferred.promise;
+    }
+
+    self.randomData = function(length){
+      var deferred = $q.defer();
+
+      window.plugins.BitsharesPlugin.randomData(
+        function(data){
+          deferred.resolve(data.random);
+        },
+        function(error){
+          deferred.reject(error);
+        },
+        length
       );
     
       return deferred.promise;

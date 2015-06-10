@@ -1,5 +1,10 @@
 {
   "g" : {
+    "ok"                            : "Ok",
+    "security"                      : "Security",
+    "ui_settings"                   : "UI settings",
+    "change_password"               : "Change password",
+    "set_password"                  : "Set password",
     "wallet_unlocked"               : "Wallet unlocked" ,
     "wallet_locked"                 : "Wallet locked" ,
     "global_items_label"            : "Global directory",
@@ -46,6 +51,7 @@
     "deposit_paragraph"   : "You can load your wallet by converting bitcoin into your preferred bitasset.<br/>Type the amount of <b>bit{{asset.symbol}}</b> you want to load and get a quote for each bitcoin, and vice versa.",  
     "deposit_title"       : "Deposit BITCOIN and get <b>bit{{asset.symbol}}</b>",
     "please_send_btc_to"  : "Please send <b>{{amount}}</b> BTC to <strong class=\"wrap_text\">{{addy}}</strong>",
+    "tap_copy"            : "Tap to copy",
     "tap_copy_bts_uri"    : "Tap to copy Bitshares payment URI",
     "tap_copy_btc_uri"    : "Tap to copy Bitcoin payment URI",
     "tap_launch_btc_wallet"   : "Tap to launch Bitcoin Wallet",
@@ -110,6 +116,8 @@
   },
 
   "err" : {
+    "bkp_wallet_locked"         : "Wallet is locked" ,
+    "bkp_wallet_locked_msg"     : "Please unlock wallet to backup seed." ,
     "retrieving_tx"             : "Oops... An error occurred while retrieveng Tx.",
     "unknown"                   : "Unknown Error - Check internet connection and try again later.",
     "wallet_locked_title"       : "Wallet lock error" ,
@@ -312,13 +320,26 @@
   },
   
   "settings": {
+    
+    "old_password"            : "Old password",
+    "new_password"            : "New password", 
+    "confirm_password"        : "Confirm password",
+    "changing_password"       : "Changing password",
+    "change_password_title"   : "Change password",
+    "change_password_subtitle": "Type old and new passwords", 
+    "set_password_subtitle"   : "Type new password", 
+    "password_change_ok"      : "Password change successfully", 
     "default_currency"        : "Default currency",
     "hide_balance"            : "Hide balance",
     "hide_balance_on_tap"     : "Hide balance on tap",
     "account_name"            : "Account name",
     "use_gravatar"            : "Use Gravatar",
     "gravatar_email"          : "Gravatar email",
-    "update_profile"          : "Update Profile"
+    "update_profile"          : "Update Profile",
+
+    "must_enter_old"          : "Please type old password",
+    "must_enter_both"         : "Please type both new and confirmation passwords",  
+    "dont_match"              : "New password and confirmation one do not match"
   },
   
   "register":{

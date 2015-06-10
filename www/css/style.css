@@ -551,10 +551,10 @@ img.i_centered {margin-left: auto;
     display: flex;
     font-size:14px;}
 .list.settings .item.item-toggle .toggle        { top: 20px;}
-.list.settings .toggle.toggle-green input:checked + .track {
+.list.ui_settings .toggle.toggle-green input:checked + .track {
   border-color: #93c91f;
   background-color: #93c91f;}
-.list.settings .item.item-select:after          { color:#93c91f;}
+.list.ui_settings .item.item-select:after          { color:#93c91f;}
 .list.settings .item.item-button-right > button {top:12px;}
 
 .main_transactions h2 , .main_transactions p {margin:0!important;}
@@ -982,9 +982,8 @@ a.w_145 {min-width:145px!important;}
 .seed_container {
   width:100%;
   margin:25px 0 25px 0;
-  /*padding:25px;*/
   font-weight: bold; 
-  /*font-size:18px;*/
+  overflow:hidden;
 }
 .seed_container p{font-size:18px;}
 .register .seed_container {margin:0px 0 25px 0!important;}
@@ -1258,3 +1257,12 @@ ion-spinner {stroke:#d3eb00!important;} /*93c91f*/
 .item.larger{
   height: auto!important;
   min-height: 100px;}
+
+.button.button-icon.mini:before{font-size:24px!important;}
+.ui_settings .item-divider{
+  font-weight: 300;
+  background-color: transparent!important;
+  color: #fff!important;
+  border: none!important;
+  margin-top: 25px!important;
+}

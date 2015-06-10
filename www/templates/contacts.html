@@ -1,6 +1,6 @@
 <ion-view class="dark" view-title="{{'menu.contacts'|translate}}">
     <ion-nav-buttons side="right">
-      <button ng-click="popover.show($event)" class="button button-icon icon ion-android-more-vertical base-color"></button>
+      <button ng-click="add()" class="button button-icon icon ion-android-person-add base-color"></button>
     </ion-nav-buttons>
     
     <ion-content class="has-header contacts base-color_bg padding" has-bouncing="false">
@@ -9,19 +9,6 @@
           <span class="display_table_cell vmiddle" style="text-align:center;">{{'addys.no_contacts' | translate}}</span>
         </div>
       </div> 
-
-      <!--div class="list balances contacts">
-          <div ng-repeat="contact in data.contacts" class="item base-color">
-            <div class="asset_data">
-              <strong>{{contact.name}}</strong>
-              <br/>
-              <span> 
-                {{contact.address}}
-              </span>
-            </div>  
-          </div>
-      </div -->
-      
       <div class="list">
         
           <a ng-repeat="contact in data.contacts" class="item base-color item-avatar" href="#">
@@ -36,26 +23,3 @@
       
     </ion-content>
   </ion-view>
-  
-  <script id="templates/contacts_popover.html" type="text/ng-template">
-    <ion-popover-view>
-      <ion-content>
-        <div class="list">
-          <a class="item" href="#" target="_blank">
-            Add new
-          </a>
-          <div class="item item-divider" style="border-width:0px;margin:0;height:2px;min-height:1px;background-color: #cecece!important;padding: 0;border: none;">
-          </div>
-          <a class="item" href="#" target="_blank">
-            Show local contacts
-          </a>
-          <a class="item" href="#" target="_blank">
-            Show global contacts
-          </a>
-          <a class="item" href="#" target="_blank">
-            Show all contacts
-          </a>
-        </div>
-      </ion-content>
-    </ion-popover-view>
-  </script>

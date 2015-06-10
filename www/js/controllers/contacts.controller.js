@@ -1,5 +1,5 @@
 bitwallet_controllers
-.controller('ContactsCtrl', function($scope, $state, Wallet, T, $ionicPopup, $ionicActionSheet, $rootScope, $ionicNavBarDelegate, $stateParams, $ionicPopover){
+.controller('ContactsCtrl', function($scope, $state, Wallet, T, $ionicPopup, $ionicActionSheet, $rootScope, $ionicNavBarDelegate, $stateParams){
   
   $scope.data = {contacts : [ {   name              : 'pepe',     
                                   pubkey_or_address : 'DVS54jEBqoWGYAc5uJFCPXv4BjAyuW9F67BZjiL9YKv9swrhBGRSS', 
@@ -12,24 +12,10 @@ bitwallet_controllers
                                   source            : 'local'}]};
   
   
-  $ionicPopover.fromTemplateUrl('templates/contacts_popover.html', {
-    scope: $scope
-  }).then(function(popover) {
-    $scope.popover = popover;
-  });
-
   
-
-  $scope.openPopover = function($event) {
-    document.body.classList.remove('platform-ios');
-    document.body.classList.remove('platform-android');
-    document.body.classList.add('platform-ionic');
-    $scope.popover.show($event);
-  };
-  $scope.closePopover = function() {
-    $scope.popover.hide();
-  };
-
+  $scope.add = function(){
+    console.log(' -- add contact');
+  }
 
   $scope.showActionSheet = function(addr){
     var fav_text = 'book.add_to_fav';

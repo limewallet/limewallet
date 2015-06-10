@@ -3,7 +3,7 @@ bitwallet_controllers
   
   $scope.data = { 
                   tx          : undefined, 
-                  tx_id       : undefined,
+                  x_id        : undefined,
                   asset       : undefined,
                   show_extra  : false };
                   

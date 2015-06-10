@@ -245,7 +245,7 @@ bitwallet_services
     self.UI_ALLOW_HIDE_BALANCE  = 'allow_hide_balance';
     self.SEED                   = 'seed'; // json 
     self.MPK                    = 'mpk'; // json 
-    self.PASSWORD_HASH          = 'password_hash';
+    self.SALT                   = 'salt';
 
     self.getMany = function(keys) {
 
@@ -372,6 +372,13 @@ bitwallet_services
     self.create = function(obj) {
       var cmd = self._create(obj);
       return DB.query(cmd.sql, cmd.params);
+    }
+
+    self._update = function(obj) {
+      var sql    = 'UPDATE account set account_mpk=?, privkey=?, skip32_key=?, memo_mpk=?, encrypted=? where id=?';
+      var params = [obj.account_mpk, obj.privkey, obj.skip32_key, obj.memo_mpk, obj.encrypted, obj.id];
+
+      return {sql:sql, params:params};
     }
 
     self._create = function(obj) {
