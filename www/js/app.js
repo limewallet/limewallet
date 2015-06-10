@@ -295,7 +295,7 @@ bitwallet_module
 
 })
 
-.run(function(Account, DB, $state, $ionicHistory, $ionicPopup,$rootScope, $ionicPlatform, Wallet, Scanner, $q, BitShares, ENVIRONMENT, $cordovaGlobalization, $translate, $state) {
+.run(function(Account, DB, $state, $ionicHistory, $ionicPopup, $ionicLoading, T, $rootScope, $ionicPlatform, Wallet, Scanner, $q, BitShares, ENVIRONMENT, $cordovaGlobalization, $translate, $state) {
 
   console.log(' app.js Init de .RUN !');
   
@@ -407,6 +407,28 @@ bitwallet_module
   $rootScope.isEqualSeed = function(seed){
     console.log ('are equal? -> ' + $rootScope.init.seed +'=='+seed);
     return $rootScope.init.seed == seed;
+  }
+  
+  $rootScope.showLoading = function(message){
+    $ionicLoading.show({
+      template     : '<ion-spinner icon="android"></ion-spinner>&nbsp;' + T.i(message),
+      animation    : 'fade-in',
+      showBackdrop : true,
+      maxWidth     : 200,
+      showDelay    : 10
+    }); 
+  }
+
+  $rootScope.hideLoading = function(){
+    $ionicLoading.hide();
+  }
+  
+  $rootScope.showAlert = function(title, message){
+    $ionicPopup.alert({
+       title    : T.i(title),
+       template : T.i(message),
+       okType   : 'button-assertive', 
+     });
   }
 
 
