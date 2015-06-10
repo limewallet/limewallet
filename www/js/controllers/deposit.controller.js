@@ -16,7 +16,7 @@ bitwallet_controllers
     input_timeout    : undefined,
     input_in_btc     : false,
     input_amount     : undefined,
-    input_curr       : 'USD',
+    input_curr       : Wallet.data.asset.symbol,
     other_amount     : undefined,
     other_curr       : 'BTC',
     step             : 1,
@@ -48,12 +48,12 @@ bitwallet_controllers
 
   }
 
-  if($stateParams.xtx_id) {
-    ExchangeTransaction.byXId($stateParams.xtx_id).then(function(xtx) {
-      $scope.buildQRCode(xtx);
-      $scope.data.step=2;
-    });
-  }
+  //if($stateParams.xtx_id) {
+    //ExchangeTransaction.byXId($stateParams.xtx_id).then(function(xtx) {
+      //$scope.buildQRCode(xtx);
+      //$scope.data.step=2;
+    //});
+  //}
   
   $scope.toggleInputCurrency = function(){
     
@@ -140,28 +140,6 @@ bitwallet_controllers
     //$scope.data.quoting_btc_error = undefined;
     //$scope.data.quoting_usd_error = undefined;
   //};
-  
-  $scope.showLoading = function(message){
-    $ionicLoading.show({
-      template     : '<ion-spinner icon="android"></ion-spinner> ' + T.i(message),
-      animation    : 'fade-in',
-      showBackdrop : true,
-      maxWidth     : 200,
-      showDelay    : 10
-    }); 
-  }
-
-  $scope.hideLoading = function(){
-    $ionicLoading.hide();
-  }
-  
-  $scope.showAlert = function(title, message){
-    $ionicPopup.alert({
-       title    : T.i(title),
-       template : T.i(message),
-       okType   : 'button-assertive', 
-     });
-  }
 
   $scope.next = function() {
 
