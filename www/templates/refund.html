@@ -1,6 +1,10 @@
 <ion-view title="{{'g.refund'|translate}}">
     
-    <ion-content class="has-header refund" has-bouncing="false" scroll="false" overflow-scroll="false">
+  <ion-nav-buttons side="right">
+    <button class="button button-icon icon lime_icon qr" ng-click="scanQR()"><i class="fa fa-qrcode"></i></button>
+  </ion-nav-buttons>
+
+  <ion-content class="has-header refund" has-bouncing="false" scroll="false" overflow-scroll="false">
         
       <div class="list">          
         <div class="item item-divider base-color larger bgcolor_white">

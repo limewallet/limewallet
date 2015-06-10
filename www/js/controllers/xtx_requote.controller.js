@@ -39,12 +39,12 @@ bitwallet_controllers
   }
 
   ExchangeTransaction.byXId($stateParams.xtx_id).then(function(xtx){
-    console.log('APENAS CARGO: ' + JSON.stringify(xtx));
+    console.log(' *** requote APENAS CARGO: ' + JSON.stringify(xtx));
     $scope.data.xtx = xtx;
     $scope.doRequote();
   }, function(err){
     $scope.goHome();
-    console.log('XtxRequoteCtrl db error:' + JSON.stringify(err));
+    console.log(' *** requote XtxRequoteCtrl db error:' + JSON.stringify(err));
     window.plugins.toast.show( T.i('err.invalid_xtx_id'), 'long', 'bottom');
   });
   

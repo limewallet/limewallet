@@ -1,5 +1,5 @@
 bitwallet_controllers
-.controller('RefundCtrl', function($stateParams, $translate, T, Account, Wallet, BitShares, $scope, $rootScope, $http, $timeout, $ionicActionSheet, $ionicPopup, $cordovaClipboard, $ionicLoading, $timeout, BitShares, $state, $ionicModal, $q, ExchangeTransaction, $ionicPopover) {
+.controller('RefundCtrl', function($stateParams, $translate, T, Account, Wallet, BitShares, $scope, Scanner, $http, $timeout, $ionicActionSheet, $ionicPopup, $cordovaClipboard, $ionicLoading, $timeout, BitShares, $state, $ionicModal, $q, ExchangeTransaction, $ionicPopover) {
 
 $scope.data = {   xtx           : undefined, 
                   xtx_id        : undefined,
@@ -13,12 +13,13 @@ $scope.data = {   xtx           : undefined,
   }
 
   $scope.data.xtx_id = $stateParams.xtx_id;
-  console.log(' --- RefundCtrl for: ' + $scope.data.xtx_id.toString());
+  console.log(' **************** RefundCtrl for: ' + $scope.data.xtx_id.toString());
   ExchangeTransaction.byXId($scope.data.xtx_id).then(function(res){
+      console.log(' **************** RefundCtrl xtx:' + JSON.stringify(res));
       $scope.data.xtx             = res;
   }, function(err){
     $scope.goHome();
-    console.log('RefundCtrl db error:' + JSON.stringify(err));
+    console.log(' **************** RefundCtrl db error:' + JSON.stringify(err));
     window.plugins.toast.show( T.i('err.invalid_xtx_id'), 'long', 'bottom');
   });
   
@@ -44,6 +45,23 @@ $scope.data = {   xtx           : undefined,
        template : T.i(message),
        okType   : 'button-assertive', 
      });
+  }
+
+  $scope.scanQR = function() {
+    Scanner.scan().then(function(result) {
+      if( result.cancelled ) return;
+
+      if(!result.is_btc)
+      {
+        window.plugins.toast.show(T.i('err.btc_addr_error'), 'long', 'bottom');
+        return;
+      }
+
+      $scope.data.refund_address = result.address;
+
+    }, function(error) {
+      window.plugins.toast.show(error, 'long', 'bottom')
+    });
   }
 
   $scope.doRefund = function(){
