@@ -1,44 +1,44 @@
 <ion-view class="dark" title="{{'menu.rate_changed'|translate}}">
     
     <ion-nav-buttons side="right">
-      <button ng-click="options()" class="button button-icon icon ion-android-more-vertical "></button>
+      <button ng-click="popover.show($event)" class="button button-icon icon ion-android-more-vertical "></button>
     </ion-nav-buttons>
 
     <ion-content class="has-header requote" has-bouncing="false">
       <div>
-        <div class="list balances">
+        <div class="list rate_changed">
           <div class="item item-divider base-color larger bgcolor_white">
             <span class="tx_desc wrap_text" ng-bind-html="'rate_changed.headline'|translate:{action:data.xtx.extra_data}"></span> 
           </div>
           <div class="item base-color">
-            <div class="asset_data">
+            <div class="">
               <strong>New rate</strong>
-              <span class="asset_balance"> 
-                <span class="balance_amount">{{data.quote.rate | currency : data.quote.book}}</span>&nbsp;{{data.quote.book | book2rate}}
+              <span class="float_right"> 
+                {{data.quote.rate | currency : data.quote.book}}&nbsp;{{data.quote.book | book2rate}}
               </span>
             </div>  
           </div>
           <div class="item base-color">
-            <div class="asset_data">
+            <div class="">
               <strong>You already transfered</strong>
-              <span class="asset_balance"> 
-                <span class="balance_amount">{{data.quote.cl_pay | currency : data.quote.cl_pay_curr}}</span>&nbsp;{{data.quote.cl_pay_curr}}
+              <span class="float_right"> 
+                {{data.quote.cl_pay | currency : data.quote.cl_pay_curr}}&nbsp;{{data.quote.cl_pay_curr}}
               </span>
             </div>  
           </div>
           <div class="item base-color">
-            <div class="asset_data">
+            <div class="">
               <strong>You will receive</strong>
-              <span class="asset_balance"> 
-                <span class="balance_amount">{{data.quote.cl_recv | currency : data.quote.cl_recv_curr}}</span>&nbsp;{{data.quote.cl_recv_curr}}
+              <span class="float_right"> 
+                {{data.quote.cl_recv | currency : data.quote.cl_recv_curr}}&nbsp;{{data.quote.cl_recv_curr}}
               </span>
             </div>  
           </div>
           <div class="item" style="color:#cecece;">
-            <div class="asset_data">
+            <div class="">
               <strong>Old rate</strong>
-              <span class="asset_balance"> 
-                <span class="balance_amount">{{data.xtx.rate | currency : data.xtx.book}}</span>&nbsp;{{data.xtx.book | book2rate}}
+              <span class="float_right"> 
+                {{data.xtx.rate | currency : data.xtx.book}}&nbsp;{{data.xtx.book | book2rate}}
               </span>
             </div>  
           </div>
@@ -49,38 +49,22 @@
         <button ng-click="xxxx()" class="button button-block button no-margin hide-on-keyboard-open button_taller dock_bottom button-energized  color_white">
           {{'rate_changed.accept_requote'|translate|uppercase}}
         </button>
-        <!-- 
-          {{'g.refund'|translate|uppercase}}
-          {{'g.requote'|translate|uppercase}}
-        -->
       </div>
     </ion-content>
 
-
-    <!-- ion-content class="has-header rate_changed energized_bgNOT" has-bouncing="false" scroll="false" overflow-scroll="false">
-        <ion-scroll zooming="false" direction="y" class="register_details">
-          <div class="energized_bg register_container">
-            <h4 class="register_color" ng-bind-html="'rate_changed.headline'|translate:{action:data.xtx.tx_type}"></h4>
-          </div>
-          <div id="quote_ttl" style="height:5px;width:100%;"></div>
-          <div class="row new_rate" ng-show="data.show_inverse_rate==false" ng-click="data.show_inverse_rate=!data.show_inverse_rate">
-            <div class="col-33">{{'rate_changed.instant_rate'|translate}}</div>
-            <div class="col-47 ta_right">{{data.rate|number:5}}</div>
-            <div class="col-20">&nbsp;{{wallet.asset.symbol}}/BTC</div>
-          </div>
-          <div class="row new_rate" ng-show="data.show_inverse_rate==true" ng-click="data.show_inverse_rate=!data.show_inverse_rate">
-            <div class="col-33">{{'rate_changed.instant_rate'|translate}}</div>
-            <div class="col-47 ta_right">{{data.inverse_rate|number:5}}</div>
-            <div class="col-20">&nbsp;BTC/{{wallet.asset.symbol}}</div>
-          </div>
-          <div class="row new_rate">
-            <div class="col-33">{{'rate_changed.you_deposited'|translate}}</div><div class="col-47 ta_right">{{data.amount_btc|number:5}}</div><div class="col-20">&nbsp;{{data.pay_curr}}</div>
-          </div>
-          <div class="row new_rate">
-            <div class="col-33">{{'rate_changed.you_receive'|translate}}</div><div class="col-47 ta_right">{{data.amount_asset|number:5}} </div><div class="col-20">&nbsp;{{data.recv_curr}}</div>
-          </div>
-        </ion-scroll>
-        
-    </ion-content -->
-
   </ion-view>
+
+<script id="templates/rate_changed_popover.html" type="text/ng-template">
+    <ion-popover-view style="height:110px;">
+      <ion-content>
+        <div class="list" >
+          <a class="item" ng-click="doRequote()">
+            {{'g.get_new_quote'|translate}}
+          </a>
+          <a class="item" ng-click="refund()">
+            {{'g.refund'|translate}}
+          </a>
+        </div>
+      </ion-content>
+    </ion-popover-view>
+  </script>

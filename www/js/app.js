@@ -370,6 +370,8 @@ bitwallet_module
         //                     , amount    : '69.3'
         //                     , type      : 'send' });
         //$state.go('app.import_priv', {private_key:'ESSSSSSSSSTA'});
+        //$state.go('app.xtx_requote', {xtx_id:18});
+        //$state.go('app.refund', {xtx_id:18});
         $rootScope.goTo('app.home');
         Wallet.refreshBalance();
       }, function(err) {

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="51px" height="51px" viewBox="0 0 51 51" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <!-- Generator: Sketch 3.2.2 (9983) - http://www.bohemiancoding.com/sketch -->
+    <title>ico-deposit</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="GUI-light" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <g id="Dashboard" sketch:type="MSArtboardGroup" transform="translate(-51.000000, -1029.000000)">
+            <g id="tx-group" sketch:type="MSLayerGroup" transform="translate(0.000000, 620.000000)">
+                <g id="Group" transform="translate(0.000000, 370.000000)" sketch:type="MSShapeGroup">
+                    <g id="Comment" transform="translate(0.000000, 0.650080)">
+                        <g id="ico-deposit" transform="translate(51.222222, 38.585366)">
+                            <ellipse id="Oval-5" fill="#4fbaed" cx="25.0220264" cy="25.0471698" rx="25.0220264" ry="25.0471698"></ellipse>
+                            <path d="M22.8107048,34.879 L25.0220264,37 L37.5330396,25 L25.0220264,13 L22.8107048,15.121 L31.5465198,23.5 L12.5110132,23.5 L12.5110132,26.5 L31.5465198,26.5 L22.8107048,34.879 Z" id="Imported-Layers-5" fill="#FFFFFF" transform="translate(25.022026, 25.000000) rotate(-270.000000) translate(-25.022026, -25.000000) "></path>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

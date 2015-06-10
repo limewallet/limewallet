@@ -1,16 +1,23 @@
 <ion-view title="{{'g.refund'|translate}}">
     
     <ion-content class="has-header refund" has-bouncing="false" scroll="false" overflow-scroll="false">
-        <ion-scroll zooming="false" direction="y" class="register_details margin-bottom-buttonNOT">
-          <div class="energized_bg register_container">
-            <h4 class="register_color" ng-bind-html="'refund.headline'|translate:{symbol:data.xtx.cl_pay_curr}"></h4>
+        
+      <div class="list">          
+        <div class="item item-divider base-color larger bgcolor_white">
+          <span class="tx_desc wrap_text" ng-bind-html="'refund.headline'|translate:{action:data.xtx.extra_data}"></span> 
+        </div>
+        <form novalidate name="sendForm" class="deposit_form send_form">
+          <div class="recipient_container recipient_container2">
+            <label class="item item-input pmd item-floating-label">
+              <span class="input-label pmd">{{'refund.address'|translate}}</span>
+              <input name="refundAddress" placeholder="{{'refund.address'|translate}}" ng-model="data.refund_address" class="big full_width pmd" />
+              <span style="clear:both;float:right;width:100%;" class="quote_error assertive" ng-show="data.address_error!==undefined">{{data.address_error}}</span>
+            </label>
+            <button ng-click="pasteBitcoinAddress()" class="button button-icon icon ion-clipboard">
+            </button>
           </div>
-          
-          <!-- div class="register_container energized_bg register_color">
-            <p ng-bind-html="'withdraw.headline2'|translate"></p>
-          </div -->
-          <div class="list settings" >
-            <div class="row" ng-cloak>
+        </form>   
+            <!--div class="row" ng-cloak>
               <div class="item-input-inset bitcoin_address">
                 <label class="item item-input item-floating-label" style="width:300px;">
                   <span class="input-label">{{'refund.address'|translate}}</span>
@@ -22,14 +29,13 @@
                 <div class="line-divider" style="clear:both;"></div>            
               </div>
               <span class="quote_error assertive" ng-show="data.address_error!==undefined">{{data.address_error}}</span>
-            </div>
-          </div>
-          
-        </ion-scroll>
-      
-        <button ng-click="doRefund()" class="button button-block button-energized no-margin hide-on-keyboard-open button_taller" style="position:absolute;bottom:0px;">
-          {{'g.refund'|translate|uppercase}}
-        </button>
+            </div -->
+        </div>
+        <div class="buttons_container hide-on-keyboard-open ">
+          <button ng-click="doRefund()" class="button button-block button-energized no-margin hide-on-keyboard-open button_taller" style="position:absolute;bottom:0px;">
+            {{'g.refund'|translate|uppercase}}
+          </button>
+        </div>
     </ion-content>
 
   </ion-view>

@@ -185,13 +185,13 @@ h2 .transactions .sent_ex, h2 .transactions .received_ex, h2 .transactions .self
 .transactions .withdraw .tx_address, .transactions .deposit .tx_address, .transactions .btc_pay .tx_address { display:none;}
 
 .tx_icon {  width: 24px ; left:15px!important;}
-.icon_receive   {background-image: url(../img/icons/ico-received.svg);}
+/*.icon_receive   {background-image: url(../img/icons/ico-received.svg);}
 .icon_send      {background-image: url(../img/icons/ico-sent.svg);}
 .icon_self      {background-image: url(../img/icons/ico-received.svg);}
 .icon_withdraw  {background-image: url(../img/icons/ico-withdraw.svg);}
 .icon_deposit   {background-image: url(../img/icons/ico-deposit.svg);}
 .icon_btc_pay   {background-image: url(../img/icons/ico-payments.svg);}
-
+*/
 .lime_icon           { background-size: 24px 24px !important; 
                        background-position:center center!important;
                        background-repeat: no-repeat!important;
@@ -278,14 +278,14 @@ NOTtextarea.wallet_input{width:100%;height:100%; box-sizing: border-box;-moz-box
 .big_placeholder.right::-webkit-input-placeholder { text-align:right; }
 /* mozilla solution */
 .big_placeholder.right:-moz-placeholder { text-align:right; }
-input.big::-webkit-input-placeholder{font-size: 24px!important;color:#eaeaea;}
-input.big:-moz-placeholder{font-size: 24px!important;color:#eaeaea;}
-input.big::-moz-placeholder {font-size: 24px!important;color:#eaeaea;}
-input.big:-ms-input-placeholder {font-size: 24px!important;color:#eaeaea;}
-textarea.big::-webkit-input-placeholder{font-size: 24px!important;color:#eaeaea;}
-textarea.big:-moz-placeholder{font-size: 24px!important;color:#eaeaea;}
-textarea.big::-moz-placeholder {font-size: 24px!important;color:#eaeaea;}
-textarea.big:-ms-input-placeholder {font-size: 24px!important;color:#eaeaea;}
+input.big::-webkit-input-placeholder{font-size: 16px!important;color:#eaeaea;padding-top:5px;}
+input.big:-moz-placeholder{font-size: 16px!important;color:#eaeaea;padding-top:5px;}
+input.big::-moz-placeholder {font-size: 16px!important;color:#eaeaea;padding-top:5px;}
+input.big:-ms-input-placeholder {font-size: 16px!important;color:#eaeaea;padding-top:5px;}
+textarea.big::-webkit-input-placeholder{font-size: 16px!important;color:#eaeaea;padding-top:5px;}
+textarea.big:-moz-placeholder{font-size: 16px!important;color:#eaeaea;padding-top:5px;}
+textarea.big::-moz-placeholder {font-size: 16px!important;color:#eaeaea;padding-top:5px;}
+textarea.big:-ms-input-placeholder {font-size: 16px!important;color:#eaeaea;padding-top:5px;}
 
 .input_amount{text-align:right;}
 .input_amount::-webkit-input-placeholder{text-align: left;}
@@ -667,39 +667,33 @@ img.i_centered {margin-left: auto;
 /******************/
 /* BALANCES */
 
-.list.balances{
+.list.balances, .list.rate_changed, .refund .list{
   margin-bottom:5px!important;
   /* box-shadow: 0 3px 7px 0 rgba(90, 187, 92, 1); */
   /* box-shadow: 0 3px 7px 0 rgba(0, 0, 0, 0.24); */
 }
 
-.list.balances .item{ 
+.refund .list .item, .list.rate_changed .item, .list.balances .item{ 
   height:78px; 
   padding-left: 28px;
   padding-right: 28px;
   font-size: 12px;}
+.refund .list .item, .list.rate_changed .item {border-width:0px;}
 .list.balances .item .asset_data{
-  /*margin-left: 72px;*/
   height: 56px;
   padding-top: 15px;
 }
-.padding_top_0, .deposits .list.balances .item .asset_data{padding-top: 0px!important;}
-.list.balances .item .asset_data{
-  /*color: #aaa;*/}
-.list.balances .item .asset_balance{
-  float: right;
-  /*font-size: 16px;*/
-  /*color: #aaa;*/
-}
+.list.rate_changed .item{ height: 56px;}
 
-.list.balances .item .asset_balance .balance_amount{
-  /*font-weight: bold;*/
-}
+.padding_top_0, .deposits .list.balances .item .asset_data{padding-top: 0px!important;}
+.list.balances .item .asset_balance{float: right;}
+.refund .list .item-divider,.list.rate_changed .item-divider {padding:28px;}
+
 .list.balances.contacts .item.base-color:first-child{border-top-left-radius:4px;border-top-right-radius:4px;}
 .list.balances .item.base-color:last-child{border-bottom-left-radius:4px;border-bottom-right-radius:4px;}
 .list.balances .item-divider {display:flex;align-items:center;border-top-left-radius:4px;border-top-right-radius:4px;}
 .list.balances .item-divider span {width:50%;}
-.list.balances .item-divider span.tx_desc {
+.refund .list .item-divider span.tx_desc, .list.balances .item-divider span.tx_desc, .list.rate_changed .item-divider span.tx_desc {
   width: 100%;
   font-size: 17px;
 }  
@@ -897,11 +891,6 @@ span.quote_error{padding-left: 16px;}
   flex: 0 0 47%;
   width: 47%; }
 
-.rate_changed .new_rate.row {display:table; margin-top:15px;}
-.rate_changed .new_rate .col-33 {display:table-cell!important;line-height:20px;vertical-align: text-bottom;padding-left:15px;}
-.rate_changed .new_rate .col-47 {display:table-cell!important;line-height:20px;font-size:20px;vertical-align: text-bottom}
-.rate_changed .new_rate .col-20 {display:table-cell!important;line-height:20px;vertical-align: text-bottom;}
-
 /* HACK css > Ionic, v1.0.0-rc.1 */
 
 .platform-android .action-sheet .action-sheet-title{
@@ -931,7 +920,7 @@ fieldset {
     padding-right:33px!important;
 }
 
-.welcome, .create_account, .requote{
+.welcome, .create_account, .requote, .refund{
     align-content: stretch;
     height:100%;
     -webkit-align-content: stretch; /* Safari 7.0+ */
@@ -1043,6 +1032,7 @@ input.pmd {font-size:16px!important;  color:#fff;border-top:none; border-left:no
 .seed_container span.error {font-size:14px;width:100%;text-align:right;}
 
 .send_form {padding-top: 10px;}
+.refund .send_form{padding-top: 0px;}
 .send_form .item-input-inset{padding:0px 8px 0px 0px!important}
 
 .send_form input{color:#546979!important;}                      
@@ -1107,7 +1097,7 @@ input.pmd {font-size:16px!important;  color:#fff;border-top:none; border-left:no
     align-content: strecht;
     height:100%;
     width:100%;}
-.send .buttons_container{ align-self:flex-end;width:100%;}
+.requote .buttons_container, .refund .buttons_container, .send .buttons_container{ align-self:flex-end;width:100%;}
 
 .import_priv h1 {padding-top:44px;padding-bottom:22px;}
 .import_priv_content, .receive_qr_content {width:100%;}
@@ -1205,7 +1195,6 @@ input.pmd {font-size:16px!important;  color:#fff;border-top:none; border-left:no
 .action_container .one_of_two_buttons .button.border_top_left {border-left:1px solid #b2b2b2!important;}
 .action_container .one_of_two_buttons .button{border-top:1px solid #b2b2b2!important;font-size:26px;}
 
-.balances .item {}
 .super_flex{
   display: -webkit-flex; /* Safari */
   -webkit-flex-flow: row wrap; /* Safari 6.1+ */

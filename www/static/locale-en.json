@@ -53,6 +53,7 @@
     "instant_quote"       : "Instant quote",
     "withdraw_address"    : "Withdraw address",
     "requote"             : "Requote",
+    "get_new_quote"       : "Get new quote",
     "refund"              : "Refund",
     "next"                : "Next",
     "later"               : "Later",
@@ -378,7 +379,7 @@
    },
 
   "rate_changed":{
-    "headline"              : "The exchange rate has changed. Please choose an option to continue processing the {{action}}",
+    "headline"              : "The exchange rate has changed. Please choose an option to continue processing the {{action}}.",
     "headline2"             : "You can withdraw bitcoins from your wallet by converting your preferred bitasset into bitcoins.<br/>Type the destination bitcoin address and the amount you want to withdraw.",
     "accept_requote"        : "Accept new rate",
     "instant_rate"          : "Instant rate",
@@ -393,7 +394,7 @@
   },      
 
   "refund":{
-    "headline"                : "Refund your {{symbol}}",
+    "headline"                : "Refund your {{symbol}}. Please input a valid bitcoin address to receive your funds.",
     "headline2"               : "You can withdraw bitcoins from your wallet by converting your preferred bitasset into bitcoins.<br/>Type the destination bitcoin address and the amount you want to withdraw.",
     "address"                 : "Refund address",
     "successful"              : "Successful refund! Please wait for notifications"

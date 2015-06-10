@@ -78,6 +78,7 @@ bitwallet_controllers
 
     if( BitShares.hasXtxRateChanged(tx) )
     {
+      console.log(' xxxxxxxxxxxx app.xtx_requote xtx_id:'+tx['id']);
       $state.go('app.xtx_requote', {xtx_id:tx['id']});
       return;
     }

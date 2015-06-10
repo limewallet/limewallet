@@ -1,5 +1,5 @@
 bitwallet_controllers
-.controller('RefundCtrl', function($stateParams, $translate, T, Address, Account, Wallet, BitShares, $scope, $rootScope, $http, $timeout, $ionicActionSheet, $ionicPopup, $cordovaClipboard, $ionicLoading, $timeout, BitShares, $state, $ionicModal, $q, ExchangeTransaction) {
+.controller('RefundCtrl', function($stateParams, $translate, T, Account, Wallet, BitShares, $scope, $rootScope, $http, $timeout, $ionicActionSheet, $ionicPopup, $cordovaClipboard, $ionicLoading, $timeout, BitShares, $state, $ionicModal, $q, ExchangeTransaction, $ionicPopover) {
 
 $scope.data = {   xtx           : undefined, 
                   xtx_id        : undefined,
@@ -11,8 +11,6 @@ $scope.data = {   xtx           : undefined,
     $scope.goHome();
     window.plugins.toast.show( T.i('err.invalid_xtx_id'), 'long', 'bottom');
   }
-
-  $scope.data.refund_address = Wallet.getMainAddress().address;
 
   $scope.data.xtx_id = $stateParams.xtx_id;
   console.log(' --- RefundCtrl for: ' + $scope.data.xtx_id.toString());
