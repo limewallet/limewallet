@@ -39,18 +39,7 @@ bitwallet_controllers
   }
   
   $scope.scanQR = function() {
-    
-    //var uri = 'bts:DVSNKLe7F5E7msNG5RnbdWZ7HDeHoxVrUMZo/transfer/amount/1.1/asset/USD';
-    //var uri = 'bitcoin://BweMQsJqRdmncwagPiYtANrNbApcRvEV77?amount=0.11';
-    //Scanner.parseUrl(uri).then(function(data){
-      //console.log(JSON.stringify(data));
-      //$scope.resolveURI(data);
-    //}, function(error){
-        //console.log(error);
-    //});
-    
-    //return;           
-    
+
     Scanner.scan().then(function(result) {
       console.log(JSON.stringify(result));
       $scope.resolveURI(result);
@@ -59,16 +48,6 @@ bitwallet_controllers
     });
   }
 
-  $scope.showLoading = function(text){
-    $ionicLoading.show({
-      template     : '<ion-spinner icon="android"></ion-spinner> ' + text,
-      animation    : 'fade-in',
-      showBackdrop : true,
-      maxWidth     : 200,
-      showDelay    : 10
-    }); 
-  }
-  
   // on-hold
   $scope.showComplainView = function(tx) {
 
@@ -147,20 +126,11 @@ bitwallet_controllers
 
   }
 
-  $scope.go = function ( path ) {
-    console.log('location:'+path);
-    $timeout(function () {
-      $location.path(path);
-    });
-  };
-
   $scope.doRefresh = function() {
     Wallet.refreshBalance()
     .then(function() {
-      $scope.$broadcast('scroll.refreshComplete');
       window.plugins.toast.show( T.i('g.updated'), 'short', 'bottom');
     }, function(err) {
-      $scope.$broadcast('scroll.refreshComplete');
       window.plugins.toast.show( T.i('g.unable_to_refresh'), 'long', 'bottom');
     });
   };
@@ -169,7 +139,7 @@ bitwallet_controllers
     //$scope.$broadcast('scroll.infiniteScrollComplete');
     return;
   };
-  
+
   $scope.$on('$stateChangeSuccess', function() {
     //return;
     $scope.loadMore();

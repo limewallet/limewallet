@@ -10,12 +10,14 @@ bitwallet_services
       salt              : undefined,
       assets            : {},
       asset             : {},
-      transactions      : [1],
-      ord_transactions  : {},
       account           : {},
       accounts          : [],
       ui                : { balance:  { hidden:false, allow_hide:false  } },
       initialized       : false
+    }
+
+    self.txs = {
+      transactions  : {},
     }
 
     self.timeout = {
@@ -25,7 +27,7 @@ bitwallet_services
     };
 
     self.switchAsset = function(asset_id) {
-      self.data.transactions = [],
+      self.txs.transactions = [],
       self.setDefaultAsset(asset_id);
       return self.refreshBalance();
     }
@@ -317,8 +319,6 @@ bitwallet_services
         salt              : undefined,
         assets            : {},
         asset             : {},
-        transactions      : [1],
-        ord_transactions  : {},
         account           : {},
         accounts          : [],
         ui                : { balance:  { hidden:false, allow_hide:false  } },
@@ -654,7 +654,7 @@ bitwallet_services
 
           Operation.all().then(function(ops) {
 
-            self.data.ord_transactions = self.orderTransactions(ops);
+            self.txs.transactions = self.orderTransactions(ops);
             self.lookupContacts(ops, to_search).then(function(n) {
               if( n > 0 ) {
                 self.loadBalance();
@@ -662,6 +662,8 @@ bitwallet_services
             }, function(err) {
               
             });
+
+            deferred.resolve();
 
           }, function(err) {
             console.log( 'loadBalance err0:' + JSON.stringify(err) );
@@ -778,32 +780,29 @@ bitwallet_services
               //Data is on the DB 
               self.loadBalance().then(function() {
                 deferred.resolve();
+                console.log('Luego del load balanccciio!!!');
+                self.emit(self.REFRESH_DONE);
               }, function(err) {
-                deferred.reject(err); 
+                self.refreshError(deferred, 'refreshError #0', err);
               });
 
             }, function(err) {
-              deferred.reject(err);
+              self.refreshError(deferred, 'refreshError #1', err);
             });
 
-
           }, function(err) {
-            console.log(JSON.stringify(err));
-            deferred.reject(err);
+            self.refreshError(deferred, 'refreshError #2', err);
           });
 
         }, function(err){
-          console.log('TOMA EL ERROR ' + JSON.stringify(err));
-          deferred.reject(err);
+          self.refreshError(deferred, 'refreshError #3', err);
         });
 
       }, function(err){
-        console.log(JSON.stringify(err));
-        deferred.reject(err);
+        self.refreshError(deferred, 'refreshError #4', err);
       });
 
       return deferred.promise;
-
     }
 
     return self;

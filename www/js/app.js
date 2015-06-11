@@ -372,9 +372,9 @@ bitwallet_module
         //$state.go('app.import_priv', {private_key:'ESSSSSSSSSTA'});
         //$state.go('app.xtx_requote', {xtx_id:18});
         //$state.go('app.refund', {xtx_id:18});
-        $state.go('app.settings');
+        //$state.go('app.settings');
         //$state.go('app.contacts');
-        //$rootScope.goTo('app.home');
+        $rootScope.goTo('app.home');
         Wallet.refreshBalance();
       }, function(err) {
 
@@ -437,7 +437,7 @@ bitwallet_module
   //*****************************
 
   $rootScope.global_init = function() {
-            
+
     $rootScope.wallet = Wallet.data;
     $rootScope.$watch(
         function(){ return Wallet.data },
@@ -445,6 +445,22 @@ bitwallet_module
         $rootScope.wallet = newVal;
       }
     );
+
+    $rootScope.txs = Wallet.txs;
+    $rootScope.$watch(
+        function(){ return Wallet.txs },
+      function(newVal) {
+        $rootScope.txs = newVal;
+      }
+    );
+            
+    //$rootScope.wallet = Wallet.txs;
+    //$rootScope.$watch(
+        //function(){ return Wallet.txs },
+      //function(newVal) {
+        //$rootScope.wallet = newVal;
+      //}
+    //);
 
     //*****************
     // INIT DEV/PROD ENVIRONMENT
@@ -539,7 +555,6 @@ bitwallet_module
     console.log('Wallet refresh error');
   });
   
-
   /// transfer/amount/'+$scope.amount+'/asset/
   //  window.open('bts:DVSNKLe7F5E7msNG5RnbdWZ7HDeHoxVrUMZo/transfer/amount/1.1/asset/USD', '_system', 'location=yes');
   //  bitcoin:BweMQsJqRdmncwagPiYtANrNbApcRvEV77?amount=1.1  | bitcoin://BweMQsJqRdmncwagPiYtANrNbApcRvEV77?amount=1.1

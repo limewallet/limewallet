@@ -28,24 +28,24 @@
         </div>
       </div>
     </div>
-    <div ng-show="!wallet.transactions.length" class="index_transactions">
+    <div ng-show="!txs.transactions.length" class="index_transactions">
       <div class="display_table no_transactions"> 
         <span ng-show="refresh_status==0" class="display_table_cell vmiddle" style="text-align:center;">{{'home.no_txs' | translate}}</span>
         <span ng-show="refresh_status==1" class="display_table_cell vmiddle" style="text-align:center;"><ion-spinner icon="android"></ion-spinner><!--i class="icon ion-looping"></i--></span>
         <span ng-show="refresh_status==-1" class="display_table_cell vmiddle" style="text-align:center;"><a ng-click="doRefresh()">{{'home.tap_to_refresh'|translate}}</a></i></span>
       </div>
     </div> 
-    <ion-scroll ng-hide="wallet.ord_transactions=={}" zooming="false" direction="y" class="index_transactions transactions">
+    <ion-scroll ng-hide="txs.transactions=={}" zooming="false" direction="y" class="index_transactions transactions">
       <ion-refresher
       pulling-text="{{'home.pull_to_refresh' | translate}}"
         on-refresh="doRefresh()">
       </ion-refresher>
       <ion-list style="height: 100%;" class="main_transactions">
         <div class="item item-divider _{{box}}"
-          ng-repeat-start="box in wallet.ord_transactions.orderedKeys ">
+          ng-repeat-start="box in txs.transactions.orderedKeys ">
           {{box|moment_separator}}
         </div>
-        <div ng-repeat="tx in wallet.ord_transactions[box]" class="item item-icon-left">
+        <div ng-repeat="tx in txs.transactions[box]" class="item item-icon-left">
           <a ng-click="showActionSheet(tx)">
             <div class="{{tx.ui_type}}">
               <div class="full_width" ng-class="{true:'pending', false:''}[tx.status=='WP']">

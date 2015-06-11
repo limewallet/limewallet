@@ -9,12 +9,11 @@ bitwallet_controllers.controller('SettingsCtrl', function($q, DB, BitShares, $sc
   };
   
   $scope.loadViewData = function() {
-    var wallet = $scope.wallet;
     // Load assets
-    Object.keys(wallet.assets).forEach(function(aid){
-      var asset = wallet.assets[aid];
+    Object.keys(Wallet.data.assets).forEach(function(aid){
+      var asset = Wallet.data.assets[aid];
       $scope.data.assets.push({value:asset.id, label:asset.symbol});
-      if(wallet.asset.id == asset.id)
+      if(Wallet.data.asset.id == asset.id)
         $scope.data.selected_asset = $scope.data.assets[$scope.data.assets.length-1];
     });
     console.log('$scope.data.hide_balance:'+$scope.data.hide_balance);
@@ -94,7 +93,7 @@ bitwallet_controllers.controller('SettingsCtrl', function($q, DB, BitShares, $sc
   
   $scope.copySeed = function(){
     $cordovaClipboard
-      .copy($scope.wallet.seed.plain_value)
+      .copy(Wallet.data.seed.plain_value)
       .then(function () {
         window.plugins.toast.show(T.i('g.seed_copied'), 'short', 'bottom');
       }, function () {
@@ -144,7 +143,7 @@ bitwallet_controllers.controller('SettingsCtrl', function($q, DB, BitShares, $sc
     Wallet.loadDB().then(function(data) {
 
       //No, No esta encryptado
-      if(!$scope.wallet.password_required) {
+      if(!Wallet.data.password_required) {
         deferred.resolve(data);
         return deferred.promise;
       }
@@ -195,7 +194,7 @@ bitwallet_controllers.controller('SettingsCtrl', function($q, DB, BitShares, $sc
     var sub_title = T.i('settings.set_password_subtitle');
     var template  = '<input type="password" placeholder="'+T.i('settings.new_password')+'" ng-model="data.password.new"><br/><input type="password" placeholder="'+T.i('settings.confirm_password')+'" ng-model="data.password.confirm">';
 
-    if ( $scope.wallet.password_required ) {
+    if ( Wallet.data.password_required ) {
       template  = '<input type="password" placeholder="'+T.i('settings.old_password')+'" ng-model="data.password.old"><br/>' + template;
       title     = T.i('g.change_password');
       sub_title = T.i('settings.change_password_subtitle');
@@ -213,13 +212,13 @@ bitwallet_controllers.controller('SettingsCtrl', function($q, DB, BitShares, $sc
             type: 'button-positive',
             onTap: function(e) {
 
-              if($scope.wallet.password_required && !$scope.data.password.old) {
+              if(Wallet.data.password_required && !$scope.data.password.old) {
                 $scope.showAlert(T.i('settings.change_password_title'), T.i('settings.must_enter_old'));
                 e.preventDefault();
                 return;
               }
 
-              if(!$scope.wallet.password_required && (!$scope.data.password.new || !$scope.data.password.confirm)) {
+              if(!Wallet.data.password_required && (!$scope.data.password.new || !$scope.data.password.confirm)) {
                 $scope.showAlert(T.i('settings.change_password_title'), T.i('settings.must_enter_both'));
                 e.preventDefault();
                 return;
@@ -243,6 +242,11 @@ bitwallet_controllers.controller('SettingsCtrl', function($q, DB, BitShares, $sc
     });
     
     myPopup.then(function(res) {
+
+      if(!res) {
+        console.log('Mmm ... seems to be null');
+        return;
+      }
 
       $scope.showLoading(T.i('settings.changing_password'));
 
@@ -273,8 +277,19 @@ bitwallet_controllers.controller('SettingsCtrl', function($q, DB, BitShares, $sc
           DB.queryMany(sql_cmd, sql_params).then(function() {
             
             Wallet.load().then(function() {
-              Wallet.unlock(res.new_).then(function() {
-                Wallet.loadBalance();
+
+              var prom;
+              if (!res.new_) {
+                prom = Wallet.unlock(res.new_);
+                console.log('Unlocking wallet...');
+              }
+              else {
+                prom = Wallet.lock();
+                console.log('Locking wallet...');
+              }
+              
+              prom.then(function() {
+                Wallet.refreshBalance();
                 $scope.hideLoading();
                 window.plugins.toast.show( T.i('settings.password_change_ok'), 'long', 'bottom');
               }, function(err) {

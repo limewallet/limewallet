@@ -95,11 +95,11 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
       window.plugins.toast.show( T.i('send.transaction_sent'), 'long', 'bottom')
       //HACK:
 
-      if (Wallet.data.ord_transactions['0_today'] === undefined) {
-        Wallet.data.ord_transactions['0_today'] = [];
+      if (Wallet.txs.transactions['0_today'] === undefined) {
+        Wallet.txs.transactions['0_today'] = [];
       }
       
-      Wallet.data.ord_transactions['0_today'].unshift({
+      Wallet.txs.transactions['0_today'].unshift({
         ui_type   : 'sent',
         address   : tx.destination.address_or_pubkey,
         name      : tx.destination.name,
@@ -110,14 +110,15 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
       });
 
 
-      $scope.goToSuccess({  txid        : undefined
-                            , xtxid      : undefined
-                            , address   : tx.destination.address_or_pubkey
-                            , name      : tx.destination.name
-                            , message   : tx.memo
-                            , amount    : tx.amount
-                            , type      : 'send' });
-      //$scope.goHome();
+      $scope.goToSuccess({
+        txid    : undefined,
+        xtxid   : undefined,
+        address : tx.destination.address_or_pubkey,
+        name    : tx.destination.name,
+        message : tx.memo,
+        amount  : tx.amount,
+        type    : 'send'
+      });
 
     }, function(err) {
        //$scope.formDone();
