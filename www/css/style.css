@@ -706,8 +706,6 @@ img.i_centered {margin-left: auto;
   font-size: 17px;
 }  
 
-.contacts .list .item p {color:#666!important; font-size:10px!important;}
-
 /******************************/
 /*DEPOSIT *********************/ 
 /******************************/
@@ -1056,9 +1054,8 @@ input.pmd {font-size:16px!important;  color:#fff;border-top:none; border-left:no
 
 .button_taller.dock_bottom.button-icon.ion-ios-paperplane {font-size: 40px!important;/*color:#fff !important;*/}
 
-.send_form input.pmd.input_amount{font-size:32px!important; line-height:32px!important;
-     padding-right: 70px!important; 
-    height:44px!important;}
+.send_form input.pmd.input_amount{font-size:32px!important; line-height:32px!important;height:44px!important;
+    padding-right: 70px; } /* HACK padding-right: 70px!important*/
 .send_form .item-floating-label input.pmd.input_amount {padding-left: 25px;text-align: left;}
 .send_form input.pmd:focus {border-bottom: 1px solid #8ec919 !important;}    
 .send_form textarea.pmd {font-size:14px!important;
@@ -1315,3 +1312,33 @@ ion-spinner {stroke:#d3eb00!important;} /*93c91f*/
 .action-sheet .button.destructive {
   color: #ff3b30!important;
 }
+.contact .list {}
+.contact .data_container { height:80px; display:flex; width:100%;align-items:center;}
+.contact .data_container canvas{ float:left; padding:10px;}
+.contact .data_container label{ float:left; width:270px; }
+.contact .input_text {padding-left:0px!important;padding-right:0px!important;
+  font-size:26px!important; line-height:26px!important;height:36px!important;}
+
+.contacts .list .item p {color:#666!important; font-size:10px!important;}
+/*.home .no_tx, */
+.contacts .no_contacts {
+  align-items: center;
+  display: flex;
+  width: 100%;
+  height: 100%;}
+.home .no_tx {height: auto; overflow:hidden;width:100%;padding-top: 150px;}  
+.home .no_tx .content, .contacts .no_contacts .content{text-align:center;width:100%;}
+.home .no_tx .content span, .home .no_tx .content i:before, 
+  .contacts .no_contacts .content span, .contacts .no_contacts .content i:before {color:#c1c1c1;}
+.home .no_tx .content i:before, .contacts .no_contacts .content i:before {font-size:36px;}
+/*
+.home .scroll{
+  display:flex;
+  height:100%;
+  width:100%;
+  flex-flow: row wrap;
+  align-content:stretch; 
+  -webkit-align-content: stretch;
+}
+.home .balance_container_full {align-self:flex-start; width:100%;}
+.home .transactions {align-self:stretch;width:100%;}*/

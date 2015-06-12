@@ -203,8 +203,18 @@ bitwallet_services
 .service('Contact', function(DB) {
     var self = this;
     
+    self.LOCAL  = 'local';
+    self.GLOBAL = 'global';
+
     self.all = function() {
         return DB.query('SELECT * FROM contact order by name')
+        .then(function(result){
+            return DB.fetchAll(result);
+        });
+    };
+
+    self.locals = function() {
+        return DB.query('SELECT c.*, IFNULL(c.pubkey, c.address) pubkey_or_address FROM contact c where c.source=? order by c.name', [self.LOCAL])
         .then(function(result){
             return DB.fetchAll(result);
         });
@@ -216,6 +226,24 @@ bitwallet_services
       var sql    = 'INSERT or REPLACE into contact (name, address, pubkey, public_data, source) values (?,?,?,?,?)';
       var params = [name, address, pubkey, public_data, source];
       return {sql:sql, params:params};
+    }
+
+    self.add = function(name, address, pubkey, public_data, source) {
+      var sql = self._add(name, address, pubkey, public_data, source);
+      return DB.query(sql.sql, sql.params);
+    }
+
+    self._update = function(id, name, address, pubkey, public_data, source) {
+      address = address || null;
+      pubkey  = pubkey  || null;
+      var sql    = 'UPDATE contact set name=?, address=?, pubkey=?, public_data=?, source=? WHERE id=?';
+      var params = [name, address, pubkey, public_data, source, id];
+      return {sql:sql, params:params};
+    }
+
+    self.update = function(id, name, address, pubkey, public_data, source) {
+      var sql = self._update(id, name, address, pubkey, public_data, source);
+      return DB.query(sql.sql, sql.params);
     }
 
     self.startsWith = function(prefix) {
@@ -230,7 +258,7 @@ bitwallet_services
     };
 
     self.deleteAll = function() {
-        return DB.query('DELETE from address_book');
+        return DB.query('DELETE from contact');
     };
 
     return self;

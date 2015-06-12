@@ -4,9 +4,11 @@
     </ion-nav-buttons>
     
     <ion-content class="has-header contacts base-color_bg padding" has-bouncing="false">
-      <div ng-show="!data.contacts || data.contacts.length<1" class="addys_empty">
-        <div class="display_table no_transactions"> 
-          <span class="display_table_cell vmiddle" style="text-align:center;">{{'contacts.none' | translate}}</span>
+      <div ng-show="!data.contacts || data.contacts.length<1" class="no_contacts">
+        <div class="content"> 
+          <i class="icon ion-android-people" ></i>
+          <br/>
+          <span>{{'contacts.none' | translate}}</span>
         </div>
       </div> 
       <div class="list">

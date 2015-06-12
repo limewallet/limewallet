@@ -117,6 +117,13 @@
   },
 
   "err" : {
+    "contact_saving"            : "An error occurred while storing contact",
+    "contact_saving_msg"        : "Please validate contact data and try again.",
+    "contact_validating"        : "An error occurred while validating contact data",
+    "contact_addr_pk_empty"     : "Address and pubkey are empty",
+    "contact_addr_pk_empty_msg" : "Please type at least a valid address or valid pubkey",
+    "contact_name_empty"        : "Name is empty",
+    "contact_name_empty_msg"    : "Please type a name",
     "bkp_wallet_locked"         : "Wallet is locked" ,
     "bkp_wallet_locked_msg"     : "Please unlock wallet to backup seed." ,
     "retrieving_tx"             : "Oops... An error occurred while retrieveng Tx.",
@@ -165,7 +172,9 @@
     "invalid_amount"      : "Invalid amount",
     "enter_valid_amount"  : "Please enter a valid amount",
     "invalid_address"     : "Invalid address",
-    "enter_valid_address" : "Please enter a valid address",
+    "enter_valid_address" : "Please type a valid address",
+    "invalid_pubkey"      : "Invalid public key",
+    "enter_valid_pubkey"  : "Please type a valid public key",
     "invalid_address_account" : "Invalid address or account name", 
     "invalid_password"    : "Invalid password",
     "enter_valid_password": "Please enter a valid password",
@@ -284,8 +293,14 @@
   },
 
   "contacts" : {
+    "save"            : "Save",
+    "pubkey_or_address" : "Pubkey or address",
+    "address"         : "Address",
+    "pubkey"          : "Pubkey",
     "options"         : "Contact options",
     "view_edit"       : "View/Edit",
+    "edit_contact"    : "Edit contact",
+    "add_contact"     : "Add contact",
     "edit"            : "Edit",
     "share"           : "Share",
     "new_address"     : "New Address",
@@ -297,7 +312,8 @@
     "no_addys"        : "No address added yet",
     "none"            : "No contacts added yet",
     "remove_title"    : "Remove from contacts",
-    "remove_sure"     : "Are you sure you want to remove <b>{{name}}</b> from contacts?"
+    "remove_sure"     : "Are you sure you want to remove <b>{{name}}</b> from contacts?",
+    "saved_ok"        : "Contact stored successfully!"
   },
   
   "import_priv" : {

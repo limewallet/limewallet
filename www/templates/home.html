@@ -4,7 +4,7 @@
     <button class="button button-icon icon lime_icon qr" ng-click="scanQR()"><i class="fa fa-qrcode"></i></button>
   </ion-nav-buttons>
   
-  <ion-content has-bouncing="false" class="has-header">
+  <ion-content has-bouncing="false" class="has-header home">
     <div class="balance_container_full" ng-cloak>
       
         <div class="balance hidden" ng-show="wallet.ui.balance.hidden" ng-click="toggleBalance()">
@@ -15,7 +15,6 @@
           <br/>
           <span class="balance_curr {{wallet.asset.symbol|lowercase}}">{{ 'home.balance' | translate:{asset:wallet.asset.symbol} }}</span>
         </div>
-      
       <div class="button-bar_container">
         <div class="button-bar tabbed">
 
@@ -29,13 +28,17 @@
         <button class="button button-icon icon ion-locked smaller" ng-click="alertUnlock()"></button>
       </div>
     </div>
-    <div ng-show="!txs.transactions.length" class="index_transactions">
-      <div class="display_table no_transactions"> 
-        <span ng-show="refresh_status==0" class="display_table_cell vmiddle" style="text-align:center;">{{'home.no_txs' | translate}}</span>
-        <span ng-show="refresh_status==1" class="display_table_cell vmiddle" style="text-align:center;"><ion-spinner icon="android"></ion-spinner><!--i class="icon ion-looping"></i--></span>
-        <span ng-show="refresh_status==-1" class="display_table_cell vmiddle" style="text-align:center;"><a ng-click="doRefresh()">{{'home.tap_to_refresh'|translate}}</a></i></span>
+
+    <div ng-show="txs.transactions.length==0" class="no_tx">
+      <div class="content"> 
+        <div ng-show="refresh_status==0">
+          <i class="icon ion-earth" ></i><br/><span>{{'home.no_txs' | translate}}</span>
+        </div>
+        <span ng-show="refresh_status==1"><ion-spinner icon="android"></ion-spinner></span>
+        <span ng-show="refresh_status==-1"><a ng-click="doRefresh()">{{'home.tap_to_refresh'|translate}}</a></i></span>
       </div>
     </div> 
+    
     <ion-scroll ng-hide="txs.transactions=={}" zooming="false" direction="y" class="index_transactions transactions">
       <ion-refresher
       pulling-text="{{'home.pull_to_refresh' | translate}}"
@@ -81,6 +84,7 @@
         on-infinite="loadMore()"
         distance="1%">
       </ion-infinite-scroll>
-    </ion-scroll>      
+    </ion-scroll> 
+
   </ion-content>
 </ion-view>

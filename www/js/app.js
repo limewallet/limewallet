@@ -94,7 +94,8 @@ bitwallet_module
     })
 
     .state('app.contact', {
-      url: "/contact/:id",
+      url: "/contact",
+      params: {contact : undefined},
       //cache: false,
       views: {
         'menuContent' :{
@@ -384,9 +385,10 @@ bitwallet_module
         //$state.go('app.xtx_requote', {xtx_id:18});
         //$state.go('app.refund', {xtx_id:18});
         //$state.go('app.settings');
-        $state.go('app.contacts');
+        //$state.go('app.contact', {contact:{name: 'pepe', pubkey:'LAPUBKEYNENE' , address: 'DVS54jEBqoWGYAc5uJFCPXv4BjAyuW9F67BZjiL9YKv9swrhBGRSS'}}, {inherit:true});
         //$state.go('app.account');
-        //$rootScope.goTo('app.home');
+        //$state.go('app.contacts');
+        $rootScope.goTo('app.home');
         Wallet.refreshBalance();
       }, function(err) {
 
@@ -529,6 +531,9 @@ bitwallet_module
 
   $rootScope.refresh_status = 0;
 
+  $rootScope.goBack = function(){
+    $ionicHistory.backView();
+  }
   //TODO: hacerlo bien
   $rootScope.goHome = function() {
     $ionicHistory.clearHistory();

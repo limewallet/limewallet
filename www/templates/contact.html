@@ -1,0 +1,33 @@
+  <ion-view class="dark" view-title="{{data.title}}">
+  
+    <ion-content class="has-header send contact">
+      
+      <form novalidate name="sendForm" class="send_form">
+        <div class="list">
+          <div class="data_container">
+            <canvas id="menu_jdenticon_canvas" width="60" height="60" data-jdenticon-hash="{{data.contact.avatar_hash}}"></canvas>
+            <label class="item item-input pmd item-floating-label">
+              <span class="input-label pmd">{{'g.name'|translate}}</span>
+              <input required type="text" placeholder="{{'g.name'|translate}}" ng-model="data.contact.name" class="input_text big pmd">
+            </label>
+          </div>
+
+          <label class="item item-input pmd item-floating-label">
+            <span class="input-label pmd">{{'contacts.pubkey'|translate}}</span>
+            <input required type="text" placeholder="{{'contacts.pubkey'|translate}}" ng-model="data.contact.pubkey" class="input_text big pmd">
+          </label>
+
+          <label class="item item-input pmd item-floating-label">
+            <span class="input-label pmd">{{'contacts.address'|translate}}</span>
+            <input required type="text" placeholder="{{'contacts.address'|translate}}" ng-model="data.contact.address" class="input_text big pmd">
+          </label>
+
+        </div>
+      </form>
+      
+      <fieldset ng-disabled="data.from_in_progress" class="buttons_container hide-on-keyboard-open"> 
+        <button ng-click="saveOrUpdate()" class="button button-block button-energized no-margin button_taller"> {{'contacts.save'|translate|uppercase}} 
+        </button>
+      </fieldset> 
+    </ion-content>
+  </ion-view>
