@@ -92,6 +92,17 @@ bitwallet_module
         }
       }
     })
+
+    .state('app.contact', {
+      url: "/contact/:id",
+      //cache: false,
+      views: {
+        'menuContent' :{
+          templateUrl: "templates/contact.html",
+          controller: 'ContactCtrl'
+        }
+      }
+    })
     
     .state('app.receive', {
       url: "/receive",
@@ -372,9 +383,9 @@ bitwallet_module
         //$state.go('app.xtx_requote', {xtx_id:18});
         //$state.go('app.refund', {xtx_id:18});
         //$state.go('app.settings');
-        //$state.go('app.contacts');
+        $state.go('app.contacts');
         //$state.go('app.account');
-        $rootScope.goTo('app.home');
+        //$rootScope.goTo('app.home');
         Wallet.refreshBalance();
       }, function(err) {
 

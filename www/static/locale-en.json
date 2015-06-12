@@ -286,6 +286,7 @@
   "contacts" : {
     "options"         : "Contact options",
     "view_edit"       : "View/Edit",
+    "edit"            : "Edit",
     "share"           : "Share",
     "new_address"     : "New Address",
     "are_you_sure"    : "Are you sure you want to add a new address to your account?",

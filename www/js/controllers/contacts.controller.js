@@ -24,15 +24,15 @@ bitwallet_controllers
 // share
   var hideSheet = $ionicActionSheet.show({
      buttons: [
-       { text: '<b>'+T.i('contacts.view_edit')+'</b>' },
+       { text: '<b>'+T.i('contacts.edit')+'</b>' },
        { text: T.i('contacts.share')},
        { text: '<span class="assertive">'+T.i('g.remove') + '</span>'}],
      //destructiveText: T.i('g.remove'),
      cancelText: T.i('g.cancel'),
      titleText: T.i('contacts.options'),
-     cancel: function() {
-          console.log(' ** CONTACTS ** -> cancel action');
-        },
+     // cancel: function() {
+     //      console.log(' ** CONTACTS ** -> cancel action');
+     //    },
      buttonClicked: function(index) {
       // View Edit
       if(index==0)
