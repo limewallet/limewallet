@@ -26,59 +26,86 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
   }
 
   $scope.transaction = {
-    amount      : 0,
+    amount      : undefined,
     destination : {},
-    memo        : ''
+    memo        : undefined
   }
 
-  if (!angular.isUndefined($stateParams.amount))
-    $scope.transaction.amount = $stateParams.amount;
-  
-  if (!angular.isUndefined($stateParams.destination))
-    $scope.transaction.destination = $stateParams.destination;
+  $scope.applyScan = function(scan_data) {
 
-  if (!angular.isUndefined($stateParams.memo))
-    $scope.transaction.memo = $stateParams.memo;
+    $scope.transaction.amount = scan_data.amount ? Number(scan_data.amount) : undefined;
+    $scope.transaction.memo   = scan_data.memo;
+
+    if ( scan_data.pubkey || scan_data.address ) {
+      $scope.transaction.destination = {
+        address_or_pubkey : scan_data.pubkey || scan_data.address,
+        name              : scan_data.name   || scan_data.pubkey || scan_data.address,
+        is_pubkey         : !!scan_data.pubkey
+      }
+      return;
+    }
+    
+    if ( scan_data.name && !scan_data.pubkey ) {
+      $scope.showLoading('looking up contact');
+      BitShares.getAccount(scan_data.name).then(function(account) {
+        $scope.hideLoading();
+        if(!account || !account[scan_data.name]) {
+          window.plugins.toast.show('Unable to get contact info', 'long', 'bottom');
+          return;
+        }
+
+        $scope.transaction.destination = {
+          address_or_pubkey : account[scan_data.name].owner_key,
+          name              : scan_data.name,
+          is_pubkey         : true
+        }
+
+        console.log(JSON.stringify(account));
+      }, function(err) {
+        $scope.hideLoading();
+        window.plugins.toast.show('Unable to get contact info', 'long', 'bottom');
+      });
+    }
+  }
+
+  //console.log('SCANDATA -> ' + JSON.stringify($stateParams.scan_data));
+  var scan_data = $stateParams.scan_data;
+  if(scan_data) {
+    $scope.applyScan(scan_data);
+  }
 
   $scope.clearDestination = function(){
     $scope.transaction.destination = {};
   }
-  
+
   $scope.scanQR = function() {
+    console.log('scan en send...');
     Scanner.scan().then(function(result) {
-      if( result.cancelled ) return;
+      
+      if(!result || result.cancelled)
+        return;
 
-        //Pubkey scanned
-        if(result.pubkey !== undefined) {
-          //bitcoin.bts.pub_to_address(bitcoin.bts.decode_pubkey(result.pubkey))
-          BitShares.btsPubToAddress(result.pubkey).then(function(addy){
-            $scope.transaction.address = addy;
-            console.log($scope.transaction.address);
-          })
-          return;
-        }
-        
-        $scope.transaction.address = result.address;
-        if(result.amount !== undefined)
-        {
-          //HACK: 
-          $scope.transaction.amount = result.amount;
-          sendForm.transactionAmount.value = result.amount;
-        }
-        
-        if(result.asset_id !== undefined && result.asset_id != $scope.wallet.asset.symbol && !result.is_btc)
-        {
-          window.plugins.toast.show(T.i('err.invalid_asset'), 'long', 'bottom');
-          return;
-        }
+      // SEND BTS
+      if(result.type == 'bts_request' || 
+         result.type == 'bts_address' || 
+         result.type == 'bts_pubkey'  || 
+         result.type == 'bts_contact') {
 
-        if(result.is_btc)
-        {
-
+        //TODO: check bitAsset if request
+        if( result.asset && result.asset != Wallet.data.asset.name ) {
+          window.plugins.toast.show('Switch your asset first', 'long', 'bottom')
+        } else {
+          $scope.applyScan(result);
         }
+      }
+
     }, function(error) {
       window.plugins.toast.show(error, 'long', 'bottom')
     });
+  }
+  
+  $scope.scanQR = function() {
+
   }
   
   $scope.doSend = function(tx) {

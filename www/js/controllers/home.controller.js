@@ -49,10 +49,33 @@ bitwallet_controllers
   }
   
   $scope.scanQR = function() {
-
     Scanner.scan().then(function(result) {
-      console.log(JSON.stringify(result));
-      $scope.resolveURI(result);
+      
+      //console.log('SCAN en home (' + result.type + ') => ' + JSON.stringify(result));
+
+      if(!result || result.cancelled)
+        return;
+
+      // PRIVKEY
+      // TODO:
+      
+      // SEND BTC
+      // TODO:
+
+      // SEND BTS
+      if(result.type == 'bts_request' || 
+         result.type == 'bts_address' || 
+         result.type == 'bts_pubkey'  || 
+         result.type == 'bts_contact') {
+
+        //TODO: check bitAsset if request
+        if( result.asset && result.asset != Wallet.data.asset.name ) {
+          window.plugins.toast.show('Switch your asset first', 'long', 'bottom')
+        } else {
+          $state.go('app.send', {scan_data:result}, {inherit:true});
+        }
+      }
+
     }, function(error) {
       window.plugins.toast.show(error, 'long', 'bottom')
     });
