@@ -28,14 +28,12 @@ bitwallet_controllers
 
   
   
-  $scope.toggleBalance = function(){
-    if($scope.wallet.ui.balance.allow_hide)
-    {
-      $scope.wallet.ui.balance.hidden = !$scope.wallet.ui.balance.hidden;
+  $scope.toggleBalance = function() {
+
+    if(!$scope.wallet.ui.balance.allow_hide)
       return;
-    }
-    if($scope.wallet.ui.balance.hidden)
-      $scope.wallet.ui.balance.hidden = false;
+
+    $scope.wallet.ui.balance.hidden = !$scope.wallet.ui.balance.hidden;
   }
   
   $scope.scanQR = function() {

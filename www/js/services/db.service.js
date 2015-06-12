@@ -242,7 +242,6 @@ bitwallet_services
 
     self.DEFAULT_ASSET          = 'default_asset';
     self.UI_HIDE_BALANCE        = 'hide_balance';
-    self.UI_ALLOW_HIDE_BALANCE  = 'allow_hide_balance';
     self.SEED                   = 'seed'; // json 
     self.MPK                    = 'mpk'; // json 
     self.SALT                   = 'salt';

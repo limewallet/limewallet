@@ -4,7 +4,6 @@ bitwallet_controllers.controller('SettingsCtrl', function($q, DB, BitShares, $sc
     assets : [],
     selected_asset    : {},
     hide_balance      : false,
-    addy              : '',
     password          : {old:'', new:'', confirm:''} 
   };
   
@@ -16,55 +15,31 @@ bitwallet_controllers.controller('SettingsCtrl', function($q, DB, BitShares, $sc
       if(Wallet.data.asset.id == asset.id)
         $scope.data.selected_asset = $scope.data.assets[$scope.data.assets.length-1];
     });
-    console.log('$scope.data.hide_balance:'+$scope.data.hide_balance);
+
+    $scope.data.hide_balance = Wallet.data.ui.balance.allow_hide;
   }
 
-  // On asset change reload wallet asset.
-  $scope.assetChanged = function(){
-    Wallet.switchAsset($scope.data.selected_asset.value)
-    .then(function() {
-      window.plugins.toast.show( T.i('g.updated'), 'short', 'bottom');
-    }, function(err) {
-      window.plugins.toast.show( T.i('g.unable_to_refresh'), 'long', 'bottom');
-    });
-  }
-  
-  var balance_timeout = undefined;
-  $scope.$watch('data.hide_balance', function(newValue, oldValue, scope) {
-    if(newValue===oldValue)
+  $scope.$watch('data.selected_asset', function(newValue, oldValue, scope) {
+    if(!$scope || newValue===oldValue)
       return;
-    if($scope)
-    {
-      if(balance_timeout)
-      {
-        $timeout.cancel(balance_timeout);
-        balance_timeout = undefined;
-      }
-      balance_timeout = $timeout(function () {
-        Wallet.setUIHideBalance($scope.data.hide_balance);
-      }, 500);
-      console.log('Hide balance seteado: [$scope.data.hide_balance:'+$scope.data.hide_balance+']' );
-      return;
-    }
+
+    Setting.set(Setting.DEFAULT_ASSET, newValue.value);
+    Wallet.switchAsset(newValue.value);
   });
   
-  $scope.copyAddy = function(){
-    $cordovaClipboard
-      .copy($scope.data.addy)
-      .then(function () {
-        //success
-        window.plugins.toast.show(T.i('g.address_copy_ok'), 'long', 'bottom');
-      }, function () {
-        //error
-        window.plugins.toast.show(T.i('err.unable_to_copy_addy'), 'long', 'bottom');
-      });    
-  }
+  $scope.$watch('data.hide_balance', function(newValue, oldValue, scope) {
+    if(!$scope || newValue===oldValue)
+      return;
 
+    Setting.set(Setting.UI_HIDE_BALANCE, newValue)
+    Wallet.setAllowHideBalance(newValue);
+  });
+  
   $scope.loadViewData();
   
-  $scope.backupWallet = function(){
-    if(Wallet.isLocked())
-    {
+  $scope.backupWallet = function() {
+
+    if(Wallet.isLocked()) {
       $scope.showAlert('err.bkp_wallet_locked', 'err.bkp_wallet_locked_msg');      
       return;
     }
@@ -106,6 +81,10 @@ bitwallet_controllers.controller('SettingsCtrl', function($q, DB, BitShares, $sc
     var deferred = $q.defer();
 
     if(!new_password) {
+
+      console.log('COMO NO TIENE PASS va de UNA');
+      console.log('--> ' + JSON.stringify(data));
+
       deferred.resolve(data);
       return deferred.promise;
     }
@@ -154,6 +133,9 @@ bitwallet_controllers.controller('SettingsCtrl', function($q, DB, BitShares, $sc
         BitShares.derivePassword(current_password, salt.value).then(function(dpass) {
 
           Wallet.unlockData(data, dpass.key).then(function() {
+
+            data.seed.value = data.seed.plain_value;
+            data.mpk.value  = data.mpk.plain_value;
 
             for(var i=0; i<data.accounts.length;i++){
               data.accounts[i].memo_mpk    = data.accounts[i].plain_memo_mpk;
@@ -278,24 +260,14 @@ bitwallet_controllers.controller('SettingsCtrl', function($q, DB, BitShares, $sc
             
             Wallet.load().then(function() {
 
-              var prom;
-              if (!res.new_) {
-                prom = Wallet.unlock(res.new_);
-                console.log('Unlocking wallet...');
-              }
-              else {
+              if (res.new_) {
                 prom = Wallet.lock();
-                console.log('Locking wallet...');
               }
-              
-              prom.then(function() {
-                Wallet.refreshBalance();
-                $scope.hideLoading();
-                window.plugins.toast.show( T.i('settings.password_change_ok'), 'long', 'bottom');
-              }, function(err) {
-                console.log('ERROR TERMINO DB TXS ' + JSON.stringify(err));
-                $scope.hideLoading();
-              });
+
+              Wallet.refreshBalance();
+              $scope.hideLoading();
+              window.plugins.toast.show( T.i('settings.password_change_ok'), 'long', 'bottom');
+
             }, function(err) {
               console.log('ERROR TERMINO DB TXS ' + JSON.stringify(err));
               $scope.hideLoading();
@@ -309,12 +281,13 @@ bitwallet_controllers.controller('SettingsCtrl', function($q, DB, BitShares, $sc
 
         }, function(err) {
           console.log('myPopup #0: ' + JSON.stringify(err));
+          $scope.hideLoading();
           //TODO: alert?
         });
 
-
       }, function(err) {
         console.log('myPopup #0: ' + JSON.stringify(err));
+        $scope.hideLoading();
         //TODO: alert?
       });
 

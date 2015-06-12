@@ -34,17 +34,15 @@ bitwallet_services
 
     self.setDefaultAsset = function(asset_id) {
       self.data.asset = self.data.assets[asset_id];
-      Setting.set(Setting.DEFAULT_ASSET, asset_id);
     }
 
     self.setHideBalance = function(hide_balance) {
       self.data.ui.balance.hidden = hide_balance;
-      Setting.set(Setting.UI_, allow_hide);
     }
     
     self.setAllowHideBalance = function(allow_hide) {
       self.data.ui.balance.allow_hide = allow_hide;
-      Setting.set(Setting.UI_ALLOW_HIDE_BALANCE, allow_hide);
+      self.setHideBalance(allow_hide);
     }
     
     self.ADDRESS_BOOK_CHANGE = 'w-address-book-changed';
@@ -336,8 +334,7 @@ bitwallet_services
       //Load Settings & Accounts
       var keys = {}; 
       keys[Setting.DEFAULT_ASSET]         = ENVIRONMENT.default_asset;
-      keys[Setting.UI_HIDE_BALANCE]       = false;
-      keys[Setting.UI_ALLOW_HIDE_BALANCE] = false;
+      keys[Setting.UI_HIDE_BALANCE]       = 'false';
       keys[Setting.SEED]                  = '';
       keys[Setting.MPK]                   = '';
       keys[Setting.SALT]                  = '';
@@ -391,8 +388,8 @@ bitwallet_services
         console.log(JSON.stringify(ptr_data.account));
 
         ptr_data.asset                 = ptr_data.assets[res.setting.default_asset];
-        ptr_data.ui.balance.allow_hide = res.setting.allow_hide_balance;
-        ptr_data.ui.balance.hidden     = res.setting.hide_balance;
+        ptr_data.ui.balance.allow_hide = (res.setting.hide_balance == 'true');
+        ptr_data.ui.balance.hidden     = (res.setting.hide_balance == 'true');
         ptr_data.salt                  = res.setting.salt;
 
         ptr_data.seed                  = JSON.parse(res.setting.seed); 
@@ -581,7 +578,7 @@ bitwallet_services
       return deferred.promise;
     }
 
-    self.loadBalance = function() {
+    self.loadBalance = function(auto_call) {
       var deferred = $q.defer();
 
       //HACK:
@@ -656,8 +653,8 @@ bitwallet_services
 
             self.txs.transactions = self.orderTransactions(ops);
             self.lookupContacts(ops, to_search).then(function(n) {
-              if( n > 0 ) {
-                self.loadBalance();
+              if( n > 0 && !auto_call) {
+                self.loadBalance(true);
               }  
             }, function(err) {
               
