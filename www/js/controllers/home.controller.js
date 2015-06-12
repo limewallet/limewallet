@@ -26,7 +26,19 @@ bitwallet_controllers
   //Wallet.refreshBalance(false);
 
 
-  
+  $scope.alertUnlock = function(){
+    // if never shown (settings)
+    var alertPopup = $ionicPopup.alert({
+      title:    T.i('home.wallet_is_locked'),
+      template: T.i('home.wallet_is_locked_content'),
+      subTitle: '',
+      okText: T.i('g.got_it'), 
+      okType: 'button-positive'
+     });
+     alertPopup.then(function(res) {
+       // save settings not to show anymore.
+     });
+  }
   
   $scope.toggleBalance = function() {
 

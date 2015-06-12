@@ -1,5 +1,6 @@
 {
   "g" : {
+    "got_it"                        : "Got it!",
     "ok"                            : "Ok",
     "security"                      : "Security",
     "ui_settings"                   : "UI settings",
@@ -194,6 +195,8 @@
   },
 
   "home" : {
+    "wallet_is_locked"          : "Wallet is locked",
+    "wallet_is_locked_content"  : "In order to send and withdraw money and be able to read transfers notes you must unlock the wallet from menu screen.",
     "0_today"             : "Today",
     "1_this_week"         : "This week",
     "2_this_month"        : "This month",
@@ -222,7 +225,6 @@
     "unregistered"   : "unregistered",
     "settings"       : "Settings",
     "home"           : "Home",
-    "address_book"   : "Address Book",
     "backup_wallet"  : "Backup Wallet",
     "restore_wallet" : "Restore Wallet",
     "account"        : "Account",
@@ -250,7 +252,6 @@
     "signing_transaction"    : "Signing Transaction",
     "sending_transaction"    : "Sending Transaction",
     "transaction_sent"       : "Transaction Sent",
-    "address_book"           : "Address Book",
     "searching_account"      : "Searching account...",
     "pay_in_bitcoins"        : "Pay in bitcoins",
     "dest_address"           : "Destination address",
@@ -282,7 +283,10 @@
     "bitcoin_info"        : "Bitcoin info"
   },
 
-  "addys" : {
+  "contacts" : {
+    "options"         : "Contact options",
+    "view_edit"       : "View/Edit",
+    "share"           : "Share",
     "new_address"     : "New Address",
     "are_you_sure"    : "Are you sure you want to add a new address to your account?",
     "set_as_default"  : "Set as default",
@@ -290,14 +294,9 @@
     "copy_address"    : "Copy Address",
     "copy_public_key" : "Copy Public Key",
     "no_addys"        : "No address added yet",
-    "no_contacts"     : "No contacts added yet"
-  },
-
-  "book" : {
-    "add_to_fav"        : "Add to favorites",
-    "remove_from_fav"   : "Remove from favorites",
-    "remove_from_ab"    : "Remove from address book",
-    "remove_sure"       : "Are you sure you want to remove <b>{{name}}</b> from the address book?"
+    "none"            : "No contacts added yet",
+    "remove_title"    : "Remove from contacts",
+    "remove_sure"     : "Are you sure you want to remove <b>{{name}}</b> from contacts?"
   },
   
   "import_priv" : {
@@ -350,7 +349,7 @@
     "account_registered"      : "Account registered successfully!",
     "already_registered"      : "Account already registered",
     "account_name_saved"      : "Account name stored successfully!",
-    "type_account_name"       : "Please type a name for your account",
+    "type_account_name"       : "Account name",
     "valid_name_chars"        : "Name must contain lowercase alphanumeric characters and dashes, must start with a letter and cannot end with a dash."
   },
   

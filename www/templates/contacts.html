@@ -1,17 +1,17 @@
 <ion-view class="dark" view-title="{{'menu.contacts'|translate}}">
     <ion-nav-buttons side="right">
-      <button ng-click="add()" class="button button-icon icon ion-android-person-add base-color"></button>
+      <button ng-click="addNew()" class="button button-icon icon ion-android-person-add base-color icon_smaller"></button>
     </ion-nav-buttons>
     
     <ion-content class="has-header contacts base-color_bg padding" has-bouncing="false">
       <div ng-show="!data.contacts || data.contacts.length<1" class="addys_empty">
         <div class="display_table no_transactions"> 
-          <span class="display_table_cell vmiddle" style="text-align:center;">{{'addys.no_contacts' | translate}}</span>
+          <span class="display_table_cell vmiddle" style="text-align:center;">{{'contacts.none' | translate}}</span>
         </div>
       </div> 
       <div class="list">
         
-          <a ng-repeat="contact in data.contacts" class="item base-color item-avatar" href="#">
+          <a ng-repeat="contact in data.contacts" class="item base-color item-avatar" ng-click="contactOptions(contact)">
             <img src="http://ionicframework.com/img/docs/venkman.jpg">
 
             <h2>{{contact.name}}</h2>

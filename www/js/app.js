@@ -361,7 +361,6 @@ bitwallet_module
         //$state.go('app.xtransaction_details', {x_id:'10'});
         //$state.go('app.transaction_details', {tx_id:'5394df9b7a4e1a9db60f576ad7e1a079b439a7e4'});
         //$state.go('app.receive_qrcode', {amount:150});
-        //$rootScope.goTo('app.contacts');
         // $rootScope.goToSuccess({  txid        : undefined
         //                     , xtxid      : undefined
         //                     , address   : 'DVSNKLe7F5E7msNG5RnbdWZ7HDeHoxVrUMZo'
@@ -374,6 +373,7 @@ bitwallet_module
         //$state.go('app.refund', {xtx_id:18});
         //$state.go('app.settings');
         //$state.go('app.contacts');
+        //$state.go('app.account');
         $rootScope.goTo('app.home');
         Wallet.refreshBalance();
       }, function(err) {

@@ -1,6 +1,7 @@
 <ion-view hide-back-button="true" title="">
   
   <ion-nav-buttons side="right">
+    <!-- button class="button button-icon icon ion-locked smaller" ng-click="unlock()"></button -->
     <button class="button button-icon icon lime_icon qr" ng-click="scanQR()"><i class="fa fa-qrcode"></i></button>
   </ion-nav-buttons>
   
@@ -26,6 +27,7 @@
             {{'g.receive' | translate | uppercase}}
           </a>
         </div>
+        <button class="button button-icon icon ion-locked smaller" ng-click="alertUnlock()"></button>
       </div>
     </div>
     <div ng-show="!txs.transactions.length" class="index_transactions">

@@ -13,56 +13,49 @@ bitwallet_controllers
   
   
   
-  $scope.add = function(){
+  $scope.addNew = function(){
     console.log(' -- add contact');
   }
 
-  $scope.showActionSheet = function(addr){
-    var fav_text = 'book.add_to_fav';
-    if(addr.is_favorite)
-      fav_text = 'book.remove_from_fav';
-
+  $scope.contactOptions = function(contact){
+    
 // ver/edit
 // delete
 // share
-
-   var hideSheet = $ionicActionSheet.show({
+  var hideSheet = $ionicActionSheet.show({
      buttons: [
-       { text: '<b>'+T.i(fav_text)+'</b>' },
-       { text: T.i('g.remove') },
-       ],
+       { text: '<b>'+T.i('contacts.view_edit')+'</b>' },
+       { text: T.i('contacts.share')},
+       { text: '<span class="assertive">'+T.i('g.remove') + '</span>'}],
+     //destructiveText: T.i('g.remove'),
      cancelText: T.i('g.cancel'),
+     titleText: T.i('contacts.options'),
      cancel: function() {
-          // add cancel code..
+          console.log(' ** CONTACTS ** -> cancel action');
         },
      buttonClicked: function(index) {
-      // Set as favorite
+      // View Edit
       if(index==0)
       {
-        var fav = addr.is_favorite ? 0 : 1;
-        console.log('mandamos: ' + addr.id + '->' + fav);
-        AddressBook.setFavorite(addr.id, fav).then(function() {
-          Wallet.loadAddressBook().then(function(){
-           $rootScope.$emit('address-book-changed');
-         });
-        });
+        console.log(' ** CONTACTS ** -> view-edit');
       }
-      // Remove from address book
+      // Share
       else if(index==1)
       {
-          // load current label
-         var confirmPopup = $ionicPopup.confirm({
-           title    : T.i('book.remove_from_ab'),
-           template : T.i('book.remove_sure', {'name':addr.name}),
-         }).then(function(res) {
+        console.log(' ** CONTACTS ** -> share');
+      }
+      //Remove
+      else if(index==2)
+      {
+        console.log(' ** CONTACTS ** -> remove'); 
+        
+        var confirmPopup = $ionicPopup.confirm({
+          title    : T.i('contacts.remove_title'),
+          template : T.i('contacts.remove_sure', {'name':contact.name}),
+        }).then(function(res) {
           if(!res)
             return;
-            AddressBook.remove(addr.id).then(function() {
-              Wallet.loadAddressBook().then(function(){
-                $rootScope.$emit('address-book-changed');
-              });
-            });
-         });
+        });
       }
       return true;
      }

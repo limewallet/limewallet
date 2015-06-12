@@ -58,7 +58,7 @@ line-height: 38px;}
   width:100%!important;
 }
 .balance_container_full{
-  /*height:147px;*/
+  text-align: center;
   height:158px;
 }
 .balance{text-align:center;padding-top: 15px;}
@@ -69,7 +69,11 @@ line-height: 38px;}
 .balance_hidden_text i.fa {vertical-align:top;}
 
 .balance_container_full .button-bar_container {width:300px;margin:0 auto;display:block;}
-.balance_container_full .button-bar {padding-top:28px;padding-bottom:28px;}
+.balance_container_full .button-bar {
+  /*padding-top:28px;padding-bottom:28px;*/
+  padding-top: 25px;
+  padding-bottom: 10px;
+}
 
 .display_table{display:table;}
 .display_table_cell{display:table-cell;}
@@ -641,16 +645,20 @@ img.i_centered {margin-left: auto;
 /* REGISTER ********/
 /* *************** */
 .register {
-    align-self: flex-start;
+    /*align-self: flex-start;*/
+    align-content: stretch;
     width: 100%;
-    height:100%!important;
+    /*height:100%!important;*/
+    height:auto;
+    min-height:300px;
+    overflow: hidden;
     position:relative; 
     color: #c0c0c0;
     padding-top:88px!important;
     /*padding-left:55px;
     padding-right:44px;*/
   }
-.register p{padding-top:20px;font-size:14px;}  
+.register p{padding:0px;margin:0px;font-size:14px;}  
 .register .list.settings{margin-bottom:47px!important;}
 .register_container {
   padding: 10px 10px 10px 0px;
@@ -971,6 +979,7 @@ button.centered_autow {width:auto!important;margin:0 auto;}
   background: linear-gradient(327deg, rgba(26,66,84,1) 0%, rgba(26,67,86,1) 100%); /* w3c */
 }
 
+.register_bg h3 {width:100%;}
 .create_account a, .create_account_seed a, .create_account_password a  { 
   font-size:13px; border-radius: 4px; text-transform:uppercase; max-height:47px;
   width: auto;
@@ -1217,6 +1226,42 @@ input.pmd {font-size:16px!important;  color:#fff;border-top:none; border-left:no
   .bar .button.button-icon.icon-right:before {
   font-size: 26px!important;}
 
+.bar .button.button-icon .icon.icon_smaller:before, 
+  .bar .button.button-icon.icon_smaller:before, 
+  .bar .button.button-icon.icon-left.icon_smaller:before, 
+  .bar .button.button-icon.icon-right.icon_smaller:before {
+  font-size: 22px!important;
+  padding-top: 2px;}
+
+
+/*.bar .button.button-icon.smaller:before, 
+  .bar .button.button-icon.icon-left.smaller:before, 
+  .bar .button.button-icon.icon-right.smaller:before,*/
+  
+  .button.button-icon.smaller{line-height: 30px;
+    height: 30px;
+    min-height: 35px;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    /*background-color: #d3eb00;*/
+    -webkit-box-shadow: 0px 1px 4px 0px rgba(0,0,0,0.50);
+    -moz-box-shadow: 0px 1px 4px 0px rgba(0,0,0,0.50);
+    box-shadow: 0px 1px 4px 0px rgba(0,0,0,0.50);
+    background-color:#BDC3C7; 
+
+    -webkit-align-self: flex-end; /* Safari 7.0+ */
+    align-self:flex-end;
+  }
+  
+  .button.button-icon.smaller:before {
+    font-size: 15px!important; 
+    padding-top:2px;
+    color: #fff;/*#e65f3f*/
+    line-height: 30px;
+  }
+
+
 .c1x.button-icon:before, .bar .button.button-icon.micro-icon:before {font-size:17px!important;}
 
 .loading-container .loading {display:flex;align-items:center;}
@@ -1265,4 +1310,8 @@ ion-spinner {stroke:#d3eb00!important;} /*93c91f*/
   color: #fff!important;
   border: none!important;
   margin-top: 25px!important;
+}
+
+.action-sheet .button.destructive {
+  color: #ff3b30!important;
 }

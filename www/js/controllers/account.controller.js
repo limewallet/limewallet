@@ -13,6 +13,8 @@ bitwallet_controllers.controller('AccountCtrl', function($translate, T, BitShare
                   do_register     : true,
                   can_update      : false};
   
+  $timeout(function () { jdenticon(); }, 500);
+
   var name_timeout = undefined;
   $scope.$watch('data.name', function(newValue, oldValue, scope) {
     if(newValue===oldValue)
