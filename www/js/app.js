@@ -127,8 +127,9 @@ bitwallet_module
     })
     
     .state('app.send', {
-      url: "/send/:address/:amount/:asset_id/:is_btc",
+      url: "/send",
       cache: false,
+      params: {scan_data : undefined},
       views: {
         'menuContent' :{
           templateUrl: "templates/send.html",
@@ -139,7 +140,7 @@ bitwallet_module
     
     .state('app.transaction_details', {
       url: "/transaction/:tx_id",
-      //cache: false,
+      cache: false,
       views: {
         'menuContent' :{
           templateUrl: "templates/tx.html",
@@ -150,7 +151,7 @@ bitwallet_module
     
     .state('app.xtransaction_details', {
       url: "/xtransaction/:x_id",
-      //cache: false,
+      cache: false,
       views: {
         'menuContent' :{
           templateUrl: "templates/xtx.html",
@@ -161,7 +162,7 @@ bitwallet_module
 
     .state('app.import_priv', {
       url: "/import_priv/:private_key",
-      //cache: false,
+      cache: false,
       views: {
         'menuContent' :{
           templateUrl: "templates/import_priv.html",
@@ -172,7 +173,7 @@ bitwallet_module
     
     .state('app.register', {
       url:    "/register",
-      //cache: false,
+      cache: false,
       views: {
               'menuContent' :{
                 templateUrl: "templates/register.html",
@@ -182,7 +183,7 @@ bitwallet_module
     })
     
     .state('app.account', {
-      //cache:  false,
+      cache:  false,
       url:    "/account/:first_time",
       views: {
               'menuContent' :{
@@ -193,7 +194,7 @@ bitwallet_module
     })
     
     .state('app.deposit', {
-      //cache:  false,,
+      cache:  false,
       url:    "/deposit/:xtx_id",
       views: {
               'menuContent' :{
@@ -204,7 +205,7 @@ bitwallet_module
     })
     
     .state('app.withdraw', {
-      //cache:  false,,
+      cache:  false,
       url:    "/withdraw",
       views: {
               'menuContent' :{
@@ -215,7 +216,7 @@ bitwallet_module
     })
     
     .state('app.xtx_requote', {
-      //cache:  false,,
+      cache:  false,
       url:    "/xtx_requote/:xtx_id",
       views: {
               'menuContent' :{
@@ -226,7 +227,7 @@ bitwallet_module
     })
 
     .state('app.refund', {
-      //cache:  false,,
+      cache:  false,
       url:    "/refund/:xtx_id",
       views: {
               'menuContent' :{
@@ -237,7 +238,7 @@ bitwallet_module
     })
 
     .state('app.successful', {
-      //cache:  false,,
+      cache:  false,
       url:    "/successful/:txid/:xtxid/:address/:name/:message/:amount/:type",
       views: {
               'menuContent' :{
@@ -248,7 +249,7 @@ bitwallet_module
     })
 
     .state('app.welcome', {
-      //cache:  false,,
+      cache:  false,
       url:    "/welcome",
       views: {
               'menuContent' :{
@@ -259,7 +260,7 @@ bitwallet_module
     })
 
     .state('app.create_wallet', {
-      //cache:  false,,
+      cache:  false,
       url:    "/create_wallet",
       views: {
               'menuContent' :{
@@ -270,7 +271,7 @@ bitwallet_module
     })
 
     .state('app.create_wallet_seed', {
-      //cache:  false,,
+      cache:  false,
       url:    "/create_wallet_seed",
       views: {
               'menuContent' :{
@@ -281,7 +282,7 @@ bitwallet_module
     })
 
     .state('app.create_wallet_password', {
-      //cache:  false,,
+      cache:  false,
       url:    "/create_wallet_password",
       views: {
               'menuContent' :{
@@ -292,7 +293,7 @@ bitwallet_module
     })
 
     .state('app.home', {
-      //cache:  false,
+      cache:  true,
       url:    "/home",
       views: {
               'menuContent' :{
