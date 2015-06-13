@@ -5,9 +5,9 @@ bitwallet_controllers
                   retype_password:  ''};
   
   $scope.showLoading = function(){
+    var title = $scope.isCreateInitMode()?T.i('g.creating_wallet'):T.i('g.recovering_wallet');
     $ionicLoading.show({
-      template     : '<ion-spinner icon="android"></ion-spinner> ' + T.i('g.creating_wallet'), 
-      //template     : '<i class="icon ion-looping"></i> ' + T.i('g.loading'), creating_wallet
+      template     : '<ion-spinner icon="android"></ion-spinner> ' + title, 
       animation    : 'fade-in',
       showBackdrop : true,
       maxWidth     : 300,

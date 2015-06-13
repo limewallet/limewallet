@@ -61,11 +61,11 @@ line-height: 38px;}
   text-align: center;
   height:158px;
 }
-.balance{text-align:center;padding-top: 15px;}
+.balance{text-align:center;padding-top: 15px;height:73px;}
 .balance.hidden{padding-top: 25px;}
 .balance_text{font-size:38px;line-height:38px;color:#caee36;font-weight:300;}
 .balance_curr { font-size:14px; color:#69818d;}
-.balance_hidden_text{font-size:35px;line-height:35px;letter-spacing: -2px;}
+.balance_hidden_text{font-size:35px;line-height:35px;letter-spacing:-2px; font-weight: 200;}
 .balance_hidden_text i.fa {vertical-align:top;}
 
 .balance_container_full .button-bar_container {width:300px;margin:0 auto;display:block;}
@@ -1245,7 +1245,7 @@ input.pmd {font-size:16px!important;  color:#fff;border-top:none; border-left:no
     -webkit-box-shadow: 0px 1px 4px 0px rgba(0,0,0,0.50);
     -moz-box-shadow: 0px 1px 4px 0px rgba(0,0,0,0.50);
     box-shadow: 0px 1px 4px 0px rgba(0,0,0,0.50);
-    background-color:#BDC3C7; 
+    background-color:#546979; /*#BDC3C7; */
 
     -webkit-align-self: flex-end; /* Safari 7.0+ */
     align-self:flex-end;
@@ -1254,7 +1254,7 @@ input.pmd {font-size:16px!important;  color:#fff;border-top:none; border-left:no
   .button.button-icon.smaller:before {
     font-size: 15px!important; 
     padding-top:2px;
-    color: #fff;/*#e65f3f*/
+    color: #1b4356; /*#5f7381; #e65f3f*/
     line-height: 30px;
   }
 
@@ -1300,7 +1300,19 @@ ion-spinner {stroke:#d3eb00!important;} /*93c91f*/
   height: auto!important;
   min-height: 100px;}
 
-.button.button-icon.mini:before{font-size:24px!important;}
+.button.button-icon.mini:before, .icon.mini:before{font-size:24px!important;}
+.button.button-icon.mini2:before, .icon.mini2:before{font-size:20px!important;}
+
+.ui_settings .item-button-right i.icon{
+  position: absolute;
+  top: 14px;
+  right: 12px;
+  min-width: 34px;
+  min-height: 34px;
+  /*font-size: 18px;*/
+  line-height: 32px;}
+.ui_settings .item-button-right i.icon.ion-locked {right: 9px;}
+
 .ui_settings .item-divider{
   font-weight: 300;
   background-color: transparent!important;
@@ -1342,3 +1354,14 @@ ion-spinner {stroke:#d3eb00!important;} /*93c91f*/
 }
 .home .balance_container_full {align-self:flex-start; width:100%;}
 .home .transactions {align-self:stretch;width:100%;}*/
+
+.item-avatar > canvas {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  max-width: 40px;
+  max-height: 40px;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}

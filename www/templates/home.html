@@ -8,7 +8,7 @@
     <div class="balance_container_full" ng-cloak>
       
         <div class="balance hidden" ng-show="wallet.ui.balance.hidden" ng-click="toggleBalance()">
-          <span class="balance_hidden_text">{{'home.show_balance' | translate | uppercase}} <!-- i class="fa fa16 fa-eye"></i --></span>
+          <span class="balance_hidden_text">{{'home.show_balance' | translate | uppercase}}</span>
         </div>
         <div class="balance" ng-show="!wallet.ui.balance.hidden && wallet.initialized" ng-click="toggleBalance()">
           <span class="balance_text">{{wallet.asset.symbol_ui_text}} {{wallet.asset.amount | number : 2}}</span>
@@ -25,7 +25,7 @@
             {{'g.receive' | translate | uppercase}}
           </a>
         </div>
-        <button class="button button-icon icon ion-locked smaller" ng-click="alertUnlock()"></button>
+        <button ng-show="wallet.password_required==1 && wallet.locked==1" class="button button-icon icon ion-locked smaller" style="z-index:10;" ng-click="alertUnlock()"></button>
       </div>
     </div>
 

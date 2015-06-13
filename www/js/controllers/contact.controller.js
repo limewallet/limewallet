@@ -1,39 +1,32 @@
 bitwallet_controllers
-.controller('ContactCtrl', function($scope, $state, BitShares, T, $ionicPopup, $timeout, $stateParams){
+.controller('ContactCtrl', function($scope, $q, $state, BitShares, Contact, T, $ionicPopup, $timeout, $stateParams){
   
   $scope.data = {
     from_in_progress  : true,
-    contact           : {},
+    contact           : {name:'', address:'', pubkey:'', avatar_hash:''},
     watch_name        : undefined,
     title             : ''
   };
 
   var contact = $stateParams.contact;
   if(contact && contact.name) {
-    console.log(' -------- Contact -> ONE param received!');
-    $scope.data.title = T.i('contacts.edit_contact');
-    //$scope.applyContact(contact);
     $scope.data.contact = contact;
-    BitShares.sha256(contact.name).then(function(hash){
-      $scope.data.contact.avatar_hash = hash;
-      $timeout(function () { jdenticon(); }, 200);
-      $scope.from_in_progress=false;
-    }, function(err){
-      $scope.from_in_progress=false;
-    });
+  }
+  if(contact && contact.id)
+  {
+    $scope.data.title = T.i('contacts.edit_contact');
   }
   else
   {  
-    console.log(' -------- Contact -> NO param received!');
     $scope.data.title = T.i('contacts.add_contact');
-    BitShares.sha256('').then(function(hash){
-      $scope.data.contact.avatar_hash = hash;
-      $timeout(function () { jdenticon(); }, 200);
-      $scope.from_in_progress=false;
-    }, function(err){
-      $scope.from_in_progress=false;
-    });
   }
+  BitShares.sha256(contact.name).then(function(hash){
+    $scope.data.contact.avatar_hash = hash;
+    $timeout(function () { jdenticon(); }, 200);
+    $scope.data.from_in_progress=false;
+  }, function(err){
+    $scope.data.from_in_progress=false;
+  });
 
   var name_timeout = undefined;
   $scope.$watch('data.contact.name', function(newValue, oldValue, scope) {
@@ -53,19 +46,21 @@ bitwallet_controllers
         console.log('error sha256 account.constroller '+JSON.stringify(err));
       })
     }, 750);
-  });
+  })
 
-  $scope.saveOrUpdate = function(){
-
-    
+  $scope.save = function(){
+    $scope.data.from_in_progress=true;
+    console.log(' -------------- llamaron a Contact.$scope.saveOrUpdate() ');
     if(!$scope.data.contact.name)
     {
+      $scope.data.from_in_progress=false;
       $scope.showAlert('err.contact_name_empty', 'err.contact_name_empty_msg');
       return;
     }
 
     if(!$scope.data.contact.address && !$scope.data.contact.pubkey)
     {
+      $scope.data.from_in_progress=false;
       $scope.showAlert('err.contact_addr_pk_empty', 'err.contact_addr_pk_empty_msg');
       return;
     }
@@ -76,36 +71,42 @@ bitwallet_controllers
     }
 
     $q.all(proms).then(function(res) {
-      if(!($scope.data.contact.address && res.address)){
+      if($scope.data.contact.address && !res.address){
         $scope.showAlert('err.invalid_address', 'err.enter_valid_address');
+        $scope.data.from_in_progress=false;
         return;
       }
-      if(!($scope.data.contact.pubkey && res.pubkey)){
+      if($scope.data.contact.pubkey && !res.pubkey){
         $scope.showAlert('err.invalid_pubkey', 'err.enter_valid_pubkey');
+        $scope.data.from_in_progress=false;
         return;
       }
 
+      console.log(' ----- save or update contact.avatar_hash:'+$scope.data.contact.avatar_hash);
       var db_prom = undefined;
       if(!$scope.data.contact.id)
       {
-        db_prom = Contact.add($scope.data.contact.name, $scope.data.contact.address, $scope.data.contact.pubkey, undefined, Contact.LOCAL);
+        console.log(' ----- contact.ADD');
+        db_prom = Contact.add($scope.data.contact.name, $scope.data.contact.address, $scope.data.contact.pubkey, $scope.data.contact.avatar_hash, Contact.LOCAL);
       }
       else
       {
-        db_prom = Contact.update($scope.data.contact.id, $scope.data.contact.name, $scope.data.contact.address, $scope.data.contact.pubkey, undefined, Contact.LOCAL);
+        console.log(' ----- contact.UPDATE');
+        db_prom = Contact.update($scope.data.contact.id, $scope.data.contact.name, $scope.data.contact.address, $scope.data.contact.pubkey, $scope.data.contact.avatar_hash, Contact.LOCAL);
       } 
       db_prom.then(function(res){
-        window.plugins.toast.show(T.i('contact.saved_ok'), 'long', 'bottom');
+        window.plugins.toast.show(T.i('contacts.saved_ok'), 'long', 'bottom');
+        $scope.data.from_in_progress=false;
         $scope.goBack();
       }, function(err){
+        $scope.data.from_in_progress=false;
         $scope.showAlert('err.contact_saving','err.contact_saving_msg');
       })     
     }, function(err){
+      $scope.data.from_in_progress=false;
       $scope.showAlert('err.contact_validating', err);
       return;
     })
-    
-    
   }
 });
 

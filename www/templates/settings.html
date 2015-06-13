@@ -34,18 +34,18 @@
         <div class="item item-divider">
           {{'g.security'|translate}}
         </div>
-        <div class="item item-button-right base-color ">
+        <div class="item item-button-right base-color" ng-click="backupWallet()">
           {{'g.backup_wallet'|translate}} 
-          <a class="button button-icon base-color icon mini ion-android-upload" ng-click="backupWallet()"></a>
+          <i class="base-color icon mini ion-android-upload" ></i>
           <div class="line-divider"></div>
         </div>
-        <div class="item item-button-right base-color">
+        <div class="item item-button-right base-color" ng-click="restoreWallet()">
           {{'g.restore_wallet'|translate}} 
-          <a class="button button-icon base-color icon mini ion-android-download" ng-click="restoreWallet()"></a>
+          <i class="base-color icon mini ion-android-download" ></i>
         </div>
-        <div class="item item-button-right base-color">
+        <div class="item item-button-right base-color" ng-click="password()">
           {{(wallet.password_required==1?'g.change_password':'g.set_password')|translate}} 
-          <a class="button button-icon base-color icon mini ion-locked" ng-click="password()"></a>
+          <i class="base-color icon mini2 ion-locked" ></i>
         </div>
       </div>
     </ion-content>

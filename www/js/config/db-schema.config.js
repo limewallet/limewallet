@@ -42,7 +42,8 @@ bitwallet_config
                 { name : 'address',           type  : 'text unique'},
                 { name : 'pubkey',            type  : 'text unique'},
                 { name : 'source',            type  : 'text not null'},
-                { name : 'public_data',       type  : 'text'},
+                //{ name : 'public_data',       type  : 'text'},
+                { name : 'avatar_hash',       type  : 'text'},
                 { name : 'created_at',        type  : 'datetime default CURRENT_TIMESTAMP'},
                 { name : 'backup',            type  : 'integer default 0'}
             ]

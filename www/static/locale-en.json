@@ -26,7 +26,8 @@
     "recover_wallet_html"           : "Recover&nbsp;wallet",
     "recover_wallet"                : "Recover wallet",
     "create_wallet"                 : "Create Wallet",
-    "creating_wallet"               : "Create Wallet",
+    "creating_wallet"               : "Creating Wallet",
+    "recovering_wallet"             : "Recovering Wallet",
     "wallet_created"                : "Wallet created successfully!",
     "wallet_recovered"              : "Wallet recovered successfully!",
     "wait_for_notifications"        : "Please wait for notifications at home screen!",  
@@ -117,6 +118,7 @@
   },
 
   "err" : {
+    "contact_removing"          : "An error occurred while removing contact",
     "contact_saving"            : "An error occurred while storing contact",
     "contact_saving_msg"        : "Please validate contact data and try again.",
     "contact_validating"        : "An error occurred while validating contact data",
@@ -184,6 +186,7 @@
     "password_mismatch"   : "The passwords do not match",
     "retype_passwords"    : "Confirmation password does not match the first password entered, please verify",
     "unable_to_copy_addy" : "Unable to copy address",
+    "unable_to_share_contact" : "Unable to share payment contact",
     "unable_to_share_req" : "Unable to share payment request",
     "unable_to_copy_req"  : "Unable to copy payment request",
     "unable_to_share_ew"  : "Unable to share encrypted wallet",
@@ -311,9 +314,10 @@
     "copy_public_key" : "Copy Public Key",
     "no_addys"        : "No address added yet",
     "none"            : "No contacts added yet",
-    "remove_title"    : "Remove from contacts",
+    "remove_title"    : "Remove contact",
     "remove_sure"     : "Are you sure you want to remove <b>{{name}}</b> from contacts?",
-    "saved_ok"        : "Contact stored successfully!"
+    "saved_ok"        : "Contact stored successfully!",
+    "removed_ok"      : "Contact removed successfully!"
   },
   
   "import_priv" : {

@@ -37,6 +37,10 @@ bitwallet_controllers.controller('SettingsCtrl', function($q, DB, BitShares, $sc
   
   $scope.loadViewData();
   
+  $scope.restoreWallet = function() {
+    $scope.showAlert('Hay que hacer','ESTO');
+  }
+  
   $scope.backupWallet = function() {
 
     if(Wallet.isLocked()) {

@@ -384,11 +384,14 @@ bitwallet_module
         //$state.go('app.import_priv', {private_key:'ESSSSSSSSSTA'});
         //$state.go('app.xtx_requote', {xtx_id:18});
         //$state.go('app.refund', {xtx_id:18});
-        //$state.go('app.settings');
-        //$state.go('app.contact', {contact:{name: 'pepe', pubkey:'LAPUBKEYNENE' , address: 'DVS54jEBqoWGYAc5uJFCPXv4BjAyuW9F67BZjiL9YKv9swrhBGRSS'}}, {inherit:true});
+        $state.go('app.settings');
+        //$state.go('app.contact', {contact:{name: 'peteelpopo', pubkey:'DVS5YYZsZ7g1fSpPxmZcJifWJ2rmiXbUyJpEYSdNsVw738C88yvoy'}}, {inherit:true});
         //$state.go('app.account');
         //$state.go('app.contacts');
-        $rootScope.goTo('app.home');
+        //$rootScope.goTo('app.home');
+
+        //obscure around glue cheese inherit thing subject blade slow unknown solve assum
+        
         Wallet.refreshBalance();
       }, function(err) {
 
@@ -532,7 +535,7 @@ bitwallet_module
   $rootScope.refresh_status = 0;
 
   $rootScope.goBack = function(){
-    $ionicHistory.backView();
+    $ionicHistory.goBack();
   }
   //TODO: hacerlo bien
   $rootScope.goHome = function() {

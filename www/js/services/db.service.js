@@ -220,29 +220,29 @@ bitwallet_services
         });
     };
 
-    self._add = function(name, address, pubkey, public_data, source) {
+    self._add = function(name, address, pubkey, avatar_hash, source) {
       address = address || null;
       pubkey  = pubkey  || null;
-      var sql    = 'INSERT or REPLACE into contact (name, address, pubkey, public_data, source) values (?,?,?,?,?)';
-      var params = [name, address, pubkey, public_data, source];
+      var sql    = 'INSERT or REPLACE into contact (name, address, pubkey, avatar_hash, source) values (?,?,?,?,?)';
+      var params = [name, address, pubkey, avatar_hash, source];
       return {sql:sql, params:params};
     }
 
-    self.add = function(name, address, pubkey, public_data, source) {
-      var sql = self._add(name, address, pubkey, public_data, source);
+    self.add = function(name, address, pubkey, avatar_hash, source) {
+      var sql = self._add(name, address, pubkey, avatar_hash, source);
       return DB.query(sql.sql, sql.params);
     }
 
-    self._update = function(id, name, address, pubkey, public_data, source) {
+    self._update = function(id, name, address, pubkey, avatar_hash, source) {
       address = address || null;
       pubkey  = pubkey  || null;
-      var sql    = 'UPDATE contact set name=?, address=?, pubkey=?, public_data=?, source=? WHERE id=?';
-      var params = [name, address, pubkey, public_data, source, id];
+      var sql    = 'UPDATE contact set name=?, address=?, pubkey=?, avatar_hash=?, source=? WHERE id=?';
+      var params = [name, address, pubkey, avatar_hash, source, id];
       return {sql:sql, params:params};
     }
 
-    self.update = function(id, name, address, pubkey, public_data, source) {
-      var sql = self._update(id, name, address, pubkey, public_data, source);
+    self.update = function(id, name, address, pubkey, avatar_hash, source) {
+      var sql = self._update(id, name, address, pubkey, avatar_hash, source);
       return DB.query(sql.sql, sql.params);
     }
 
