@@ -252,7 +252,7 @@ bitwallet_module
 
     .state('app.successful', {
       cache:  false,
-      url:    "/successful/:txid/:xtxid/:address/:name/:message/:amount/:type",
+      url:    "/successful/:txid/:xtxid/:address/:name/:message/:amount/:type/:currency_name/:currency_symbol",
       views: {
               'menuContent' :{
                 templateUrl: "templates/successful.html",
@@ -442,7 +442,7 @@ bitwallet_module
   
   $rootScope.showLoading = function(message){
     $ionicLoading.show({
-      template     : '<ion-spinner icon="android"></ion-spinner>&nbsp;' + T.i(message),
+      template     : '<ion-spinner icon="android"></ion-spinner>&nbsp;&nbsp;&nbsp;' + T.i(message),
       animation    : 'fade-in',
       showBackdrop : true,
       maxWidth     : 200,
@@ -580,15 +580,75 @@ bitwallet_module
     $state.go('app.home');
   }
 
-  $rootScope.goToState = function(state){
-    if(state == 'app.send' || state == 'app.withdraw') {
+  $rootScope.signAll = function(to_sign, addys) {
+    var proms = [];
+    
+    addys.forEach(function(addy) {
+      proms.push(BitShares.compactSignatureForHash(to_sign, Wallet.data.account.plain_privkey)) 
+    });
+    return $q.all(proms);
+  }
+
+  $rootScope.computeMemo = function(tx) {
+    var deferred = $q.defer();
+
+    //HACK: We use our pubkey when transfering to an address
+    var pubkey_to_use = tx.destination.is_pubkey ? tx.destination.address_or_pubkey : Wallet.data.account.pubkey;
+
+    BitShares.randomInteger().then(function(rand_int) {
+
+      rand_int = (rand_int>>>0) & 0x7FFFFFFF;
+
+      BitShares.computeMemo(
+        Wallet.data.account.pubkey,
+        tx.memo.trim(),
+        pubkey_to_use,
+        Wallet.data.mpk.plain_value,
+        Wallet.data.account.plain_account_mpk,
+        Wallet.data.account.plain_memo_mpk,
+        rand_int
+      ).then(function(res) {
+        console.log('OK -> ' + JSON.stringify(res));
+
+        BitShares.skip32(rand_int, Wallet.data.account.plain_skip32_key, true).then(function(skip32_index) {
+
+          skip32_index = skip32_index>>>0;
+
+          console.log('%%%%%%%%%%%%%%%%%%%% => RANDINT ' + rand_int);
+          console.log('%%%%%%%%%%%%%%%%%%%% => SKIP32 ' + skip32_index);
+          console.log('%%%%%%%%%%%%%%%%%%%% => KEY ' + Wallet.data.account.plain_skip32_key);
+
+          res.skip32_index = skip32_index;
+          deferred.resolve(res);
+        }, function(err) {
+          console.log('ERR SKIP32->' + JSON.stringify(err));
+          deferred.reject(err);
+        }); 
+
+      }, function(err) {
+        console.log('ERR computeMemo #0->' + JSON.stringify(err));
+        deferred.reject(err);
+      });
+
+
+    }, function(err) {
+      console.log('ERR computeMemo #1->' + JSON.stringify(err));
+      deferred.reject(err);
+    });
+
+    return deferred.promise;
+  }
+
+
+  $rootScope.goToState = function(state, scan_data){
+    if(state == 'app.send' || state == 'app.withdraw' || state == 'app.send_btc') {
       if ( Wallet.data.locked ) {
         $rootScope.alertUnlock();
         return;
       }
 
-      if (state == 'app.send')
-        return $state.go('app.send', {scan_data:{}}, {inherit:true});
+      if (state == 'app.send' || state == 'app.send_btc')
+        return $state.go(state, {scan_data:scan_data}, {inherit:true});
     }
 
     $state.go(state);

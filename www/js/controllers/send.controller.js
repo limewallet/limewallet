@@ -149,55 +149,6 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
   }
 
 
-  $scope.computeMemo = function(tx) {
-    var deferred = $q.defer();
-
-    var pubkey_to_use = tx.destination.is_pubkey ? tx.destination.address_or_pubkey : Wallet.data.account.pubkey;
-
-    BitShares.randomInteger().then(function(rand_int) {
-
-      rand_int = (rand_int>>>0) & 0x7FFFFFFF;
-
-      BitShares.computeMemo(
-        Wallet.data.account.pubkey,
-        tx.memo.trim(),
-        pubkey_to_use,
-        Wallet.data.mpk.plain_value,
-        Wallet.data.account.plain_account_mpk,
-        Wallet.data.account.plain_memo_mpk,
-        rand_int
-      ).then(function(res) {
-        console.log('OK -> ' + JSON.stringify(res));
-
-        BitShares.skip32(rand_int, Wallet.data.account.plain_skip32_key, true).then(function(skip32_index) {
-
-          skip32_index = skip32_index>>>0;
-
-          console.log('%%%%%%%%%%%%%%%%%%%% => RANDINT ' + rand_int);
-          console.log('%%%%%%%%%%%%%%%%%%%% => SKIP32 ' + skip32_index);
-          console.log('%%%%%%%%%%%%%%%%%%%% => KEY ' + Wallet.data.account.plain_skip32_key);
-
-          res.skip32_index = skip32_index;
-          deferred.resolve(res);
-        }, function(err) {
-          console.log('ERR SKIP32->' + JSON.stringify(err));
-          deferred.reject();
-        }); 
-
-      }, function(err) {
-        console.log('ERR computeMemo->' + JSON.stringify(err));
-        deferred.reject();
-      });
-
-
-    }, function(err) {
-      console.log('ERR ->' + JSON.stringify(err));
-      deferred.reject();
-    });
-
-    return deferred.promise;
-  }
-
   $scope.promptSend = function(asset, tx) {
 
     var symbol =  asset.symbol_ui_text;
@@ -210,16 +161,6 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
       })
     });
 
-  }
-
-  $scope.signAll = function(to_sign, addys) {
-    var proms = [];
-    
-    addys.forEach(function(addy) {
-      //TODO: change privkey when sending from multiples accounts
-      proms.push(BitShares.compactSignatureForHash(to_sign, Wallet.data.account.plain_privkey)) 
-    });
-    return $q.all(proms);
   }
 
 
@@ -241,12 +182,7 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
     //} 
 
     if (error) {
-      $ionicPopup.alert({
-        title    : 'Error',
-        template : error,
-        okType   : 'button-assertive', 
-      });
-
+      $scope.showAlert('send.title', error);
       return false;
     }
 

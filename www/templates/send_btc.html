@@ -49,8 +49,8 @@
         </div>
       </form>
       
-      <fieldset ng-disabled="data.from_in_progress" class="buttons_container hide-on-keyboard-open"> 
-        <button ng-click="doSend()" class="button button-block button-energized no-margin button_taller"> {{'g.send'|translate|uppercase}} 
+      <fieldset ng-disabled="!data.valid_quote" class="buttons_container hide-on-keyboard-open"> 
+        <button ng-click="doAcceptAndSend()" class="button button-block button-energized no-margin button_taller"> {{'g.send'|translate|uppercase}} 
         </button>
       </fieldset> 
     </ion-content>

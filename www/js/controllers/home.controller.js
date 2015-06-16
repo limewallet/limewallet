@@ -22,7 +22,8 @@ bitwallet_controllers
       
       // SEND BTC
       if(result.type == 'btc_request') { 
-        $state.go('app.send_btc', {scan_data:result}, {inherit:true});
+        //$state.go('app.send_btc', {scan_data:result}, {inherit:true});
+        $scope.goToState('app.send_btc', result);
         return;
       }
 
@@ -37,7 +38,7 @@ bitwallet_controllers
         if( result.asset && result.asset != Wallet.data.asset.name ) {
           window.plugins.toast.show('Switch your asset first', 'long', 'bottom')
         } else {
-          $state.go('app.send', {scan_data:result}, {inherit:true});
+          $scope.goToState('app.send', result);
         }
       }
 
@@ -130,6 +131,9 @@ bitwallet_controllers
       window.plugins.toast.show( T.i('g.updated'), 'short', 'bottom');
     }, function(err) {
       window.plugins.toast.show( T.i('g.unable_to_refresh'), 'long', 'bottom');
+    })
+    .finally(function() {
+      $scope.$broadcast('scroll.refreshComplete');
     });
   };
   
