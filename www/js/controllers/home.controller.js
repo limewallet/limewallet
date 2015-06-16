@@ -146,6 +146,7 @@ bitwallet_controllers
           BitShares.cancelXTx(keys, tx.id).then(function(res){
             $ionicLoading.hide();
             Wallet.refreshBalance();
+            window.plugins.toast.show( T.i('g.cancel_ok'), 'long', 'bottom');
           }, function(error){
             console.log(JSON.stringify(error));
             $ionicLoading.hide();
