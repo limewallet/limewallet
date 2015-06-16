@@ -1,9 +1,8 @@
 bitwallet_controllers
-.controller('ContactCtrl', function($scope, $q, $state, BitShares, Contact, T, $ionicPopup, $timeout, $stateParams){
+.controller('ContactCtrl', function($scope, $q, $state, Scanner, BitShares, Contact, T, $ionicPopup, $timeout, $stateParams){
   
   $scope.data = {
-    from_in_progress  : true,
-    contact           : {name:'', address:'', pubkey:'', avatar_hash:''},
+    contact           : {name:'', pubkey_or_address:'', avatar_hash:''},
     watch_name        : undefined,
     title             : ''
   };
@@ -12,20 +11,21 @@ bitwallet_controllers
   if(contact && contact.name) {
     $scope.data.contact = contact;
   }
-  if(contact && contact.id)
-  {
+
+  if(contact && contact.id) {
     $scope.data.title = T.i('contacts.edit_contact');
-  }
-  else
-  {  
+  } else {  
     $scope.data.title = T.i('contacts.add_contact');
   }
-  BitShares.sha256(contact.name).then(function(hash){
+
+  var tmp = '';
+  if(contact && contact.name)
+    tmp = contact.name; 
+
+  BitShares.sha256(tmp).then(function(hash){
     $scope.data.contact.avatar_hash = hash;
     $timeout(function () { jdenticon(); }, 200);
-    $scope.data.from_in_progress=false;
   }, function(err){
-    $scope.data.from_in_progress=false;
   });
 
   var name_timeout = undefined;
@@ -48,63 +48,106 @@ bitwallet_controllers
     }, 750);
   })
 
+
+  $scope.getAddress = function (pubkey_or_address) {
+
+    var deferred = $q.defer();
+
+    BitShares.isValidPubkey(pubkey_or_address).then(function(res) {
+      BitShares.btsPubToAddress(pubkey_or_address).then(function(addy) {
+        deferred.resolve({pubkey:pubkey_or_address, address:addy});
+      }, function(err) {
+        deferred.reject(err);
+      });
+    }, function(err) {
+      BitShares.btsIsValidAddress(pubkey_or_address).then(function(res) {
+        deferred.resolve({address:pubkey_or_address});
+      }, function(err) {
+        deferred.reject();
+      });
+    });
+
+    return deferred.promise;
+  }
+
+  $scope.scanQR = function() {
+
+    Scanner.scan().then(function(result) {
+      
+      if(!result || result.cancelled)
+        return;
+
+      // SEND BTS
+      if(result.type == 'bts_request' || 
+         result.type == 'bts_address' || 
+         result.type == 'bts_pubkey'  || 
+         result.type == 'bts_contact') {
+
+         $scope.data.contact.name              = result.name;
+         $scope.data.contact.pubkey_or_address = result.pubkey || result.address;
+      }
+
+    }, function(error) {
+      $scope.showAlert('contacts.scan_contact', error);
+    });
+  }
+
   $scope.save = function(){
-    $scope.data.from_in_progress=true;
     console.log(' -------------- llamaron a Contact.$scope.saveOrUpdate() ');
     if(!$scope.data.contact.name)
     {
-      $scope.data.from_in_progress=false;
       $scope.showAlert('err.contact_name_empty', 'err.contact_name_empty_msg');
       return;
     }
 
-    if(!$scope.data.contact.address && !$scope.data.contact.pubkey)
+    if(!BitShares.isValidBTSName($scope.data.contact.name).valid) {
+      $scope.showAlert('err.invalid_name', 'register.valid_name_chars');
+      return;
+    }
+
+    if(!$scope.data.contact.pubkey_or_address)
     {
-      $scope.data.from_in_progress=false;
       $scope.showAlert('err.contact_addr_pk_empty', 'err.contact_addr_pk_empty_msg');
       return;
     }
 
-    proms = { 
-      'address' : $scope.data.contact.address?BitShares.btsIsValidAddress($scope.data.contact.address):undefined,
-      'pubkey'  : $scope.data.contact.pubkey?BitShares.btsIsValidPubkey($scope.data.contact.pubkey):undefined
-    }
+    //proms = { 
+      //'address' : $scope.data.contact.address?BitShares.btsIsValidAddress($scope.data.contact.address):undefined,
+      //'pubkey'  : $scope.data.contact.pubkey?BitShares.btsIsValidPubkey($scope.data.contact.pubkey):undefined
+    //}
 
-    $q.all(proms).then(function(res) {
-      if($scope.data.contact.address && !res.address){
-        $scope.showAlert('err.invalid_address', 'err.enter_valid_address');
-        $scope.data.from_in_progress=false;
-        return;
-      }
-      if($scope.data.contact.pubkey && !res.pubkey){
-        $scope.showAlert('err.invalid_pubkey', 'err.enter_valid_pubkey');
-        $scope.data.from_in_progress=false;
-        return;
-      }
+    $scope.getAddress($scope.data.contact.pubkey_or_address).then(function(res) {
+      //
+      //if($scope.data.contact.address && !res.address){
+        //$scope.showAlert('err.invalid_address', 'err.enter_valid_address');
+        //return;
+      //}
+      //if($scope.data.contact.pubkey && !res.pubkey){
+        //$scope.showAlert('err.invalid_pubkey', 'err.enter_valid_pubkey');
+        //return;
+      //}
 
       console.log(' ----- save or update contact.avatar_hash:'+$scope.data.contact.avatar_hash);
       var db_prom = undefined;
       if(!$scope.data.contact.id)
       {
         console.log(' ----- contact.ADD');
-        db_prom = Contact.add($scope.data.contact.name, $scope.data.contact.address, $scope.data.contact.pubkey, $scope.data.contact.avatar_hash, Contact.LOCAL);
+        db_prom = Contact.add($scope.data.contact.name, res.address, res.pubkey, $scope.data.contact.avatar_hash, Contact.LOCAL);
       }
       else
       {
         console.log(' ----- contact.UPDATE');
-        db_prom = Contact.update($scope.data.contact.id, $scope.data.contact.name, $scope.data.contact.address, $scope.data.contact.pubkey, $scope.data.contact.avatar_hash, Contact.LOCAL);
+        db_prom = Contact.update($scope.data.contact.id, $scope.data.contact.name, res.address, res.pubkey, $scope.data.contact.avatar_hash, Contact.LOCAL);
       } 
       db_prom.then(function(res){
         window.plugins.toast.show(T.i('contacts.saved_ok'), 'long', 'bottom');
-        $scope.data.from_in_progress=false;
         $scope.goBack();
       }, function(err){
-        $scope.data.from_in_progress=false;
+        console.log('xxx=>'+JSON.stringify(err));
         $scope.showAlert('err.contact_saving','err.contact_saving_msg');
       })     
     }, function(err){
-      $scope.data.from_in_progress=false;
-      $scope.showAlert('err.contact_validating', err);
+      $scope.showAlert('err.contact_validating', 'err.invalid_pubkey_or_address');
       return;
     })
   }

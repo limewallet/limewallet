@@ -24,9 +24,13 @@ bitwallet_services
         res.address = address;
 
         var expected = ['amount', 'label', 'message'];
-        for(var i=0; i<parts.length; i+=2) {
-          if( expected.indexOf(parts[i]) != -1 )
-            res[parts[i]] = parts[i+1];
+        
+        console.log('FORMATO:' + JSON.stringify(parts));
+
+        for(var i=0; i<parts.length; i++) {
+          var tmp = parts[i].split('=');
+          if( expected.indexOf(tmp[0]) != -1 )
+            res[tmp[0]] = tmp[1];
         } 
 
         deferred.resolve(res);
@@ -68,7 +72,7 @@ bitwallet_services
           });
 
         } else {
-          deferred.reject(err);
+          deferred.reject('err.invalid_name');
         }
 
         return deferred.promise;
@@ -184,7 +188,7 @@ bitwallet_services
                       }); 
                     },
                     function(error){
-                      //console.log(' barcodescanner dijo NO es valid WIF' );
+                      console.log(' barcodescanner dijo NO es valid WIF + ' + JSON.stringify(error) );
                       deferred.reject(error);
                     });
                 });

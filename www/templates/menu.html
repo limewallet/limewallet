@@ -19,11 +19,11 @@
           <a ng-click="unLockWallet()" ng-disabled="data.in_progress" ng-show="wallet.password_required==1 && wallet.locked==1"  class="c1x lime_settings_ionicon button button-icon icon ion-locked micro-icon"></a>
           <a href="#" ng-show="wallet.password_required==0" class="c1x lime_settings_ionicon button button-icon icon ion-unlocked micro-icon"></a>
           <!-- lime_settings_icon logout -->
-          <div class="menu_avatar c2x" menu-close ng-click="goTo('app.account')"> 
+          <div class="menu_avatar c2x" menu-close ng-click="goToState('app.account')"> 
             <canvas id="menu_jdenticon_canvas" width="80" height="80" data-jdenticon-hash="{{wallet.account.avatar_hash}}"></canvas>
             <!-- img src="{{wallet.account.photo}}" alt="" / --> 
           </div>
-          <a href="#/app/settings" menu-close class="c3x button button-icon icon lime_settings_icon settings"></a>
+          <a ng-click="goToState('app.settings')" menu-close class="c3x button button-icon icon lime_settings_icon settings"></a>
 
         </div>
         <div class="menu_name"> 
@@ -40,7 +40,7 @@
           {{'menu.home'|translate}} 
         </ion-item>
         <ion-item class="line-divider"></ion-item>
-        <ion-item menu-close href="#/app/contacts" class="item-icon-left">
+        <ion-item menu-close ng-click="goToState('app.contacts')" class="item-icon-left">
           <i class="icon fa16 fa fa-book lime"></i>
           {{'menu.contacts'|translate}}
         </ion-item>

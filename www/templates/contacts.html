@@ -14,11 +14,9 @@
       <div class="list">
         
           <a ng-repeat="contact in data.contacts" class="item base-color item-avatar" ng-click="contactOptions(contact)">
-            <!-- img src="http://ionicframework.com/img/docs/venkman.jpg" -->
-            <canvas id="menu_jdenticon_canvas" width="40" height="40" data-jdenticon-hash="{{contact.avatar_hash}}"></canvas>
+            <canvas id="contact_canvas_{{contact.id}}" width="40" height="40" data-jdenticon-hash="{{contact.avatar_hash}}"></canvas>
             <h2>{{contact.name}}</h2>
             <p>{{contact.pubkey_or_address}}</p>
-
           </a>
         
       </div>

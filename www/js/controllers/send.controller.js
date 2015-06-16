@@ -104,10 +104,6 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
     });
   }
   
-  $scope.scanQR = function() {
-
-  }
-  
   $scope.doSend = function(tx) {
 
     //$scope.formInProgress();
@@ -156,11 +152,7 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
   $scope.computeMemo = function(tx) {
     var deferred = $q.defer();
 
-    if ( !tx.destination.is_pubkey ) {
-      console.log('No es para un pubkey, no hacemos memor');
-      deferred.resolve();
-      return deferred.promise;
-    }
+    var pubkey_to_use = tx.destination.is_pubkey ? tx.destination.address_or_pubkey : Wallet.data.account.pubkey;
 
     BitShares.randomInteger().then(function(rand_int) {
 
@@ -169,7 +161,7 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
       BitShares.computeMemo(
         Wallet.data.account.pubkey,
         tx.memo.trim(),
-        tx.destination.address_or_pubkey,
+        pubkey_to_use,
         Wallet.data.mpk.plain_value,
         Wallet.data.account.plain_account_mpk,
         Wallet.data.account.plain_memo_mpk,
@@ -242,10 +234,11 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
     // Validate enough funds
     } else if ( Wallet.canSend(amount) < 0 ) {
       error = 'no_funds';
+    }
     // Validate destination
-    } else if ( tx.destination.is_pubkey === undefined ) {
-      error = 'no_destination';
-    } 
+    //} else if ( tx.destination.is_pubkey === undefined ) {
+      //error = 'no_destination';
+    //} 
 
     if (error) {
       $ionicPopup.alert({
@@ -267,8 +260,7 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
 
     $scope.computeMemo(tx).then(function(memo) {
 
-      var slate = undefined;
-      if ( memo !== undefined ) slate = memo.skip32_index;
+      slate = memo.skip32_index;
 
       BitShares.new_(
         Wallet.data.account.address, 

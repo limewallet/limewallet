@@ -1051,12 +1051,14 @@ input.pmd {font-size:16px!important;  color:#fff;border-top:none; border-left:no
 .send_form label.pmd button{position: absolute;top: 10px;right: 5px;color:#eaeaea!important;}
 
 .send_form .item-floating-label i.pmd{top: 44px;left:10px;}
+.send_btc_form .item-floating-label i.pmd{left:auto; right:15px}
 
 .button_taller.dock_bottom.button-icon.ion-ios-paperplane {font-size: 40px!important;/*color:#fff !important;*/}
 
 .send_form input.pmd.input_amount{font-size:32px!important; line-height:32px!important;height:44px!important;
     padding-right: 70px; } /* HACK padding-right: 70px!important*/
 .send_form .item-floating-label input.pmd.input_amount {padding-left: 25px;text-align: left;}
+.send_btc_form .item-floating-label input.pmd.input_amount {padding-left: 0px;}
 .send_form input.pmd:focus {border-bottom: 1px solid #8ec919 !important;}    
 .send_form textarea.pmd {font-size:14px!important;
                         border-top:none; border-left:none; border-right:none; 

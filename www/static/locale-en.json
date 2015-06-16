@@ -122,8 +122,8 @@
     "contact_saving"            : "An error occurred while storing contact",
     "contact_saving_msg"        : "Please validate contact data and try again.",
     "contact_validating"        : "An error occurred while validating contact data",
-    "contact_addr_pk_empty"     : "Address and pubkey are empty",
-    "contact_addr_pk_empty_msg" : "Please type at least a valid address or valid pubkey",
+    "contact_addr_pk_empty"     : "Pubkey or address empty",
+    "contact_addr_pk_empty_msg" : "Please enter a valid address or pubkey",
     "contact_name_empty"        : "Name is empty",
     "contact_name_empty_msg"    : "Please type a name",
     "bkp_wallet_locked"         : "Wallet is locked" ,
@@ -166,7 +166,7 @@
     "account_registration": "Account registration could not be completed. Please try again.",
     "unavailable_name"    : "Chosen name is already taken. Please type another one.",
     "choose_another_name" : "Please type another name.",
-    "invalid_name"        : "Invalid characters in name.",
+    "invalid_name"        : "Invalid name.",
     "enter_valid_name"    : "Please enter a valid name.",
     "invalid_email"       : "Invalid email",
     "enter_valid_email"   : "Please enter a valid email",
@@ -176,6 +176,7 @@
     "invalid_address"     : "Invalid address",
     "enter_valid_address" : "Please type a valid address",
     "invalid_pubkey"      : "Invalid public key",
+    "invalid_pubkey_or_address"  : "Invalid public key or address",
     "enter_valid_pubkey"  : "Please type a valid public key",
     "invalid_address_account" : "Invalid address or account name", 
     "invalid_password"    : "Invalid password",
@@ -256,6 +257,8 @@
   },
 
   "send" : { 
+    "title"                  : "Send money",
+    "title_btc"              : "Send Bitcoin",
     "payment_confirm"        : "Payment confirmation",
     "are_you_sure"           : "Are you sure you want to send {{symbol}} {{amount}} to {{address}}?{{extra_data}}",
     "send_payment"           : "Send Payment",
@@ -317,6 +320,7 @@
     "remove_title"    : "Remove contact",
     "remove_sure"     : "Are you sure you want to remove <b>{{name}}</b> from contacts?",
     "saved_ok"        : "Contact stored successfully!",
+    "scan_contact"    : "Scan contact",
     "removed_ok"      : "Contact removed successfully!"
   },
   

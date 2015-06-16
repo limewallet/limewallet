@@ -519,17 +519,19 @@ bitwallet_services
     
     self.btcIsValidAddress = function(addy) {
       var deferred = $q.defer();
-
+      
+      //TODO: !!
       deferred.resolve(true);
-      // window.plugins.BitsharesPlugin.btcIsValidAddress(
-      //   function(data){
-      //     deferred.resolve(true);
-      //   },
-      //   function(error){
-      //     deferred.reject(error);
-      //   },
-      //   addy
-      // );
+
+       // window.plugins.BitsharesPlugin.btcIsValidAddress(
+       //   function(data){
+       //     deferred.resolve(true);
+       //   },
+       //   function(error){
+       //     deferred.reject(error);
+       //   },
+       //   addy
+       // );
 
       return deferred.promise;
     };

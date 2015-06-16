@@ -138,6 +138,18 @@ bitwallet_module
         }
       }
     })
+
+    .state('app.send_btc', {
+      url: "/send_btc",
+      cache: false,
+      params: {scan_data : undefined},
+      views: {
+        'menuContent' :{
+          templateUrl: "templates/send_btc.html",
+          controller: 'SendBTCCtrl'
+        }
+      }
+    })
     
     .state('app.transaction_details', {
       url: "/transaction/:tx_id",
@@ -384,11 +396,11 @@ bitwallet_module
         //$state.go('app.import_priv', {private_key:'ESSSSSSSSSTA'});
         //$state.go('app.xtx_requote', {xtx_id:18});
         //$state.go('app.refund', {xtx_id:18});
-        $state.go('app.settings');
+        //$state.go('app.settings');
         //$state.go('app.contact', {contact:{name: 'peteelpopo', pubkey:'DVS5YYZsZ7g1fSpPxmZcJifWJ2rmiXbUyJpEYSdNsVw738C88yvoy'}}, {inherit:true});
         //$state.go('app.account');
-        //$state.go('app.contacts');
-        //$rootScope.goTo('app.home');
+        //$state.go('app.send_btc', {scan_data:{address:'CF2b4MsrfNMG9ZjatUFg7ZVYwE2qNupBMt', amount:0.05123, message:'Starbucks'}}, {inherit:true});
+        $rootScope.goTo('app.home');
 
         //obscure around glue cheese inherit thing subject blade slow unknown solve assum
         
@@ -441,15 +453,35 @@ bitwallet_module
   $rootScope.hideLoading = function(){
     $ionicLoading.hide();
   }
+
+  $rootScope.unLockWallet= function(){
+
+    $ionicPopup.prompt({
+      title            : T.i('g.wallet_locked'),
+      subTitle         : T.i('g.input_password'),
+      inputPlaceholder : T.i('g.password'),
+      inputType        : 'password',
+      okType           : 'base-color_bg color_white base-color_border',
+    }).then(function(password) {
+      if(!password){
+        return;
+      }
+      Wallet.unlock(password).then(function(){
+        window.plugins.toast.show( T.i('g.wallet_unlocked'), 'long', 'bottom'); 
+      }, function(err){
+        $rootScope.showAlert('err.wallet_un_locked_title', err);
+      });
+    })
+
+  }
   
   $rootScope.showAlert = function(title, message){
     $ionicPopup.alert({
        title    : T.i(title),
        template : T.i(message),
-       okType   : 'button-assertive', 
+       okType   : 'base-color_bg color_white base-color_border', 
      });
   }
-
 
   //*****************************
 
@@ -548,6 +580,21 @@ bitwallet_module
     $state.go('app.home');
   }
 
+  $rootScope.goToState = function(state){
+    if(state == 'app.send' || state == 'app.withdraw') {
+      if ( Wallet.data.locked ) {
+        $rootScope.alertUnlock();
+        return;
+      }
+
+      if (state == 'app.send')
+        return $state.go('app.send', {scan_data:{}}, {inherit:true});
+    }
+
+    $state.go(state);
+  }
+
+
   $rootScope.goTo = function(param) {
     $state.go(param);
   }
@@ -574,36 +621,27 @@ bitwallet_module
     $rootScope.refresh_status = -1;
     console.log('Wallet refresh error');
   });
+
+  $rootScope.alertUnlock = function(){
+    // if never shown (settings)
+    var alertPopup = $ionicPopup.alert({
+      title    : T.i('home.wallet_is_locked'),
+      template : T.i('home.wallet_is_locked_content'),
+      subTitle : '',
+      okText   : T.i('g.got_it'),
+      okType   : 'base-color_bg color_white base-color_border',
+     });
+     alertPopup.then(function(res) {
+       // save settings not to show anymore.
+     });
+  }
+  
+
   
   /// transfer/amount/'+$scope.amount+'/asset/
   //  window.open('bts:DVSNKLe7F5E7msNG5RnbdWZ7HDeHoxVrUMZo/transfer/amount/1.1/asset/USD', '_system', 'location=yes');
   //  bitcoin:BweMQsJqRdmncwagPiYtANrNbApcRvEV77?amount=1.1  | bitcoin://BweMQsJqRdmncwagPiYtANrNbApcRvEV77?amount=1.1
   //  bts:DVSNKLe7F5E7msNG5RnbdWZ7HDeHoxVrUMZo?amount=1.1    | bts://DVSNKLe7F5E7msNG5RnbdWZ7HDeHoxVrUMZo?amount=1.1
-  $rootScope.resolveURI = function(data){
-
-    if( !data.cancelled ) {
-
-        if(data.privkey !== undefined)
-        {
-          $state.go('app.import_priv', {private_key:data.privkey});
-          return;
-        }
-        
-        var promises = [];
-        //Pubkey scanned
-        if(data.pubkey !== undefined) {
-          var p = BitShares.btsPubToAddress(data.pubkey)
-          .then(function(addy){
-            data.address = addy;
-          })
-          promises.push(p);
-        }
-        
-        $q.all(promises).then(function() {
-          $state.go('app.send', {address:data.address, amount:data.amount, asset_id:data.asset_id, is_btc:data.is_btc});
-        })
-      }
-  }
 
   window.addEventListener('OnPaymentRequest', function(e) {
       if(!e.detail || !e.detail.url)
@@ -611,10 +649,35 @@ bitwallet_module
         console.log('OnPaymentRequest null url.');
         return;
       }
-      Scanner.parseUrl(e.detail.url).then(function(data){
-        // address/:amount/:asset_id/:is_btc
-        // $state.go('app.send', {address:data.address, amount:data.amount, asset_id:data.asset_id, is_btc:data.is_btc});
-        $rootScope.resolveURI(data);
+      Scanner.parseScannedData(e.detail.url).then(function(result){
+
+        console.log('SCAN en OnPaymentRequest (' + result.type + ') => ' + JSON.stringify(result));
+
+        if(!result || result.cancelled)
+          return;
+
+        // SEND BTC
+        if(result.type == 'btc_request') { 
+          $state.go('app.send_btc', {scan_data:result}, {inherit:true});
+          return;
+        }
+
+        // SEND BTS
+        if(result.type == 'bts_request') { 
+          if( result.asset && result.asset != Wallet.data.asset.name ) {
+            window.plugins.toast.show('Switch your asset first', 'long', 'bottom')
+          } else { 
+            $state.go('app.send', {scan_data:result}, {inherit:true});
+          }
+          return;
+        }
+
+        if(result.type == 'bts_contact') {
+          result.pubkey_or_address = result.pubkey || result.address;
+          $state.go('app.contact', {contact:result}, {inherit:true});
+          return;
+        }
+
       }, function(error){
         console.log(error);
       });

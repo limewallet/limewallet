@@ -75,11 +75,11 @@ bitwallet_controllers
   }
 
   $scope.shareContact = function(contact){
-    var contact_uri = 'bts:'+contact.name+'/address/'+contact.address;
-    if(contact.pubkey)
-      contact_uri = 'bts:'+contact.name+':'+contact.pubkey;
+    var pubkey_or_address = contact.pubkey || contact.address;
+    var contact_uri = 'bts://'+contact.name+':'+pubkey_or_address;
     $cordovaSocialSharing
-    .share(null, null, null, contact_uri)
+    //.share(null, null, null, contact_uri)
+    .share(contact.name, null, document.getElementById('contact_canvas_'+contact.id).toDataURL(), contact_uri)
     .then(function(result) {
       // success
 
