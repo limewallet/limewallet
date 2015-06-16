@@ -204,7 +204,7 @@ bitwallet_services
     var self = this;
     
     self.LOCAL  = 'local';
-    self.GLOBAL = 'global';
+    self.GLOBAL = 'transfer';
 
     self.all = function() {
         return DB.query('SELECT * FROM contact order by name')
@@ -236,7 +236,7 @@ bitwallet_services
     self._update = function(id, name, address, pubkey, avatar_hash, source) {
       address = address || null;
       pubkey  = pubkey  || null;
-      var sql    = 'UPDATE contact set name=?, address=?, pubkey=?, avatar_hash=?, source=? WHERE id=?';
+      var sql    = 'UPDATE OR REPLACE contact set name=?, address=?, pubkey=?, avatar_hash=?, source=? WHERE id=?';
       var params = [name, address, pubkey, avatar_hash, source, id];
       return {sql:sql, params:params};
     }

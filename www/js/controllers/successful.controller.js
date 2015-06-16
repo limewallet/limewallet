@@ -1,15 +1,16 @@
 bitwallet_controllers
-.controller('SuccessfulCtrl', function($scope, $rootScope, T, $stateParams, Operation, ExchangeTransaction){
+.controller('SuccessfulCtrl', function($scope, Wallet, $rootScope, T, $stateParams, Operation, ExchangeTransaction){
   
-  $scope.data = { title       : "title",
-                  amount      : 0,
-                  sub_title   : '', // "Recipient"
-                  sub_data    : '', // "recipient?",
-                  sub_title2  : '', // "Memo",
-                  sub_data2   : '', // "memo?",
-                  oper_id     : 0,
-                  xtx_id      : 0
-                }
+  $scope.data = { 
+    title       : "title",
+    amount      : 0,
+    sub_title   : '', // "Recipient"
+    sub_data    : '', // "recipient?",
+    sub_title2  : '', // "Memo",
+    sub_data2   : '', // "memo?",
+    oper_id     : 0,
+    xtx_id      : 0
+  }
   
   // stateParams -> :txid/:xtxid/:address/:name/:message/:amount/:type                
 
@@ -17,12 +18,15 @@ bitwallet_controllers
   $scope.data.amount      = $stateParams.amount;
   
   $scope.data.sub_title   = T.i('send.recipient');
-  $scope.data.sub_data    = $stateParams.name?$stateParams.name:$stateParams.address;
+  $scope.data.sub_data    = $stateParams.name || $stateParams.address;
 
   if ($stateParams.message){
     $scope.data.sub_title2  = T.i('g.memo');
     $scope.data.sub_data2   = $stateParams.message;
   }
+
+  $scope.data.currency_symbol = $stateParams.currency_symbol || Wallet.data.asset.symbol_ui_text;
+  $scope.data.currency_name   = $stateParams.currency_name   || Wallet.data.asset.name;
 
   // if (!angular.isUndefined($stateParams.xtx_id))
   // {

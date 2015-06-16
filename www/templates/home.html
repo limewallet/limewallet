@@ -18,14 +18,14 @@
       <div class="button-bar_container">
         <div class="button-bar tabbed">
 
-          <a class="button button-small button-send" href="#/app/send">
+          <a class="button button-small button-send" ng-click="goToState('app.send')">
             {{'g.send' | translate | uppercase}}
           </a>
-          <a class="button button-small button-receive" href="#/app/receive">
+          <a class="button button-small button-receive" ng-click="goToState('app.receive')">
             {{'g.receive' | translate | uppercase}}
           </a>
         </div>
-        <button ng-show="wallet.password_required==1 && wallet.locked==1" class="button button-icon icon ion-locked smaller" style="z-index:10;" ng-click="alertUnlock()"></button>
+        <button ng-show="wallet.password_required==1 && wallet.locked==1" class="button button-icon icon ion-locked smaller" style="z-index:10;" ng-click="unLockWallet()"></button>
       </div>
     </div>
 

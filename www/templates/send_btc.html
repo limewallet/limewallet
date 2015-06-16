@@ -1,0 +1,57 @@
+  <ion-view class="dark" view-title="{{'send.title_btc'|translate}}">
+
+    <ion-nav-buttons side="right">
+      <button class="button button-icon icon lime_icon qr" ng-click="scanQR()"><i class="fa fa-qrcode"></i></button>
+    </ion-nav-buttons>
+  
+    <ion-content id="nanobar_id" class="has-header send">
+      
+      <form novalidate name="sendForm" class="send_btc_form send_form">
+        <div class="list">
+          
+          <label class="item item-input pmd item-floating-label">
+            <span class="input-label pmd">{{'g.bitcoin_address'|translate}}</span>
+            <input name="transactionAddress" placeholder="{{'g.bitcoin_address'|translate}}" ng-model="data.address" class="big full_width pmd" />
+            <span style="clear:both;float:right;width:100%;" class="quote_error assertive" ng-show="data.address_error!==undefined">{{data.address_error}}</span>
+          </label>
+
+          <!-- BTC -->
+          <div class="btc_amount_container">
+            <label class="item item-input pmd item-floating-label">
+              <span class="input-label pmd">{{'g.amount'|translate}}</span>
+              <input numbers-only-key-press required placeholder="{{'g.amount'|translate}}" name="transactionAmount" ng-model="data.amount" type="number" class="input_amount big pmd" ng-class="{'error':sendForm.transactionAmount.$error.number}"> 
+              <i class="pmd icon placeholder-icon">BTC</i>
+              <br/>
+            </label>
+            <div class="send_rate">
+              <div ng-show="data.quoting" class="deposit_rate_loading" >
+                <ion-spinner icon="android"></ion-spinner>
+              </div>
+
+              <div ng-show="data.valid_quote" class="deposit_rate" >
+                <div class="hint left">{{'g.you_pay'|translate}}:</div><div class="hint right base-color"><strong>{{data.quote.quote.cl_pay}}&nbsp;{{data.quote.quote.cl_pay_curr}}</strong></div> <br>
+                <div class="hint left">{{'g.cur_rate'|translate}}:</div><div class="hint right base-color"><strong>{{data.quote.quote.rate}}&nbsp;{{data.quote.quote.book}}</strong></div>
+              </div>
+            </div>
+
+          </div>
+
+          
+          <!-- BTS & BTC -->
+          <label class="item item-input pmd item-floating-label">
+            <span class="input-label pmd">{{'g.memo'|translate}}</span>
+            <textarea name="" id="" cols="30" rows="5" placeholder="{{'g.memo'|translate}}" name="transactionMemo" ng-model="data.memo"
+            class="big pmd base-color" ng-class="{'error':sendForm.transactionMemo.$error.number}"></textarea>  
+            <br/>
+          </label>
+          <span class="error input" ng-show="sendForm.transactionAmount.$error.number">{{'err.enter_valid_amount'|translate}}</span>
+
+        </div>
+      </form>
+      
+      <fieldset ng-disabled="!data.valid_quote" class="buttons_container hide-on-keyboard-open"> 
+        <button ng-click="doAcceptAndSend()" class="button button-block button-energized no-margin button_taller"> {{'g.send'|translate|uppercase}} 
+        </button>
+      </fieldset> 
+    </ion-content>
+  </ion-view>

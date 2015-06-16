@@ -2,7 +2,7 @@
   <ion-content has-bouncing="false" class="dark_blue_bg no_header" >
     <div class="successful">
       <h2>{{data.title}}<br/>successful</h2>
-      <h2 class="amount lime">{{wallet.asset.symbol_ui_text}} {{data.amount|currency:wallet.asset.name}}</h2>
+      <h2 class="amount lime">{{data.currency_symbol}} {{data.amount|currency:data.currency_name}}</h2>
       <p class="white">{{data.sub_title}}</p>
       <p class="bigger lime">{{data.sub_data}}</p>     
       <p class="white">{{data.sub_title2}}</p>

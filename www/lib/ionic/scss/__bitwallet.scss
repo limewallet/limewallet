@@ -26,6 +26,7 @@ $base-color:    #5f7381 !default;
 
 .base-color     { color:$base-color!important;}
 .base-color_bg  { background-color:$base-color!important;}
+.base-color_border  { border: $base-color 1px solid!important;}
 
 $lime:          #d3eb00 !default;
 .lime           { color:$lime!important;}

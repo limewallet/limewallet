@@ -1,45 +1,6 @@
 bitwallet_controllers
 .controller('HomeCtrl', function(T, Wallet, Scanner, $ionicHistory, $ionicActionSheet, $scope, $state, $http, $ionicModal, $rootScope, $ionicPopup, $timeout, $location, BitShares, $q, $ionicLoading) {
 
-  // $timeout(function () {
-  //   $rootScope.goTo('app.settings');
-  // }, 2000); 
-  
-
-  // For testing purposes, remove on prod.
-  // $scope.$on( '$ionicView.beforeEnter', function(){
-  //   if(!$scope || !$scope.wallet || !$scope.wallet.ui)
-  //     return;
-  //   if(!$scope.wallet.ui.balance.allow_hide)
-  //   { 
-  //     $scope.wallet.ui.balance.hidden = false;
-  //     return;
-  //   }
-  //   $scope.wallet.ui.balance.hidden = true;
-    
-  // });
-  
-  // $timeout(function () {
-  //   $scope.wallet.initialized = true;
-  // }, 2000); 
-  
-  //Wallet.refreshBalance(false);
-
-
-  $scope.alertUnlock = function(){
-    // if never shown (settings)
-    var alertPopup = $ionicPopup.alert({
-      title:    T.i('home.wallet_is_locked'),
-      template: T.i('home.wallet_is_locked_content'),
-      subTitle: '',
-      okText: T.i('g.got_it'), 
-      okType: 'button-positive'
-     });
-     alertPopup.then(function(res) {
-       // save settings not to show anymore.
-     });
-  }
-  
   $scope.toggleBalance = function() {
 
     if(!$scope.wallet.ui.balance.allow_hide)
@@ -60,7 +21,12 @@ bitwallet_controllers
       // TODO:
       
       // SEND BTC
-      // TODO:
+      if(result.type == 'btc_request') { 
+        //$state.go('app.send_btc', {scan_data:result}, {inherit:true});
+        $scope.goToState('app.send_btc', result);
+        return;
+      }
+
 
       // SEND BTS
       if(result.type == 'bts_request' || 
@@ -72,7 +38,7 @@ bitwallet_controllers
         if( result.asset && result.asset != Wallet.data.asset.name ) {
           window.plugins.toast.show('Switch your asset first', 'long', 'bottom')
         } else {
-          $state.go('app.send', {scan_data:result}, {inherit:true});
+          $scope.goToState('app.send', result);
         }
       }
 
@@ -166,6 +132,9 @@ bitwallet_controllers
       window.plugins.toast.show( T.i('g.updated'), 'short', 'bottom');
     }, function(err) {
       window.plugins.toast.show( T.i('g.unable_to_refresh'), 'long', 'bottom');
+    })
+    .finally(function() {
+      $scope.$broadcast('scroll.refreshComplete');
     });
   };
   

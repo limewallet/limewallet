@@ -519,17 +519,16 @@ bitwallet_services
     
     self.btcIsValidAddress = function(addy) {
       var deferred = $q.defer();
-
-      deferred.resolve(true);
-      // window.plugins.BitsharesPlugin.btcIsValidAddress(
-      //   function(data){
-      //     deferred.resolve(true);
-      //   },
-      //   function(error){
-      //     deferred.reject(error);
-      //   },
-      //   addy
-      // );
+      
+      window.plugins.BitsharesPlugin.btcIsValidAddress(
+        function(data){
+          deferred.resolve(true);
+        },
+        function(error){
+          deferred.reject(error);
+        },
+        addy
+      );
 
       return deferred.promise;
     };
@@ -774,7 +773,7 @@ bitwallet_services
         }]
       });
 
-      console.log(JSON.stringify(payload));
+      //console.log('BitShares.new_: ' + payload);
 
       return self.apiCall(undefined, url, payload);
     }

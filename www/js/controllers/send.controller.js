@@ -104,10 +104,6 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
     });
   }
   
-  $scope.scanQR = function() {
-
-  }
-  
   $scope.doSend = function(tx) {
 
     //$scope.formInProgress();
@@ -153,59 +149,6 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
   }
 
 
-  $scope.computeMemo = function(tx) {
-    var deferred = $q.defer();
-
-    if ( !tx.destination.is_pubkey ) {
-      console.log('No es para un pubkey, no hacemos memor');
-      deferred.resolve();
-      return deferred.promise;
-    }
-
-    BitShares.randomInteger().then(function(rand_int) {
-
-      rand_int = (rand_int>>>0) & 0x7FFFFFFF;
-
-      BitShares.computeMemo(
-        Wallet.data.account.pubkey,
-        tx.memo.trim(),
-        tx.destination.address_or_pubkey,
-        Wallet.data.mpk.plain_value,
-        Wallet.data.account.plain_account_mpk,
-        Wallet.data.account.plain_memo_mpk,
-        rand_int
-      ).then(function(res) {
-        console.log('OK -> ' + JSON.stringify(res));
-
-        BitShares.skip32(rand_int, Wallet.data.account.plain_skip32_key, true).then(function(skip32_index) {
-
-          skip32_index = skip32_index>>>0;
-
-          console.log('%%%%%%%%%%%%%%%%%%%% => RANDINT ' + rand_int);
-          console.log('%%%%%%%%%%%%%%%%%%%% => SKIP32 ' + skip32_index);
-          console.log('%%%%%%%%%%%%%%%%%%%% => KEY ' + Wallet.data.account.plain_skip32_key);
-
-          res.skip32_index = skip32_index;
-          deferred.resolve(res);
-        }, function(err) {
-          console.log('ERR SKIP32->' + JSON.stringify(err));
-          deferred.reject();
-        }); 
-
-      }, function(err) {
-        console.log('ERR computeMemo->' + JSON.stringify(err));
-        deferred.reject();
-      });
-
-
-    }, function(err) {
-      console.log('ERR ->' + JSON.stringify(err));
-      deferred.reject();
-    });
-
-    return deferred.promise;
-  }
-
   $scope.promptSend = function(asset, tx) {
 
     var symbol =  asset.symbol_ui_text;
@@ -220,16 +163,6 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
 
   }
 
-  $scope.signAll = function(to_sign, addys) {
-    var proms = [];
-    
-    addys.forEach(function(addy) {
-      //TODO: change privkey when sending from multiples accounts
-      proms.push(BitShares.compactSignatureForHash(to_sign, Wallet.data.account.plain_privkey)) 
-    });
-    return $q.all(proms);
-  }
-
 
   $scope.validateSend = function(tx) {
 
@@ -242,18 +175,14 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
     // Validate enough funds
     } else if ( Wallet.canSend(amount) < 0 ) {
       error = 'no_funds';
+    }
     // Validate destination
-    } else if ( tx.destination.is_pubkey === undefined ) {
-      error = 'no_destination';
-    } 
+    //} else if ( tx.destination.is_pubkey === undefined ) {
+      //error = 'no_destination';
+    //} 
 
     if (error) {
-      $ionicPopup.alert({
-        title    : 'Error',
-        template : error,
-        okType   : 'button-assertive', 
-      });
-
+      $scope.showAlert('send.title', error);
       return false;
     }
 
@@ -267,8 +196,7 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
 
     $scope.computeMemo(tx).then(function(memo) {
 
-      var slate = undefined;
-      if ( memo !== undefined ) slate = memo.skip32_index;
+      slate = memo.skip32_index;
 
       BitShares.new_(
         Wallet.data.account.address, 
