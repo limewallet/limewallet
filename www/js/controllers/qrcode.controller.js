@@ -1,5 +1,5 @@
 bitwallet_controllers
-.controller('ReceiveQrcodeCtrl', function($scope, $ionicHistory, $rootScope, T, $cordovaClipboard, $cordovaSocialSharing, $stateParams, $ionicLoading, $timeout, $ionicModal, $ionicPopup, Wallet) {
+.controller('ReceiveQrcodeCtrl', function($scope, $ionicHistory, $rootScope, T, $cordovaClipboard, $cordovaSocialSharing, $stateParams, $timeout, $ionicModal, $ionicPopup, Wallet) {
   
   console.log(' ***** ReceiveQrcodeCtrl amount: '+$stateParams.amount);
 
@@ -42,20 +42,6 @@ bitwallet_controllers
   
   $scope.buildUri();
   
-  $scope.showLoading = function(){
-    $ionicLoading.show({
-      template     : '<ion-spinner icon="android"></ion-spinner> ' + T.i('g.loading'),
-      animation    : 'fade-in',
-      showBackdrop : true,
-      maxWidth     : 200,
-      showDelay    : 10
-    }); 
-  }
-
-  $scope.hideLoading = function(){
-    $ionicLoading.hide();
-  }
-
   $scope.doShareRecvPayment = function(){
     $cordovaSocialSharing
     .share(null, null, null, $scope.data.uri)

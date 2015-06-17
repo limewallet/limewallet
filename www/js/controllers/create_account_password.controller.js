@@ -4,21 +4,6 @@ bitwallet_controllers
   $scope.data = { password:         '',
                   retype_password:  ''};
   
-  $scope.showLoading = function(){
-    var title = $scope.isCreateInitMode()?T.i('g.creating_wallet'):T.i('g.recovering_wallet');
-    $ionicLoading.show({
-      template     : '<ion-spinner icon="android"></ion-spinner> ' + title, 
-      animation    : 'fade-in',
-      showBackdrop : true,
-      maxWidth     : 300,
-      showDelay    : 10
-    }); 
-  }
-
-  $scope.hideLoading = function(){
-    $ionicLoading.hide();
-  }
-
   $scope.encrypt = function(plainData, password) {
 
     var deferred = $q.defer();
@@ -168,7 +153,8 @@ bitwallet_controllers
     }
 
     //Mostrar loading
-    $scope.showLoading();
+    var title = $scope.isCreateInitMode()?'g.creating_wallet':'g.recovering_wallet';
+    $scope.showLoading(title);
 
     BitShares.randomData(32).then(function(salt) {
 

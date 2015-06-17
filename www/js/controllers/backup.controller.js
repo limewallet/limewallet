@@ -123,7 +123,7 @@ bitwallet_controllers
           $scope.modal.show();
         } else {
           $ionicPopup.alert({
-            title    : T.i('menu.backup_wallet'),
+            title    : T.i('g.backup_wallet'),
             template : T.i('err.backup_error')
           }).then(function(){
             alertPopup.close();

@@ -178,7 +178,7 @@ bitwallet_controllers.controller('SettingsCtrl', function($q, DB, BitShares, $sc
 
     var title     = T.i('g.set_password');
     var sub_title = T.i('settings.set_password_subtitle');
-    var template  = '<input type="password" placeholder="'+T.i('settings.new_password')+'" ng-model="data.password.new"><br/><input type="password" placeholder="'+T.i('settings.confirm_password')+'" ng-model="data.password.confirm">';
+    var template  = '<input type="password" placeholder="'+T.i('settings.new_password')+'" ng-model="data.password.new"><br/><input type="password" placeholder="'+T.i('g.confirm_password')+'" ng-model="data.password.confirm">';
 
     if ( Wallet.data.password_required ) {
       template  = '<input type="password" placeholder="'+T.i('settings.old_password')+'" ng-model="data.password.old"><br/>' + template;

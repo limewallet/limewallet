@@ -1,5 +1,5 @@
 bitwallet_controllers
-.controller('SuccessfulCtrl', function($scope, Wallet, $rootScope, T, $stateParams, Operation, ExchangeTransaction){
+.controller('SuccessfulCtrl', function($scope, Wallet, $rootScope, T, $stateParams, $timeout){
   
   $scope.data = { 
     title       : "title",
@@ -14,57 +14,28 @@ bitwallet_controllers
   
   // stateParams -> :txid/:xtxid/:address/:name/:message/:amount/:type                
 
-  $scope.data.title       = T.i('g.'+$stateParams.type);
-  $scope.data.amount      = $stateParams.amount;
+  var tx = $stateParams.tx;
+  if(tx && tx.amount) {
   
-  $scope.data.sub_title   = T.i('send.recipient');
-  $scope.data.sub_data    = $stateParams.name || $stateParams.address;
+    $scope.data.title       = T.i('g.'+tx.type);
+    $scope.data.amount      = tx.amount;
+    
+    $scope.data.sub_title   = T.i('g.recipient');
+    $scope.data.sub_data    = tx.name || tx.address;
 
-  if ($stateParams.message){
-    $scope.data.sub_title2  = T.i('g.memo');
-    $scope.data.sub_data2   = $stateParams.message;
+    if (tx.message){
+      $scope.data.sub_title2  = T.i('g.memo');
+      $scope.data.sub_data2   = tx.message;
+    }
+
+    $scope.data.currency_symbol = tx.currency_symbol || Wallet.data.asset.symbol_ui_text;
+    $scope.data.currency_name   = tx.currency_name   || Wallet.data.asset.name;
+
+    $timeout(function () { $scope.goHome(); }, 3000);
   }
-
-  $scope.data.currency_symbol = $stateParams.currency_symbol || Wallet.data.asset.symbol_ui_text;
-  $scope.data.currency_name   = $stateParams.currency_name   || Wallet.data.asset.name;
-
-  // if (!angular.isUndefined($stateParams.xtx_id))
-  // {
-  //   $scope.data.xtx_id = $stateParams.xtx_id;
-  //   ExchangeTransaction.byXId($scope.data.xtx_id).then(function(res){
-  //     $scope.data.xtx    = res;
-  //     if($scope.data.xtx.tx_id===null)
-  //       $scope.goHome();
-      
-  //     $scope.data.title       = T.i('g.'+$stateParams.type);
-  //     $scope.data.amount      = $scope.data.xtx.cl_recv;
-  //     $scope.data.currency    = $scope.data.xtx.cl_recv_curr;
-  //     $scope.data.sub_title   = $scope.data.xtx.cl_recv_curr;
-  //     $scope.data.sub_data    = "";
-
-  //   }, function(error){
-  //     console.log('XTxCtrl ERROR 2 '); console.log(error);
-  //   });
-  // }
-  // else if (!angular.isUndefined($stateParams.oper_id))
-  // {
-  //   $scope.data.oper_id = $stateParams.oper_id;
-  //   Operation.byId($scope.data.xtx_id).then(function(res){
-  //     $scope.data.xtx    = res;
-  //     if($scope.data.xtx.tx_id===null)
-  //       $scope.goHome();
-      
-  //     $scope.data.title       = "";
-  //     $scope.data.amount      = "";
-  //     $scope.data.currency    = "";
-  //     $scope.data.sub_title   = "";
-  //     $scope.data.sub_data    = "";
-
-  //   }, function(error){
-  //     console.log('XTxCtrl ERROR 2 '); console.log(error);
-  //   });
-  // }
-  
+  else{
+    $scope.goHome();
+  }
   
 });
 

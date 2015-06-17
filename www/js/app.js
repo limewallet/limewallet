@@ -252,7 +252,9 @@ bitwallet_module
 
     .state('app.successful', {
       cache:  false,
-      url:    "/successful/:txid/:xtxid/:address/:name/:message/:amount/:type/:currency_name/:currency_symbol",
+      //url:    "/successful/:txid/:xtxid/:address/:name/:message/:amount/:type/:currency_name/:currency_symbol",
+      url:    "/successful",
+      params: {tx : undefined},
       views: {
               'menuContent' :{
                 templateUrl: "templates/successful.html",
@@ -663,8 +665,9 @@ bitwallet_module
     $state.go(state, params);
   }
 
-  $rootScope.goToSuccess = function(params) {
-    $rootScope.goToEx('app.successful', params);
+  $rootScope.goToSuccess = function(param) {
+    // /successful/:txid/:xtxid/:address/:name/:message/:amount/:type/:currency_name/:currency_symbol",
+    $state.go('app.successful', {tx:param}, {inherit:true});
   }
 
   $rootScope.$on(Wallet.REFRESH_START, function(event, data) {

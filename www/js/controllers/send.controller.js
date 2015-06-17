@@ -46,11 +46,12 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
     }
     
     if ( scan_data.name && !scan_data.pubkey ) {
-      $scope.showLoading('looking up contact');
+      $scope.showLoading('send.looking_up_contact');
       BitShares.getAccount(scan_data.name).then(function(account) {
         $scope.hideLoading();
         if(!account || !account[scan_data.name]) {
-          window.plugins.toast.show('Unable to get contact info', 'long', 'bottom');
+          $scope.showAlert('send.looking_up_contact', 'send.cant_get_contact_info');
+          //window.plugins.toast.show(T.i('send.cant_get_contact_info'), 'long', 'bottom');
           return;
         }
 
@@ -63,7 +64,9 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
         console.log(JSON.stringify(account));
       }, function(err) {
         $scope.hideLoading();
-        window.plugins.toast.show('Unable to get contact info', 'long', 'bottom');
+        //window.plugins.toast.show(T.i('send.cant_get_contact_info'), 'long', 'bottom');
+        $scope.showAlert('send.looking_up_contact', 'send.cant_get_contact_info');
+        return;
       });
     }
   }
@@ -93,7 +96,9 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
 
         //TODO: check bitAsset if request
         if( result.asset && result.asset != Wallet.data.asset.name ) {
-          window.plugins.toast.show('Switch your asset first', 'long', 'bottom')
+          //window.plugins.toast.show('Switch your asset first', 'long', 'bottom')
+          $scope.showAlert('send.mistaken_asset', 'send.switch_asset_required');
+          return;
         } else {
           $scope.applyScan(result);
         }

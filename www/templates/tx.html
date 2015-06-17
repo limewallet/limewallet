@@ -1,4 +1,4 @@
-<ion-view class="dark" title="{{'detail.transaction_details'|translate}}">
+<ion-view title="{{'detail.transaction_details'|translate}}">
     
     <ion-content class="has-header assets base-color_bg padding" scroll="true" scrollbar-y="true" has-bouncing="false">
     
@@ -8,7 +8,7 @@
         </div>
         <div class="item base-color">
           <div class="asset_data">
-            <strong>Recipient</strong>
+            <strong>{{'g.recipient'|translate}}</strong>
             <br/>
             <span> 
               {{data.tx.name}}
@@ -17,7 +17,7 @@
         </div>
         <div class="item base-color">
           <div class="asset_data">
-            <strong>Amount</strong>
+            <strong>{{'g.amount'|translate}}</strong>
             <br/>
             <span> 
               {{data.asset.symbol_ui_text}}{{data.tx.amount|number:2}}
@@ -26,7 +26,7 @@
         </div>
         <div class="item base-color">
           <div class="asset_data">
-            <strong>Fee</strong>
+            <strong>{{'detail.fee'|translate}}</strong>
             <br/>
             <span> 
               {{data.asset.symbol_ui_text}}{{data.tx.fee|number:2}}
@@ -36,7 +36,7 @@
         
         <div class="item base-color">
           <div class="asset_data">
-            <strong>Note</strong>
+            <strong>{{'detail.note_msg'|translate}}</strong>
             <br/>
             <span> 
               {{data.tx.message}}
@@ -46,7 +46,7 @@
 
         <div class="item base-color">
           <div class="asset_data">
-            <strong>Date</strong>
+            <strong>{{'g.date'|translate}}</strong>
             <br/>
             <span> 
               {{(data.tx.timestamp*1000)|date:'medium'}}
@@ -56,13 +56,13 @@
 
         <div class="item base-color" ng-show="data.show_extra==false">
           <div class="asset_data text_centered">
-            <a ng-click="data.show_extra= (!data.show_extra)">More data...</a>
+            <a ng-click="data.show_extra= (!data.show_extra)">{{'detail.more_data'|translate}}</a>
           </div>
         </div>
         
         <div class="item base-color" ng-show="data.show_extra==true">
           <div class="asset_data" on-click="copy()">
-            <strong>Public key</strong>
+            <strong>{{'detail.pubkey'|translate}}</strong>
             <br/>
             <span> 
               {{data.tx.pubkey?data.tx.pubkey:'N/A'}}
@@ -72,7 +72,7 @@
         
         <div class="item base-color" ng-show="data.show_extra==true">
           <div class="asset_data">
-            <strong>Address</strong>
+            <strong>{{'detail.address'|translate}}</strong>
             <br/>
             <span> 
               {{data.tx.address}}
@@ -82,7 +82,7 @@
 
         <div class="item base-color" ng-show="data.show_extra==true">
           <div class="asset_data">
-            <strong>Asset</strong>
+            <strong>{{'g.asset'|translate}}</strong>
             <br/>
             <span> 
               {{data.asset.symbol}} ({{data.asset.name}})
@@ -92,7 +92,7 @@
 
         <div class="item base-color" ng-show="data.show_extra==true">
           <div class="asset_data">
-            <strong>Transaction id</strong>
+            <strong>{{'detail.tx_id'|translate}}</strong>
             <br/>
             <span> 
               {{data.tx.txid}}
@@ -102,7 +102,7 @@
 
         <div class="item base-color" ng-show="data.show_extra==true">
           <div class="asset_data">
-            <strong>Bitshares Block (id)</strong>
+            <strong>{{'detail.bts_block'|translate}}</strong>
             <br/>
             <span> 
               {{data.tx.block}}<br/>({{data.tx.block_id}})

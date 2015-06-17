@@ -48,29 +48,6 @@ bitwallet_controllers
     window.plugins.toast.show( T.i('err.invalid_xtx_id'), 'long', 'bottom');
   });
   
-  $scope.showLoading = function(text_to_translate){
-    $ionicLoading.show({
-      //template     : '<i class="icon ion-looping"></i> ' + T.i(text_to_translate),
-      template     : '<ion-spinner icon="android"></ion-spinner> ' + T.i(text_to_translate),
-      animation    : 'fade-in',
-      showBackdrop : true,
-      maxWidth     : 200,
-      showDelay    : 10
-    }); 
-  }
-
-  $scope.hideLoading = function(){
-    $ionicLoading.hide();
-  }
-
-  $scope.showAlert = function(title, message){
-    $ionicPopup.alert({
-       title    : T.i(title),
-       template : T.i(message),
-       okType   : 'button-assertive', 
-     });
-  }
-
   $scope.xxxx = function() {
     
     console.log('doAcceptReQuote');

@@ -189,13 +189,6 @@ bitwallet_controllers
   //   return rem;
   // }
   
-  $scope.showAlert = function(title, message){
-    $ionicPopup.alert({
-       title    : T.i(title),
-       template : T.i(message),
-       okType   : 'button-assertive', 
-     });
-  }
   
   // Load sending process modal view.
   $ionicModal.fromTemplateUrl('sending-modal.html', function($ionicModal) {

@@ -1,23 +1,9 @@
 bitwallet_controllers
-.controller('RegisterCtrl', function($translate, T, BitShares, $scope, $rootScope, $http, $timeout, $ionicPopup, $ionicLoading, $q, Account, Wallet, $interval) {
+.controller('RegisterCtrl', function($translate, T, BitShares, $scope, $rootScope, $http, $timeout, $ionicPopup, $q, Account, Wallet, $interval) {
   
   $scope.data = { valid_name  : true
                   , error     : ''
                   , new_name  : '' };
-
-  $scope.showLoading = function(){
-    $ionicLoading.show({
-      template     : '<ion-spinner icon="android"></ion-spinner> ' + T.i('g.registering'),
-      animation    : 'fade-in',
-      showBackdrop : true,
-      maxWidth     : 200,
-      showDelay    : 10
-    }); 
-  }
-
-  $scope.hideLoading = function(){
-    $ionicLoading.hide();
-  }
 
   $scope.alert = function(error){
     $ionicPopup.alert({
@@ -34,7 +20,7 @@ bitwallet_controllers
 
   $scope.register = function(){
     
-    $scope.showLoading();
+    $scope.showLoading('register.in_progress');
 
     var name = $scope.data.new_name;
     if (name===undefined || name.length==0)

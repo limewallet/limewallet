@@ -156,7 +156,7 @@ bitwallet_controllers.controller('RestoreCtrl', function($q, T, Setting, $rootSc
             Wallet.updateAccountFromNetwork(addy);
           },1500);
           $ionicPopup.alert({
-            title: T.i('menu.restore_wallet'),
+            title: T.i('g.restore_wallet'),
             template: T.i('restore.successful')
           })
           .then(function(res) {

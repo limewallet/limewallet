@@ -1,5 +1,5 @@
 bitwallet_controllers
-.controller('RefundCtrl', function($stateParams, $translate, T, Account, Wallet, BitShares, $scope, Scanner, $http, $timeout, $ionicActionSheet, $ionicPopup, $cordovaClipboard, $ionicLoading, $timeout, BitShares, $state, $ionicModal, $q, ExchangeTransaction, $ionicPopover) {
+.controller('RefundCtrl', function($stateParams, $translate, T, Account, Wallet, BitShares, $scope, Scanner, $http, $timeout, $ionicActionSheet, $ionicPopup, $cordovaClipboard, $timeout, BitShares, $state, $ionicModal, $q, ExchangeTransaction, $ionicPopover) {
 
 $scope.data = {   xtx           : undefined, 
                   xtx_id        : undefined,
@@ -23,30 +23,6 @@ $scope.data = {   xtx           : undefined,
     window.plugins.toast.show( T.i('err.invalid_xtx_id'), 'long', 'bottom');
   });
   
-  
-  $scope.showLoading = function(text_to_translate){
-    $ionicLoading.show({
-      //template     : '<i class="icon ion-looping"></i> ' + T.i(text_to_translate),
-      template     : '<ion-spinner icon="android"></ion-spinner> ' + T.i(text_to_translate),
-      animation    : 'fade-in',
-      showBackdrop : true,
-      maxWidth     : 200,
-      showDelay    : 10
-    }); 
-  }
-
-  $scope.hideLoading = function(){
-    $ionicLoading.hide();
-  }
-
-  $scope.showAlert = function(title, message){
-    $ionicPopup.alert({
-       title    : T.i(title),
-       template : T.i(message),
-       okType   : 'button-assertive', 
-     });
-  }
-
   $scope.scanQR = function() {
     Scanner.scan().then(function(result) {
       if( result.cancelled ) return;

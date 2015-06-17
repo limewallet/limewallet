@@ -1,4 +1,4 @@
-<ion-view class="dark" title="{{'detail.transaction_details'|translate}}">
+<ion-view title="{{'detail.transaction_details'|translate}}">
     <ion-content class="has-header assets base-color_bg padding" scroll="true" scrollbar-y="true" has-bouncing="false">
     
       <div class="list balances">
@@ -8,7 +8,7 @@
         
         <div class="item base-color">
           <div class="asset_data">
-            <strong>Amount</strong>
+            <strong>{{'g.amount'|translate}}</strong>
             <br/>
             <span> 
               {{data.tx.amount_asset.symbol_ui_text}}{{data.tx.amount|number:2}} ( {{data.tx.btc_amount|number:2}}BTC)
@@ -28,7 +28,7 @@
         
         <div class="item base-color">
           <div class="asset_data">
-            <strong>BTC rate</strong>
+            <strong>{{'detail.btc_rate'|translate}}</strong>
             <br/>
             <span> 
               {{data.tx.rate|number:2}} {{data.tx.amount_asset.symbol}}/BTC
@@ -38,7 +38,7 @@
 
         <div class="item base-color">
           <div class="asset_data">
-            <strong>Transaction status</strong>
+            <strong>{{'detail.tx_status'|translate}}</strong>
             <br/>
             <span> 
               {{('xchg.'+data.tx.status)|translate}}
@@ -48,7 +48,7 @@
         
         <div class="item base-color">
           <div class="asset_data">
-            <strong>Asset</strong>
+            <strong>{{'g.asset'|translate}}</strong>
             <br/>
             <span> 
               {{data.tx.amount_asset.symbol}} ({{data.tx.amount_asset.name}})
@@ -58,7 +58,7 @@
 
         <div class="item base-color">
           <div class="asset_data">
-            <strong>Date</strong>
+            <strong>{{'g.date'|translate}}</strong>
             <br/>
             <span> 
               {{(data.tx.created_at*1000)|date:'medium'}}
@@ -74,7 +74,7 @@
         
         <div class="item base-color" ng-show="data.show_extra==true">
           <div class="asset_data">
-            <strong>Bitshares Transaction id</strong>
+            <strong>{{'detail.bts_txid'|translate}}</strong>
             <br/>
             <span> 
               {{data.tx.bitshares_txid?data.tx.bitshares_txid:'N/A'}}
@@ -84,7 +84,7 @@
 
         <div class="item base-color" ng-show="data.show_extra==true">
           <div class="asset_data">
-            <strong>Bitcoin Transaction id</strong>
+            <strong>{{'detail.btc_txid'|translate}}</strong>
             <br/>
             <span> 
               {{data.tx.bitcoin_txid?data.tx.bitcoin_txid:'N/A'}}

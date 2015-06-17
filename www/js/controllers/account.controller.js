@@ -39,20 +39,6 @@ bitwallet_controllers.controller('AccountCtrl', function($translate, T, BitShare
     }, 750);
   });
   
-  $scope.showLoading = function(){
-    $ionicLoading.show({
-      template     : '<ion-spinner icon="android" class="float_r"></ion-spinner> ' + T.i('g.updating'),
-      animation    : 'fade-in',
-      showBackdrop : true,
-      maxWidth     : 200,
-      showDelay    : 10
-    }); 
-  }
-
-  $scope.hideLoading = function(){
-    $ionicLoading.hide();
-  }
-
   $scope.doRegister = function(name, pubkey){
     var deferred = $q.defer();
     
@@ -92,7 +78,7 @@ bitwallet_controllers.controller('AccountCtrl', function($translate, T, BitShare
       return;
     }
     console.log(' Chosen name:'+$scope.data.name);
-    $scope.showLoading();
+    $scope.showLoading('account.updating');
     // Check name is not null or empty;
     var is_valid_name_res = BitShares.isValidBTSName($scope.data.name);
     if(!is_valid_name_res.valid)
