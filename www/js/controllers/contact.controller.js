@@ -1,6 +1,10 @@
 bitwallet_controllers
 .controller('ContactCtrl', function($scope, $q, $state, Scanner, BitShares, Contact, T, $ionicPopup, $timeout, $stateParams){
   
+  $scope.$on( '$ionicView.enter', function(){
+    $scope.viewRendered();
+  }); 
+  
   $scope.data = {
     contact           : {name:'', pubkey_or_address:'', avatar_hash:''},
     watch_name        : undefined,

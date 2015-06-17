@@ -1,6 +1,10 @@
 bitwallet_controllers
 .controller('ContactsCtrl', function(Contact, $scope, $timeout, $state, Wallet, T, $ionicPopup, $ionicActionSheet, $rootScope, $cordovaSocialSharing, $stateParams){
   
+  $scope.$on( '$ionicView.enter', function(){
+    $scope.viewRendered();
+  }); 
+  
   $scope.data = {
     contacts : [ 
     // {   name              : 'pepe',     

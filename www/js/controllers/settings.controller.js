@@ -1,5 +1,9 @@
 bitwallet_controllers.controller('SettingsCtrl', function($q, DB, BitShares, $scope, Wallet, Setting, $rootScope, Account, $ionicModal, $timeout, T, $cordovaClipboard, $ionicPopup) {
   
+  $scope.$on( '$ionicView.enter', function(){
+    $scope.viewRendered();
+  }); 
+  
   $scope.data = { 
     assets : [],
     selected_asset    : {},

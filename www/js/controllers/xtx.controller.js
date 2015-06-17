@@ -1,6 +1,10 @@
 bitwallet_controllers
 .controller('XTxCtrl', function($scope, $rootScope, $ionicNavBarDelegate, $stateParams, ExchangeTransaction, Wallet){
   
+  $scope.$on( '$ionicView.enter', function(){
+    $scope.viewRendered();
+  }); 
+  
   $scope.data = { 
                   tx          : undefined, 
                   x_id        : undefined,

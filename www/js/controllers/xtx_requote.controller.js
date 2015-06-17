@@ -1,6 +1,10 @@
 bitwallet_controllers
 .controller('XtxRequoteCtrl', function($stateParams, $translate, T, Account, Wallet, BitShares, $scope, $rootScope, $http, $timeout, $ionicActionSheet, $ionicPopup, $cordovaClipboard, $ionicLoading, $timeout, BitShares, $state, $ionicModal, $q, ExchangeTransaction, $ionicPopover) {
 
+  $scope.$on( '$ionicView.enter', function(){
+    $scope.viewRendered();
+  }); 
+  
   $scope.data = { 
     xtx               : undefined,
     quote             : undefined,

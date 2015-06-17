@@ -1,12 +1,12 @@
-<ion-view hide-back-button="true" title="">
-  
+<ion-view hide-back-button="true" title=" ">
+ 
   <ion-nav-buttons side="right">
     <button class="button button-icon icon lime_icon qr" ng-click="scanQR()"><i class="fa fa-qrcode"></i></button>
   </ion-nav-buttons>
   
-  <ion-content has-bouncing="false" class="has-header home">
-    <div class="balance_container_full" ng-cloak>
-      
+  <ion-content has-bouncing="false" class="home has-header">
+    
+    <div class="balance_container">
         <div class="balance hidden" ng-show="wallet.ui.balance.hidden" ng-click="toggleBalance()">
           <span class="balance_hidden_text">{{'home.show_balance' | translate | uppercase}}</span>
         </div>
@@ -44,7 +44,7 @@
       pulling-text="{{'home.pull_to_refresh' | translate}}"
         on-refresh="doRefresh()">
       </ion-refresher>
-      <ion-list style="height: 100%;" class="main_transactions">
+      <ion-list class="main_transactions">
         <div class="item item-divider _{{box}}"
           ng-repeat-start="box in txs.transactions.orderedKeys ">
           {{box|moment_separator}}

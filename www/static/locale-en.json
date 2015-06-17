@@ -1,5 +1,8 @@
 {
   "g" : {
+    "on_exit_title"                 : "Exit door",
+    "on_exit_msg"                   : "Are you sure you want to leave Lime Wallet?",
+
     "got_it"                        : "Got it!",
     "ok"                            : "Ok",
     "date"                          : "Date",

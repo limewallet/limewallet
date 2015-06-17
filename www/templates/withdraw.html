@@ -1,6 +1,6 @@
 <ion-view title="{{'menu.withdraw'|translate}}">
     <ion-content class="has-header withdraw" has-bouncing="false" scroll="false" overflow-scroll="false">
-        <ion-scroll zooming="false" direction="y" class="register_details margin-bottom-buttonNOT">
+        <ion-scroll zooming="false" direction="y" class="">
           
           <div class="step1">
             <form novalidate name="sendForm" class="deposit_form send_form">
@@ -53,7 +53,7 @@
               <p ng-bind-html="'withdraw.headline2'|translate"></p>
             </div>
             <div class="list settings quote" id="quote_ttl">
-              <div class="row" ng-cloak>
+              <div class="row">
                 <div class="item-input-inset bitcoin_address">
                   <label class="item item-input item-floating-label" style="width:300px;">
                     <span class="input-label">{{'withdraw.address'|translate}}</span>
@@ -67,12 +67,12 @@
                 <span class="quote_error assertive" ng-show="data.address_error!==undefined">{{data.address_error}}</span>
               </div>
               
-              <div class="row" ng-cloak>
+              <div class="row">
                 <div class="col col-50">
                   <label class="item item-input item-floating-label">
                     <span class="input-label">{{wallet.asset.symbol}}</span>
                     <input type="number" placeholder="{{wallet.asset.symbol}}" ng-model="data.amount_usd">
-                    <i class="icon ion-loading-c" ng-cloak ng-show="data.quoting_usd"></i>
+                    <i class="icon ion-loading-c" ng-show="data.quoting_usd"></i>
                     <div class="line-divider"></div>            
                   </label>
                   <span class="quote_error assertive" ng-show="data.quoting_btc_error!==undefined">{{data.quoting_btc_error}}</span>
@@ -81,7 +81,7 @@
                   <label class="item item-input item-floating-label">
                     <span class="input-label">BTC</span>
                     <input type="number" placeholder="BTC" ng-model="data.amount_btc">
-                    <i class="icon ion-loading-c" ng-cloak ng-show="data.quoting_btc"> </i>
+                    <i class="icon ion-loading-c" ng-show="data.quoting_btc"> </i>
                     <div class="line-divider"></div>   
                   </label>
                   <span class="quote_error assertive" ng-show="data.quoting_usd_error!==undefined">{{data.quoting_usd_error}}</span>

@@ -1,14 +1,6 @@
-.html, body {
-    height: 100%;
+html, body {
+ height: 100%;
 }
-/*
-@font-face {
-  font-family: 'Roboto';
-  font-style: normal;
-  font-weight: 400;
-  src: local('Roboto'), local('Roboto-Regular'), url(../fonts/Fcx7Wwv8OzT71A3E1XOAjvesZW2xOQ-xsNqO47m55DA.woff2) format('woff2');
-  unicode-range: U+0100-024F, U+1E00-1EFF, U+20A0-20AB, U+20AD-20CF, U+2C60-2C7F, U+A720-A7FF;
-}*/
 
 html, body {
   font-family: 'Roboto' !important;
@@ -28,36 +20,39 @@ html, body {
 ion-nav-view {
   background-color: #fff!important;
 }
-/*ion-nav-bar.bar-energized{
-  background-image: none!important;
-}*/
 
-.logo-center{
-  margin: 0 auto;
-  display: block;
+.pseudo-nav-bar { 
+  height:44px; 
+  padding:2px 5px 8px 5px;
+  overflow: hidden;
 }
+.pseudo-nav-bar .button {
+  color: #fff!important; 
+  z-index: 1;
+  padding: 0 8px;
+  min-height: 31px;
+  font-weight: 400;
+  /*font-size: 13px;*/
+  line-height: 32px;}
+
+.pseudo-nav-bar .button-icon.right{
+  position: absolute;
+  top: 8px;
+  right: 5px;
+  }
+.pseudo-nav-bar .button-icon:before{font-size: 26px!important;line-height: 39px!important;}
 
 .bar .fa {font-size: 25px;
-line-height: 38px;}
+  line-height: 38px;}
 .fa.fa16 {font-size: 16px!important;line-height: 18px;}
-.fa.fa18 {font-size: 18px!important;line-height: 20px;}
-.fa.fa20 {font-size: 20px!important;}
-.fa.fa300{font-weight: 300;}
 .icon.icon26 {font-size:26px!important;}
 
-.tab-item .fa{
+/*.tab-item .fa{
   font-size: 30px!important;
   line-height: 40px!important;}
-.receive_payment .tab-item{opacity: 1!important; }
-
-.has_header_padded {padding-top:44px!important;}
+*/
 
 .balance_container{
-  color:#ffffff;
-  height:80px;
-  width:100%!important;
-}
-.balance_container_full{
   text-align: center;
   height:158px;
 }
@@ -68,8 +63,8 @@ line-height: 38px;}
 .balance_hidden_text{font-size:35px;line-height:35px;letter-spacing:-2px; font-weight: 200;}
 .balance_hidden_text i.fa {vertical-align:top;}
 
-.balance_container_full .button-bar_container {width:300px;margin:0 auto;display:block;}
-.balance_container_full .button-bar {
+.balance_container .button-bar_container {width:300px;margin:0 auto;display:block;}
+.balance_container .button-bar {
   /*padding-top:28px;padding-bottom:28px;*/
   padding-top: 25px;
   padding-bottom: 10px;
@@ -113,26 +108,14 @@ line-height: 38px;}
   color:#ffffff!important;
 }
 
-.index_buttons .button_receive a.button, .index_buttons .button_send a.button{
-  border-radius:0px;
-}
-.index_transactions, .addys_empty, .restore_wallet_textarea, .addys_balances_scroll, .register_details, .txs_empty{
+.index_transactions{
   display:block;
   overflow: hidden;
   width:100%;
   top:158px;
+  /*top:202px;*/
   position:absolute!important; bottom:0;
   }
-.addys_empty{top:0px!important;}
-.restore_wallet_textarea{top:43px!important;bottom:67px;}
-.addys_balances_scroll{top:342px!important;}
-.register_details{top:0px!important;margin-bottom:20px;}
-.margin-bottom-button{margin-bottom:67px;}
-.txs_empty{top:0px!important;margin-bottom:67px;}
-
-.row75{
-  height: 75% !important;
-}
 .scroll{
   height:100% !important;
 }
@@ -542,6 +525,7 @@ img.i_centered {margin-left: auto;
 .list.settings .item span.addy{
   font-size:14px;
 }
+.main_transactions {height: 100%;}
 .list.settings .item, .list.balances .item, .list.addys_balances .item, .main_transactions .item{
   border-color:transparent!important;
   border:none;
@@ -968,7 +952,7 @@ button.centered_autow {width:auto!important;margin:0 auto;}
 .create_account_passsword .buttons_container {text-align:center;}
 .create_account_passsword .list_password .item.pmd.margin15 {margin-top:15px!important;}
 
-.balance_container_full, .register, .welcome, .welcome_bg, .create_account, .create_account_bg, .register_bg {
+.pseudo-nav-bar, .balance_container, .register, .welcome, .welcome_bg, .create_account, .create_account_bg, .register_bg {
   background: -moz-linear-gradient(123deg, rgba(26,66,84,1) 0%, rgba(26,67,86,1) 100%); /* ff3.6+ */
   background: -webkit-gradient(linear, left top, right bottom, color-stop(0%, rgba(26,67,86,1)), color-stop(100%, rgba(26,66,84,1))); /* safari4+,chrome */
   background: -webkit-linear-gradient(123deg, rgba(26,66,84,1) 0%, rgba(26,67,86,1) 100%); /* safari5.1+,chrome10+ */
@@ -1217,7 +1201,7 @@ input.pmd {font-size:16px!important;  color:#fff;border-top:none; border-left:no
     position: absolute;
     right: 10px;
     top: 10px;}
-.bar .title {font-size: 17px!important;}
+.bar .title {font-size: 17px!important; font-weight:400!important;}
 
 .bar .button.button-icon .icon:before, 
   .bar .button.button-icon:before, 
@@ -1345,17 +1329,6 @@ ion-spinner {stroke:#d3eb00!important;} /*93c91f*/
 .home .no_tx .content span, .home .no_tx .content i:before, 
   .contacts .no_contacts .content span, .contacts .no_contacts .content i:before {color:#c1c1c1;}
 .home .no_tx .content i:before, .contacts .no_contacts .content i:before {font-size:36px;}
-/*
-.home .scroll{
-  display:flex;
-  height:100%;
-  width:100%;
-  flex-flow: row wrap;
-  align-content:stretch; 
-  -webkit-align-content: stretch;
-}
-.home .balance_container_full {align-self:flex-start; width:100%;}
-.home .transactions {align-self:stretch;width:100%;}*/
 
 .item-avatar > canvas {
   position: absolute;

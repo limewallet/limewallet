@@ -1,5 +1,9 @@
 bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T, BitShares, Scanner, $http, $ionicLoading, $ionicNavBarDelegate, $ionicModal, $ionicPopup, $location, $timeout, $rootScope, $stateParams, Wallet, Contact) {
 
+  $scope.$on( '$ionicView.enter', function(){
+    $scope.viewRendered();
+  }); 
+
   $scope.isSelectable = function (query) {
 
     var deferred = $q.defer();

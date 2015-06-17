@@ -9,7 +9,6 @@
       <form novalidate name="sendForm" class="send_form"> <!--ng-show="data.is_btc==false" -->
         <div class="list">
           
-          <!-- BTS -->
           <label class="item item-input pmd item-floating-label" ng-disabled="data.is_btc==true" ng-show="!data.is_btc">
             <span class="input-label pmd">{{'g.amount'|translate}}</span>
             <input numbers-only-key-press required type="number" placeholder="{{'g.amount'|translate}}" ng-model="transaction.amount" class="input_amount big pmd">
@@ -28,7 +27,6 @@
             </button>
           </div>
 
-          <!-- BTC -->
           <div class="btc_amount_container" ng-show="data.is_btc==true">
             <label class="item item-input pmd" ng-disabled="data.is_btc==false">
               <span class="input-label pmd">{{'g.amount'|translate}}</span>

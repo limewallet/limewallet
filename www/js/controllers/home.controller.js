@@ -1,6 +1,11 @@
 bitwallet_controllers
 .controller('HomeCtrl', function(T, Wallet, Scanner, $ionicHistory, $ionicActionSheet, $scope, $state, $http, $ionicModal, $rootScope, $ionicPopup, $timeout, $location, BitShares, $q, $ionicLoading) {
 
+  $scope.$on( '$ionicView.enter', function(){
+    console.log(' ========= homeRendered!!');
+    $scope.homeRendered();
+  }); 
+
   $scope.toggleBalance = function() {
 
     if(!$scope.wallet.ui.balance.allow_hide)

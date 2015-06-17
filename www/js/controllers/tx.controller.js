@@ -1,6 +1,10 @@
 bitwallet_controllers
 .controller('TxCtrl', function($scope, $rootScope, $ionicNavBarDelegate, $stateParams, Operation, T, $translate){
   
+  $scope.$on( '$ionicView.enter', function(){
+    $scope.viewRendered();
+  }); 
+  
   $scope.data = { 
                   tx          : undefined, 
                   tx_id       : undefined,

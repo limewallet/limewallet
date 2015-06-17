@@ -38,28 +38,6 @@ bitwallet_module
       
     })
 
-    .state('app.backup', {
-      url: "/settings/backup",
-      //cache: false,
-      views: {
-        'menuContent' :{
-          templateUrl: "templates/settings.backup.html",
-          controller: 'BackupCtrl'
-        }
-      }
-    })
-    
-    .state('app.restore', {
-      url: "/settings/restore",
-      //cache: false,
-      views: {
-        'menuContent' :{
-          templateUrl: "templates/settings.restore.html",
-          controller: 'RestoreCtrl'
-        }
-      }
-    })
-    
     .state('app.settings', {
       //cache: false,
       url: "/settings",
@@ -322,19 +300,17 @@ bitwallet_module
 
 })
 
-.run(function(Account, DB, $state, $ionicHistory, $ionicPopup, $ionicLoading, T, $rootScope, $ionicPlatform, Wallet, Scanner, $q, BitShares, ENVIRONMENT, $cordovaGlobalization, $translate, $state) {
+.run(function(Account, DB, $state, $ionicHistory, $ionicPopup, $ionicLoading, T, $rootScope, $ionicPlatform, Wallet, Scanner, $q, BitShares, ENVIRONMENT, $cordovaGlobalization, $translate, $state, $timeout) {
 
-  console.log(' app.js Init de .RUN !');
+  //console.log(' app.js Init de .RUN !');
   
-  $rootScope.homeClass = 'darky'; //darky
-
   $ionicPlatform.registerBackButtonAction(function (event) {
 
     if($ionicHistory.currentStateName() == 'app.home')
     {
       var confirmPopup = $ionicPopup.confirm({
-        title: 'Exit door',
-        template: 'Are you sure you want to Leave?'
+        title: T.i('g.on_exit_title'),
+        template: T.i('g.on_exit_msg')
       });
      
       confirmPopup.then(function(res) {
@@ -350,13 +326,19 @@ bitwallet_module
     }
   }, 100);
   
-  $rootScope.$on('$stateChangeSuccess', function (evt, toState) {
-    if (toState.homeClass) {
-      $rootScope.homeClass = toState.homeClass;
-    } else {
-      $rootScope.homeClass = '';
-    }
-  });
+  $rootScope.homeClass = 'darky'; //darky // HACK
+  $rootScope.viewRendered = function(){$rootScope.homeClass = '';}
+  $rootScope.homeRendered = function(){$rootScope.homeClass = 'darky';}
+  
+  // $rootScope.$on("$stateChangeSuccess", function(event, toState, toParams, fromState, fromParams){
+  //   console.log(' ++++++ $stateChangeSuccess: ' + JSON.stringify(toState));
+  //   if (toState.homeClass) {
+  //     $rootScope.homeClass = toState.homeClass;
+  //   } else {
+  //     $rootScope.homeClass = '';
+  //     //$timeout(function () { $rootScope.homeClass = ''; }, 1000);
+  //   }
+  // });
   
   $ionicPlatform.ready(function() {
     
@@ -643,6 +625,10 @@ bitwallet_module
 
 
   $rootScope.goToState = function(state, scan_data){
+
+    $ionicHistory.nextViewOptions({
+      disableAnimate : true});
+
     if(state == 'app.send' || state == 'app.withdraw' || state == 'app.send_btc') {
       if ( Wallet.data.locked ) {
         $rootScope.alertUnlock();

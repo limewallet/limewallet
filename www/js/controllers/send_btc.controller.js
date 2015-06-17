@@ -1,5 +1,9 @@
 bitwallet_controllers.controller('SendBTCCtrl', function($scope, $q, T, ExchangeTransaction, BitShares, Scanner, $http, $ionicLoading, $ionicNavBarDelegate, $ionicModal, $ionicPopup, $location, $timeout, $rootScope, $stateParams, Wallet, Contact) {
 
+  $scope.$on( '$ionicView.enter', function(){
+    $scope.viewRendered();
+  }); 
+
   $scope.data = {
 
     amount        : undefined,

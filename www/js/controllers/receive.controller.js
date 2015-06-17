@@ -1,6 +1,10 @@
 bitwallet_controllers
 .controller('ReceiveCtrl', function($scope, $rootScope, T, $http, $ionicNavBarDelegate, $ionicModal, $ionicPopup, $location, $state) {
   
+  $scope.$on( '$ionicView.enter', function(){
+    $scope.viewRendered();
+  }); 
+  
   $scope.doGenerateQRCodeRecvPayment = function(){
     var amount = parseInt(parseFloat(receiveForm.transactionAmount.value)*$scope.wallet.asset.precision);
     if( isNaN(amount) || amount <= 0 ) {

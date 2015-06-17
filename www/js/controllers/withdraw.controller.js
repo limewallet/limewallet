@@ -1,6 +1,10 @@
 bitwallet_controllers
 .controller('WithdrawCtrl', function($ionicHistory, $translate, T, Account, Wallet, BitShares, $scope, $rootScope, $http, $timeout, $ionicActionSheet, $ionicPopup, $cordovaClipboard, $ionicLoading, $timeout, BitShares, $state, $ionicModal, $q, Setting) {
 
+  $scope.$on( '$ionicView.enter', function(){
+    $scope.viewRendered();
+  }); 
+
 // Bitcoin Address:
 // msmmBfcvrdG2yZiUQQ21phPkbw966f8nbb
 // Private Key (Wallet Import Format):
