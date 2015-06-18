@@ -899,7 +899,7 @@ fieldset {
   border: none!important;
 }
 
-.deposit , .welcome, .create_account, .register{
+.withdraw, .deposit , .welcome, .create_account, .register{
     display: -webkit-flex; /* Safari */
     -webkit-flex-flow: row wrap; /* Safari 6.1+ */
     display: flex;
@@ -1021,7 +1021,7 @@ input.pmd {font-size:16px!important;  color:#fff;border-top:none; border-left:no
 .seed_input_container span.error {font-size:14px;width:100%;text-align:right;}
 .seed_container span.error {font-size:14px;width:100%;text-align:right;}
 
-.send_form {padding-top: 10px;}
+.send_form {/*padding-top: 10px;*/}
 .refund .send_form{padding-top: 0px;}
 .send_form .item-input-inset{padding:0px 8px 0px 0px!important}
 
@@ -1145,7 +1145,7 @@ input.pmd {font-size:16px!important;  color:#fff;border-top:none; border-left:no
 .deposit .step2 {width:100%;}
 .deposit .list.qr_code .item, .list.receive_qr .item{border:none!important;}
 .deposit_form .deposit_rate_loading {text-align:center;display: block;min-height: 28px;overflow: hidden;margin-top:40px;}
-.deposit_form .input_amount {padding-right:60px!important;}
+/*.deposit_form .input_amount {padding-right:60px!important;}*/
 .deposit_form .amount_container {position:relative;display:block;width:100%;height:auto;padding-top:25px;overflow:hidden;}
 .deposit_form .amount_container label.pmd{width: 300px!important;float:left;} /*padding-left: 32px!important;*/
 .deposit_form .toggle_curr {top: 53px;right: 0px;/*color:#eaeaea!important;*/margin-right:5px;}
@@ -1169,7 +1169,7 @@ input.pmd {font-size:16px!important;  color:#fff;border-top:none; border-left:no
 .deposit .deposit_qr_hint {float: right;font-size: 10px;padding-right: 30px!important;padding-top:0px;}
 
 /*.deposit .bottom_bar {clear:both;position: absolute;bottom:0px;display:block;width:100%;}*/
-.deposit .buttons_container{ align-self:flex-end;width:100%;}
+.withdraw .buttons_container, .deposit .buttons_container{ align-self:flex-end;width:100%;}
 
 .ion-autocomplete-container .item {color:#5f7381!important;}
 .ion-autocomplete-container .item p {color:#666!important; font-size:10px;}
@@ -1340,3 +1340,5 @@ ion-spinner {stroke:#d3eb00!important;} /*93c91f*/
   height: 100%;
   border-radius: 50%;
 }
+
+p.paragraph {padding:25px; font-size:17px; font-weight: 300;}

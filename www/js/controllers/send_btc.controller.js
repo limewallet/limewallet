@@ -276,6 +276,9 @@ bitwallet_controllers.controller('SendBTCCtrl', function($scope, $q, T, Exchange
     console.log('SEBND BTC controller: ' + JSON.stringify(scan_data));
     $scope.applyScan(scan_data);
   }
-
+  
+  $scope.$on( '$ionicView.beforeLeave', function(){
+    $scope.stopNanobar();
+  });
 
 });

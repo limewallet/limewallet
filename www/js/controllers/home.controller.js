@@ -89,11 +89,11 @@ bitwallet_controllers
       if(index==0) {
         if(BitShares.isXtx(tx)) {
           console.log('ES XTX');
-          if(BitShares.isDeposit(tx)) {
-            console.log('ES DEPOSIT');
+          if(BitShares.isDeposit(tx) && BitShares.isXtxPending(tx)) {
+            //console.log('ES DEPOSIT en pending');
             $state.go('app.deposit', {xtx_id:tx['id']});
           } else { 
-            console.log('NO ES DEPOSIT');
+            //console.log('NO ES DEPOSIT');
             $state.go('app.xtransaction_details', {x_id:tx['id']});
           }
         } else {

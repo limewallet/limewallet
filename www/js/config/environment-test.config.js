@@ -4,10 +4,10 @@ bitwallet_config
   timeout       : 10000,
   default_asset : 24,
   assets : [
-    {id: 24,  name: 'bitUSD',  symbol: 'USD',  unit: 'USD',  x_symbol: 'bitUSD',  fullname: 'United States Dollar', precision: 10000 ,    symbol_ui_text : '$'},
-    {id: 27,  name: 'bitGOLD', symbol: 'GOLD', unit: 'OZT',  x_symbol: 'bitGOLD', fullname: 'Gold' ,                precision: 1000000,   symbol_ui_text : 'ozt'},
-    {id: 28,  name: 'bitCNY',  symbol: 'CNY',  unit: 'CNY',  x_symbol: 'bitCNY',  fullname: 'Chinese Yuan' ,        precision: 10000,     symbol_ui_text : '¥'},
-    {id: 25,  name: 'bitBTC',  symbol: 'BTC',  unit: 'BTC',  x_symbol: 'bitBTC',  fullname: 'Bitcoin' ,             precision: 100000000, symbol_ui_text : '€'}
+    {id: 24,  name: 'bitUSD',  symbol: 'USD',  unit: 'USD',  fullname: 'United States Dollar', precision: 10000 ,    symbol_ui_text : '$'},
+    {id: 27,  name: 'bitGOLD', symbol: 'GOLD', unit: 'OZ',   fullname: 'Gold' ,                precision: 1000000,   symbol_ui_text : 'oz'},
+    {id: 28,  name: 'bitCNY',  symbol: 'CNY',  unit: 'CNY',  fullname: 'Chinese Yuan' ,        precision: 10000,     symbol_ui_text : '¥'},
+    {id: 25,  name: 'bitBTC',  symbol: 'BTC',  unit: 'BTC',  fullname: 'Bitcoin' ,             precision: 100000000, symbol_ui_text : '€'}
   ],
   apiurl : function(path) {
     //var url = 'http://bsw-test.latincoin.com/api/v2';

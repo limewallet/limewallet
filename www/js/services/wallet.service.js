@@ -617,8 +617,11 @@ bitwallet_services
             //Si llego aca, es de salida, pero no tengo la pubkey destino .. 
             //tengo que ir a buscar este contacto
 
-            console.log('ESTOY EN LA TWILAAA ZONE ' + m.address);
-            to_search.push(m.address);
+            //HACK: pensar bien...
+            return BitShares.decryptMemo(m.one_time_key, m.memo, pk);
+
+            //console.log('ESTOY EN LA TWILAAA ZONE ' + m.address);
+            //to_search.push(m.address);
 
           }, function(err) {
             deferred.reject();

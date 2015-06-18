@@ -1,7 +1,7 @@
 {
   "g" : {
-    "on_exit_title"                 : "Exit door",
-    "on_exit_msg"                   : "Are you sure you want to leave Lime Wallet?",
+    "on_exit_title"                 : "LimeWallet",
+    "on_exit_msg"                   : "Are you sure you want to leave?",
 
     "got_it"                        : "Got it!",
     "ok"                            : "Ok",
@@ -23,7 +23,7 @@
 
     "cur_rate"                      : "Current rate",
     "memo"                          : "Memo",
-    "seed_copied"                   : "Seed copied successfully!",
+    "seed_copied"                   : "Seed copied to clipboard",
     "welcome"                       : "Welcome",
     "create_wallet_html"            : "Create&nbsp;wallet",
     "recover_wallet_html"           : "Recover&nbsp;wallet",
@@ -358,13 +358,13 @@
   },
   
   "deposit":{
-    "uri_copied"              : "Bitcoin payment URI copied successfully",
+    "addy_copied"             : "Bitcoin address copied to clipboard",
+    "uri_copied"              : "Bitcoin payment URI copied to clipboard",
     "no_deposits"             : "No deposits done yet",
     "new_deposit"             : "New deposit",
     "deposit_successful"      : "Successful deposit! Please wait for notifications.",
 
-    "deposit_paragraph"       : "You can load your wallet by converting bitcoin into your preferred bitasset.<br/>Type the amount of <b>bit{{asset.symbol}}</b> you want to load and get a quote for each bitcoin, and vice versa.",  
-    "deposit_title"           : "Deposit BITCOIN and get <b>bit{{asset.symbol}}</b>"
+    "deposit_paragraph"       : "Enter the amount you want to deposit into your wallet."
   },
   
   "withdraw":{
@@ -374,8 +374,8 @@
     "new"                     : "New withdraw",
     "successful"              : "Successful withdraw! Please wait for notifications.",
     "in_progress"             : "Withdraw in progress",
-    "headline"                : "Withdraw BITCOIN exchanging your <b>bit{{asset.symbol}}</b>",
-    "headline2"               : "You can withdraw bitcoins from your wallet by converting your preferred bitasset into bitcoins.<br/>Type the destination bitcoin address and the amount you want to withdraw."
+    "title"                   : "Withdraw Bitcoin",
+    "withdraw_paragraph"       : "Enter a Bitcoin destination address and the amount you want to withdraw."
   },
   
   "xchg":{

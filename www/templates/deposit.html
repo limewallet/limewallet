@@ -7,11 +7,13 @@
         
         <div class="step1" ng-show="data.step==1">
           
+          <p class="paragraph">{{'deposit.deposit_paragraph'|translate}}</p>
+
           <form novalidate name="sendForm" class="deposit_form send_form">
             <div class="list">
               <div class="amount_container">
                 <label class="item item-input pmd input_curr">
-                  <input numbers-only-key-press required name="transactionAmount" type="number" class="full_width input_amount big pmd" ng-model="data.input_amount" />
+                  <input numbers-only-key-press required name="transactionAmount" type="number" class="full_width input_amount big pmd" placeholder="{{'g.amount'|translate}}" ng-model="data.input_amount" />
                   <i class="pmd icon placeholder-icon base-color">{{data.input_curr}}</i>
                 </label>
                 <label class="item item-input pmd other_curr">
@@ -34,7 +36,7 @@
         
         <div class="step2" ng-show="data.step==2">
           <div class="deposit_confirm base-color">
-            <p ng-bind-html="'g.please_send_btc_to'|translate:{amount:(data.tx.cl_pay|number:8), addy:data.tx.cl_pay_addr}">
+            <p ng-click="copyAddy()" ng-bind-html="'g.please_send_btc_to'|translate:{amount:(data.tx.cl_pay|number:8), addy:data.tx.cl_pay_addr}">
             </p>
           </div>
           <div class="list qr_code" id="quote_ttl">

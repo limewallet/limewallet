@@ -308,12 +308,8 @@ bitwallet_module
 
     if($ionicHistory.currentStateName() == 'app.home')
     {
-      var confirmPopup = $ionicPopup.confirm({
-        title: T.i('g.on_exit_title'),
-        template: T.i('g.on_exit_msg')
-      });
-     
-      confirmPopup.then(function(res) {
+      
+      $rootScope.showConfirm('g.on_exit_title', 'g.on_exit_msg').then(function(res) {
         if(res) {
           navigator.app.exitApp();
         } else {
@@ -384,7 +380,10 @@ bitwallet_module
         //$state.go('app.contact', {contact:{name: 'peteelpopo', pubkey:'DVS5YYZsZ7g1fSpPxmZcJifWJ2rmiXbUyJpEYSdNsVw738C88yvoy'}}, {inherit:true});
         //$state.go('app.account');
         //$state.go('app.send_btc', {scan_data:{address:'CF2b4MsrfNMG9ZjatUFg7ZVYwE2qNupBMt', amount:0.05123, message:'Starbucks'}}, {inherit:true});
-        $rootScope.goTo('app.home');
+        $state.go('app.withdraw');
+
+
+        //$rootScope.goTo('app.home');
 
         //obscure around glue cheese inherit thing subject blade slow unknown solve assum
         
@@ -457,6 +456,14 @@ bitwallet_module
       });
     })
 
+  }
+
+  $rootScope.showConfirm = function(title, message){
+    return $ionicPopup.confirm({
+       title    : T.i(title),
+       template : T.i(message),
+       okType   : 'base-color_bg color_white base-color_border', 
+     });
   }
   
   $rootScope.showAlert = function(title, message){
@@ -624,7 +631,7 @@ bitwallet_module
   }
 
 
-  $rootScope.goToState = function(state, scan_data){
+  $rootScope.goToState = function(state, param){
 
     $ionicHistory.nextViewOptions({
       disableAnimate : true});
@@ -636,10 +643,10 @@ bitwallet_module
       }
 
       if (state == 'app.send' || state == 'app.send_btc')
-        return $state.go(state, {scan_data:scan_data}, {inherit:true});
+        return $state.go(state, {scan_data:param}, {inherit:true});
     }
 
-    $state.go(state);
+    $state.go(state, param);
   }
 
 

@@ -3,7 +3,7 @@
     
       <div class="list balances">
         <div class="item item-divider green_bg color_white">
-          <span class="tx_desc">{{data.tx.amount_asset.symbol_ui_text}}{{data.tx.amount|number:2}} {{('tx.'+data.tx.ui_type)|translate}}</span> 
+          <span class="tx_desc">{{data.tx|xtx_amount}} {{('tx.'+data.tx.ui_type)|translate}}</span> 
         </div>
         
         <div class="item base-color">
@@ -11,7 +11,7 @@
             <strong>{{'g.amount'|translate}}</strong>
             <br/>
             <span> 
-              {{data.tx.amount_asset.symbol_ui_text}}{{data.tx.amount|number:2}} ( {{data.tx.btc_amount|number:2}}BTC)
+              {{data.tx|draw_tx_amount}}  
             </span>
           </div>
         </div>

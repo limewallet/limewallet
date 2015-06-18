@@ -97,6 +97,7 @@ function getTxStatus(tx){
     return '_rate_changed';
   return '';
 }
+
 bitwallet_filters.filter('tx_icon_src', function(BitShares, $filter) {
   return function(tx) {
     if(BitShares.isDeposit(tx))
@@ -115,25 +116,29 @@ bitwallet_filters.filter('tx_icon_src', function(BitShares, $filter) {
   }
 });
 
-bitwallet_filters.filter('draw_tx_amount', function(BitShares, $filter) {
+bitwallet_filters.filter('xtx_amount', function(BitShares, Wallet, $filter) {
   return function(tx) {
-    if(BitShares.isDeposit(tx.ui_type))
-      return $filter('number')(tx.cl_recv, 2);
-    if(BitShares.isWithdraw(tx.ui_type) || BitShares.isBtcPay(tx.ui_type))
-      return $filter('number')(tx.cl_pay, 2);
     
-    return $filter('number')(tx.amount, 2);
+    var amount = $filter('draw_tx_amount')(tx);
+
+    if(Wallet.data.asset.symbol == 'BTC') 
+      return amount + ' ' + Wallet.data.asset.symbol_ui_text;
+
+    return Wallet.data.asset.symbol_ui_text + ' ' + amount;
   }
 });
 
-bitwallet_filters.filter('draw_pending_tx', function(BitShares, $filter) {
+
+bitwallet_filters.filter('draw_tx_amount', function(BitShares, Wallet, $filter) {
   return function(tx) {
-    if(BitShares.isDeposit(tx.ui_type))
-      return $filter('number')(tx.cl_pay, 4) + '&nbsp;' + tx.cl_pay_curr ;
-    if(BitShares.isWithdraw(tx.ui_type) || BitShares.isBtcPay(tx.ui_type))
-      return $filter('number')(tx.cl_recv, 4) + '&nbsp;' + tx.cl_recv_curr ;
+
+    if(BitShares.isDeposit(tx))
+      return $filter('currency')(tx.cl_recv, tx.cl_recv_curr);
+
+    if(BitShares.isWithdraw(tx) || BitShares.isBtcPay(tx))
+      return $filter('currency')(tx.cl_pay, tx.cl_pay_curr);
     
-    return '';
+    return $filter('currency')(tx.amount, Wallet.data.asset.name);
   }
 });
 

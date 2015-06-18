@@ -5,14 +5,6 @@ bitwallet_controllers
     $scope.viewRendered();
   }); 
   
-  // HACK UI: for testing
-  //$scope.data.tx              = {cl_pay:22.15, cl_pay_addr: 'Bso7DduduMapkTDW7HNWXf5dMCcYcNdpXi'}
-  //$scope.data.deposit_uri     = 'bitcoin://Bso7DduduMapkTDW7HNWXf5dMCcYcNdpXi?amount=22.15&label=bitwallet_deposit&message=convert_btc_to_bitasset';
-  //$scope.data.deposit_qrcode    = 'http://zxing.org/w/chart?chs=300x300&cht=qr&choe=UTF-8&chld=L|1&chl=7'+encodeURIComponent($scope.data.deposit_uri);
-  // python send_btc.py BzxyUCprnJWYXmQ6gGwREFPboTxhU1JB3E CCDVYmCptt5b3HnxPwHgdKZ8zXEywMB1Rb 0.05 yes
-  // bitcoin://CCDVYmCptt5b3HnxPwHgdKZ8zXEywMB1Rb?amount=0.10000000?label=bitwallet_deposit?message=convert_btc_to_bitasset
-  // HACK UI : PONELE 2 y ves la pantalla del qr 
-  
   $scope.data = {
     from_in_progress : false,
     valid_quote      : false,
@@ -23,16 +15,7 @@ bitwallet_controllers
     input_curr       : Wallet.data.asset.symbol,
     other_amount     : undefined,
     other_curr       : 'BTC',
-    step             : 1,
-    timer:           { 
-      options   : {},
-      remaining : undefined,
-      percent   : undefined,
-      start     : 0,
-      stop      : 0,
-      expired   : 0,
-      waiting   : 0
-    }
+    step             : 1
   }
 
   $scope.buildQRCode = function (xtx) {
@@ -52,12 +35,13 @@ bitwallet_controllers
 
   }
 
-  //if($stateParams.xtx_id) {
-    //ExchangeTransaction.byXId($stateParams.xtx_id).then(function(xtx) {
-      //$scope.buildQRCode(xtx);
-      //$scope.data.step=2;
-    //});
-  //}
+  //TODO:
+  if($stateParams.xtx_id) {
+    ExchangeTransaction.byXId($stateParams.xtx_id).then(function(xtx) {
+      $scope.buildQRCode(xtx);
+      $scope.data.step=2;
+    });
+  }
   
   $scope.toggleInputCurrency = function(){
     
@@ -82,13 +66,6 @@ bitwallet_controllers
     console.log(' -- DepositCtrl Form ENABLED!!!!');
   }
 
-  //$scope.default_data = {};
-  //angular.copy($scope.data, $scope.default_data);
-  
-  //$scope.quote_data = { 'quote_curr'     : $scope.wallet.asset.x_symbol+'_BTC'
-                        //, 'quote_btc'    : 'BTC_'+$scope.wallet.asset.x_symbol};
-  
-  //$scope.usd_timeout = undefined;
   $scope.$watch('data.input_amount', function(newValue, oldValue, scope) {
     if(newValue===oldValue)
       return;
@@ -118,7 +95,6 @@ bitwallet_controllers
 
         $scope.data.other_amount    = $scope.data.input_in_btc ? Number(res.quote.cl_recv) : Number(res.quote.cl_pay);
         $scope.data.quote           = res;
-        $scope.data.quote_timestamp = parseInt((new Date()).getTime());
         $scope.data.valid_quote     = true;
         $scope.data.quoting         = false;
       }, function(err){
@@ -140,11 +116,6 @@ bitwallet_controllers
   };
         
         
-  //$scope.clearErrors = function(){
-    //$scope.data.quoting_btc_error = undefined;
-    //$scope.data.quoting_usd_error = undefined;
-  //};
-
   $scope.next = function() {
 
     if ( !$scope.data.valid_quote ) {
@@ -190,92 +161,18 @@ bitwallet_controllers
         window.plugins.toast.show(T.i('err.unable_to_copy_uri'), 'short', 'bottom');
       });
   }
-  
-  // $scope.requote = function(){
-  //   angular.copy($scope.default_data, $scope.data);
-  // }
-  
-  $scope.alreadyPaid = function(){
-    
-    return;
-    // Disable Form
-    $scope.formInProgress();
 
-    $scope.startWaitingPayment();
-    
-    // 1.- Lanza un timer de 5 minutos para espera.
-    // 2.- Se pone a esperar la txid.
-    // 3.- Si llega, redirect a home + toast
-    // 4.- Si no llega, toast e indicamos que si luego llega se vera en home.
+  $scope.copyAddy = function(){
+    $cordovaClipboard
+      .copy($scope.data.tx.cl_pay_addr)
+      .then(function () {
+        //success
+        window.plugins.toast.show(T.i('deposit.addy_copied'), 'short', 'bottom');
+      }, function () {
+        //error
+        window.plugins.toast.show(T.i('err.unable_to_copy_uri'), 'short', 'bottom');
+      });
   }
   
-  $scope.nanobar = undefined;
-  var w_ttl = 300;
-  var w_counter_timeout = w_ttl;
-  
-  // $scope.startWaitingPayment = function() {
-  //   if($scope.nanobar===undefined)
-  //   {
-  //     var options3 = {
-  //       target: document.getElementById('quote_ttl'),
-  //       id: 'mynano3',
-  //       bg: '#5abb5c'
-  //     };
-  //     $scope.nanobar = new Nanobar( options3 );
-  //   }
-  //   $scope.data.timer.waiting = 1;
-  //   $timeout($scope.onWaitingPayment, 1000);
-  // };
-  
-  // $scope.stopWaitingPayment = function() {
-  //   w_counter_timeout = 0;
-  //   if($scope.nanobar)
-  //     $timeout(function(){
-  //         $scope.nanobar.go(0);
-  //       }, 1000);
-  //   // Enable Form
-  //   $scope.formDone();
-  // }
-  
-  // $scope.onWaitingPayment = function() {
-    
-  //   w_counter_timeout = w_counter_timeout - 1;
-  //   if(w_counter_timeout<=0)
-  //   {
-  //     $scope.stopWaitingPayment();
-  //     $scope.nanobar.go(100);
-  //     $scope.data.timer.waiting = 0;
-  //     return;
-  //   }
-  //   $scope.nanobar.go((w_ttl-w_counter_timeout)*100/w_ttl);
-  //   $timeout($scope.onWaitingPayment, 1000);
-    
-  //   var addy = Wallet.getMainAddress();
-  //   BitShares.getBackendToken(addy).then(function(token) {
-  //     BitShares.getExchangeTx(token, $scope.data.tx.id).then(function(xtx){
-  //       //var my_xtx = Wallet.processXTx(xtx);
-  //       //console.log('DepositCtrl::WatingTx: ui_type='+xtx.ui_type);
-  //       if(BitShares.isXtxPartiallyOrFullyPaid(xtx))
-  //       {
-  //         $scope.stopWaitingPayment();
-  //         window.plugins.toast.show(T.i('deposit.deposit_successful'), 'long', 'bottom');
-  //         Wallet.onNewXTxAndLoad(xtx);
-  //         $scope.goHome();
-  //       }
-  //     }, function(error){
-      
-  //     })
-  //   }, function(error){
-    
-  //   });
-    
-  // }
-  
-  $scope.$on( '$ionicView.beforeLeave', function(){
-    // Destroy timers
-    //console.log('DepositCtrl.ionicView.beforeLeave killing timers.');
-    //w_counter_timeout=0;
-    //$scope.stopWaitingPayment();
-  });
 })
 

@@ -697,11 +697,11 @@ bitwallet_services
       return valid_status.indexOf(tx.status)>=0;
     }
     
-    // self.isXtxPending = function(tx){
-    //   if(!self.isXtx(tx))
-    //     return false;
-    //   return tx.status == 'WP';
-    // }
+    self.isXtxPending = function(tx){
+      if(!self.isXtx(tx))
+        return false;
+      return tx.status == 'WP';
+    }
     
     self.acceptQuote = function(quote, signature, keys, address, extra_data) {
 
