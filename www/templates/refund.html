@@ -6,18 +6,19 @@
 
   <ion-content class="has-header refund" has-bouncing="false" scroll="false" overflow-scroll="false">
         
-      <div class="list">          
-        <div class="item item-divider base-color larger bgcolor_white">
+      <div class="list">
+        <p class="paragraph wrap_text" ng-bind-html="'refund.headline'|translate:{ action:(('g.'+data.xtx.extra_data)|translate|lowercase)}"></p>          
+        <!-- div class="item item-divider base-color larger bgcolor_white">
           <span class="tx_desc wrap_text" ng-bind-html="'refund.headline'|translate:{action:data.xtx.extra_data}"></span> 
-        </div>
+        </div -->
         <form novalidate name="sendForm" class="deposit_form send_form">
-          <div class="recipient_container recipient_container2">
+          <div class="recipient_container">
             <label class="item item-input pmd item-floating-label">
               <span class="input-label pmd">{{'refund.address'|translate}}</span>
               <input name="refundAddress" placeholder="{{'refund.address'|translate}}" ng-model="data.refund_address" class="big full_width pmd" />
               <span style="clear:both;float:right;width:100%;" class="quote_error assertive" ng-show="data.address_error!==undefined">{{data.address_error}}</span>
             </label>
-            <button ng-click="pasteBitcoinAddress()" class="button button-icon icon ion-clipboard">
+            <button ng-click="pasteBitcoinAddress()" class="top_23 button button-icon icon ion-clipboard">
             </button>
           </div>
         </form>   

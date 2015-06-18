@@ -6,37 +6,38 @@
 
     <ion-content class="has-header requote" has-bouncing="false">
       <div>
+        <p class="paragraph wrap_text" ng-bind-html="'rate_changed.headline'|translate:{action:data.xtx.extra_data}"></p>
         <div class="list rate_changed">
-          <div class="item item-divider base-color larger bgcolor_white">
+          <!--div class="item item-divider base-color larger bgcolor_white">
             <span class="tx_desc wrap_text" ng-bind-html="'rate_changed.headline'|translate:{action:data.xtx.extra_data}"></span> 
-          </div>
+          </div-->
           <div class="item base-color">
-            <div class="">
-              <strong>New rate</strong>
+            <div class="item_data">
+              {{'rate_changed.new_rate'|translate}} 
               <span class="float_right"> 
                 {{data.quote.rate | currency : data.quote.book}}&nbsp;{{data.quote.book | book2rate}}
               </span>
             </div>  
           </div>
           <div class="item base-color">
-            <div class="">
-              <strong>You already transfered</strong>
+            <div class="item_data">
+              {{'rate_changed.already_transfered'|translate}} 
               <span class="float_right"> 
                 {{data.quote.cl_pay | currency : data.quote.cl_pay_curr}}&nbsp;{{data.quote.cl_pay_curr}}
               </span>
             </div>  
           </div>
           <div class="item base-color">
-            <div class="">
-              <strong>You will receive</strong>
+            <div class="item_data">
+              {{'rate_changed.will_receive'|translate}} 
               <span class="float_right"> 
                 {{data.quote.cl_recv | currency : data.quote.cl_recv_curr}}&nbsp;{{data.quote.cl_recv_curr}}
               </span>
             </div>  
           </div>
           <div class="item" style="color:#cecece;">
-            <div class="">
-              <strong>Old rate</strong>
+            <div class="item_data">
+              {{'rate_changed.old_rate'|translate}} 
               <span class="float_right"> 
                 {{data.xtx.rate | currency : data.xtx.book}}&nbsp;{{data.xtx.book | book2rate}}
               </span>

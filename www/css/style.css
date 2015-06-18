@@ -669,7 +669,12 @@ img.i_centered {margin-left: auto;
   height:78px; 
   padding-left: 28px;
   padding-right: 28px;
-  font-size: 12px;}
+  /*font-size: 12px;*/
+  font-size: 14px;
+}
+.rate_changed .item_data{font-weight:400;}
+.rate_changed span.float_right{font-weight:300;}
+
 .refund .list .item, .list.rate_changed .item {border-width:0px;}
 .list.balances .item .asset_data{
   height: 56px;
@@ -1069,9 +1074,23 @@ input.pmd {font-size:16px!important;  color:#fff;border-top:none; border-left:no
 }
 
 .send_form .recipient_container {position:relative;display:block;width:100%;height:auto;overflow: hidden;}
-.send_form .recipient_container label.pmd{width:320px!important;float:left;}
-.send_form .recipient_container button{position: absolute;right: 5px;color:#eaeaea!important;top:6px;}
-.send_form .recipient_container2 button {top:23px;}
+.send_form .recipient_container label.pmd{
+    /*width:320px!important;*/
+  width:310px!important;
+  float:left;
+}
+.send_form .recipient_container.recipient_container2 label.pmd{
+  width:320px!important;
+  float:left;
+}
+
+.send_form .recipient_container button{
+    position: absolute;
+    /*right: 5px;*/
+    right: 16px;
+    color:#eaeaea!important;top:6px;}
+button.top_23, .send_form .recipient_container2 button {top:23px!important;}
+
 .send_form .recipient_container button.ion-android-cancel{right: 10px;}
 .send_form button.button-icon.icon.ion-android-cancel:before{font-size:24px!important;}
 .send_form_button {color: #8ec919!important;font-weight: bold;
@@ -1147,8 +1166,11 @@ input.pmd {font-size:16px!important;  color:#fff;border-top:none; border-left:no
 .deposit_form .deposit_rate_loading {text-align:center;display: block;min-height: 28px;overflow: hidden;margin-top:40px;}
 /*.deposit_form .input_amount {padding-right:60px!important;}*/
 .deposit_form .amount_container {position:relative;display:block;width:100%;height:auto;padding-top:25px;overflow:hidden;}
-.deposit_form .amount_container label.pmd{width: 300px!important;float:left;} /*padding-left: 32px!important;*/
-.deposit_form .toggle_curr {top: 53px;right: 0px;/*color:#eaeaea!important;*/margin-right:5px;}
+.deposit_form .amount_container label.pmd{width: 310px!important;float:left;} /*padding-left: 32px!important;*/
+.deposit_form .toggle_curr {
+    /*top: 53px;right: 0px;margin-right:5px;*/
+    position: absolute;top: 70px;right: 16px;
+  }
 .deposit_confirm {
   /*padding: 10px 10px 10px 0px;*/
   padding:30px 10px 0px 16px;

@@ -88,24 +88,28 @@ bitwallet_filters.filter('draw_op_amount', function(BitShares, $filter) {
   }
 });
 
-function getTxStatus(tx){
-  if (['RR', 'RF', 'XX'].indexOf(tx.status)>=0)
+bitwallet_filters.filter('get_tx_status', function(BitShares, $filter) {
+  return function(tx) {
+    if (['RR', 'RF', 'XX'].indexOf(tx.status)>=0)
     return '_gray';
   if ('WP'==tx.status)
     return '_waiting';
   if ('RC'==tx.status)
     return '_rate_changed';
+  if($filter('is_uncompleted_xtx')(tx))
+    return '_waiting';  
   return '';
-}
+  }
+});
 
 bitwallet_filters.filter('tx_icon_src', function(BitShares, $filter) {
   return function(tx) {
     if(BitShares.isDeposit(tx))
-      return 'img/icons/ico-deposit'+ getTxStatus(tx) +'.svg';
+      return 'img/icons/ico-deposit'+ $filter('get_tx_status')(tx) +'.svg';
     if(BitShares.isWithdraw(tx)) 
-      return 'img/icons/ico-withdraw'+ getTxStatus(tx) +'.svg';
+      return 'img/icons/ico-withdraw'+ $filter('get_tx_status')(tx) +'.svg';
     if(BitShares.isBtcPay(tx))
-      return 'img/icons/ico-payments'+ getTxStatus(tx) +'.svg';
+      return 'img/icons/ico-btc_pay'+ $filter('get_tx_status')(tx) +'.svg';
     if(tx.ui_type=='sent')
       return 'img/icons/ico-sent.svg';
     if(tx.ui_type=='received')

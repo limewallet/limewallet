@@ -421,7 +421,13 @@
     "accept_content"        : "Are you sure to accept the rate?",
     "refund_headline"       : "Refund confirmation",
     "refund_content"        : "Are you sure you want to get your bitcoins back?",
-    "operation_completed"   : "Operation completed successfully! Please wait for notifications."
+    "operation_completed"   : "Operation completed successfully! Please wait for notifications.",
+    "new_rate"              : "New rate",
+    "already_transfered"    : "You already transfered",
+    "will_receive"          : "You will receive",
+    "old_rate"              : "Old rate"
+
+
   },      
 
   "refund":{
