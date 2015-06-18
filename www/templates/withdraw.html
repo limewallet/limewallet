@@ -8,12 +8,12 @@
         <form novalidate name="sendForm" class="deposit_form withdraw_form send_form">
           <div class="list">
 
-            <div class="recipient_container recipient_container2">
+            <div class="recipient_container">
               <label class="item item-input pmd ">
                 <input name="transactionAddress" placeholder="{{'g.bitcoin_address'|translate}}" ng-model="data.address" class="big full_width pmd" />
                 <span style="clear:both;float:right;width:100%;" class="quote_error assertive" ng-show="data.address_error!==undefined">{{data.address_error}}</span>
               </label>
-              <button ng-click="pasteBitcoinAddress()" class="button button-outline button-stable button-small icon" >
+              <button ng-click="pasteBitcoinAddress()" class="top_23 button button-outline button-stable button-small icon" >
                 <i class="fa fa-paste"></i>
               </button>
             </div>
@@ -34,24 +34,10 @@
               <ion-spinner icon="android"></ion-spinner>
             </div>
 
-            <!-- div class="amount_container">
-              <label class="item item-input pmd item-floating-label">
-                <span class="input-label pmd">{{'g.amount'|translate}}</span>
-                <input numbers-only-key-press placeholder="{{'g.amount'|translate}}" required name="transactionAmount" type="number" class="full_width input_amount big pmd" ng-model="data.input_amount" />
-                <i class="pmd icon placeholder-icon">{{data.input_curr}}</i>
-              </label>
-              <button ng-click="toggleInputCurrency()" class="button button-icon icon ion-arrow-swap base-color toggle_curr">
-              </button>
-              <span style="clear:both;float:right;width:100%;" class="quote_error assertive" ng-show="data.quote_error!==undefined">{{data.quote_error}}</span>
-              <br/>
-              <div class="deposit_rate">
-                <div class="hint left" ng-show="data.input_in_btc==true">{{'g.you_pay'|translate}}:</div>
-                <div class="hint right base-color padded_r" ng-show="data.input_in_btc==true"><strong>55.5</strong> USD</div>
-                <div class="hint left" ng-show="data.input_in_btc==false">{{'withdraw.action'|translate}}:</div>
-                <div class="hint right base-color padded_r" ng-show="data.input_in_btc==false"><strong>0.2</strong> BTC</div> <br/>
-                <div class="hint left">{{'g.cur_rate'|translate}}:</div><div class="hint right base-color"><strong>251.8</strong> USD/BTC</div>
-              </div>
-            </div -->
+            <div ng-show="data.valid_quote" class="deposit_rate" >
+              <div class="hint left">{{'g.cur_rate'|translate}}:</div><div class="hint right base-color">{{data.quote.quote.rate}}&nbsp;{{data.quote.quote.book}}</div>
+            </div>
+
           </div>
         </form>
       </div>

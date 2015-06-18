@@ -27,25 +27,6 @@
             </button>
           </div>
 
-          <div class="btc_amount_container" ng-show="data.is_btc==true">
-            <label class="item item-input pmd" ng-disabled="data.is_btc==false">
-              <span class="input-label pmd">{{'g.amount'|translate}}</span>
-              <input numbers-only-key-press required name="transactionAmount" ng-model="transaction.amount" type="number" class="input_amount big pmd" ng-class="{'error':sendForm.transactionAmount.$error.number}"> 
-              <i class="pmd icon placeholder-icon">BTC</i>
-              <br/>
-            </label>
-            <div class="send_rate">
-              <div class="hint left">{{'g.you_pay'|translate}}:</div><div class="hint right base-color padded_r"><strong>55.5</strong> USD</div> <br/>
-              <div class="hint left">{{'g.cur_rate'|translate}}:</div><div class="hint right base-color"><strong>251.8</strong> USD/BTC</div>
-            </div>
-          </div>
-          
-          <!-- label class="item item-input pmd" ng-disabled="data.is_btc==false" ng-show="data.is_btc==true">
-            <span class="input-label pmd">{{'g.recipient'|translate}}</span>
-            <input name="transactionAddress" ng-model="transaction.destination" class="big full_width pmd" />
-          </label -->
-
-          
           <!-- BTS & BTC -->
           <label class="item item-input pmd item-floating-label">
             <span class="input-label pmd">{{'g.memo'|translate}}</span>

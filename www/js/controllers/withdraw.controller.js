@@ -15,7 +15,8 @@ bitwallet_controllers
     input_amount     : undefined,
     input_curr       : Wallet.data.asset.symbol,
     other_amount     : undefined,
-    other_curr       : 'BTC'
+    other_curr       : 'BTC',
+    quote            : undefined
   }
   
   $scope.pasteBitcoinAddress = function(){

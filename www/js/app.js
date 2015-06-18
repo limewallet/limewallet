@@ -381,6 +381,7 @@ bitwallet_module
         //$state.go('app.account');
         //$state.go('app.send_btc', {scan_data:{address:'CF2b4MsrfNMG9ZjatUFg7ZVYwE2qNupBMt', amount:0.05123, message:'Starbucks'}}, {inherit:true});
         //$state.go('app.withdraw');
+        //$state.go('app.deposit');
 
         $rootScope.goTo('app.home');
 

@@ -23,17 +23,15 @@
               <i class="pmd icon placeholder-icon">BTC</i>
               <br/>
             </label>
-            <div class="send_rate">
               <div ng-show="data.quoting" class="deposit_rate_loading" >
                 <ion-spinner icon="android"></ion-spinner>
               </div>
 
               <div ng-show="data.valid_quote" class="deposit_rate" >
-                <div class="hint left">{{'g.you_pay'|translate}}:</div><div class="hint right base-color"><strong>{{data.quote.quote.cl_pay}}&nbsp;{{data.quote.quote.cl_pay_curr}}</strong></div> <br>
-                <div class="hint left">{{'g.cur_rate'|translate}}:</div><div class="hint right base-color"><strong>{{data.quote.quote.rate}}&nbsp;{{data.quote.quote.book}}</strong></div>
+                <div class="hint left">{{'g.you_pay'|translate}}:</div><div class="hint right base-color">{{data.quote.quote.cl_pay}}&nbsp;{{data.quote.quote.cl_pay_curr}}</div> <br>
+                <div class="hint left">{{'g.cur_rate'|translate}}:</div><div class="hint right base-color">{{data.quote.quote.rate}}&nbsp;{{data.quote.quote.book}}</div>
               </div>
-            </div>
-
+            
           </div>
 
           

@@ -15,7 +15,8 @@ bitwallet_controllers
     input_curr       : Wallet.data.asset.symbol,
     other_amount     : undefined,
     other_curr       : 'BTC',
-    step             : 1
+    step             : 1,
+    quote            : undefined
   }
 
   $scope.buildQRCode = function (xtx) {

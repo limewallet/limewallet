@@ -53,6 +53,10 @@ ion-nav-view {
 */
 
 .balance_container{
+  background-size: 360px auto !important; 
+  background-position:center -44px!important;
+  background-repeat: no-repeat!important;
+  background-image: url(../img/bg/bg-dashboard@0x.png);
   text-align: center;
   height:158px;
 }
@@ -179,11 +183,15 @@ h2 .transactions .sent_ex, h2 .transactions .received_ex, h2 .transactions .self
 .icon_deposit   {background-image: url(../img/icons/ico-deposit.svg);}
 .icon_btc_pay   {background-image: url(../img/icons/ico-payments.svg);}
 */
-.lime_icon           { background-size: 24px 24px !important; 
+.lime_icon           { background-size: 20px 20px !important; 
                        background-position:center center!important;
                        background-repeat: no-repeat!important;
-                       width:32px;height:38px;}
+                       width:38px;height:38px;}
 .lime_icon.navicon_w { background-image: url(../img/icons/menu-white.svg)!important ;}
+
+ion-nav-bar.light_navbar .lime_icon.qr-code { background-image: url(../img/icons/ico-qr-code_dark.svg)!important ;}
+ion-nav-bar.light_navbar.darky .lime_icon.qr-code { background-image: url(../img/icons/ico-qr-code.svg)!important ;}
+
 .lime_icon.qr i      { font-size:20px!important; /*background-image: url(../img/icons/ico-qr.svg) !important ;*/}
 
 .lime_settings_icon           { background-size: 16px 16px !important; 
@@ -193,7 +201,6 @@ h2 .transactions .sent_ex, h2 .transactions .received_ex, h2 .transactions .self
 .lime_settings_icon.settings  { background-image: url(../img/icons/ico-settings_gray.svg);}
 .lime_settings_icon.assets    { background-image: url(../img/icons/ico-assets-2.svg); height:16px; width:32px; left:11px;}
 .lime_settings_icon.assets    { background-image: url(../img/icons/ico-assets-2.svg); height:16px; width:32px; left:11px;}
-
 .lime_settings_icon.deposit   { background-image: url(../img/icons/ico-deposit_lime.svg); height:16px; width:32px; left:11px;}
 .lime_settings_icon.withdraw  { background-image: url(../img/icons/ico-withdraw_lime.svg); height:16px; width:32px; left:11px;}
 
@@ -861,8 +868,9 @@ span.quote_error{padding-left: 16px;}
 }
 
 .button-bar.tabbed > .button-receive{
-  background-color:#1b4356 ;
-  color: #cad0d5; /*#546979 ;*/
+  /*background-color:#1b4356 ;*/
+  background-color:transparent;
+  color: #cad0d5; 
   border-color:#546979;
 }
 
@@ -957,7 +965,8 @@ button.centered_autow {width:auto!important;margin:0 auto;}
 .create_account_passsword .buttons_container {text-align:center;}
 .create_account_passsword .list_password .item.pmd.margin15 {margin-top:15px!important;}
 
-.pseudo-nav-bar, .balance_container, .register, .welcome, .welcome_bg, .create_account, .create_account_bg, .register_bg {
+/* .balance_container,  */
+.pseudo-nav-bar, .register, .welcome, .welcome_bg, .create_account, .create_account_bg, .register_bg {
   background: -moz-linear-gradient(123deg, rgba(26,66,84,1) 0%, rgba(26,67,86,1) 100%); /* ff3.6+ */
   background: -webkit-gradient(linear, left top, right bottom, color-stop(0%, rgba(26,67,86,1)), color-stop(100%, rgba(26,66,84,1))); /* safari4+,chrome */
   background: -webkit-linear-gradient(123deg, rgba(26,66,84,1) 0%, rgba(26,67,86,1) 100%); /* safari5.1+,chrome10+ */
@@ -995,10 +1004,15 @@ a.button.lime_border.activated{background-color:#d3eb00!important; color:rgba(26
 ion-nav-bar.light_navbar ion-header-bar { background-color: #fff!important;
                 box-shadow: 0px 0px 5px 0px #546979!important;}
 ion-nav-bar.light_navbar.darky ion-header-bar{
-  background-image:none!important;
+  
   color: #fff;
   box-shadow: none!important;
-  background-color:#1b4356!important;
+  /*background-image:none!important;
+  background-color:#1b4356!important;*/
+  background-size: 360px auto !important; 
+  background-position:center 0px!important;
+  background-repeat: no-repeat!important;
+  background-image: url(../img/bg/bg-dashboard@0x.png)!important;
 }
 ion-nav-bar.light_navbar .button.button-icon{color:#5f7381;}
 ion-nav-bar.light_navbar.darky .button.button-icon{color:#ffffff;}
@@ -1157,20 +1171,20 @@ button.top_23, .send_form .recipient_container2 button {top:23px!important;}
     margin-left: 10px;
     font-size:12px;
     color:#d0d0d0!important;
+    font-weight: 500;
 }
 .deposit_rate .hint.left{min-width: 80px!important;}
-.deposit_rate {clear:both;padding-left:71px;padding-right: 80px;margin-top: 40px;}
-.deposit_rate .hint.padded_r{padding-right:27px}
+.deposit_rate {clear:both;padding-left:71px;padding-right: 80px;margin-top: 0px;} /*margin-top: 40px*/
+.deposit_rate_loading {text-align:center;display: block;min-height: 28px;overflow: hidden;margin-top:0px;} /* margin-top:40px  */
+
+
 .deposit .step2 {width:100%;}
 .deposit .list.qr_code .item, .list.receive_qr .item{border:none!important;}
-.deposit_form .deposit_rate_loading {text-align:center;display: block;min-height: 28px;overflow: hidden;margin-top:40px;}
-/*.deposit_form .input_amount {padding-right:60px!important;}*/
-.deposit_form .amount_container {position:relative;display:block;width:100%;height:auto;padding-top:25px;overflow:hidden;}
-.deposit_form .amount_container label.pmd{width: 310px!important;float:left;} /*padding-left: 32px!important;*/
-.deposit_form .toggle_curr {
-    /*top: 53px;right: 0px;margin-right:5px;*/
-    position: absolute;top: 70px;right: 16px;
-  }
+.deposit_form .amount_container {position:relative;display:block;width:100%;height:auto;padding-top:0px;overflow:hidden;} /*padding-top:25px;*/
+.withdraw .deposit_form .amount_container {padding-top:0px!important;}
+.deposit_form .amount_container label.pmd{width: 310px!important;float:left;}
+.deposit_form .toggle_curr { position: absolute;top: 45px;right: 16px; } /* top: 70px */
+.withdraw .deposit_form .toggle_curr { top: 45px!important;}
 .deposit_confirm {
   /*padding: 10px 10px 10px 0px;*/
   padding:30px 10px 0px 16px;
@@ -1363,4 +1377,4 @@ ion-spinner {stroke:#d3eb00!important;} /*93c91f*/
   border-radius: 50%;
 }
 
-p.paragraph {padding:25px; font-size:17px; font-weight: 300;}
+p.paragraph {padding:25px; font-size:17px; font-weight: 300;margin:0;}
