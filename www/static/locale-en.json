@@ -1,5 +1,6 @@
 {
   "g" : {
+    "not_available"                 : "N/A",
     "on_exit_title"                 : "LimeWallet",
     "on_exit_msg"                   : "Are you sure you want to leave?",
 
@@ -431,7 +432,7 @@
   },      
 
   "refund":{
-    "headline"                : "Please input a valid bitcoin address to receive the money from your {{action}}.",
+    "headline"                : "Please input a valid bitcoin address to receive back the money from your {{action}}.",
     "headline2"               : "You can withdraw bitcoins from your wallet by converting your preferred bitasset into bitcoins.<br/>Type the destination bitcoin address and the amount you want to withdraw.",
     "address"                 : "Refund address",
     "successful"              : "Successful refund! Please wait for notifications",

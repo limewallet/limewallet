@@ -84,7 +84,9 @@ bitwallet_controllers
      buttons    : opt_buttons,
      titleText  : T.i('home.transaction_options'),
      cancelText : T.i('g.dismiss'),
-
+     cancel: function() {
+          // add cancel code..
+        },
      buttonClicked: function(index) {
       if(index==0) {
         if(BitShares.isXtx(tx)) {

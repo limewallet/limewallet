@@ -1,116 +1,113 @@
 <ion-view title="{{'detail.transaction_details'|translate}}">
-    
     <ion-content class="has-header assets base-color_bg padding" scroll="true" scrollbar-y="true" has-bouncing="false">
-    
-      <div class="list balances">
-        <div class="item item-divider green_bg color_white">
-          <span class="tx_desc">{{data.asset.symbol_ui_text}}{{data.tx.amount|number:2}} {{('tx.'+data.tx.ui_type)|translate}} {{data.tx.name}}</span> 
+      
+      <div class="list tx_detail">
+        <div class="item item-icon-left">
+          <div class="{{data.tx.ui_type}}">
+            <div class="full_width">
+              <img class="{{data.tx.ui_type}}_ex icon tx_icon " src="{{data.tx|tx_icon_src}}"/>
+              <h2>
+                <span class="tx_amount">{{wallet.asset.symbol_ui_text}} {{data.tx|draw_tx_amount}}</span> 
+                <span class="self_text wrap_text ">{{('tx.'+data.tx.ui_type)|translate}} <font class="fw100">{{data.tx.name}}</font></span>
+              </h2>
+            </div>
+          </div>
         </div>
         <div class="item base-color">
-          <div class="asset_data">
-            <strong>{{'g.recipient'|translate}}</strong>
-            <br/>
-            <span> 
+          <div class="detail_data">
+            {{(data.tx.ui_type=='sent'?'g.recipient':'g.from')|translate}}
+            <span class="wrap_text nl"> 
               {{data.tx.name}}
             </span>
           </div>
         </div>
+        
         <div class="item base-color">
-          <div class="asset_data">
-            <strong>{{'g.amount'|translate}}</strong>
-            <br/>
+          <div class="detail_data">
+            {{'g.amount'|translate}}
             <span> 
-              {{data.asset.symbol_ui_text}}{{data.tx.amount|number:2}}
+              {{data.tx|xtx_amount}}
             </span>
           </div>
         </div>
+        
         <div class="item base-color">
-          <div class="asset_data">
-            <strong>{{'detail.fee'|translate}}</strong>
-            <br/>
+          <div class="detail_data">
+            {{'detail.fee'|translate}}
             <span> 
               {{data.asset.symbol_ui_text}}{{data.tx.fee|number:2}}
             </span>
           </div>
         </div>
-        
+
         <div class="item base-color">
-          <div class="asset_data">
-            <strong>{{'detail.note_msg'|translate}}</strong>
-            <br/>
-            <span> 
-              {{data.tx.message}}
+          <div class="detail_data">
+            {{'detail.note_msg'|translate}}
+            <br/><span class="nl wrap_text">
+              {{data.tx.message?data.tx.message:'g.not_available'|translate}}
             </span>
           </div>
         </div>
-
+        
         <div class="item base-color">
-          <div class="asset_data">
-            <strong>{{'g.date'|translate}}</strong>
-            <br/>
-            <span> 
-              {{(data.tx.timestamp*1000)|date:'medium'}}
+          <div class="detail_data">
+            {{'g.date'|translate}}
+            <br/><span class="nl wrap_text">
+              {{data.tx|from_now }} ({{(data.tx.timestamp*1000)|date:'medium'}})
             </span>
           </div>
         </div>
 
         <div class="item base-color" ng-show="data.show_extra==false">
-          <div class="asset_data text_centered">
-            <a ng-click="data.show_extra= (!data.show_extra)">{{'detail.more_data'|translate}}</a>
+          <div class="detail_data text_centered">
+            <a ng-click="data.show_extra= (!data.show_extra)">More data...</a>
           </div>
         </div>
         
         <div class="item base-color" ng-show="data.show_extra==true">
-          <div class="asset_data" on-click="copy()">
-            <strong>{{'detail.pubkey'|translate}}</strong>
-            <br/>
-            <span> 
-              {{data.tx.pubkey?data.tx.pubkey:'N/A'}}
+          <div class="detail_data">
+            {{'detail.pubkey'|translate}}
+            <br/><span class="nl wrap_text"> 
+              {{data.tx.pubkey?data.tx.pubkey:'g.not_available'|translate}}
             </span>
           </div>
         </div>
-        
+
         <div class="item base-color" ng-show="data.show_extra==true">
-          <div class="asset_data">
-            <strong>{{'detail.address'|translate}}</strong>
-            <br/>
-            <span> 
+          <div class="detail_data">
+            {{'detail.address'|translate}}
+            <br/><span class="nl wrap_text"> 
               {{data.tx.address}}
             </span>
           </div>
         </div>
 
         <div class="item base-color" ng-show="data.show_extra==true">
-          <div class="asset_data">
-            <strong>{{'g.asset'|translate}}</strong>
-            <br/>
+          <div class="detail_data">
+            {{'g.asset'|translate}}
             <span> 
-              {{data.asset.symbol}} ({{data.asset.name}})
+              {{wallet.asset.symbol}} ({{wallet.asset.name}})
             </span>
           </div>
         </div>
 
         <div class="item base-color" ng-show="data.show_extra==true">
-          <div class="asset_data">
-            <strong>{{'detail.tx_id'|translate}}</strong>
-            <br/>
-            <span> 
+          <div class="detail_data">
+            {{'detail.tx_id'|translate}}
+            <br/><span class="nl wrap_text"> 
               {{data.tx.txid}}
             </span>
           </div>
         </div>
-
+        
         <div class="item base-color" ng-show="data.show_extra==true">
-          <div class="asset_data">
-            <strong>{{'detail.bts_block'|translate}}</strong>
-            <br/>
-            <span> 
+          <div class="detail_data">
+            {{'detail.bts_block'|translate}}
+            <br/><span class="nl wrap_text"> 
               {{data.tx.block}}<br/>({{data.tx.block_id}})
             </span>
           </div>
         </div>
-
       </div>
     </ion-content>
   </ion-view>
-  

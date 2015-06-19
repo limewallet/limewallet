@@ -525,7 +525,7 @@ bitwallet_services
       var deferred = $q.defer();
       
       var query = " \
-        SELECT o.timestamp*1000 as TS, o.slate, IFNULL(m.encrypted,-1) encmsg, m.message, m.pubkey pubkey, c.name, m.address, \
+        SELECT o.timestamp*1000 as TS, o.slate, IFNULL(m.encrypted,-1) encmsg, m.message, m.pubkey pubkey, IFNULL(c.name, m.address) name, m.address, \
           o.type as ui_type, \
             o.* FROM operation o \
           LEFT JOIN memo m \

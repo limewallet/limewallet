@@ -75,9 +75,31 @@ bitwallet_filters.filter('xtx_action', function(BitShares, $filter, T) {
 
 bitwallet_filters.filter('is_uncompleted_xtx', function(BitShares, $filter) {
   return function(xtx) {
+    if(!xtx)
+      return false;
     if (!BitShares.isXtx(xtx))
       return false;
     return !BitShares.isXtxCompleted(xtx);
+  }
+});
+
+bitwallet_filters.filter('bitshares_tx_id', function(BitShares, $filter) {
+  return function(tx) {
+    if(!tx)
+      return '';
+    if(BitShares.isDeposit(tx))
+      return tx.cl_recv_tx?tx.cl_recv_tx:'N/A';
+    return tx.cl_pay_tx?tx.cl_pay_tx:'N/A';
+  }
+});
+
+bitwallet_filters.filter('bitcoin_tx_id', function(BitShares, $filter) {
+  return function(tx) {
+    if(!tx)
+      return '';
+    if(!BitShares.isDeposit(tx))
+      return tx.cl_recv_tx?tx.cl_recv_tx:'N/A';
+    return tx.cl_pay_tx?tx.cl_pay_tx:'N/A';
   }
 });
 
@@ -104,6 +126,8 @@ bitwallet_filters.filter('get_tx_status', function(BitShares, $filter) {
 
 bitwallet_filters.filter('tx_icon_src', function(BitShares, $filter) {
   return function(tx) {
+    if(!tx)
+      return '';
     if(BitShares.isDeposit(tx))
       return 'img/icons/ico-deposit'+ $filter('get_tx_status')(tx) +'.svg';
     if(BitShares.isWithdraw(tx)) 
@@ -120,9 +144,37 @@ bitwallet_filters.filter('tx_icon_src', function(BitShares, $filter) {
   }
 });
 
+bitwallet_filters.filter('xtx_btc_amount', function(BitShares, Wallet, $filter) {
+  return function(tx) {
+    if(!tx)
+      return '';
+
+    var amount = $filter('draw_tx_btc_amount')(tx);
+
+    return amount + ' BTC';
+  }
+});
+bitwallet_filters.filter('draw_tx_btc_amount', function(BitShares, Wallet, $filter) {
+  return function(tx) {
+    if(!tx)
+      return '';
+
+    if(BitShares.isWithdraw(tx) || BitShares.isBtcPay(tx))
+      return $filter('currency')(tx.cl_recv, tx.cl_recv_curr);
+
+    if(BitShares.isDeposit(tx))
+      return $filter('currency')(tx.cl_pay, tx.cl_pay_curr);
+    
+    return '';
+  }
+});
+
+
 bitwallet_filters.filter('xtx_amount', function(BitShares, Wallet, $filter) {
   return function(tx) {
-    
+    if(!tx)
+      return '';
+
     var amount = $filter('draw_tx_amount')(tx);
 
     if(Wallet.data.asset.symbol == 'BTC') 
@@ -132,9 +184,10 @@ bitwallet_filters.filter('xtx_amount', function(BitShares, Wallet, $filter) {
   }
 });
 
-
 bitwallet_filters.filter('draw_tx_amount', function(BitShares, Wallet, $filter) {
   return function(tx) {
+    if(!tx)
+      return '';
 
     if(BitShares.isDeposit(tx))
       return $filter('currency')(tx.cl_recv, tx.cl_recv_curr);

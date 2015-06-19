@@ -1,15 +1,28 @@
 <ion-view title="{{'detail.transaction_details'|translate}}">
     <ion-content class="has-header assets base-color_bg padding" scroll="true" scrollbar-y="true" has-bouncing="false">
-    
-      <div class="list balances">
-        <div class="item item-divider green_bg color_white">
-          <span class="tx_desc">{{data.tx|xtx_amount}} {{('tx.'+data.tx.ui_type)|translate}}</span> 
+      
+      <div class="list tx_detail">
+        <div class="item item-icon-left">
+          <div class="{{data.tx.ui_type}}">
+            <div class="full_width" style="padding-top:15px;padding-bottom:15px;" ng-class="{true:'pending', false:''}[data.tx.status=='WP']">
+              <img class="{{data.tx.ui_type}}_ex icon tx_icon " src="{{data.tx|tx_icon_src}}"/>
+              <h2>
+                <span class="tx_amount">{{wallet.asset.symbol_ui_text}} {{data.tx|draw_tx_amount}}</span> 
+                <span class="self_text">{{('g.'+data.tx.ui_type) | translate}}</span>
+                <span class="pending_text {{data.tx.status}}">{{('xchg.'+data.tx.status) | translate}}</span>
+              </h2>
+              <p>
+                <span class="deposit_ex wrap_text fw100">{{data.tx.cl_pay|number:4}}&nbsp;{{data.tx.cl_pay_curr}}</span>
+                <span class="withdraw_ex wrap_text fw100">{{data.tx.cl_recv|number:4}}&nbsp;{{data.tx.cl_recv_curr}}</span>
+                <span class="btc_pay_ex wrap_text fw100">{{data.tx.cl_recv|number:4}}&nbsp;{{data.tx.cl_recv_curr}}</span>
+              </p>
+            </div>
+          </div>
         </div>
-        
         <div class="item base-color">
-          <div class="asset_data">
-            <strong>{{'g.amount'|translate}}</strong>
-            <br/>
+          <div class="detail_data">
+            {{'g.amount'|translate}}
+            
             <span> 
               {{data.tx|draw_tx_amount}}  
             </span>
@@ -17,29 +30,29 @@
         </div>
         
         <div class="item base-color">
-          <div class="asset_data">
-            <strong>BTC</strong>
-            <br/>
+          <div class="detail_data">
+            BTC
+            
             <span> 
-              {{data.tx.btc_amount|number:2}} BTC
+              {{data.tx|xtx_btc_amount}}
             </span>
           </div>
         </div>
         
         <div class="item base-color">
-          <div class="asset_data">
-            <strong>{{'detail.btc_rate'|translate}}</strong>
-            <br/>
+          <div class="detail_data">
+            {{'detail.btc_rate'|translate}}
+            
             <span> 
-              {{data.tx.rate|number:2}} {{data.tx.amount_asset.symbol}}/BTC
+              {{data.tx.rate|number:2}} {{wallet.asset.symbol_ui_text}}/BTC
             </span>
           </div>
         </div>
 
         <div class="item base-color">
-          <div class="asset_data">
-            <strong>{{'detail.tx_status'|translate}}</strong>
-            <br/>
+          <div class="detail_data">
+            {{'detail.tx_status'|translate}}
+            
             <span> 
               {{('xchg.'+data.tx.status)|translate}}
             </span>
@@ -47,19 +60,19 @@
         </div>
         
         <div class="item base-color">
-          <div class="asset_data">
-            <strong>{{'g.asset'|translate}}</strong>
-            <br/>
+          <div class="detail_data">
+            {{'g.asset'|translate}}
+            
             <span> 
-              {{data.tx.amount_asset.symbol}} ({{data.tx.amount_asset.name}})
+              {{wallet.asset.symbol}} ({{wallet.asset.name}})
             </span>
           </div>
         </div>
 
         <div class="item base-color">
-          <div class="asset_data">
-            <strong>{{'g.date'|translate}}</strong>
-            <br/>
+          <div class="detail_data">
+            {{'g.date'|translate}}
+            
             <span> 
               {{(data.tx.created_at*1000)|date:'medium'}}
             </span>
@@ -67,27 +80,27 @@
         </div>
 
         <div class="item base-color" ng-show="data.show_extra==false">
-          <div class="asset_data text_centered">
+          <div class="detail_data text_centered">
             <a ng-click="data.show_extra= (!data.show_extra)">More data...</a>
           </div>
         </div>
         
         <div class="item base-color" ng-show="data.show_extra==true">
-          <div class="asset_data">
-            <strong>{{'detail.bts_txid'|translate}}</strong>
+          <div class="detail_data">
+            {{'detail.bts_txid'|translate}}
             <br/>
-            <span> 
-              {{data.tx.bitshares_txid?data.tx.bitshares_txid:'N/A'}}
+            <span class="nl wrap_text"> 
+              {{data.tx|bitshares_tx_id}}
             </span>
           </div>
         </div>
 
         <div class="item base-color" ng-show="data.show_extra==true">
-          <div class="asset_data">
-            <strong>{{'detail.btc_txid'|translate}}</strong>
+          <div class="detail_data">
+            {{'detail.btc_txid'|translate}}
             <br/>
-            <span> 
-              {{data.tx.bitcoin_txid?data.tx.bitcoin_txid:'N/A'}}
+            <span class="nl wrap_text"> 
+              {{data.tx|bitcoin_tx_id}}
             </span>
           </div>
         </div>

@@ -382,7 +382,10 @@ bitwallet_module
         //$state.go('app.send_btc', {scan_data:{address:'CF2b4MsrfNMG9ZjatUFg7ZVYwE2qNupBMt', amount:0.05123, message:'Starbucks'}}, {inherit:true});
         //$state.go('app.withdraw');
         //$state.go('app.deposit');
-
+        //$state.go('app.xtransaction_details', {x_id:'70'});
+        //$state.go('app.transaction_details', {tx_id:'bdb2cd28f54ae1a16a7218bf124c41058793215e'});
+        
+        //$state.go('app.assets');
         $rootScope.goTo('app.home');
 
         //obscure around glue cheese inherit thing subject blade slow unknown solve assum

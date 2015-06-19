@@ -128,41 +128,41 @@ ion-nav-view {
 .transactions h2 {font-size:14px!important;}
 /* ***************************************** */
 /* received */
-.transactions .received .sent_ex{display:none;}
-.transactions .received .self_ex{display:none;}
-.transactions .received .deposit_ex{display:none;}
-.transactions .received .withdraw_ex{display:none;}
-.transactions .received .btc_pay_ex{display:none;}
+/*.transactions*/ .received .sent_ex{display:none;}
+/*.transactions*/ .received .self_ex{display:none;}
+/*.transactions*/ .received .deposit_ex{display:none;}
+/*.transactions*/ .received .withdraw_ex{display:none;}
+/*.transactions*/ .received .btc_pay_ex{display:none;}
 /* sent */
-.transactions .sent .received_ex{display:none;}
-.transactions .sent .self_ex{display:none;}
-.transactions .sent .deposit_ex{display:none;}
-.transactions .sent .withdraw_ex{display:none;}
-.transactions .sent .btc_pay_ex{display:none;}
+/*.transactions*/ .sent .received_ex{display:none;}
+/*.transactions*/ .sent .self_ex{display:none;}
+/*.transactions*/ .sent .deposit_ex{display:none;}
+/*.transactions*/ .sent .withdraw_ex{display:none;}
+/*.transactions*/ .sent .btc_pay_ex{display:none;}
 /* self */
-.transactions .self .received_ex{display:none;}
-.transactions .self .sent_ex{display:none;}
-.transactions .self .deposit_ex{display:none;}
-.transactions .self .withdraw_ex{display:none;}
-.transactions .self .btc_pay_ex{display:none;}
+/*.transactions*/ .self .received_ex{display:none;}
+/*.transactions*/ .self .sent_ex{display:none;}
+/*.transactions*/ .self .deposit_ex{display:none;}
+/*.transactions*/ .self .withdraw_ex{display:none;}
+/*.transactions*/ .self .btc_pay_ex{display:none;}
 /* deposit */
-.transactions .deposit .received_ex{display:none;}
-.transactions .deposit .sent_ex{display:none;}
-.transactions .deposit .self_ex{display:none;}
-.transactions .deposit .withdraw_ex{display:none;}
-.transactions .deposit .btc_pay_ex{display:none;}
+/*.transactions*/ .deposit .received_ex{display:none;}
+/*.transactions*/ .deposit .sent_ex{display:none;}
+/*.transactions*/ .deposit .self_ex{display:none;}
+/*.transactions*/ .deposit .withdraw_ex{display:none;}
+/*.transactions*/ .deposit .btc_pay_ex{display:none;}
 /* withdraw */
-.transactions .withdraw .received_ex{display:none;}
-.transactions .withdraw .sent_ex{display:none;}
-.transactions .withdraw .self_ex{display:none;}
-.transactions .withdraw .deposit_ex{display:none;}
-.transactions .withdraw .btc_pay_ex{display:none;}
+/*.transactions*/ .withdraw .received_ex{display:none;}
+/*.transactions*/ .withdraw .sent_ex{display:none;}
+/*.transactions*/ .withdraw .self_ex{display:none;}
+/*.transactions*/ .withdraw .deposit_ex{display:none;}
+/*.transactions*/ .withdraw .btc_pay_ex{display:none;}
 /* btc_pay */
-.transactions .btc_pay .received_ex{display:none;}
-.transactions .btc_pay .sent_ex{display:none;}
-.transactions .btc_pay .self_ex{display:none;}
-.transactions .btc_pay .deposit_ex{display:none;}
-.transactions .btc_pay .withdraw_ex{display:none;}
+/*.transactions*/ .btc_pay .received_ex{display:none;}
+/*.transactions*/ .btc_pay .sent_ex{display:none;}
+/*.transactions*/ .btc_pay .self_ex{display:none;}
+/*.transactions*/ .btc_pay .deposit_ex{display:none;}
+/*.transactions*/ .btc_pay .withdraw_ex{display:none;}
 /* pending */
 /*.transactions .pending .sent_ex{display:none;}
 .transactions .pending .received_ex{display:none;}
@@ -189,8 +189,8 @@ h2 .transactions .sent_ex, h2 .transactions .received_ex, h2 .transactions .self
                        width:38px;height:38px;}
 .lime_icon.navicon_w { background-image: url(../img/icons/menu-white.svg)!important ;}
 
-ion-nav-bar.light_navbar .lime_icon.qr-code { background-image: url(../img/icons/ico-qr-code_dark.svg)!important ;}
-ion-nav-bar.light_navbar.darky .lime_icon.qr-code { background-image: url(../img/icons/ico-qr-code.svg)!important ;}
+ion-nav-bar.light_navbar .lime_icon.qr-code { background-image: url(../img/icons/ico-qr-code_dark.svg)!important ; height:36px;}
+ion-nav-bar.light_navbar.darky .lime_icon.qr-code { background-image: url(../img/icons/ico-qr-code.svg)!important ; height:38px;}
 
 .lime_icon.qr i      { font-size:20px!important; /*background-image: url(../img/icons/ico-qr.svg) !important ;*/}
 
@@ -203,6 +203,8 @@ ion-nav-bar.light_navbar.darky .lime_icon.qr-code { background-image: url(../img
 .lime_settings_icon.assets    { background-image: url(../img/icons/ico-assets-2.svg); height:16px; width:32px; left:11px;}
 .lime_settings_icon.deposit   { background-image: url(../img/icons/ico-deposit_lime.svg); height:16px; width:32px; left:11px;}
 .lime_settings_icon.withdraw  { background-image: url(../img/icons/ico-withdraw_lime.svg); height:16px; width:32px; left:11px;}
+
+
 
 .pending_text {
   float:right;
@@ -236,12 +238,7 @@ ion-nav-bar.light_navbar.darky .lime_icon.qr-code { background-image: url(../img
 
 .pending_text {background-color: transparent!important; color:#4fbaed!important;}
 .pending_text.XX, .pending_text.RR, .pending_text.RF {color:#BDC3C7!important;}
-/*.pending_text.WP { color:#4fbaed!important;}*/
 .pending_text.RC{color: #E74C3C!important;} 
-
-/*.transactions .pending h2, .transactions .pending .icon , .transactions .pending span, .transactions .pending p
-{color:#4fbaed;} */ /* HACKED */
-/*#3498DB*/
 
 .transactions p , .transactions span.tx_address {font-size:12px!important;}
 .transactions span.tx_amount{font-weight:700;font-size:16px!important;}
@@ -429,10 +426,9 @@ margin-bottom: 20px!important;
 .keyboard-open .restoreForm_inputs{
   /*height: 100%;  */
 }
-.tx_details .row{ margin-top:0px!important;padding:0!important;}
-.tx_details .row .col{font-size:11px!important;}
-
 .full_width{width:100%;}
+.tx_detail .full_width, .main_transactions .full_width{padding-top:15px;padding-bottom:15px;}
+
 div.text_centered{text-align: center;}
 img.i_centered {margin-left: auto;
     margin-right: auto;
@@ -482,8 +478,6 @@ img.i_centered {margin-left: auto;
     border-radius: 4px;
 }
 
-/*.default_addr h3, .default_addr h4, .default_addr p, .default_asset h2, .default_asset p{color:#ffffff!important;}*/
-/*.default_asset,  .default_addr{background-color:#007DC4!important;} */
 .asset_list h2, .addr_list h3 {color:#003762;}
 .hidden_asset {background-color:#eeeeee!important;} /*acfa84*/
 .badge-default{
@@ -533,7 +527,7 @@ img.i_centered {margin-left: auto;
   font-size:14px;
 }
 .main_transactions {height: 100%;}
-.list.settings .item, .list.balances .item, .list.addys_balances .item, .main_transactions .item{
+.list.tx_detail .item,  .list.settings .item, .list.balances .item, .list.addys_balances .item, .main_transactions .item{
   border-color:transparent!important;
   border:none;
   border-width: 0px;
@@ -683,6 +677,12 @@ img.i_centered {margin-left: auto;
 .rate_changed span.float_right{font-weight:300;}
 
 .refund .list .item, .list.rate_changed .item {border-width:0px;}
+
+.assets_header {background-color:#d0d8dc;color:#697b8c;}
+.assets_header span{font-weight: 200;}
+.assets .asset_data {font-weight: 300;}
+.assets .asset_data span.asset_balance{font-weight: 400;}
+
 .list.balances .item .asset_data{
   height: 56px;
   padding-top: 15px;
@@ -701,7 +701,14 @@ img.i_centered {margin-left: auto;
   width: 100%;
   font-size: 17px;
 }  
-
+.tx_detail h2 {font-size: 18px!important;margin:0!important;}
+.tx_detail h2 .pending_text {font-size: 11px!important;}
+.tx_detail .tx_amount {font-weight: 700;}
+.tx_detail h2 {font-size: 17px;}
+.tx_detail .item .detail_data {font-weight: 300;}
+.tx_detail .item .detail_data span {float:right; font-weight: 500;}
+.tx_detail .item .detail_data span.nl {float:left;}
+.fw100 {font-weight:100;}
 /******************************/
 /*DEPOSIT *********************/ 
 /******************************/
@@ -894,16 +901,14 @@ span.quote_error{padding-left: 16px;}
   flex: 0 0 47%;
   width: 47%; }
 
-/* HACK css > Ionic, v1.0.0-rc.1 */
-
 .platform-android .action-sheet .action-sheet-title{
   text-align: center !important; 
+  font-weight: 200;
 }
-
 .platform-android .action-sheet .button {
   text-align: center !important; 
   border-color: #d1d3d6!important; 
-  /*color: #007aff!important; */
+  
 }
 
 fieldset {
