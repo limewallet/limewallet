@@ -11,7 +11,7 @@ bitwallet_controllers
 
     $scope.data.amount     = $stateParams.amount;
     if(!$scope.data.amount || isNaN($scope.data.amount) || $scope.data.amount <= 0 ) {
-      $scope.goTo('app.receive');
+      $scope.goToState('app.receive');
       window.plugins.toast.show( T.i('err.invalid_amount'), 'long', 'bottom');
       return;
     }

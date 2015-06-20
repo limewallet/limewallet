@@ -105,7 +105,7 @@ bitwallet_controllers.controller('AccountCtrl', function($translate, T, BitShare
           $scope.hideLoading();
           window.plugins.toast.show( T.i('register.account_name_saved'), 'long', 'bottom');        
           Wallet.updateActiveAccount(account['name'], account['registered'], account['avatar_hash']);
-          $scope.goTo('app.home');
+          $scope.goHome();
         }, function(error){
           $scope.alert({title:'err.occurred', message:'err.account_registration'});
           $scope.hideLoading();

@@ -39,7 +39,7 @@ bitwallet_module
     })
 
     .state('app.settings', {
-      //cache: false,
+      cache: false,
       url: "/settings",
       views: {
         'menuContent' :{
@@ -50,7 +50,7 @@ bitwallet_module
     })
     
     .state('app.assets', {
-      //cache: false,
+      cache: false,
       url: "/assets",
       views: {
         'menuContent' :{
@@ -62,7 +62,7 @@ bitwallet_module
 
     .state('app.contacts', {
       url: "/contacts",
-      //cache: false,
+      cache: false,
       views: {
         'menuContent' :{
           templateUrl: "templates/contacts.html",
@@ -74,7 +74,7 @@ bitwallet_module
     .state('app.contact', {
       url: "/contact",
       params: {contact : undefined},
-      //cache: false,
+      cache: false,
       views: {
         'menuContent' :{
           templateUrl: "templates/contact.html",
@@ -85,7 +85,7 @@ bitwallet_module
     
     .state('app.receive', {
       url: "/receive",
-      //cache: false,
+      cache: false,
       views: {
         'menuContent' :{
           templateUrl: "templates/receive.html",
@@ -96,7 +96,7 @@ bitwallet_module
     
     .state('app.receive_qrcode', {
       url: "/receive/qrcode/:amount",
-      //cache: false,
+      cache: false,
       views: {
         'menuContent' :{
           templateUrl: "templates/receive.qrcode.html",
@@ -230,7 +230,6 @@ bitwallet_module
 
     .state('app.successful', {
       cache:  false,
-      //url:    "/successful/:txid/:xtxid/:address/:name/:message/:amount/:type/:currency_name/:currency_symbol",
       url:    "/successful",
       params: {tx : undefined},
       views: {
@@ -360,7 +359,7 @@ bitwallet_module
     $rootScope.global_init().then(function(account) {
       
       if( account === undefined) {
-        $rootScope.goTo('app.welcome');
+        $rootScope.goToState('app.welcome');
         return;
       }
       
@@ -391,8 +390,7 @@ bitwallet_module
         //$state.go('app.xtransaction_details', {x_id:'70'});
         //$state.go('app.transaction_details', {tx_id:'bdb2cd28f54ae1a16a7218bf124c41058793215e'});
         
-        //$state.go('app.assets');
-        $rootScope.goTo('app.home');
+        $rootScope.goHome();
 
         //obscure around glue cheese inherit thing subject blade slow unknown solve assum
         
@@ -404,7 +402,6 @@ bitwallet_module
       }, function(err) {
 
       })
-      //$rootScope.goTo('app.welcome');
     }, function(error){
       console.log('initPLatform ready error:'+JSON.stringify(error));
       
@@ -570,20 +567,6 @@ bitwallet_module
 
   $rootScope.refresh_status = 0;
 
-  $rootScope.goBack = function(){
-    $ionicHistory.goBack();
-  }
-  //TODO: hacerlo bien
-  $rootScope.goHome = function() {
-    //$ionicHistory.clearHistory();
-    //$ionicHistory.nextViewOptions({
-      //disableAnimate : true,
-      //disableBack: true
-    //});
-    //console.log('clear history and go home!');
-    $state.go('app.home');
-  }
-
   $rootScope.signAll = function(to_sign, addys, privkey) {
     var proms = [];
     privkey = privkey || Wallet.data.account.plain_privkey;
@@ -645,6 +628,18 @@ bitwallet_module
   }
 
 
+  $rootScope.goBack = function(){
+    $ionicHistory.goBack();
+  }
+  $rootScope.goHome = function() {
+    $ionicHistory.clearHistory();
+    $ionicHistory.nextViewOptions({
+      disableAnimate : true,
+      disableBack: true
+    });
+    //console.log('clear history and go home!');
+    $state.go('app.home');
+  }
   $rootScope.goToState = function(state, param){
 
     $ionicHistory.nextViewOptions({
@@ -663,19 +658,6 @@ bitwallet_module
     $state.go(state, param);
   }
 
-
-  $rootScope.goTo = function(param) {
-    $state.go(param);
-  }
-
-  $rootScope.goToEx = function(state, params) {
-    $state.go(state, params);
-  }
-
-  $rootScope.goToSuccess = function(param) {
-    // /successful/:txid/:xtxid/:address/:name/:message/:amount/:type/:currency_name/:currency_symbol",
-    $state.go('app.successful', {tx:param}, {inherit:true});
-  }
 
   $rootScope.$on(Wallet.REFRESH_START, function(event, data) {
     $rootScope.refresh_status = 1;

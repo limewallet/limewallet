@@ -1,5 +1,5 @@
 {
-  "name": "Bitwallet",
+  "name": "LimeWallet",
   "app_id": "",
   "proxies": [{
     "path": "/api/v2",

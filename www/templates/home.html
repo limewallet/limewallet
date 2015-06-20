@@ -64,13 +64,13 @@
                   <span class="deposit_ex wrap_text">{{tx.cl_pay|number:4}}&nbsp;{{tx.cl_pay_curr}}</span>
                   <span class="withdraw_ex wrap_text">{{tx.cl_recv|number:4}}&nbsp;{{tx.cl_recv_curr}}</span>
                   <span class="btc_pay_ex wrap_text">{{tx.cl_recv|number:4}}&nbsp;{{tx.cl_recv_curr}}</span>
-                  <span class="sent_ex">{{'g.to'|translate}}</span> <span class="received_ex">{{'g.from'|translate}}</span>
-                  <span class="self_ex">{{'g.from'|translate}}</span><span class="tx_address">:&nbsp;
-                  {{ tx.name | limitTo: 20 }}{{tx.name.length > 20 ? '...' : ''}}</span>
-
-
-                  <!--{{'home.on'|translate}} tx.TS|date:'medium'--> 
-                  <span style="float:right;">{{tx|from_now}}</span>
+                  
+                  <span class="sent_ex" ng-show="tx.name">{{'g.to'|translate}}</span> 
+                  <span class="received_ex" ng-show="tx.name">{{'g.from'|translate}}</span>
+                  <span class="self_ex" ng-show="tx.name">{{'g.from'|translate}}</span>
+                  <span class="tx_address" ng-show="tx.name">:&nbsp;{{ tx.name | limitTo: 20 }}{{tx.name.length > 20 ? '...' : ''}}</span>
+                  
+                  <span class="from_now">{{tx|from_now}}</span>
                 </p>
                 <p><span class="memo">{{tx.message}}</span></p>
               </div>

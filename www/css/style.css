@@ -172,6 +172,12 @@ ion-nav-view {
 .transactions .pending .btc_pay_ex{display:none;}*/
 
 h2 .transactions .sent_ex, h2 .transactions .received_ex, h2 .transactions .self_ex, h2 .transactions .deposit_ex, h2 .transactions .withdraw_ex, h2 .transactions .btc_pay_ex{font-size:16px;}
+.full_width p .sent_ex
+  , .full_width p .received_ex
+  , .full_width p .self_ex
+  , .full_width p .tx_address
+  , .full_width p .from_now {color:#5f7381;}
+.full_width p .from_now {font-size:12px;float:right;}
 
 .transactions .withdraw .tx_address, .transactions .deposit .tx_address, .transactions .btc_pay .tx_address { display:none;}
 
@@ -679,7 +685,7 @@ img.i_centered {margin-left: auto;
 .refund .list .item, .list.rate_changed .item {border-width:0px;}
 
 .assets_header {background-color:#d0d8dc;color:#697b8c;}
-.assets_header span{font-weight: 200;}
+.assets_header span{font-weight: 300;}
 .assets .asset_data {font-weight: 300;}
 .assets .asset_data span.asset_balance{font-weight: 400;}
 
@@ -705,9 +711,11 @@ img.i_centered {margin-left: auto;
 .tx_detail h2 .pending_text {font-size: 11px!important;}
 .tx_detail .tx_amount {font-weight: 700;}
 .tx_detail h2 {font-size: 17px;}
-.tx_detail .item .detail_data {font-weight: 300;}
+.tx_detail .item .detail_data {font-weight: 200;}
 .tx_detail .item .detail_data span {float:right; font-weight: 500;}
-.tx_detail .item .detail_data span.nl {float:left;}
+.tx_detail .item .detail_data span.nl {float:left; padding-top:5px!important;}
+.tx_detail .item.item-icon-left {border-bottom: 1px solid #ddd!important;}
+.list.tx_detail {margin-bottom:20px!important;}
 .fw100 {font-weight:100;}
 /******************************/
 /*DEPOSIT *********************/ 
@@ -980,9 +988,19 @@ button.centered_autow {width:auto!important;margin:0 auto;}
   background: linear-gradient(327deg, rgba(26,66,84,1) 0%, rgba(26,67,86,1) 100%); /* w3c */
 }
 
+.register, .welcome, .create_account {
+  background: url(../img/bg/world-dotted-map.png) no-repeat center center fixed; 
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  }
+
 .register_bg h3 {width:100%;}
 .create_account a, .create_account_seed a, .create_account_password a  { 
-  font-size:13px; border-radius: 4px; text-transform:uppercase; max-height:47px;
+  font-size:13px; border-radius: 4px; text-transform:uppercase; 
+  max-height:47px;
+  line-height:47px;
   width: auto;
   min-width:100px;
   display: block; }

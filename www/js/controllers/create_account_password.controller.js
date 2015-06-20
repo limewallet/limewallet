@@ -212,11 +212,11 @@ bitwallet_controllers
 
                         if($scope.isCreateInitMode()){
                           window.plugins.toast.show( T.i('g.wallet_created'), 'long', 'bottom');
-                          $scope.goTo('app.account');
+                          $scope.goToState('app.account');
                         }
                         else{
                           window.plugins.toast.show( T.i('g.wallet_recovered'), 'long', 'bottom');
-                          $scope.goTo('app.home');
+                          $scope.goHome();
                         }
                         
 

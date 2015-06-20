@@ -5,7 +5,7 @@ bitwallet_controllers
   
   $scope.next = function(){
     $scope.setSeed($scope.data.seed);
-    $scope.goTo('app.create_wallet_seed');
+    $scope.goToState('app.create_wallet_seed');
   }
 
   $scope.copySeed = function(){

@@ -15,7 +15,7 @@ bitwallet_controllers
   }
 
   $scope.skip = function(){
-    $scope.goTo('app.home');
+    $scope.goHome();
   }
 
   $scope.register = function(){
@@ -63,7 +63,6 @@ bitwallet_controllers
             Account.setProfileInfo(account).then(function(res){
               $scope.hideLoading();
               window.plugins.toast.show( T.i('register.account_registered'), 'long', 'bottom');        
-              //$scope.goTo('app.register');
               $scope.goHome();
             }, function(error){
               $scope.alert({title:'err.occurred', message:'err.account_registration'});

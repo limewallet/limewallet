@@ -22,7 +22,7 @@ bitwallet_controllers
     }
 
     console.log('Lets set password :)');
-    $rootScope.goTo('app.create_wallet_password');
+    $rootScope.goToState('app.create_wallet_password');
   }
 });
 
