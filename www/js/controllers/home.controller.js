@@ -17,13 +17,16 @@ bitwallet_controllers
   $scope.scanQR = function() {
     Scanner.scan().then(function(result) {
       
-      //console.log('SCAN en home (' + result.type + ') => ' + JSON.stringify(result));
+      console.log('SCAN en home (' + result.type + ') => ' + JSON.stringify(result));
 
       if(!result || result.cancelled)
         return;
 
       // PRIVKEY
-      // TODO:
+      if(result.type == 'bts_wif') {
+        $scope.goToState('app.import_priv', {private_key:result.wif});
+        return;
+      }
       
       // SEND BTC
       if(result.type == 'btc_request') { 
@@ -104,10 +107,10 @@ bitwallet_controllers
       }
       else 
       if(index==1) {
-        var confirmPopup = $ionicPopup.confirm({
-          title    : T.i('g.sure_cancel_operation'),
-          template : T.i('g.sure_cancel_operation_msg'),
-        }).then(function(res) {
+        var confirmPopup = $scope.showConfirm(
+          'g.sure_cancel_operation',
+          'g.sure_cancel_operation_msg'
+        ).then(function(res) {
 
           if(!res) {
             console.log('User didnt want to cancel :(');

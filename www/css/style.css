@@ -427,7 +427,7 @@ margin-bottom: 20px!important;
   /*height: 100%;  */
 }
 .full_width{width:100%;}
-.tx_detail .full_width, .main_transactions .full_width{padding-top:15px;padding-bottom:15px;}
+.tx_detail .full_width {padding-top:15px;padding-bottom:15px;}
 
 div.text_centered{text-align: center;}
 img.i_centered {margin-left: auto;

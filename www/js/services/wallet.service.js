@@ -101,12 +101,9 @@ bitwallet_services
         }, 1000);
       }
       else if( ev.name=='xu') {
-        //self.onNewXTx(json_event.data);
-        clearTimeout(self.timeout.load);
-        self.timeout.load = setTimeout( function() { 
-          console.log(' xu: wallet changed -> loadBalance()');
+        ExchangeTransaction.add(ev.data).finally(function() {
           self.loadBalance(); 
-        }, 1000);
+        });
       }
     }
 

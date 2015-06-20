@@ -59,10 +59,10 @@ bitwallet_controllers
         {
           console.log(' ** CONTACTS ** -> remove'); 
           
-          var confirmPopup = $ionicPopup.confirm({
-            title    : T.i('contacts.remove_title'),
-            template : T.i('contacts.remove_sure', {'name':contact.name}),
-          }).then(function(res) {
+          var confirmPopup = $scope.showConfirm(
+            'contacts.remove_title',
+            'contacts.remove_sure', {'name':contact.name}
+          ).then(function(res) {
             if(!res)
               return;
             Contact.remove(contact.id).then(function(){

@@ -1,24 +1,27 @@
-<ion-view title="{{'import_priv.paper_wallet'|translate}}">
+<ion-view title="{{'import_priv.sweep_balance'|translate}}">
     
   <ion-nav-buttons side="left">
   </ion-nav-buttons>    
+
+  <!--
   <ion-nav-buttons side="right">
     <button class="button button-icon icon ion-android-close" ng-click="goHome()"></button>
-  </ion-nav-buttons>    
+  </ion-nav-buttons>
+  -->
 
-    <ion-content class="has-header import_priv_content">
-      <div class="list import_priv">
-        <div class="item">
-          <h1>{{wallet.asset.symbol_ui_text}} {{data.amount}}</h1>
-          <h2>{{'import_priv.available'|translate}}</h2> 
-        </div>
+  <ion-content class="has-header import_priv_content">
+    <div class="list import_priv">
+      <div class="item">
+        <h1>{{wallet.asset.symbol_ui_text}} {{data.amount}}</h1>
+        <h2>{{'import_priv.available'|translate}}</h2> 
       </div>
-      <div class="buttons_container">
-        <button ng-click="sweepBalance()" class="button button-block button-energized no-margin button_taller">
-          {{'import_priv.sweep_balance'|translate|uppercase}}
-        </button>
-      </div>
-          
-    </ion-content>
+    </div>
+    <div class="buttons_container">
+      <button ng-click="sweepBalance()" class="button button-block button-energized no-margin button_taller">
+        {{'import_priv.sweep_balance'|translate|uppercase}}
+      </button>
+    </div>
+        
+  </ion-content>
 
-  </ion-view>
+</ion-view>

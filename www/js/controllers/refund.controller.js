@@ -49,10 +49,10 @@ $scope.data = {   xtx           : undefined,
       return;
     }
 
-    var confirmPopup = $ionicPopup.confirm({
-       title    : T.i('rate_changed.refund_headline'),
-       template : T.i('rate_changed.refund_content'),
-     }).then(function(res) {
+    var confirmPopup = $scope.showConfirm(
+       'rate_changed.refund_headline',
+       'rate_changed.refund_content'
+     ).then(function(res) {
       if(!res)
         return;
       $scope.refund();

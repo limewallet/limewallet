@@ -367,20 +367,13 @@ bitwallet_services
       var deferred = $q.defer();
       DB.query('SELECT * FROM account where active != 0 limit 1', [])
       .then(function(result){
-          
-          // if( result.rows.length == 0 ) {
-          //   deferred.resolve(undefined);
-          //   return;           
-          // }
+
+          if( result.rows.length == 0 ) {
+            deferred.resolve(undefined);
+            return;           
+          }
+
           var account = DB.fetch(result);
-          // console.log('Active account:: '+JSON.stringify(account));
-           //if( account !== undefined) {
-             //account.pubkey       = 'DVS6G3wqTYYt8Hpz9pFQiJYpxvUja8cEMNwWuP5wNoxr9NqhF8CLS';
-             //account.address      = 'DVSM5HFFtCbhuv3xPfRPauAeQ5GgW7y4UueL';
-             //account.privkey      = '5HymcH7QHpzCZNZcKSbstrQc1Q5vcNjCLj9wBk5aqYZcHCR6SzN';
-             //account.access_key   = '7cMHdvnvhv8Q36c4Xf8HJQaibTi4kpANNaBQYhtzQ2M6';
-             //account.secret_key   = '7teitGUUbtaRJY6mnv3mB9d1VB3UggiBQf4kyiL2PaKB';
-           //}
           deferred.resolve(account);
 
       }, function(err) {

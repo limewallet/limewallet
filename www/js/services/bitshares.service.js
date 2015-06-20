@@ -624,6 +624,17 @@ bitwallet_services
       return self.apiCall(keys, ENVIRONMENT.apiurl('/record'+filter));
     }
 
+    self.sweep = function(from, to, asset) {
+
+      var payload = JSON.stringify({
+        from  : [from],
+        to    : to,
+        asset : asset
+      });
+
+      return self.apiCall(undefined, ENVIRONMENT.apiurl('/txs/sweep'), payload);
+    }
+
     // *************************************************** //
     // Exchange Service Api Calls ************************ //
     // *************************************************** //

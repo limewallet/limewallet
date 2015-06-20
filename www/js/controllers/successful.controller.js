@@ -31,11 +31,15 @@ bitwallet_controllers
     $scope.data.currency_symbol = tx.currency_symbol || Wallet.data.asset.symbol_ui_text;
     $scope.data.currency_name   = tx.currency_name   || Wallet.data.asset.name;
 
-    $timeout(function () { $scope.goHome(); }, 3000);
+    $scope.data.timeout = $timeout(function () { $scope.goHome(); }, 3000);
   }
   else{
     $scope.goHome();
   }
+
+  $scope.$on( '$ionicView.beforeLeave', function(){
+    $timeout.cancel($scope.data.timeout);
+  });
   
 });
 

@@ -300,15 +300,19 @@ bitwallet_module
 
 })
 
-.run(function(Account, DB, $state, $ionicHistory, $ionicPopup, $ionicLoading, T, $rootScope, $ionicPlatform, Wallet, Scanner, $q, BitShares, ENVIRONMENT, $cordovaGlobalization, $translate, $state, $timeout) {
+.run(function(Account, DB, $state, $cordovaSplashscreen, $ionicHistory, $ionicPopup, $ionicLoading, T, $rootScope, $ionicPlatform, Wallet, Scanner, $q, BitShares, ENVIRONMENT, $cordovaGlobalization, $translate, $state, $timeout) {
 
   //console.log(' app.js Init de .RUN !');
   
   $ionicPlatform.registerBackButtonAction(function (event) {
 
+    if($ionicHistory.currentStateName() == 'app.successful') {
+      $rootScope.goHome();
+      return;
+    }
+
     if($ionicHistory.currentStateName() == 'app.home')
     {
-      
       $rootScope.showConfirm('g.on_exit_title', 'g.on_exit_msg').then(function(res) {
         if(res) {
           navigator.app.exitApp();
@@ -338,6 +342,8 @@ bitwallet_module
   
   $ionicPlatform.ready(function() {
     
+    //$cordovaSplashscreen.spinnerStart();
+
     console.log(' app.js Platform Ready!');
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
@@ -390,7 +396,11 @@ bitwallet_module
 
         //obscure around glue cheese inherit thing subject blade slow unknown solve assum
         
-        Wallet.refreshBalance();
+        Wallet.refreshBalance().finally(function() {
+          //console.log('HIDALA FUTIOOOO');
+          $cordovaSplashscreen.hide();
+        });
+
       }, function(err) {
 
       })
@@ -461,10 +471,11 @@ bitwallet_module
 
   }
 
-  $rootScope.showConfirm = function(title, message){
+  $rootScope.showConfirm = function(title, message, params){
+    params = params || {};
     return $ionicPopup.confirm({
        title    : T.i(title),
-       template : T.i(message),
+       template : T.i(message, params),
        okType   : 'base-color_bg color_white base-color_border', 
      });
   }
@@ -532,10 +543,9 @@ bitwallet_module
     //INIT DB
     //*****************
     .then(function() {
-      var db_init = 'no'; window.localStorage['db_init'] || 'no';
-      DB.init(false, db_init == 'no');
-      
-      if ( db_init == 'yes') {
+      var db_initialized = window.localStorage['db_initialized'] || 'false';
+      DB.init(false, db_initialized=='false');
+      if ( db_initialized == 'true') {
         console.log('DB already initialized');
         //return;
       }
@@ -543,7 +553,7 @@ bitwallet_module
     })
     .then(function() {
         console.log('DB initialized OK');
-        window.localStorage['db_init'] = 'yes';
+        window.localStorage['db_initialized'] = 'true';
       },
       function(error) {
         console.log('Unable to initialize DB:' + error);
@@ -565,20 +575,21 @@ bitwallet_module
   }
   //TODO: hacerlo bien
   $rootScope.goHome = function() {
-    $ionicHistory.clearHistory();
-    $ionicHistory.nextViewOptions({
-      disableAnimate : true,
-      disableBack: true
-    });
-    console.log('clear history and go home!');
+    //$ionicHistory.clearHistory();
+    //$ionicHistory.nextViewOptions({
+      //disableAnimate : true,
+      //disableBack: true
+    //});
+    //console.log('clear history and go home!');
     $state.go('app.home');
   }
 
-  $rootScope.signAll = function(to_sign, addys) {
+  $rootScope.signAll = function(to_sign, addys, privkey) {
     var proms = [];
+    privkey = privkey || Wallet.data.account.plain_privkey;
     
     addys.forEach(function(addy) {
-      proms.push(BitShares.compactSignatureForHash(to_sign, Wallet.data.account.plain_privkey)) 
+      proms.push(BitShares.compactSignatureForHash(to_sign, privkey)) 
     });
     return $q.all(proms);
   }
