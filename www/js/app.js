@@ -184,6 +184,17 @@ bitwallet_module
       }
     })
     
+    .state('app.deposit_withdraw_selector', {
+      cache:  false,
+      url:    "/deposit_withdraw_selector/:action",
+      views: {
+              'menuContent' :{
+                templateUrl: "templates/deposit_withdraw_selector.html",
+                controller: 'DWSelectorCtrl'
+            }
+      }
+    })
+
     .state('app.deposit', {
       cache:  false,
       url:    "/deposit/:xtx_id",

@@ -1,5 +1,6 @@
 {
   "g" : {
+    "bitcoin"                       : "Bitcoin",
     "not_available"                 : "N/A",
     "on_exit_title"                 : "LimeWallet",
     "on_exit_msg"                   : "Are you sure you want to leave?",
@@ -203,6 +204,7 @@
   },
 
   "menu" : {
+    "shop"           : "Shop",
     "unregistered"   : "unregistered",
     "settings"       : "Settings",
     "home"           : "Home",
@@ -359,6 +361,23 @@
     "valid_name_chars"        : "Name must contain lowercase alphanumeric characters and dashes, must start with a letter and cannot end with a dash."
   },
   
+  "deposit_withdraw_selector":{
+    "withdraw_title"        : "Withdraw method",
+    "withdraw_headline"     : "Please choose withdraw method",
+    "deposit_title"         : "Deposit method",
+    "deposit_headline"      : "Please choose deposit method",
+
+    "bitcoin"               : "Bitcoin",
+    "bitcoin_deposit"       : "Send Bitcoin to a Bitcoin address",
+    "bitcoin_withdraw"      : "Receive Bitcoin in your Bitcoin address",
+    "bank"                  : "Bank",
+    "bank_deposit"          : "Send money to a bank account",
+    "bank_withdraw"         : "Receive money to your bank account",
+    "cash"                  : "Cash",
+    "cash_deposit"          : "Deposit cash",
+    "cash_withdraw"         : "Withdraw cash"
+  },
+
   "deposit":{
     "addy_copied"             : "Bitcoin address copied to clipboard",
     "uri_copied"              : "Bitcoin payment URI copied to clipboard",

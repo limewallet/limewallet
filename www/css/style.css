@@ -209,7 +209,7 @@ ion-nav-bar.light_navbar.darky .lime_icon.qr-code { background-image: url(../img
 .lime_settings_icon.assets    { background-image: url(../img/icons/ico-assets-2.svg); height:16px; width:32px; left:11px;}
 .lime_settings_icon.deposit   { background-image: url(../img/icons/ico-deposit_lime.svg); height:16px; width:32px; left:11px;}
 .lime_settings_icon.withdraw  { background-image: url(../img/icons/ico-withdraw_lime.svg); height:16px; width:32px; left:11px;}
-
+.lime_settings_icon.shop  { background-image: url(../img/icons/icon-shop.svg); height:16px; width:32px; left:11px;}
 
 
 .pending_text {

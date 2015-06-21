@@ -1,0 +1,43 @@
+<ion-view view-title="{{data.title|translate}}">
+    <ion-content class="has-header contacts base-color_bg padding" has-bouncing="false">
+      <div class="list" ng-show="data.action=='deposit'">
+        <a class="item base-color item-avatar" ng-click="goToState('app.deposit', {xtx_id:undefined})">
+          <img width="40" height="40" src="img/icons/icon-btc.svg"></img>
+          <h2>{{'g.bitcoin'|translate}}</h2>
+          <p>{{'deposit_withdraw_selector.bitcoin_deposit'|translate}}</p>
+        </a>
+
+        <a class="item base-color item-avatar" ng-click="alertSoon('cash')">
+          <img width="40" height="40" src="img/icons/icon-cash_gray.svg"></img>
+          <h2>{{'deposit_withdraw_selector.cash'|translate}}</h2>
+          <p>{{'deposit_withdraw_selector.cash_deposit'|translate}}</p>
+        </a>
+
+        <a class="item base-color item-avatar" ng-click="alertSoon('bank')">
+          <img width="40" height="40" src="img/icons/icon-bank_gray.svg"></img>
+          <h2>{{'deposit_withdraw_selector.bank'|translate}}</h2>
+          <p>{{'deposit_withdraw_selector.bank_deposit'|translate}}</p>
+        </a>
+      </div>
+      <div class="list" ng-show="data.action=='withdraw'">
+        <a class="item base-color item-avatar" ng-click="goToState('app.withdraw')">
+          <img width="40" height="40" src="img/icons/icon-btc.svg"></img>
+          <h2>{{'g.bitcoin'|translate}}</h2>
+          <p>{{'deposit_withdraw_selector.bitcoin_withdraw'|translate}}</p>
+        </a>
+        <a class="item base-color item-avatar" ng-click="alertSoon('cash')">
+          <img width="40" height="40" src="img/icons/icon-cash_gray.svg"></img>
+          <h2>{{'deposit_withdraw_selector.cash'|translate}}</h2>
+          <p>{{'deposit_withdraw_selector.cash_withdraw'|translate}}</p>
+        </a>
+
+        <a class="item base-color item-avatar" ng-click="alertSoon('bank')">
+          <img width="40" height="40" src="img/icons/icon-bank_gray.svg"></img>
+          <h2>{{'deposit_withdraw_selector.bank'|translate}}</h2>
+          <p>{{'deposit_withdraw_selector.bank_withdraw'|translate}}</p>
+        </a>
+        
+      </div>
+      
+    </ion-content>
+  </ion-view>

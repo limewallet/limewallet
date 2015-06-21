@@ -6,14 +6,7 @@ bitwallet_controllers
   }); 
   
   $scope.data = {
-    contacts : [ 
-    // {   name              : 'pepe',     
-    //     pubkey_or_address : 'DVS54jEBqoWGYAc5uJFCPXv4BjAyuW9F67BZjiL9YKv9swrhBGRSS'}
-    // , { name              : 'dengra',     
-    //     pubkey_or_address : 'DVS54jEBqoWGYAc5uJFCPXv4BjAyuW9F67BZjiL9YKv9swrhBGRSS'}
-    // , { name              : 'serafin.alberto',     
-    //     pubkey_or_address : 'DVS8axM9VHqo1iTFHmKrh4VjzsYhATdwTKbdoRyoYsKDcME2x5VkM'}
-  ]};
+    contacts : []};
   
   $scope.$on( '$ionicView.enter', function(){
     console.log(' -- CONTACTS loading...');
