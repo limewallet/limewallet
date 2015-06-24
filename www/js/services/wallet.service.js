@@ -578,9 +578,6 @@ bitwallet_services
     self.loadBalance = function(auto_call) {
       var deferred = $q.defer();
 
-      //HACK:
-      //self.data.account.encrypted = 0;
-
       var to_search = [];
 
       var proms = {
@@ -595,12 +592,19 @@ bitwallet_services
         
         proms = {};
 
+        if(1==2)
         res.memo.forEach(function(m) {
           //if(m.id != 'dce718a423ee9898526b416215b108633b067ed111de6e58279138fb81fb26bb') return;
 
           proms[m.id] = self.getPrivateKeyForMemo(m).then(function(pk) {
             //console.log('KEY FOR MEMO ' + m.id + ' => ' + pk);
-            if(!pk) return; 
+            if(!pk) 
+            {
+              // var tmp = $q.defer()
+              // tmp.resolve();
+              // return tmp.promise;
+              return undefined;
+            }
 
             //Entrada: uso mi PK y la otk
             if( m.in_out == 0 )
@@ -621,7 +625,8 @@ bitwallet_services
             //to_search.push(m.address);
 
           }, function(err) {
-            deferred.reject();
+            console.log(' -*-*- loadBalance err#1: '+JSON.stringify(err));
+            deferred.reject(err);
           });
         });
  
@@ -647,30 +652,35 @@ bitwallet_services
           });            
 
           //Insert decrypted memos 
+          
           DB.queryMany(sql_cmd, sql_params).then(function() {
 
-          Operation.all().then(function(ops) {
-
-            self.txs.transactions = self.orderTransactions(ops);
-            self.lookupContacts(ops, to_search).then(function(n) {
-              if( n > 0 && !auto_call) {
-                self.loadBalance(true);
-              }  
-            }, function(err) {
+            console.log(' -/-/- loadBalance -> calling [Operation.all()]');
+            Operation.all().then(function(ops) {
+              console.log(' -/-/-/ loadBalance -> Operation.all() res OK');
+              self.txs.transactions = self.orderTransactions(ops);
               
+              console.log(' -/-/-/ loadBalance -> about to lookupContacts()');
+              self.lookupContacts(ops, to_search).then(function(n) {
+                if( n > 0 && !auto_call) {
+                  console.log(' -/-/-/ loadBalance -> about to call loadBalance(true)');
+                  self.loadBalance(true);
+                }  
+              }, function(err) {
+                console.log(' -*-*- loadBalance err#2: '+JSON.stringify(err));
+              });
+
+              deferred.resolve();
+
+            }, function(err) {
+              console.log( 'loadBalance err0:' + JSON.stringify(err) );
+              deferred.reject(err);
             });
-
-            deferred.resolve();
-
-          }, function(err) {
-            console.log( 'loadBalance err0:' + JSON.stringify(err) );
-            deferred.reject(err);
-          });
 
           }, function(err) {
             console.log( 'loadBalance err1:' + JSON.stringify(err) );
             deferred.reject(err);
-          });
+            });
 
         }, function(err) {
           console.log( 'loadBalance err2:' + JSON.stringify(err) );
@@ -780,18 +790,22 @@ bitwallet_services
                 console.log('Luego del load balanccciio!!!');
                 self.emit(self.REFRESH_DONE);
               }, function(err) {
+                console.log('  -*-*-*- refreshBalance err#1: '+JSON.stringify(err));
                 self.refreshError(deferred, 'refreshError #0', err);
               });
 
             }, function(err) {
+              console.log('  -*-*-*- refreshBalance err#2: '+JSON.stringify(err));
               self.refreshError(deferred, 'refreshError #1', err);
             });
 
           }, function(err) {
+            console.log('  -*-*-*- refreshBalance err#3: '+JSON.stringify(err));
             self.refreshError(deferred, 'refreshError #2', err);
           });
 
         }, function(err){
+          console.log('  -*-*-*- refreshBalance err#4: '+JSON.stringify(err));
           self.refreshError(deferred, 'refreshError #3', err);
         });
 

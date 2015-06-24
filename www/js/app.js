@@ -20,6 +20,8 @@ bitwallet_module
   $ionicConfigProvider.views.transition('none');
   $ionicConfigProvider.navBar.transition('none');
   $ionicConfigProvider.navBar.alignTitle('left');
+  $ionicConfigProvider.backButton.text('');
+  $ionicConfigProvider.backButton.previousTitleText('');
   $translateProvider.useStaticFilesLoader({ prefix: 'static/locale-', suffix: '.json'});
 
   console.log(' app.js Init de .CONFIG !');

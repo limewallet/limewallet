@@ -11,8 +11,9 @@ bitwallet_services
             console.log('Error removing database ' + e.message);
           });
         }
-        //self.db = window.sqlitePlugin.openDatabase({name: DB_CONFIG.name});
-        self.db = window.sqlitePlugin.openDatabase({name: '/sdcard/cerda2.db'});
+        self.db = window.sqlitePlugin.openDatabase({name: DB_CONFIG.name});
+        //self.db = window.sqlitePlugin.openDatabase({name: 'lime.db'});
+        console.log('Creating lime.db!!!!!');
         if( !check_tables )
           return;
 
@@ -100,7 +101,7 @@ bitwallet_services
     self.queryMany = function(query, bindings) {
                 
         var deferred = $q.defer();
-        if ( query.lenght == 0 )
+        if ( query.length == 0 )
         {
           deferred.resolve();
           return deferred.promise;
@@ -111,11 +112,12 @@ bitwallet_services
           var proms = [];
           for(var i=0; i<query.length; i++) {
             
-            var df = $q.defer();
+            var df = $q.defer();  
             
             transaction.executeSql(query[i], bindings[i], function(tx, res) {
               df.resolve(res);
             }, function(tx, err) {
+              console.log(' ---- Query Many ERROR inside tx: ' + JSON.stringify(tx) + ' err:' + JSON.stringify(err));
               df.reject(err);
             });
 
@@ -123,8 +125,10 @@ bitwallet_services
           }
 
           $q.all(proms).then(function(res) {
+            console.log(' ---- Query Many RESOLVED!!');
             deferred.resolve(res);
           }, function(err) {
+            console.log(' ---- Query Many ERROR: '+JSON.stringify(err));
             deferred.reject(err);
           })
           

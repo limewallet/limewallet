@@ -93,8 +93,8 @@ bitwallet_controllers
       }
 
       prom.then(function(res){
-
         $scope.data.other_amount    = $scope.data.input_in_btc ? Number(res.quote.cl_recv) : Number(res.quote.cl_pay);
+        console.log(' Deposit -> other_amount:'+$scope.data.other_amount);
         $scope.data.quote           = res;
         $scope.data.valid_quote     = true;
         $scope.data.quoting         = false;

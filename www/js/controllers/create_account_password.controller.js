@@ -77,7 +77,7 @@ bitwallet_controllers
               'pubkey'              : keys.send_mpk.pubkey,
               'privkey'             : keys.send_mpk.privkey,
               'skip32_key'          : keys.skip32_key.privkey_hex,
-              'address'             : keys.send_mpk.address,
+              'address'             : keys.send_mpk.addy,
               'memo_mpk'            : keys.memo_mpk.extendedPrivateKey,
               'encrypted'           : (password != '') ? 1 : 0,
               'number'              : number,
@@ -180,36 +180,44 @@ bitwallet_controllers
               
               var account_cmd = Account._create(accountInfo);
 
-              console.log(JSON.stringify(account_cmd));
+              console.log(' ++++ ACCOUNT create command');
+              console.log('CMD: '+JSON.stringify(account_cmd));
+              console.log(' -- ');
 
               $scope.encrypt($scope.init.seed, password).then(function(encryptedSeed) {
 
                 var encrypted = ($scope.data.password != '') ? 1 : 0;
-
+                
+                var sql_cmd    = [];
+                var sql_params = [];
+                
                 var seed_cmd  = Setting._set(Setting.SEED, JSON.stringify({'value':encryptedSeed, 'encrypted':encrypted}) );
                 var mpk_cmd   = Setting._set(Setting.MPK,  JSON.stringify({'value':accountInfo.mpk, 'encrypted':encrypted}) );
                 var salt_cmd  = Setting._set(Setting.SALT, salt);
 
-                DB.db.transaction(function(transaction) {
-
-                  var proms = {
-                    'account' :  transaction.executeSql(account_cmd.sql, account_cmd.params),
-                    'seed'    :  transaction.executeSql(seed_cmd.sql, seed_cmd.params),
-                    'mpk'     :  transaction.executeSql(mpk_cmd.sql, mpk_cmd.params),
-                    'salt'    :  transaction.executeSql(salt_cmd.sql, salt_cmd.params)
-                  }
-
-                  $q.all(proms).then(function(res) {
+                sql_cmd.push(seed_cmd.sql);
+                sql_params.push(seed_cmd.params);
+                  
+                sql_cmd.push(mpk_cmd.sql);
+                sql_params.push(mpk_cmd.params);
+                
+                sql_cmd.push(salt_cmd.sql);
+                sql_params.push(salt_cmd.params);
+                  
+                sql_cmd.push(account_cmd.sql);
+                sql_params.push(account_cmd.params);
+                  
+                DB.queryMany(sql_cmd, sql_params).then(function() {
                     console.log('TERMINO DB TXS OK');
-                    $scope.hideLoading();
-
+                    //$scope.hideLoading();
                     Wallet.load().then(function(){
+                      console.log('WALLET LOADED!');
                       Wallet.unlock($scope.data.password).then(function(){
-                        
+                        console.log('WALLET UNLOCKED!');
                         Wallet.connectToBackend();
                         console.log('Create account completed papa!!!!!');
                         Wallet.refreshBalance();
-
+                        $scope.hideLoading();
                         if($scope.isCreateInitMode()){
                           window.plugins.toast.show( T.i('g.wallet_created'), 'long', 'bottom');
                           $scope.goToState('app.account');
@@ -218,8 +226,6 @@ bitwallet_controllers
                           window.plugins.toast.show( T.i('g.wallet_recovered'), 'long', 'bottom');
                           $scope.goHome();
                         }
-                        
-
                       }, function(err){
                         console.log('Wallet.unlock error ' + JSON.stringify(err));
                         $scope.hideLoading();
@@ -231,15 +237,9 @@ bitwallet_controllers
                     });
 
                   }, function(err) {
-                    console.log('ERROR TERMINO DB TXS ' + JSON.stringify(err));
+                    console.log('ERROR DB TXS ' + JSON.stringify(err));
                     $scope.hideLoading();
                   });
-
-
-                }, function(err) {
-                  console.log('EGRRA:' +JSON.stringify(err));
-                  $scope.hideLoading();
-                });
 
               }, function(err){
                 console.log( ' -- encrypt error: ' +JSON.stringify(err));

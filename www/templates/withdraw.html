@@ -1,5 +1,5 @@
 <ion-view title="{{'menu.withdraw'|translate}}">
-    <ion-content class="has-header withdraw" has-bouncing="false" scroll="false" overflow-scroll="false">
+    <ion-content class="has-header withdraw" has-bouncing="false" scroll="true" overflow-scroll="true">
           
       <div class="step1">
         
@@ -9,11 +9,12 @@
           <div class="list">
 
             <div class="recipient_container">
-              <label class="item item-input pmd ">
+              <label class="item item-input pmd item-floating-label">
+              <span class="input-label pmd">{{'g.bitcoin_address'|translate}}</span>
                 <input name="transactionAddress" placeholder="{{'g.bitcoin_address'|translate}}" ng-model="data.address" class="big full_width pmd" />
                 <span style="clear:both;float:right;width:100%;" class="quote_error assertive" ng-show="data.address_error!==undefined">{{data.address_error}}</span>
               </label>
-              <button ng-click="pasteBitcoinAddress()" class="top_23 button button-outline button-stable button-small icon" >
+              <button ng-click="pasteBitcoinAddress()" class="top_35 button button-outline button-stable button-small icon" >
                 <i class="fa fa-paste"></i>
               </button>
             </div>
