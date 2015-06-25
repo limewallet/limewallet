@@ -375,7 +375,13 @@
     "bank_withdraw"         : "Receive money to your bank account",
     "cash"                  : "Cash",
     "cash_deposit"          : "Deposit cash",
-    "cash_withdraw"         : "Withdraw cash"
+    "cash_withdraw"         : "Withdraw cash",
+
+    "deposit_cash"          : "Cash deposit will be available soon!",
+    "withdraw_cash"         : "Cash withdraw will be available soon!",
+    "deposit_bank"          : "Bank deposit will be available soon!",
+    "withdraw_bank"         : "Bank deposit will be available soon!"
+    
   },
 
   "deposit":{

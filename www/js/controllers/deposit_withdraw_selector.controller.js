@@ -6,8 +6,8 @@ bitwallet_controllers
   }); 
   
   $scope.data = {
-    title : '',
-    type  : ''
+    title   : '',
+    action  : ''
   };
   
   $scope.$on( '$ionicView.enter', function(){
@@ -20,6 +20,10 @@ bitwallet_controllers
   else
   {
     $scope.data.title = T.i('deposit_withdraw_selector.withdraw_title');
+  }
+
+  $scope.alertSoon = function(method){
+    $scope.showAlert($scope.data.title, 'deposit_withdraw_selector.'+$scope.data.action+'_'+method);
   }
 
 });

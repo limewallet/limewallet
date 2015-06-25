@@ -592,7 +592,7 @@ bitwallet_services
         
         proms = {};
 
-        if(1==2)
+        //if(1==2)
         res.memo.forEach(function(m) {
           //if(m.id != 'dce718a423ee9898526b416215b108633b067ed111de6e58279138fb81fb26bb') return;
 
@@ -605,7 +605,7 @@ bitwallet_services
               // return tmp.promise;
               return undefined;
             }
-
+            console.log(' -*-*- loadBalance -> SOMETHING PUSHED TO Memo Proms');
             //Entrada: uso mi PK y la otk
             if( m.in_out == 0 )
               return BitShares.decryptMemo(m.one_time_key, m.memo, pk);
@@ -619,8 +619,10 @@ bitwallet_services
             //tengo que ir a buscar este contacto
 
             //HACK: pensar bien...
-            return BitShares.decryptMemo(m.one_time_key, m.memo, pk);
-
+            // HACK: COMMENTED BY DARGONAR
+            //return BitShares.decryptMemo(m.one_time_key, m.memo, pk);
+            return undefined;
+            
             //console.log('ESTOY EN LA TWILAAA ZONE ' + m.address);
             //to_search.push(m.address);
 
@@ -636,12 +638,12 @@ bitwallet_services
           var sql_params = [];
 
           Object.keys(proms).forEach(function(mid) {
-
+            console.log(' -*-*- loadBalance -> ITERATING Memo Proms');
             if(!res[mid]) {
               //console.log('Not trying to decrypt memo ...');
               return;
             } 
-
+            console.log(' -*-*- loadBalance -> TRYING TO DECRYPT Memo Proms');
             if(!res[mid].error) {
               var tmp = Memo._decrypt(mid, res[mid].message, res[mid].from);
               sql_cmd.push(tmp.sql);

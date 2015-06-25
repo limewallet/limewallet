@@ -726,7 +726,8 @@ img.i_centered {margin-left: auto;
 .tx_detail .item .detail_data span {float:right; font-weight: 500;}
 .tx_detail .item .detail_data span.nl {float:left; padding-top:5px!important;}
 .tx_detail .item.item-icon-left {border-bottom: 1px solid #ddd!important;}
-.list.tx_detail {margin-bottom:20px!important;}
+.list.tx_detail {padding-bottom:20px!important;}
+/*.list.tx_detail:last-child{margin-bottom:20px!important;}*/
 .fw100 {font-weight:100;}
 /******************************/
 /*DEPOSIT *********************/ 
@@ -993,7 +994,7 @@ button.centered_autow {width:auto!important;margin:0 auto;}
 .create_account_passsword .list_password .item.pmd.margin15 {margin-top:15px!important;}
 
 /* .balance_container,  */
-.pseudo-nav-bar, .register, .welcome, .welcome_bg, .create_account, .create_account_bg, .register_bg {
+.seed_input_container textarea.pmd, .pseudo-nav-bar, .register, .welcome, .welcome_bg, .create_account, .create_account_bg, .register_bg {
   background: -moz-linear-gradient(123deg, rgba(26,66,84,1) 0%, rgba(26,67,86,1) 100%); /* ff3.6+ */
   background: -webkit-gradient(linear, left top, right bottom, color-stop(0%, rgba(26,67,86,1)), color-stop(100%, rgba(26,66,84,1))); /* safari4+,chrome */
   background: -webkit-linear-gradient(123deg, rgba(26,66,84,1) 0%, rgba(26,67,86,1) 100%); /* safari5.1+,chrome10+ */
@@ -1076,7 +1077,7 @@ input.pmd {font-size:16px!important;  color:#fff;border-top:none; border-left:no
       -moz-box-sizing: border-box;
       box-sizing: border-box; 
       border:1px solid #d8d8d8 !important; 
-      background-color:transparent!important;
+      /*background-color:transparent!important;*/
       padding:10px;}
 .seed_input_container textarea.pmd:focus {
       /*border-bottom:*/ border:; 1px solid #d3eb00 !important;
@@ -1467,11 +1468,52 @@ p.paragraph {padding:25px; font-size:17px; font-weight: 300;margin:0;}
   top:33px!important;
   right:5px!important;
 }
+
+.deposit_withdraw_selector{
+  display: -webkit-flex; /* Safari */
+  -webkit-flex-flow: row wrap; /* Safari 6.1+ */
+  display: flex;
+  flex-flow: row wrap;
+  -webkit-align-content:stretch;
+  align-content:stretch;
+  width:100%;
+  height:100%;
+}
+
+.deposit_withdraw_selector a.method{
+  width:100%;
+  text-align:center;
+  background-color: #fff;
+  margin-bottom:2px;
+}
+
+.deposit_withdraw_selector a.method h2{
+ margin-top:0px;
+}
+
 @media only screen 
   and (min-device-width: 320px) 
-  and (max-device-width: 359px)
+  and (max-device-width: 360px)
   /*and (-webkit-min-device-pixel-ratio: 2)*/
   and (orientation: portrait) {
+
+    .deposit_withdraw_selector a.method h2{
+     margin-top:-10px;
+    }
+    .deposit_withdraw_selector a.method p{
+      display:none;
+    }
+
+    ion-nav-bar.light_navbar.darky .lime_icon.qr-code { 
+      /*background-image: url(../img/icons/ico-qr-code.svg)!important ;*/
+      background-size: 18px 18px !important; 
+      width:32px;height:32px;
+    }
+    
+    .ui_settings .item-divider{
+      margin-top: 0px!important;
+    }
+
     .register {
       min-height:30px;
       padding-top:33px!important;
