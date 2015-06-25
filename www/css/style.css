@@ -1491,21 +1491,24 @@ p.paragraph {padding:25px; font-size:17px; font-weight: 300;margin:0;}
  margin-top:0px;
 }
 
+.deposit_withdraw_selector a.method p{
+  display:none;
+}
+
 @media only screen 
   and (min-device-width: 320px) 
-  and (max-device-width: 360px)
-  /*and (-webkit-min-device-pixel-ratio: 2)*/
+  and (max-device-width: 359px)
+  and (-webkit-min-device-pixel-ratio: 2)
   and (orientation: portrait) {
 
     .deposit_withdraw_selector a.method h2{
      margin-top:-10px;
     }
-    .deposit_withdraw_selector a.method p{
+    /*.deposit_withdraw_selector a.method p{
       display:none;
-    }
+    }*/
 
     ion-nav-bar.light_navbar.darky .lime_icon.qr-code { 
-      /*background-image: url(../img/icons/ico-qr-code.svg)!important ;*/
       background-size: 18px 18px !important; 
       width:32px;height:32px;
     }
@@ -1541,8 +1544,14 @@ p.paragraph {padding:25px; font-size:17px; font-weight: 300;margin:0;}
       background-size: 320px auto !important; 
       height:125px;
     }
-    .index_transactions {top:125px;}
-    p.paragraph {padding:25px 25px 0px 25px;}
+    
+    .index_transactions {
+      top:125px;
+    }
+    
+    p.paragraph {
+      padding:25px 25px 0px 25px;
+    }
 
     .deposit_form .amount_container label.pmd{
       width:270px!important;

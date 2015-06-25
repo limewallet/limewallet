@@ -77,7 +77,7 @@ bitwallet_controllers
               'pubkey'              : keys.send_mpk.pubkey,
               'privkey'             : keys.send_mpk.privkey,
               'skip32_key'          : keys.skip32_key.privkey_hex,
-              'address'             : keys.send_mpk.addy,
+              'address'             : keys.send_mpk.address,
               'memo_mpk'            : keys.memo_mpk.extendedPrivateKey,
               'encrypted'           : (password != '') ? 1 : 0,
               'number'              : number,
