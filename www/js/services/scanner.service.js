@@ -188,7 +188,7 @@ bitwallet_services
                       }); 
                     },
                     function(error){
-                      console.log(' barcodescanner dijo NO es valid WIF + ' + JSON.stringify(error) );
+                      console.log(' barcodescanner dijo NO es valid DATA + ' + JSON.stringify(error) );
                       deferred.reject(error);
                     });
                 });
@@ -215,7 +215,8 @@ bitwallet_services
           info.cancelled = false;
           deferred.resolve(info);
         }, function(error) {
-          deferred.reject(error);  
+          console.log('Services.Scanner Invalid or Unrecognizable input data.');
+          deferred.reject('err.invalid_scan_data');  
         });
           
       }, function(error) {

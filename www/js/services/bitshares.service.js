@@ -296,6 +296,7 @@ bitwallet_services
           //    privkey:  "xprv9s21ZrQH143K3ijyttwKLLMY5TXj9QxrGoEg8EbLpsSyNabQ4QrbMzFj5j5FPkc8m58AZrVo8TMH5XEYuL2bdWaD2yhgiF68f9vsMkSTkkS"
           //    addy:     "DVSNKLe7F5E7msNG5RnbdWZ7HDeHoxVrUMZo", 
           //    pubkey:   "DVS5YYZsZ7g1fSpPxmZcJifWJ2rmiXbUyJpEYSdNsVw738C88yvoy", 
+          //    wif:      "5623d6fac2e224fa188c22b6afee69e643c65465b78e7bdeead2b223f9ea3c08"
 
           // "xprv9s21ZrQH143K3PgEC8y59PEEkFN4mHz4tTo9uYCJQbAuLLfxLHLt9HegarddLEP9iGXKpcc2a6c9j8jPtHNZsKXKQpjdg1nuXqAsoQqv7E6');// matu
           
