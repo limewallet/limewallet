@@ -19,5 +19,8 @@
     "org.apache.cordova.device",
     "org.apache.cordova.splashscreen",
     "org.apache.cordova.globalization"
+  ],
+  "cordovaPlatforms": [
+    "ios"
   ]
 }

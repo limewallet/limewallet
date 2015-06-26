@@ -1501,6 +1501,18 @@ p.paragraph {padding:25px; font-size:17px; font-weight: 300;margin:0;}
   and (-webkit-min-device-pixel-ratio: 2)
   and (orientation: portrait) {
 
+    .send_btc_form .deposit_rate {
+      padding-right: 16px!important;
+    }
+    
+    .send_btc_form label.pmd.btc_memo{
+      clear:both;
+    }
+
+    .send_btc_form label.pmd.btc_memo, .btc_amount_container label.pmd{
+      padding:16px 16px 0px 16px!important;
+    }
+    
     .deposit_withdraw_selector a.method h2{
      margin-top:-10px;
     }
@@ -1551,7 +1563,12 @@ p.paragraph {padding:25px; font-size:17px; font-weight: 300;margin:0;}
     
     p.paragraph {
       padding:25px 25px 0px 25px;
+      font-size:16px!important;
     }
+    .withdraw_form p.paragraph {
+      padding:16px 16px 0px 16px!important;
+    }
+    
 
     .deposit_form .amount_container label.pmd{
       width:270px!important;

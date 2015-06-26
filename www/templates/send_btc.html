@@ -28,17 +28,26 @@
               </div>
 
               <div ng-show="data.valid_quote" class="deposit_rate" >
-                <div class="hint left">{{'g.you_pay'|translate}}:</div><div class="hint right base-color">{{data.quote.quote.cl_pay}}&nbsp;{{data.quote.quote.cl_pay_curr}}</div> <br>
-                <div class="hint left">{{'g.cur_rate'|translate}}:</div><div class="hint right base-color">{{data.quote.quote.rate}}&nbsp;{{data.quote.quote.book}}</div>
+                <div class="hint right base-color">{{data.quote.quote.cl_pay}}&nbsp;{{data.quote.quote.cl_pay_curr}}
+                  <br/>
+                  {{data.quote.quote.rate}}&nbsp;{{data.quote.quote.book}}
+                </div>
+                <div class="hint left">{{'g.you_pay'|translate}}:
+                  <br/>
+                  {{'g.cur_rate'|translate}}:
+                </div>
+
+                <!-- div class="hint left">{{'g.you_pay'|translate}}:</div><div class="hint right base-color">{{data.quote.quote.cl_pay}}&nbsp;{{data.quote.quote.cl_pay_curr}}</div> <br>
+                <div class="hint left">{{'g.cur_rate'|translate}}:</div><div class="hint right base-color">{{data.quote.quote.rate}}&nbsp;{{data.quote.quote.book}}</div -->
               </div>
             
           </div>
 
           
           <!-- BTS & BTC -->
-          <label class="item item-input pmd item-floating-label">
+          <label class="item item-input pmd item-floating-label btc_memo">
             <span class="input-label pmd">{{'g.memo'|translate}}</span>
-            <textarea name="" id="" cols="30" rows="5" placeholder="{{'g.memo'|translate}}" name="transactionMemo" ng-model="data.memo"
+            <textarea name="" id="" cols="30" rows="3" placeholder="{{'g.memo'|translate}}" name="transactionMemo" ng-model="data.memo"
             class="big pmd base-color" ng-class="{'error':sendForm.transactionMemo.$error.number}"></textarea>  
             <br/>
           </label>
