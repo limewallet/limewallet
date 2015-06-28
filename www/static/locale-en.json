@@ -16,7 +16,6 @@
     "wallet_locked"                 : "Wallet locked" ,
     "global_items_label"            : "Global directory",
     "local_items_label"             : "Local address book",
-    "tap_to_select"                 : "Tap to select",
     "recipient"                     : "Recipient",
     "search_recipient"              : "Enter recipient name or address...",
     "bitcoin_address"               : "Bitcoin address",
@@ -46,10 +45,11 @@
     "accept_tx_process"   : "Accept transaction process...",
 
     "please_send_btc_to"  : "Please send <b>{{amount}}</b> BTC to <strong class=\"wrap_text\">{{addy}}</strong>",
-    "tap_copy"            : "Tap to copy",
-    "tap_copy_bts_uri"    : "Tap to copy Bitshares payment URI",
     
-    "tap_launch_btc_wallet"   : "Tap to launch Bitcoin Wallet",
+    "tap_to_select"           : "Tap to select",
+    "tap_copy"                : "Tap words to copy",
+    "tap_copy_bts_uri"        : "Tap qrcode to copy Bitshares payment URI",
+    "tap_launch_btc_wallet"   : "Tap qrcode to launch Bitcoin Wallet",
 
     "refund"              : "Refund",
     "next"                : "Next",
@@ -381,7 +381,7 @@
     "deposit_cash"          : "Cash deposit will be available soon!",
     "withdraw_cash"         : "Cash withdraw will be available soon!",
     "deposit_bank"          : "Bank deposit will be available soon!",
-    "withdraw_bank"         : "Bank deposit will be available soon!"
+    "withdraw_bank"         : "Bank withdraw will be available soon!"
     
   },
 

@@ -471,7 +471,7 @@ bitwallet_services
       return orderedTxs;
     }
     
-    self.refreshError = function(d, err, log_msg) {
+    self.refreshError = function(d, log_msg, err) {
       console.log('refreshError: ' + log_msg + '->' + JSON.stringify(err));
       self.emit(self.REFRESH_ERROR);
       d.reject(err); 
@@ -792,22 +792,18 @@ bitwallet_services
                 console.log('Luego del load balanccciio!!!');
                 self.emit(self.REFRESH_DONE);
               }, function(err) {
-                console.log('  -*-*-*- refreshBalance err#1: '+JSON.stringify(err));
                 self.refreshError(deferred, 'refreshError #0', err);
               });
 
             }, function(err) {
-              console.log('  -*-*-*- refreshBalance err#2: '+JSON.stringify(err));
               self.refreshError(deferred, 'refreshError #1', err);
             });
 
           }, function(err) {
-            console.log('  -*-*-*- refreshBalance err#3: '+JSON.stringify(err));
             self.refreshError(deferred, 'refreshError #2', err);
           });
 
         }, function(err){
-          console.log('  -*-*-*- refreshBalance err#4: '+JSON.stringify(err));
           self.refreshError(deferred, 'refreshError #3', err);
         });
 

@@ -600,6 +600,12 @@ bitwallet_module
 
       rand_int = (rand_int>>>0) & 0x7FFFFFFF;
 
+      console.log(' -------- Wallet.data.account.pubkey:' + Wallet.data.account.pubkey
+        + ' // pubkey_to_use:' + pubkey_to_use
+        + ' // Wallet.data.mpk.plain_value:' + Wallet.data.mpk.plain_value
+        + ' // Wallet.data.account.plain_account_mpk:' + Wallet.data.account.plain_account_mpk
+        + ' // Wallet.data.account.plain_memo_mpk:' + Wallet.data.account.plain_memo_mpk);
+
       BitShares.computeMemo(
         Wallet.data.account.pubkey,
         tx.memo.trim(),

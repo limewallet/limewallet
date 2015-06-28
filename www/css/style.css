@@ -1096,7 +1096,12 @@ input.pmd {font-size:16px!important;  color:#fff;border-top:none; border-left:no
     background-color:transparent!important;
     padding-right: 0px;
     /*margin-left: 8px;*/}
-.send_form i.pmd{color:#eaeaea;font-size:32px!important; line-height:28px!important; position: absolute;top: 24px;right: 16px;}
+.send_form i.pmd{color:#eaeaea;
+    font-size:35px!important; 
+    line-height:28px!important; 
+    position: absolute;
+    top: 24px;
+    right: 16px;}
 .send_form label.pmd button{position: absolute;top: 10px;right: 5px;color:#eaeaea!important;}
 
 .send_form .item-floating-label i.pmd{top: 44px;left:10px;}
@@ -1500,6 +1505,8 @@ p.paragraph {padding:25px; font-size:17px; font-weight: 300;margin:0;}
   and (max-device-width: 359px)
   and (-webkit-min-device-pixel-ratio: 2)
   and (orientation: portrait) {
+    
+    #qrcode img {width:284px; height:284px;}
 
     .send_btc_form .deposit_rate {
       padding-right: 16px!important;

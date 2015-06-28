@@ -126,7 +126,6 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
       //TODO: Store in pending tx
       window.plugins.toast.show( T.i('send.transaction_sent'), 'long', 'bottom')
       //HACK:
-
       if (Wallet.txs.transactions['0_today'] === undefined) {
         Wallet.txs.transactions['0_today'] = [];
       }
