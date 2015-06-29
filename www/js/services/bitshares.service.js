@@ -864,6 +864,7 @@ bitwallet_services
       self.signing_up = true;
 
       self.getSignupInfo().then(function(res) {
+        console.log('PETO -> ' + res.msg + ' => ' + res.signature);
         self.recoverPubkey(res.msg, res.signature).then(function(service_pubkey) {
           //console.log(pubkey);
           if( service_pubkey != ENVIRONMENT.apiPubkey ) {
