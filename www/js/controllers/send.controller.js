@@ -382,7 +382,7 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
           return;
         }
         
-        $scope.sending_modal.show();
+        //$scope.sending_modal.show();
         var from  = [];
         var addys = Object.keys($scope.wallet.addresses);
           for(var i=0; i<addys.length; i++) {
@@ -399,7 +399,7 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
                okType: 'button-assertive', 
             })
             .then(function() {
-              $scope.sending_modal.hide();
+              //$scope.sending_modal.hide();
             });
             //$scope.formDone();
             return;
@@ -431,7 +431,7 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
             $scope.transaction.message = 'send.sending_transaction';
 
             BitShares.sendAsset(r.tx, r.secret).then(function(res) {
-              $scope.sending_modal.hide();
+              //$scope.sending_modal.hide();
               
               // Wallet.buildTxList(r, $scope.wallet.data.asset.id).then(function(res){
                 // console.log('Insertando xtx con oper_id = ' + res.insertId.toString());
@@ -452,7 +452,7 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
                    okType: 'button-assertive', 
                 })
                 .then(function() {
-                  $scope.sending_modal.hide();
+                  // $scope.sending_modal.hide();
                 });
                 //$scope.formDone();
             });
@@ -466,7 +466,7 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
                 okType: 'button-assertive', 
              })
             .then(function() {
-              $scope.sending_modal.hide();
+              // $scope.sending_modal.hide();
             });
             //$scope.formDone();
         });
@@ -491,15 +491,15 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
   }
  
   
-  // Load sending process modal view.
-  $ionicModal.fromTemplateUrl('sending-modal.html', function($ionicModal) {
-      $scope.sending_modal = $ionicModal;
-  }, {
-      // Use our scope for the scope of the modal to keep it simple
-      scope: $scope,
-      // The animation we want to use for the modal entrance
-      animation: 'slide-in-up',
-      backdropClickToClose: false,
-      hardwareBackButtonClose: false
-  });  
+  // // Load sending process modal view.
+  // $ionicModal.fromTemplateUrl('sending-modal.html', function($ionicModal) {
+  //     $scope.sending_modal = $ionicModal;
+  // }, {
+  //     // Use our scope for the scope of the modal to keep it simple
+  //     scope: $scope,
+  //     // The animation we want to use for the modal entrance
+  //     animation: 'slide-in-up',
+  //     backdropClickToClose: false,
+  //     hardwareBackButtonClose: false
+  // });  
 });

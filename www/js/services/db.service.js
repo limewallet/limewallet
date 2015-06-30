@@ -13,7 +13,7 @@ bitwallet_services
         }
         self.db = window.sqlitePlugin.openDatabase({name: DB_CONFIG.name});
         //self.db = window.sqlitePlugin.openDatabase({name: 'lime.db'});
-        console.log('Creating lime.db!!!!!');
+        //console.log('Creating lime.db!!!!!');
         if( !check_tables )
           return;
 
