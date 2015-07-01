@@ -18,10 +18,10 @@
           <div class="recipient_container recipient_container2">
             <label class="item item-input pmd item-floating-label" ng-disabled="data.is_btc==true" ng-show="!data.is_btc">
               <span class="input-label pmd">{{'g.recipient'|translate}}</span>
-              <ion-autocomplete class="big full_width pmd" autocomplete="off"  placeholder="{{'g.recipient'|translate}}" item-view-value-key="name" 
-              ng-model="transaction.destination" local-search="localSearch(query)" global-search="globalSearch(query)" 
+              <ion-autocomplete class="big full_width pmd"  autocomplete="off"  placeholder="{{'g.recipient'|translate}}" item-view-value-key="name" ng-model="transaction.destination" local-search="localSearch(query)" global-search="globalSearch(query)" 
               is-selectable="isSelectable(query)"  placeholder_="{{'g.search_recipient'|translate}}" 
               search-query-item-hint="{{'g.tap_to_select'|translate}}" cancel-label="{{'g.cancel'|translate}}" local-label="{{'g.local_items_label'|translate}}" global-label="{{'g.global_items_label'|translate}}"></ion-autocomplete>
+
             </label>
             <button ng-click="clearDestination()" class="button button-icon icon ion-android-cancel">
             </button>

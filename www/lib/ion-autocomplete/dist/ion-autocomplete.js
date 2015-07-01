@@ -1,66 +1,68 @@
-(function() {
-
-'use strict';
-
 angular.module('ion-autocomplete', []).directive('ionAutocomplete', [
-    '$ionicTemplateLoader', '$ionicBackdrop', '$rootScope', '$document', '$q', '$parse',
-    function ($ionicTemplateLoader, $ionicBackdrop, $rootScope, $document, $q, $parse) {
+    '$ionicTemplateLoader', '$ionicBackdrop', '$ionicScrollDelegate', '$rootScope', '$document', '$q', '$parse', '$ionicPlatform',
+    function ($ionicTemplateLoader, $ionicBackdrop, $ionicScrollDelegate, $rootScope, $document, $q, $parse, $ionicPlatform) {
         return {
             require: '?ngModel',
-            restrict: 'E',
-            template: '<input type="text" readonly="readonly" class="ion-autocomplete" autocomplete="off">',
-            replace: true,
+            restrict: 'A',
             scope: {
+                model: '=ngModel',
+
                 placeholder_: '@',
-                cancelLabel: '@',
-                selectItemsLabel: '@',
                 searchQueryItemHint: '@',
-                selectedItemsLabel: '@',
                 localLabel: '@',
                 globalLabel: '@',
-                templateUrl: '@',
                 isSelectable: '&',
                 localSearch: '&',
                 globalSearch: '&',
                 localValueKey: '@',
                 globalValueKey: '@',
+
+                placeholder: '@',
+                cancelLabel: '@',
+                selectItemsLabel: '@',
+                selectedItemsLabel: '@',
+                templateUrl: '@',
+                itemsMethod: '&',
+                itemsMethodValueKey: '@',
                 itemValueKey: '@',
                 itemViewValueKey: '@',
                 multipleSelect: '@',
-                itemsClickedMethod: '&'
+                itemsClickedMethod: '&',
+                itemsRemovedMethod: '&',
+                componentId: '@',
+                modelToItemMethod: '&'
             },
             link: function (scope, element, attrs, ngModel) {
 
                 // do nothing if the model is not set
                 if (!ngModel) return;
 
-                // set the default values of the passed in attributes
                 scope.localLabel    = !scope.localLabel ? '' : scope.localLabel;
                 scope.globalLabel   = !scope.globalLabel ? '' : scope.globalLabel;
                 scope.searchQueryItemHint = !scope.searchQueryItemHint ? '' : scope.searchQueryItemHint;
                 scope.placeholder_ = !scope.placeholder_ ? 'Click to enter a value...' : scope.placeholder_;
+
+                // set the default values of the passed in attributes
+                scope.placeholder = !scope.placeholder ? 'Click to enter a value...' : scope.placeholder;
                 scope.cancelLabel = !scope.cancelLabel ? scope.multipleSelect === "true" ? 'Done' : 'Cancel' : scope.cancelLabel;
                 scope.selectItemsLabel = !scope.selectItemsLabel ? 'Select an item...' : scope.selectItemsLabel;
                 scope.selectedItemsLabel = !scope.selectedItemsLabel ? 'Selected items:' : scope.selectedItemsLabel;
                 scope.templateUrl = !scope.templateUrl ? '' : scope.templateUrl;
 
                 // the items, selected items and the query for the list
-                scope.searchQuery     = '';
+                scope.items = [];
+                //scope.selectedItems = [];
+                scope.searchQuery = '';
+
                 scope.enable_select   = false;
                 scope.local_contacts  = [];
                 scope.global_contacts = [];
-                scope.selectedItems   = [];
                 scope.show_loading    = false;
                 scope.selected_result = {};
-
-                scope.getSearchQueryItem = function(){
-                  return scope.selected_result;
-                }
 
                 // returns the value of an item
                 scope.getItemValue = function (item, key) {
 
-                    //console.log(' ???? scope.getItemValue: item:'+ JSON.stringify(item) + ' // key:' + key);
                     // if it's an array, go through all items and add the values to a new array and return it
                     if (angular.isArray(item)) {
                         var items = [];
@@ -71,19 +73,15 @@ angular.module('ion-autocomplete', []).directive('ionAutocomplete', [
                                 items.push(itemValue);
                             }
                         });
-                        //console.log(' retorna items????');
                         return items;
                     } else {
                         if (key && angular.isObject(item)) {
-                            //console.log(' retorna object????');
                             return $parse(key)(item);
                         }
                     }
-                    //console.log('ion autocomplete mostrando item:'+JSON.stringify(item));
                     return item;
                 };
 
-                // the search container template
                 var searchContainerTemplate = [
                     '<div class="ion-autocomplete-container modal">',
                     '<div class="bar bar-header item-input-inset">',
@@ -95,20 +93,6 @@ angular.module('ion-autocomplete', []).directive('ionAutocomplete', [
                     '</div>',
                     '<ion-content class="has-header has-header">',
                     '<ion-list>',
-                    
-                    //'<ion-item class="item-divider" ng-show="selectedItems.length > 0">{{selectedItemsLabel}}</ion-item>',
-                    
-                    // '<ion-item ng-repeat="selectedItem in selectedItems" type="item-text-wrap" class="item-icon-left item-icon-right">',
-                    // '<i class="icon ion-checkmark"></i>',
-                    // '{{getItemValue(selectedItem, itemViewValueKey)}}',
-                    // '<i class="icon ion-trash-a" style="cursor:pointer" ng-click="removeItem($index)"></i>',
-                    // '</ion-item>',
-                    
-                    // '<ion-item class="item-divider" ng-show="items.length > 0">{{selectItemsLabel}}</ion-item>',
-                    
-                    // '<ion-item collection-repeat="item in items" item-height="55" item-width="100%" type="item-text-wrap" ng-click="selectItem(item)">',
-                    // '{{getItemValue(item, itemViewValueKey)}}',
-                    // '</ion-item>',
                     
                     '<ion-item item-height="55" item-width="100%" class="search" ng-show="enable_select" type="item-text-wrap" ng-click="selectItem(getSearchQueryItem())">',
                     '{{searchQuery}}',
@@ -147,23 +131,12 @@ angular.module('ion-autocomplete', []).directive('ionAutocomplete', [
                     '<p>{{item.address_or_pubkey}}</p>',
                     '</ion-item>',
                     '</div>',
-
-                    // '<ion-item collection-repeat="item in items2" item-height="55" item-width="100%" style="color:#0000FF;" type="item-text-wrap" ng-click="selectItem(item)">',
-                    // '{{getItemValue(item, itemViewValueKey)}}',
-                    // '</ion-item>',
-
-                    
+    
                     '</ion-list>',
-
-                    /*'<ion-list>',
-                    '<ion-item collection-repeat="item in items2" item-height="55" item-width="100%" style="color:#0000FF;" type="item-text-wrap" ng-click="selectItem(item)">',
-                    '{{getItemValue(item, itemViewValueKey)}}',
-                    '</ion-item>',
-                    '</ion-list>',
-*/
                     '</ion-content>',
                     '</div>'
                 ].join('');
+
 
                 // compile the popup template
                 $ionicTemplateLoader.compile({
@@ -183,63 +156,43 @@ angular.module('ion-autocomplete', []).directive('ionAutocomplete', [
                         compiledTemplate.scope.items = [];
                         compiledTemplate.scope.searchQuery = '';
 
-                        // if multiple select is on store the selected items
-                        if (compiledTemplate.scope.multipleSelect === "trueLARIO") {
-
-                            if (!isKeyValueInObjectArray(compiledTemplate.scope.selectedItems,
-                                    compiledTemplate.scope.itemValueKey, scope.getItemValue(item, scope.itemValueKey))) {
-                                // create a new array to update the model. See https://github.com/angular-ui/ui-select/issues/191#issuecomment-55471732
-                                compiledTemplate.scope.selectedItems = compiledTemplate.scope.selectedItems.concat([item]);
-                            }
-
-                            // set the view value and render it
-                            ngModel.$setViewValue(compiledTemplate.scope.selectedItems);
-                            ngModel.$render();
-                        } else {
-                            console.log(' selectItem: '+JSON.stringify(item));
-                            // set the view value and render it
-                            ngModel.$setViewValue(item);
-                            ngModel.$render();
-
-                            // // hide the container and the ionic backdrop
-                            compiledTemplate.element.css('display', 'none');
-                            $ionicBackdrop.release();
-                        }
-
+                        // set the view value and render it
+                        console.log(' - selectItem:'+JSON.stringify(item));
+                        ngModel.$setViewValue(item);
+                        // hide the container and the ionic backdrop
+                        hideSearchContainer();
+                        
                         // call items clicked callback
                         if (angular.isFunction(compiledTemplate.scope.itemsClickedMethod)) {
                             compiledTemplate.scope.itemsClickedMethod({
                                 callback: {
                                     item: item,
-                                    selectedItems: compiledTemplate.scope.selectedItems.slice()
+                                    //selectedItems: compiledTemplate.scope.selectedItems.slice(),
+                                    componentId: compiledTemplate.scope.componentId
                                 }
                             });
                         }
                     };
 
-                    // function which removes the item from the selected items.
-                    compiledTemplate.scope.removeItem = function (index) {
-                        // remove the item from the selected items and create a copy of the array to update the model.
-                        // See https://github.com/angular-ui/ui-select/issues/191#issuecomment-55471732
-                        compiledTemplate.scope.selectedItems.splice(index, 1);
-                        compiledTemplate.scope.selectedItems = compiledTemplate.scope.selectedItems.slice();
-
-                        // set the view value and render it
-                        ngModel.$setViewValue(compiledTemplate.scope.selectedItems);
-                        ngModel.$render();
-                    };
-
                     // watcher on the search field model to update the list according to the input
                     compiledTemplate.scope.$watch('searchQuery', function (query) {
 
+                        // if the search query is empty, clear the items
+                        // if (query == '') {
+                        //     compiledTemplate.scope.items = [];
+                        // }
+
+                        //$ionicScrollDelegate.resize();
+                        console.log(' onSearchQuery Changed: '+query);
                         compiledTemplate.scope.enable_select   = false;
                         compiledTemplate.scope.local_contacts  = [];
                         compiledTemplate.scope.global_contacts = [];
 
-                        // Callback that determines if the input is an address or a pubkey
+                       // Callback that determines if the input is an address or a pubkey
                         if (query && angular.isFunction(compiledTemplate.scope.isSelectable)) {
 
                             var promise = $q.when(compiledTemplate.scope.isSelectable({query: query}));
+
                             promise.then(function (is_pubkey) {
 
                               compiledTemplate.scope.enable_select   = true;
@@ -248,8 +201,9 @@ angular.module('ion-autocomplete', []).directive('ionAutocomplete', [
                                 address_or_pubkey : compiledTemplate.scope.searchQuery,
                                 is_pubkey         : is_pubkey
                               };
-
+                              //console.log(' onSearchQuery isSelectable OK ');
                             }, function (error) {
+                              //console.log(' onSearchQuery isSelectable ERROR '+JSON.stringify(error));
                               compiledTemplate.scope.enable_select   = false;
                               compiledTemplate.scope.selected_result = {};
                               return $q.reject(error);
@@ -261,7 +215,7 @@ angular.module('ion-autocomplete', []).directive('ionAutocomplete', [
                             scope.show_loading = true;
                             // convert the given function to a $q promise to support promises too
                             var promise = $q.when(compiledTemplate.scope.globalSearch({query: query}));
-
+                            
                             promise.then(function (promiseData) {
                                 // set the items which are returned by the items method
                                 var tmp = compiledTemplate.scope.getItemValue(promiseData, compiledTemplate.scope.globalValueKey);
@@ -277,8 +231,9 @@ angular.module('ion-autocomplete', []).directive('ionAutocomplete', [
 
                                 compiledTemplate.scope.global_contacts = global_contacts;
                                 scope.show_loading                     = false;
-
+                                $ionicScrollDelegate.resize();
                             }, function (error) {
+                                console.log(' onSearchQuery globalSearch ERROR '+JSON.stringify(error));
                                 // reject the error because we do not handle the error here
                                 scope.show_loading = false;
                                 return $q.reject(error);
@@ -313,16 +268,63 @@ angular.module('ion-autocomplete', []).directive('ionAutocomplete', [
 
                     });
 
-                    // click handler on the input field which
+                    var displaySearchContainer = function () {
+                        $ionicBackdrop.retain();
+                        compiledTemplate.element.css('display', 'block');
+                        scope.$deregisterBackButton = $ionicPlatform.registerBackButtonAction(function () {
+                            hideSearchContainer();
+                        }, 300);
+                    };
+
+                    var hideSearchContainer = function () {
+                        compiledTemplate.element.css('display', 'none');
+                        $ionicBackdrop.release();
+                        scope.$deregisterBackButton && scope.$deregisterBackButton();
+                    };
+
+                    // object to store if the user moved the finger to prevent opening the modal
+                    var scrolling = {
+                        moved: false,
+                        startX: 0,
+                        startY: 0
+                    };
+
+                    // store the start coordinates of the touch start event
+                    var onTouchStart = function (e) {
+                        scrolling.moved = false;
+                        // Use originalEvent when available, fix compatibility with jQuery
+                        if (typeof(e.originalEvent) !== 'undefined') {
+                            e = e.originalEvent;
+                        }
+                        scrolling.startX = e.touches[0].clientX;
+                        scrolling.startY = e.touches[0].clientY;
+                    };
+
+                    // check if the finger moves more than 10px and set the moved flag to true
+                    var onTouchMove = function (e) {
+                        // Use originalEvent when available, fix compatibility with jQuery
+                        if (typeof(e.originalEvent) !== 'undefined') {
+                            e = e.originalEvent;
+                        }
+                        if (Math.abs(e.touches[0].clientX - scrolling.startX) > 10 ||
+                            Math.abs(e.touches[0].clientY - scrolling.startY) > 10) {
+                            scrolling.moved = true;
+                        }
+                    };
+
+                    // click handler on the input field to show the search container
                     var onClick = function (event) {
+                        // only open the dialog if was not touched at the beginning of a legitimate scroll event
+                        if (scrolling.moved) {
+                            return;
+                        }
 
                         // prevent the default event and the propagation
                         event.preventDefault();
                         event.stopPropagation();
 
                         // show the ionic backdrop and the search container
-                        $ionicBackdrop.retain();
-                        compiledTemplate.element.css('display', 'block');
+                        displaySearchContainer();
 
                         // focus on the search input field
                         if (searchInputElement.length > 0) {
@@ -342,44 +344,83 @@ angular.module('ion-autocomplete', []).directive('ionAutocomplete', [
                         return false;
                     };
 
-                    // bind the onClick handler to the click and touchend events
-                    element.bind('click', onClick);
+                    // function to call the model to item method and select the item
+                    var resolveAndSelectModelItem = function (modelValue) {
+                        // convert the given function to a $q promise to support promises too
+                        var promise = $q.when(compiledTemplate.scope.modelToItemMethod({modelValue: modelValue}));
+
+                        promise.then(function (promiseData) {
+                            // select the item which are returned by the model to item method
+                            compiledTemplate.scope.selectItem(promiseData);
+                        }, function (error) {
+                            // reject the error because we do not handle the error here
+                            return $q.reject(error);
+                        });
+                    };
+
+                    // bind the handlers to the click and touch events of the input field
+                    element.bind('touchstart', onTouchStart);
+                    element.bind('touchmove', onTouchMove);
                     element.bind('touchend', onClick);
+                    element.bind('click', onClick);
 
                     // cancel handler for the cancel button which clears the search input field model and hides the
                     // search container and the ionic backdrop
                     compiledTemplate.element.find('button').bind('click', function (event) {
-
-                        compiledTemplate.scope.searchQuery     = '';
-                        compiledTemplate.scope.enable_select   = false;
-                        compiledTemplate.scope.local_contacts  = [];
-                        compiledTemplate.scope.global_contacts = [];
-
-                        $ionicBackdrop.release();
-                        compiledTemplate.element.css('display', 'none');
+                        compiledTemplate.scope.searchQuery = '';
+                        hideSearchContainer();
                     });
+
+                    // prepopulate view and selected items if model is already set
+                    if (compiledTemplate.scope.model && angular.isFunction(compiledTemplate.scope.modelToItemMethod)) {
+                        if (compiledTemplate.scope.multipleSelect === "true" && angular.isArray(compiledTemplate.scope.model)) {
+                            angular.forEach(compiledTemplate.scope.model, function (modelValue) {
+                                resolveAndSelectModelItem(modelValue);
+                            })
+                        } else {
+                            resolveAndSelectModelItem(compiledTemplate.scope.model);
+                        }
+                    }
 
                 });
 
                 // render the view value of the model
-                ngModel.$render = function () {
-                    element.val(scope.getItemValue(ngModel.$viewValue, scope.itemViewValueKey));
-                };
+                // ngModel.$render = function () {
+                //     element.val(scope.getItemValue(ngModel.$viewValue, scope.itemViewValueKey));
+                // };
 
                 // set the view value of the model
-                ngModel.$formatters.push(function (modelValue) {
-                    //console.log(' ???? scope.getItemValue(modelValue, scope.itemViewValueKey) : ' + scope.getItemValue(modelValue, scope.itemViewValueKey));
-                    return scope.getItemValue(modelValue, scope.itemViewValueKey);
-                });
+                // ngModel.$formatters.push(function (value) {
+                //     if(value)
+                //     {
+                //         console.log(' -- ngModel.$formatters.push modelValue: '+JSON.stringify(value));
+                //         console.log(' -- ngModel.$formatters.push scope.itemViewValueKey: '+ scope.itemViewValueKey);
 
+                //         var viewValue = scope.getItemValue(value, scope.itemViewValueKey);
+                //         console.log(' -- ngModel.$formatters.push viewValue:'+JSON.stringify(viewValue));
+                //         console.log(' -- ngModel.$formatters.push value.name:'+value.name);
+                //         return viewValue == undefined ? "" : viewValue;
+                //     }
+                //     return "";
+                // });
+                
+                // Source: http://stackoverflow.com/questions/20101054/angularjs-setviewvalue-not-responding-in-parsers-push
                 // set the model value of the model
                 ngModel.$parsers.push(function (viewValue) {
-                    //console.log(' ???? scope.getItemValue(viewValue, scope.itemValueKey) : ' + scope.getItemValue(viewValue, scope.itemValueKey));
-                    return scope.getItemValue(viewValue, scope.itemValueKey);                   
+                    ngModel.$viewValue = scope.getItemValue(viewValue, scope.itemViewValueKey);
+                    ngModel.$render();                    
+                    return scope.getItemValue(viewValue, scope.itemValueKey);
+                    // return viewValue.name;
                 });
 
             }
         };
     }
-]);
-})();
+]).directive('ionAutocomplete', function () {
+    return {
+        require: '?ngModel',
+        restrict: 'E',
+        template: '<input ion-autocomplete type="text" readonly="readonly" class="ion-autocomplete" autocomplete="off" />',
+        replace: true
+    }
+});

@@ -1318,6 +1318,7 @@ button.top_35 {top:35px!important;}
 .ion-autocomplete-container .item .global {font-size:12px!important;}
 .ion-autocomplete-container .item .spinner {stroke: #5f7381;  fill: #5f7381;}
 .ion-autocomplete-container label.item-input-wrapper {background-color:#eaeaea!important;}
+.ion-autocomplete-container .ion-autocomplete-search {color:#5f7381;}
 
 
 .action_container .one_of_two_buttons .button.border_top_left {border-left:1px solid #b2b2b2!important;}
@@ -1419,6 +1420,11 @@ ion-spinner {stroke:#d3eb00!important;} /*93c91f*/
   text-align: right!important;
   padding-right: 30px!important;}
 
+.checkbox input:checked:after, input:checked + .checkbox-icon:after {
+  border-bottom-color: rgba(26,66,84,1);
+  border-left-color: rgba(26,66,84,1);
+  /* rgba(26,66,84,1) 0%, rgba(26,67,86,1) */
+}
 .item.larger{
   height: auto!important;
   min-height: 100px;}

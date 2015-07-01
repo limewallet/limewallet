@@ -1,9 +1,21 @@
 bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T, BitShares, Scanner, $http, $ionicLoading, $ionicNavBarDelegate, $ionicModal, $ionicPopup, $location, $timeout, $rootScope, $stateParams, Wallet, Contact) {
-
+  
   $scope.$on( '$ionicView.enter', function(){
     $scope.viewRendered();
   }); 
 
+  $scope.getTestItems = function (query) {
+                        return {
+                            items: [
+                                {id: "1", name: query + "1", view: "view: " + query + "1"},
+                                {id: "2", name: query + "2", view: "view: " + query + "2"},
+                                {id: "3", name: query + "3", view: "view: " + query + "3"}]
+                        };
+                    };
+  $scope.itemsClicked = function (callback) {
+      $scope.callbackValueModel = callback;
+  }
+              
   $scope.isSelectable = function (query) {
 
     var deferred = $q.defer();
@@ -14,6 +26,10 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
       BitShares.btsIsValidAddress(query).then(function(res) {
         deferred.resolve(false);
       }, function(err) {
+        // if(BitShares.isValidBTSName(query)) {
+        //   deferred.resolve(true);
+        //   return;
+        // }
         deferred.reject();
       });
     });
@@ -31,7 +47,7 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
 
   $scope.transaction = {
     amount      : undefined,
-    destination : {},
+    destination : undefined,
     memo        : undefined
   }
 
@@ -82,7 +98,7 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
   }
 
   $scope.clearDestination = function(){
-    $scope.transaction.destination = {};
+    $scope.transaction.destination = undefined;
   }
 
   $scope.scanQR = function() {
@@ -175,6 +191,8 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
 
     var error = '';
 
+    //console.log('validateSend -> '+JSON.stringify($scope.transaction.destination));
+
     // Validate amount > 0
     var amount = parseInt(parseFloat(tx.amount)*Wallet.data.asset.precision);
     if ( isNaN(amount) || amount <= 0 ) {
@@ -189,7 +207,7 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
     //} 
 
     if (error) {
-      $scope.showAlert('send.title', error);
+      $scope.showAlert('send.title', 'err.'+error);
       return false;
     }
 
