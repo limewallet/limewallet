@@ -1,9 +1,21 @@
 bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T, BitShares, Scanner, $http, $ionicLoading, $ionicNavBarDelegate, $ionicModal, $ionicPopup, $location, $timeout, $rootScope, $stateParams, Wallet, Contact) {
-
+  
   $scope.$on( '$ionicView.enter', function(){
     $scope.viewRendered();
   }); 
 
+  $scope.getTestItems = function (query) {
+                        return {
+                            items: [
+                                {id: "1", name: query + "1", view: "view: " + query + "1"},
+                                {id: "2", name: query + "2", view: "view: " + query + "2"},
+                                {id: "3", name: query + "3", view: "view: " + query + "3"}]
+                        };
+                    };
+  $scope.itemsClicked = function (callback) {
+      $scope.callbackValueModel = callback;
+  }
+              
   $scope.isSelectable = function (query) {
 
     var deferred = $q.defer();
@@ -14,6 +26,10 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
       BitShares.btsIsValidAddress(query).then(function(res) {
         deferred.resolve(false);
       }, function(err) {
+        // if(BitShares.isValidBTSName(query)) {
+        //   deferred.resolve(true);
+        //   return;
+        // }
         deferred.reject();
       });
     });
@@ -31,7 +47,7 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
 
   $scope.transaction = {
     amount      : undefined,
-    destination : {},
+    destination : undefined,
     memo        : undefined
   }
 
@@ -82,7 +98,7 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
   }
 
   $scope.clearDestination = function(){
-    $scope.transaction.destination = {};
+    $scope.transaction.destination = undefined;
   }
 
   $scope.scanQR = function() {
@@ -175,6 +191,8 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
 
     var error = '';
 
+    //console.log('validateSend -> '+JSON.stringify($scope.transaction.destination));
+
     // Validate amount > 0
     var amount = parseInt(parseFloat(tx.amount)*Wallet.data.asset.precision);
     if ( isNaN(amount) || amount <= 0 ) {
@@ -189,7 +207,7 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
     //} 
 
     if (error) {
-      $scope.showAlert('send.title', error);
+      $scope.showAlert('send.title', 'err.'+error);
       return false;
     }
 
@@ -382,7 +400,7 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
           return;
         }
         
-        $scope.sending_modal.show();
+        //$scope.sending_modal.show();
         var from  = [];
         var addys = Object.keys($scope.wallet.addresses);
           for(var i=0; i<addys.length; i++) {
@@ -399,7 +417,7 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
                okType: 'button-assertive', 
             })
             .then(function() {
-              $scope.sending_modal.hide();
+              //$scope.sending_modal.hide();
             });
             //$scope.formDone();
             return;
@@ -431,7 +449,7 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
             $scope.transaction.message = 'send.sending_transaction';
 
             BitShares.sendAsset(r.tx, r.secret).then(function(res) {
-              $scope.sending_modal.hide();
+              //$scope.sending_modal.hide();
               
               // Wallet.buildTxList(r, $scope.wallet.data.asset.id).then(function(res){
                 // console.log('Insertando xtx con oper_id = ' + res.insertId.toString());
@@ -452,7 +470,7 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
                    okType: 'button-assertive', 
                 })
                 .then(function() {
-                  $scope.sending_modal.hide();
+                  // $scope.sending_modal.hide();
                 });
                 //$scope.formDone();
             });
@@ -466,7 +484,7 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
                 okType: 'button-assertive', 
              })
             .then(function() {
-              $scope.sending_modal.hide();
+              // $scope.sending_modal.hide();
             });
             //$scope.formDone();
         });
@@ -491,15 +509,15 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
   }
  
   
-  // Load sending process modal view.
-  $ionicModal.fromTemplateUrl('sending-modal.html', function($ionicModal) {
-      $scope.sending_modal = $ionicModal;
-  }, {
-      // Use our scope for the scope of the modal to keep it simple
-      scope: $scope,
-      // The animation we want to use for the modal entrance
-      animation: 'slide-in-up',
-      backdropClickToClose: false,
-      hardwareBackButtonClose: false
-  });  
+  // // Load sending process modal view.
+  // $ionicModal.fromTemplateUrl('sending-modal.html', function($ionicModal) {
+  //     $scope.sending_modal = $ionicModal;
+  // }, {
+  //     // Use our scope for the scope of the modal to keep it simple
+  //     scope: $scope,
+  //     // The animation we want to use for the modal entrance
+  //     animation: 'slide-in-up',
+  //     backdropClickToClose: false,
+  //     hardwareBackButtonClose: false
+  // });  
 });

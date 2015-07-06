@@ -150,6 +150,7 @@ bitwallet_services
 
       window.plugins.BitsharesPlugin.mnemonicToMasterKey(
         function(data){
+          console.log(' **** BitsharesPlugin.mnemonicToMasterKey salio ok!');
           deferred.resolve(data.masterPrivateKey);
         },
         function(error){

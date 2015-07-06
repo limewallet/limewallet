@@ -30,7 +30,7 @@
       </div>
     </div>
 
-    <div ng-show="txs.transactions.length==0" class="no_tx">
+    <div ng-hide="txs.transactions.orderedKeys && txs.transactions.orderedKeys.length>0" class="no_tx">
       <div class="content"> 
         <div ng-show="refresh_status==0">
           <i class="icon ion-earth" ></i><br/><span>{{'home.no_txs' | translate}}</span>
@@ -40,7 +40,7 @@
       </div>
     </div> 
     
-    <ion-scroll ng-hide="txs.transactions=={}" zooming="false" direction="y" class="index_transactions transactions">
+    <ion-scroll ng-show="txs.transactions.orderedKeys && txs.transactions.orderedKeys.length>0" zooming="false" direction="y" class="index_transactions transactions">
       <ion-refresher
       pulling-text="{{'home.pull_to_refresh' | translate}}"
         on-refresh="doRefresh()">

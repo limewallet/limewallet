@@ -405,8 +405,8 @@ bitwallet_module
         
         $rootScope.goHome();
 
-        //obscure around glue cheese inherit thing subject blade slow unknown solve assum
-        
+        //obscure around glue cheese inherit thing subject blade slow unknown solve assume
+
         Wallet.refreshBalance().finally(function() {
           //console.log('HIDALA FUTIOOOO');
           $cordovaSplashscreen.hide();
@@ -659,6 +659,11 @@ bitwallet_module
     //console.log('clear history and go home!');
     $state.go('app.home');
   }
+
+  $rootScope.goToSuccess = function(param){
+    $rootScope.goToState('app.successful', {tx:param});
+  }
+  
   $rootScope.goToState = function(state, param){
 
     $ionicHistory.nextViewOptions({

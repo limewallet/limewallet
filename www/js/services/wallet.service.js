@@ -17,7 +17,7 @@ bitwallet_services
     }
 
     self.txs = {
-      transactions  : {},
+      transactions  : {}
     }
 
     self.timeout = {
@@ -27,7 +27,7 @@ bitwallet_services
     };
 
     self.switchAsset = function(asset_id) {
-      self.txs.transactions = [],
+      self.txs.transactions = {};
       self.setDefaultAsset(asset_id);
       return self.refreshBalance();
     }

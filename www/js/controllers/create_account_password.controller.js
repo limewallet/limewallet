@@ -29,10 +29,10 @@ bitwallet_controllers
     var deferred = $q.defer();
 
     var proms = {
-      'mpk' :   BitShares.mnemonicToMasterKey(seed),
-      'count':  Account.count()
+      'mpk' :   BitShares.mnemonicToMasterKey(seed)
+      ,'count':  Account.count()
     };
-
+    console.log(' addNewAccount() tasks launched');
     $q.all(proms).then(function(res){
 
       var mpk    = res.mpk;

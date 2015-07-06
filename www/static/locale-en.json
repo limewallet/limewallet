@@ -94,6 +94,8 @@
   },
 
   "err" : {
+    "invalid_amount"            : "Invalid amount",
+    "no_funds"                  : "Insufficient funds",
     "invalid_scan_data"         : "Invalid or unrecognizable input data",
     "contact_removing"          : "An error occurred while removing contact",
     "contact_saving"            : "An error occurred while storing contact",
