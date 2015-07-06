@@ -13,7 +13,7 @@ bitwallet_controllers
   }
   
   // stateParams -> :txid/:xtxid/:address/:name/:message/:amount/:type                
-
+  console.log(' ****** SuccessfulCtrl me llamarin ');
   var tx = $stateParams.tx;
   if(tx && tx.amount) {
   
