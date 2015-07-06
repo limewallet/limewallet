@@ -960,9 +960,9 @@ fieldset {
   border: none!important;
 }
 
-.withdraw, .deposit , .welcome, .create_account, .register{
-    display: -webkit-flex; /* Safari */
-    -webkit-flex-flow: row wrap; /* Safari 6.1+ */
+.withdraw, .deposit , .welcome, .create_account, .register, .refund{
+    display: -webkit-flex;
+    -webkit-flex-flow: row wrap;
     display: flex;
     flex-flow: row wrap;}
 
@@ -1192,7 +1192,8 @@ button.top_35 {top:35px!important;}
     border-right:none!important;
     border-bottom:none!important;}
 
-.send .scroll{
+.send .scroll
+  , .withdraw .scroll{
      display: -webkit-flex; /* Safari */
     -webkit-flex-flow: row wrap; /* Safari 6.1+ */
     -webkit-align-content: strecht; /* Safari 7.0+ */
@@ -1245,10 +1246,10 @@ button.top_35 {top:35px!important;}
     float:right;
     color: #d0d0d0; /*#d8d8d8;*/
     text-align: right;
-    /*min-width: 140px;*/
     font-size:12px;
 }
 
+.send_btc_form .hint.left {min-width:125px;}
 .hint.right {
     text-align: right;
     float: right;
@@ -1272,7 +1273,7 @@ button.top_35 {top:35px!important;}
 .deposit_rate .hint.left{
   width:auto;
   padding-right:10px;
-  /*min-width: 80px!important;*/
+  min-width: 125px!important;
 }
 .deposit_rate_loading {text-align:center;display: block;min-height: 28px;overflow: hidden;margin-top:0px;} /* margin-top:40px  */
 
@@ -1533,6 +1534,10 @@ p.paragraph {padding:25px; font-size:17px; font-weight: 300;margin:0;}
   display:none;
 }
 
+.send_btc_form label.pmd.btc_memo{
+  clear:both;
+}
+
 @media only screen 
   and (min-device-width: 320px) 
   and (max-device-width: 359px)
@@ -1549,10 +1554,6 @@ p.paragraph {padding:25px; font-size:17px; font-weight: 300;margin:0;}
       padding-right: 16px!important;
     }
     
-    .send_btc_form label.pmd.btc_memo{
-      clear:both;
-    }
-
     .send_btc_form label.pmd.btc_memo, .btc_amount_container label.pmd{
       padding:16px 16px 0px 16px!important;
     }

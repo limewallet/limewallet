@@ -42,6 +42,9 @@ bitwallet_controllers.controller('SettingsCtrl', function($q, DB, BitShares, $sc
   $scope.loadViewData();
   
   $scope.restoreWallet = function() {
+    // input password (para saber que es el)
+    // verificar si tiene fondos, si es asi indicarle que deberia tansferirlos o en su defecto backupear la actual seed
+    // restorear
     $scope.showAlert('Hay que hacer','ESTO');
   }
   

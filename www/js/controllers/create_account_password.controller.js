@@ -146,13 +146,15 @@ bitwallet_controllers
 
   $scope.createWallet = function() {
 
+    var deferred = $q.defer();
+    
     if($scope.data.password != $scope.data.retype_password)
     {
       $scope.data.error = T.i('err.password_mismatch');
-      return;
+      deferred.reject($scope.data.error);
+      return deferred.promise;
     }
 
-    //Mostrar loading
     var title = $scope.isCreateInitMode()?'g.creating_wallet':'g.recovering_wallet';
     $scope.showLoading(title);
 
@@ -208,68 +210,81 @@ bitwallet_controllers
                 sql_params.push(account_cmd.params);
                   
                 DB.queryMany(sql_cmd, sql_params).then(function() {
-                    console.log('TERMINO DB TXS OK');
-                    //$scope.hideLoading();
-                    Wallet.load().then(function(){
-                      console.log('WALLET LOADED!');
-                      Wallet.unlock($scope.data.password).then(function(){
-                        console.log('WALLET UNLOCKED!');
-                        Wallet.connectToBackend();
-                        console.log('Create account completed papa!!!!!');
-                        Wallet.refreshBalance();
-                        $scope.hideLoading();
-                        if($scope.isCreateInitMode()){
-                          window.plugins.toast.show( T.i('g.wallet_created'), 'long', 'bottom');
-                          $scope.goToState('app.account');
-                        }
-                        else{
-                          window.plugins.toast.show( T.i('g.wallet_recovered'), 'long', 'bottom');
-                          $scope.goHome();
-                        }
-                      }, function(err){
-                        console.log('Wallet.unlock error ' + JSON.stringify(err));
-                        $scope.hideLoading();
-                      });
+                  //console.log('TERMINO DB TXS OK');
+                  Wallet.load().then(function(){
+                    //console.log('WALLET LOADED!');
+                    Wallet.unlock($scope.data.password).then(function(){
+                      //console.log('WALLET UNLOCKED!');
+                      Wallet.connectToBackend();
+                      //console.log('Create account completed papa!!!!!');
+                      Wallet.refreshBalance();
+                      $scope.hideLoading();
+                      if($scope.isCreateInitMode()){
+                        window.plugins.toast.show( T.i('g.wallet_created'), 'long', 'bottom');
+                        $scope.goToState('app.account');
+                      }
+                      else{
+                        window.plugins.toast.show( T.i('g.wallet_recovered'), 'long', 'bottom');
+                        $scope.goHome();
+                      }
+
+                      deferred.resolve();
 
                     }, function(err){
-                      console.log('Wallet.load error ' + JSON.stringify(err));
+                      console.log('Wallet.unlock error ' + JSON.stringify(err));
                       $scope.hideLoading();
+                      deferred.reject(err);
                     });
 
-                  }, function(err) {
-                    console.log('ERROR DB TXS ' + JSON.stringify(err));
+                  }, function(err){
+                    console.log('Wallet.load error ' + JSON.stringify(err));
                     $scope.hideLoading();
+                    deferred.reject(err);
                   });
+
+                }, function(err) {
+                  console.log('ERROR DB TXS ' + JSON.stringify(err));
+                  $scope.hideLoading();
+                  deferred.reject(err);
+                });
 
               }, function(err){
                 console.log( ' -- encrypt error: ' +JSON.stringify(err));
                 $scope.hideLoading();
+                deferred.reject(err);
               });
             }, function(err){
               console.log(' signup error :' +JSON.stringify(err));
               $scope.hideLoading();
+              deferred.reject(err);
             });
 
           }, function(err){
             console.log(' getInfoIfRecovering error: '+JSON.stringify(err));
             $scope.hideLoading();
+            deferred.reject(err);
           });
 
         }, function(err){
           console.log(' derivePassword error: '+JSON.stringify(err));
           $scope.hideLoading();
+          deferred.reject(err);
         });
       
       }, function(err){
         console.log(JSON.stringify(err));
         $scope.hideLoading();
+        deferred.reject(err);
       });
 
     }, function(err) {
       console.log(JSON.stringify(err));
       $scope.hideLoading();
+      deferred.reject(err);
     });
-
+    
+    return deferred.promise;
+    
   }
 });
 

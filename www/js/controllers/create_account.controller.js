@@ -23,8 +23,7 @@ bitwallet_controllers
   }, function(err) {
 
   });
-
-  //console.log('$scope.init.mode = ' + $scope.init.mode);
+  
 });
 
 

@@ -131,10 +131,12 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
   
   $scope.doSend = function(tx) {
 
+    var deferred = $q.defer(); 
     //$scope.formInProgress();
     if ( $scope.validateSend(tx) == false ) {
       //$scope.formDone();
-      return;
+      deferred.reject();
+      return deferred.promise;
     }
 
     $scope.trySend(tx).then(function(res) {
@@ -156,6 +158,7 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
         date      : new Date().getTime()
       });
 
+      deferred.resolve();
 
       $scope.goToSuccess({
         txid    : undefined,
@@ -168,8 +171,10 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
       });
 
     }, function(err) {
-       //$scope.formDone();
+       deferred.reject(err);
     });
+
+    return deferred.promise;
   }
 
 
@@ -190,8 +195,6 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
   $scope.validateSend = function(tx) {
 
     var error = '';
-
-    //console.log('validateSend -> '+JSON.stringify($scope.transaction.destination));
 
     // Validate amount > 0
     var amount = parseInt(parseFloat(tx.amount)*Wallet.data.asset.precision);
@@ -491,16 +494,12 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
  
       }, function(error){
         console.log(error);
-        if(error=='auth_failed')
-          Setting.remove(Setting.BSW_TOKEN);
         $scope.showAlert('err.cant_accept', 'err.cant_accept_retry');
         //$scope.formDone();
         return;
       });
     }, function(error){
       console.log(error);
-      if(error=='auth_failed')
-        Setting.remove(Setting.BSW_TOKEN);
       $scope.showAlert('err.no_token', 'err.no_token_retry');
       $scope.formDone();
       return;

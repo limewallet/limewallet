@@ -49,8 +49,6 @@ bitwallet_controllers.controller('AccountCtrl', function($translate, T, BitShare
         if (!keys)
         {
           deferred.reject(T.i('err.no_active_account'));
-          // $scope.alert({title:'err.no_active_account', message:'err.no_active_account_create'});
-          // $scope.hideLoading();
           return;
         }
         BitShares.registerAccount(keys, name, pubkey).then(function(result) {
@@ -72,27 +70,33 @@ bitwallet_controllers.controller('AccountCtrl', function($translate, T, BitShare
   }
 
   $scope.saveProfile = function(){
+    
+    var deferred = $q.defer();
 
+    console.log('saveProfile oneClicked!!');
     if($scope.wallet.account.registered==1)
     {
-      return;
+      deferred.reject('account.already_registered');
+      return deferred.promise;
     }
-    console.log(' Chosen name:'+$scope.data.name);
+    //console.log(' Chosen name:'+$scope.data.name);
     $scope.showLoading('account.updating');
     // Check name is not null or empty;
     var is_valid_name_res = BitShares.isValidBTSName($scope.data.name);
     if(!is_valid_name_res.valid)
     {
       $scope.hideLoading();
-      $scope.alert(is_valid_name_res);
-      return;
+      $scope.showAlert(is_valid_name_res.title, is_valid_name_res.message);
+      deferred.reject('err.invalid_name');
+      return deferred.promise;
     }
 
     Account.active().then(function(account){
       if(!account || account==undefined){
         $scope.alert({title:'err.no_active_account', message:'err.no_active_account_create'});
         $scope.hideLoading();
-        return;
+        deferred.reject('err.no_active_account');
+        return deferred.promise;
       }
       $scope.doRegister($scope.data.name, account.pubkey).then(function(){
         account['name']         = $scope.data.name;
@@ -105,36 +109,26 @@ bitwallet_controllers.controller('AccountCtrl', function($translate, T, BitShare
           $scope.hideLoading();
           window.plugins.toast.show( T.i('register.account_name_saved'), 'long', 'bottom');        
           Wallet.updateActiveAccount(account['name'], account['registered'], account['avatar_hash']);
+          deferred.resolve();
           $scope.goHome();
         }, function(error){
-          $scope.alert({title:'err.occurred', message:'err.account_registration'});
+          $scope.showAlert('err.occurred', 'err.account_registration');
           $scope.hideLoading();
+          deferred.reject('err.account_registration');
         });
       }, function(err){
-        $scope.alert({title:'err.occurred', message:err});
+        $scope.showAlert('err.occurred', err);
         $scope.hideLoading();
-        return;
+        deferred.reject(err);
       })
     }, function(err){
-        $scope.alert({title:'err.no_active_account', message:'err.no_active_account_create'});
+        $scope.showAlert('err.no_active_account', 'err.no_active_account_create');
         $scope.hideLoading();
-        return;
+        deferred.reject('err.no_active_account');
     })
-    
-    
-
-  }
-
-  $scope.alert = function(error){
-    $ionicPopup.alert({
-      title    : T.i(error.title),
-      template : T.i(error.message),
-      okType   : 'button-assertive', 
-    });
-    return;
-  }
   
-
+    return deferred.promise;
+  }
 
 });
 

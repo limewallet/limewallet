@@ -187,6 +187,8 @@ bitwallet_controllers.controller('SendBTCCtrl', function($scope, $q, T, Exchange
   }
 
   $scope.doAcceptAndSend = function() {
+    
+    var deferred = $q.defer();
 
     if (!$scope.data.valid_quote) {
       return;
@@ -195,7 +197,8 @@ bitwallet_controllers.controller('SendBTCCtrl', function($scope, $q, T, Exchange
     BitShares.btcIsValidAddress($scope.data.address).then(function(is_valid) {
 
       if(!$scope.validateSend($scope.data.quote.quote.cl_pay)) {
-        return;
+        deferred.reject();
+        return deferred.promise;
       }
 
       $scope.showLoading('g.sending');
@@ -238,27 +241,32 @@ bitwallet_controllers.controller('SendBTCCtrl', function($scope, $q, T, Exchange
           }, function(err) {
             $scope.hideLoading();
             $scope.showAlert('send.title_btc', err);
+            deferred.reject(err);
             console.log(JSON.stringify(err));
           });
 
         }, function(err) {
           $scope.hideLoading();
           $scope.showAlert('send.title_btc', err);
+          deferred.reject(err);
           console.log(JSON.stringify(err));
         });
 
       }, function(err) {
         $scope.hideLoading();
         $scope.showAlert('send.title_btc', err);
-        console.log(err);
+        deferred.reject(err);
+        console.log(JSON.stringify(err));
       });
 
     }, function(err) {
       $scope.hideLoading();
       $scope.showAlert('send.title_btc', 'err.invalid_btc_addy');
-      console.log(err);
+      deferred.reject(err);
+      console.log(JSON.stringify(err));
     });
-
+    
+    return deferred.promise;
   }
 
   $scope.applyScan = function(scan_data) {

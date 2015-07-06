@@ -1,5 +1,5 @@
 bitwallet_controllers
-.controller('ImportPrivCtrl', function($scope, Wallet, BitShares, T, $ionicLoading, $ionicModal, $ionicPopup, $stateParams, $ionicSideMenuDelegate) {
+.controller('ImportPrivCtrl', function($scope, Wallet, BitShares, T, $ionicLoading, $ionicModal, $ionicPopup, $stateParams, $ionicSideMenuDelegate, $q) {
   
   $scope.$on( '$ionicView.enter', function(){
     $scope.viewRendered();
@@ -13,6 +13,7 @@ bitwallet_controllers
   };
 
   $scope.sweepBalance = function() {
+    var deferred = $q.defer();
 
     $scope.showLoading('import_priv.transfering');
 
@@ -24,7 +25,7 @@ bitwallet_controllers
       BitShares.sendAsset(new_tx.tx, new_tx.secret).then(function(res) {
 
         $scope.hideLoading();
-
+        deferred.resolve();
         $scope.goToSuccess({
           amount  : $scope.data.amount,
           type    : 'sweep'
@@ -34,14 +35,17 @@ bitwallet_controllers
         console.log(JSON.stringify(err));
         $scope.hideLoading();
         $scope.showAlert('import_priv.sweep_balance',err);
+        deferred.reject();
       });
 
     }, function(err) {
       console.log(JSON.stringify(err));
       $scope.hideLoading();
       $scope.showAlert('import_priv.sweep_balance',err);
+      deferred.reject();
     });
 
+    return deferred.promise;
   }
   
   $scope.$on( '$ionicView.enter', function(){
