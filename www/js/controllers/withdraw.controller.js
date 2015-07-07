@@ -100,6 +100,7 @@ bitwallet_controllers
       }, function(err){
         console.log(JSON.stringify(err));
         $scope.data.quoting = false;
+        $scope.showAlert('err.occurred','err.invalid_quote_msg');
       });
     }, 750);
   });

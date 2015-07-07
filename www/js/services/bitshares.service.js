@@ -869,7 +869,7 @@ bitwallet_services
           //console.log(pubkey);
           if( service_pubkey != ENVIRONMENT.apiPubkey ) {
             deferred.reject('invalid pub key');
-            console.log('BitShares signup err  [invalid pub key]');
+            console.log('BitShares signup err  [invalid pub key] server:' +ENVIRONMENT.apiPubkey + '  recovered:'+service_pubkey );
             self.signing_up = false;
             return;
           }
@@ -982,6 +982,7 @@ bitwallet_services
           self.recoverPubkey(res.msg, res.signature).then(function(pubkey) {
             //console.log(pubkey);
             if( pubkey != ENVIRONMENT.apiPubkey ) {
+              console.log('BitShares signup err  [invalid pub key] server:' +ENVIRONMENT.apiPubkey + '  recovered:'+pubkey );
               deferred.reject('invalid pub key');
               return;
             }

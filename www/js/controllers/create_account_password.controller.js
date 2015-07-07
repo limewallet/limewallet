@@ -38,10 +38,10 @@ bitwallet_controllers
       var mpk    = res.mpk;
       var number = res.count;
 
-      console.log('mnemonicToMasterKey mpk=> ' + mpk + ' // ' + number);
+      //console.log('mnemonicToMasterKey mpk=> ' + mpk + ' // ' + number);
       BitShares.derivePrivate("", "", mpk, number).then(function(accountMpk){
         
-        console.log('mnemonicToMasterKey accountMpk > ' + JSON.stringify(accountMpk));
+        // console.log('mnemonicToMasterKey accountMpk > ' + JSON.stringify(accountMpk));
         var proms = { 
           'send_mpk'   : BitShares.derivePrivate("", mpk, accountMpk.extendedPrivateKey, 0), 
           'memo_mpk'   : BitShares.derivePrivate("", mpk, accountMpk.extendedPrivateKey, 1),

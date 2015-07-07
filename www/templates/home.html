@@ -8,6 +8,7 @@
   <ion-content has-bouncing="false" class="home has-header">
     
     <div class="balance_container">
+      <div class="balance_">
         <div class="balance hidden" ng-show="wallet.ui.balance.hidden" ng-click="toggleBalance()">
           <span class="balance_hidden_text">{{'home.show_balance' | translate | uppercase}}</span>
         </div>
@@ -16,6 +17,7 @@
           <br/>
           <span class="balance_curr {{wallet.asset.symbol|lowercase}}">{{ 'home.balance' | translate:{asset:wallet.asset.symbol} }}</span>
         </div>
+      </div>
       <div class="button-bar_container">
         <div class="button-bar tabbed">
 

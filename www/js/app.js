@@ -525,6 +525,7 @@ bitwallet_module
     //*****************
     // INIT DEV/PROD ENVIRONMENT
     //*****************
+    console.log(' INIT ENVIRONMENT.test:'+ENVIRONMENT.test);
     BitShares.setTest(ENVIRONMENT.test);
     
     //*****************
