@@ -553,14 +553,13 @@ bitwallet_services
 
       BitShares.skip32(memo.slate, self.data.account.plain_skip32_key, false).then(function(slate) {
 
-        //console.log('DERIVO PRIVADA INDICE '+ memo.slate + '=>' + slate);
-
         BitShares.derivePrivate(
           self.data.mpk.plain_value, 
           self.data.account.plain_account_mpk, 
           self.data.account.plain_memo_mpk,
           slate
         ).then(function(res) {
+          console.log('DERIVO PRIVADA INDICE '+ memo.slate + ' => ' + slate + ' => ' + res.privkey + ' => ' + self.data.account.plain_skip32_key + ' => ' + self.data.account.plain_memo_mpk);
           deferred.resolve(res.privkey);
         }, function(err) {
           console.log('ERRGPK1 ' + JSON.stringify(err));
@@ -606,13 +605,16 @@ bitwallet_services
               return undefined;
             }
             console.log(' -*-*- loadBalance -> SOMETHING PUSHED TO Memo Proms');
+            console.log(JSON.stringify(m));
             //Entrada: uso mi PK y la otk
-            if( m.in_out == 0 )
+            if( m.in_out == 0 ) {
               return BitShares.decryptMemo(m.one_time_key, m.memo, pk);
+            }
           
             //Salida: uso la PK derivada y la publica del destino
-            if( m.to_pubkey )
+            if( m.to_pubkey ) {
               return BitShares.decryptMemo(m.to_pubkey, m.memo, pk);
+            }
 
             //TODO: send to address, guardo mi memo
             //Si llego aca, es de salida, pero no tengo la pubkey destino .. 
@@ -621,10 +623,10 @@ bitwallet_services
             //HACK: pensar bien...
             // HACK: COMMENTED BY DARGONAR
             //return BitShares.decryptMemo(m.one_time_key, m.memo, pk);
-            return undefined;
             
             //console.log('ESTOY EN LA TWILAAA ZONE ' + m.address);
-            //to_search.push(m.address);
+            to_search.push(m.address);
+            return undefined;
 
           }, function(err) {
             console.log(' -*-*- loadBalance err#1: '+JSON.stringify(err));
