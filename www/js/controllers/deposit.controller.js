@@ -1,12 +1,11 @@
 bitwallet_controllers
-.controller('DepositCtrl', function($translate, $stateParams, T, ExchangeTransaction, Wallet, BitShares, $scope, $rootScope, $http, $timeout, $ionicActionSheet, $ionicPopup, $cordovaClipboard, $ionicLoading, $timeout, BitShares, Setting) {
+.controller('DepositCtrl', function($translate, $stateParams, T, ExchangeTransaction, Wallet, BitShares, $scope, $rootScope, $http, $timeout, $ionicActionSheet, $ionicPopup, $cordovaClipboard, $ionicLoading, $timeout, BitShares, Setting, $q) {
   
   $scope.$on( '$ionicView.enter', function(){
     $scope.viewRendered();
   }); 
   
   $scope.data = {
-    from_in_progress : false,
     valid_quote      : false,
     quoting          : false,
     input_timeout    : undefined,
@@ -57,16 +56,6 @@ bitwallet_controllers
     console.log(' toggled deposit currency. INPUT CURR:'+$scope.data.input_curr);
   }
 
-  $scope.formInProgress = function(){
-    $scope.data.from_in_progress = true;
-    console.log(' -- DepositCtrl Form DISABLED');
-  }
-
-  $scope.formDone = function(){
-    $scope.data.from_in_progress = false; 
-    console.log(' -- DepositCtrl Form ENABLED!!!!');
-  }
-
   $scope.$watch('data.input_amount', function(newValue, oldValue, scope) {
     if(newValue===oldValue)
       return;
@@ -101,6 +90,7 @@ bitwallet_controllers
       }, function(err){
         console.log(JSON.stringify(err));
         $scope.data.quoting = false;
+        $scope.showAlert('err.occurred','err.invalid_quote_msg');
       });
     }, 750);
   });
@@ -119,9 +109,12 @@ bitwallet_controllers
         
   $scope.next = function() {
 
+    var deferred = $q.defer();
+
     if ( !$scope.data.valid_quote ) {
       $scope.showAlert('err.invalid_quote', 'err.invalid_quote_msg');
-      return;
+      deferred.reject();
+      return deferred.promise;
     }
 
     var keys = Wallet.getAccountAccessKeys();
@@ -139,16 +132,18 @@ bitwallet_controllers
         $scope.data.step=2;
 
         Wallet.loadBalance();
-        //$scope.alreadyPaid();
-
+        deferred.resolve();
       }, function(err) {
         console.log(JSON.stringify(err));
+        deferred.reject();
       });
 
     }, function(err) {
       console.log(err);
+      deferred.reject();
     });
 
+    return deferred.promise;
   }
   
   $scope.copyUri = function(){

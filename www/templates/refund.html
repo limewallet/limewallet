@@ -8,9 +8,6 @@
         
       <div class="list">
         <p class="paragraph wrap_text" ng-bind-html="'refund.headline'|translate:{ action:(('g.'+data.xtx.extra_data)|translate|lowercase)}"></p>          
-        <!-- div class="item item-divider base-color larger bgcolor_white">
-          <span class="tx_desc wrap_text" ng-bind-html="'refund.headline'|translate:{action:data.xtx.extra_data}"></span> 
-        </div -->
         <form novalidate name="sendForm" class="deposit_form send_form">
           <div class="recipient_container">
             <label class="item item-input pmd item-floating-label">
@@ -22,12 +19,12 @@
             </button>
           </div>
         </form>   
-        </div>
-        <div class="buttons_container hide-on-keyboard-open ">
-          <button ng-click="doRefund()" class="button button-block button-energized no-margin hide-on-keyboard-open button_taller" style="position:absolute;bottom:0px;">
-            {{'g.refund'|translate|uppercase}}
-          </button>
-        </div>
+      </div>
+      <div class="buttons_container hide-on-keyboard-open ">
+        <button one-click="doRefund()" class="button button-block button-energized no-margin hide-on-keyboard-open button_taller">
+          {{'g.refund'|translate|uppercase}}
+        </button>
+      </div>
     </ion-content>
 
   </ion-view>

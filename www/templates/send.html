@@ -39,9 +39,9 @@
         </div>
       </form>
       
-      <fieldset ng-disabled="data.from_in_progress" class="buttons_container hide-on-keyboard-open"> 
-        <button ng-click="doSend(transaction)" class="button button-block button-energized no-margin button_taller"> {{'g.send'|translate|uppercase}} 
+      <div class="buttons_container hide-on-keyboard-open"> 
+        <button one-click="doSend(transaction)" class="button button-block button-energized no-margin button_taller"> {{'g.send'|translate|uppercase}} 
         </button>
-      </fieldset> 
+      </div> 
     </ion-content>
   </ion-view>

@@ -100,6 +100,7 @@ bitwallet_controllers
       }, function(err){
         console.log(JSON.stringify(err));
         $scope.data.quoting = false;
+        $scope.showAlert('err.occurred','err.invalid_quote_msg');
       });
     }, 750);
   });
@@ -154,14 +155,18 @@ bitwallet_controllers
 
   $scope.doAcceptAndSend = function() {
 
+    var deferred = $q.defer();
+
     if (!$scope.data.valid_quote) {
-      return;
+      deferred.reject();
+      return deferred.promise;
     }
 
     BitShares.btcIsValidAddress($scope.data.address).then(function(is_valid) {
 
       if(!$scope.validateSend($scope.data.quote.quote.cl_pay)) {
-        return;
+        deferred.reject();
+        return deferred.promise;
       }
 
       $scope.showLoading('g.sending');
@@ -188,9 +193,10 @@ bitwallet_controllers
         $scope.trySend(tx).then(function() {
 
           ExchangeTransaction.add(xtx.tx).then(function(res) {
+            
             Wallet.loadBalance();
-            //TODO: show success
             $scope.hideLoading();
+            deferred.resolve();
             $scope.goToSuccess({
               txid            : undefined,
               xtxid           : undefined,
@@ -205,26 +211,31 @@ bitwallet_controllers
             $scope.hideLoading();
             $scope.showAlert('withdraw.title', err);
             console.log(JSON.stringify(err));
+            deferred.reject();
           });
 
         }, function(err) {
           $scope.hideLoading();
           $scope.showAlert('withdraw.title', err);
           console.log(JSON.stringify(err));
+          deferred.reject();
         });
 
       }, function(err) {
         $scope.hideLoading();
         $scope.showAlert('withdraw.title', err);
         console.log(err);
+        deferred.reject();
       });
 
     }, function(err) {
       $scope.hideLoading();
       $scope.showAlert('withdraw.title', 'err.invalid_btc_addy');
       console.log(err);
+      deferred.reject();
     });
-
+    
+    return deferred.promise;
   }
 
   $scope.copyUri = function(){

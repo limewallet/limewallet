@@ -52,9 +52,9 @@ bitwallet_controllers
     window.plugins.toast.show( T.i('err.invalid_xtx_id'), 'long', 'bottom');
   });
   
-  $scope.xxxx = function() {
+  $scope.acceptQuote = function() {
     
-    console.log('doAcceptReQuote');
+    var deferred = $q.defer();
 
     $scope.showLoading('g.accept_tx_process');
 
@@ -65,13 +65,17 @@ bitwallet_controllers
       ExchangeTransaction.add(xtx.tx).finally(function() {
         Wallet.loadBalance().finally(function() {
           $scope.hideLoading();
+          deferred.resolve();
           $scope.goHome();
         });
       });
     }, function(error){
       $scope.hideLoading();
       $scope.showAlert('err.cant_accept', 'err.cant_accept_retry');
+      deferred.reject();
     });
+    
+    return deferred.promise;
   }
   
   $scope.refund = function(){

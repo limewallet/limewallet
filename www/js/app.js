@@ -1,12 +1,7 @@
 // BitWallet
 
 function handleOpenURL(url) {
-  var event = new CustomEvent('OnPaymentRequest', {detail: {'url': url}});
-  setTimeout( function() {
-      window.dispatchEvent(event);
-    },
-    0
-  );
+  window.localStorage.setItem('external_load', url);
 }
 
 
@@ -164,16 +159,16 @@ bitwallet_module
       }
     })
     
-    .state('app.register', {
-      url:    "/register",
-      cache: false,
-      views: {
-              'menuContent' :{
-                templateUrl: "templates/register.html",
-                controller: 'RegisterCtrl'
-            }
-      }
-    })
+    // .state('app.register', {
+    //   url:    "/register",
+    //   cache: false,
+    //   views: {
+    //           'menuContent' :{
+    //             templateUrl: "templates/register.html",
+    //             controller: 'RegisterCtrl'
+    //         }
+    //   }
+    // })
     
     .state('app.account', {
       cache:  false,
@@ -380,6 +375,16 @@ bitwallet_module
 
       Wallet.init().then(function() {
         
+        var external_load = window.localStorage.getItem('external_load');
+        if(external_load){
+          window.localStorage.removeItem('external_load');
+          var event = new CustomEvent('OnPaymentRequest', {detail: {'url': url}});
+          setTimeout( function() {
+              window.dispatchEvent(event);
+            }, 0);
+          return;
+        }
+        
         //$state.go('app.xtx_requote', {xtx_id:'13'});
         //$state.go('app.xtransaction_details', {x_id:'10'});
         //$state.go('app.transaction_details', {tx_id:'5394df9b7a4e1a9db60f576ad7e1a079b439a7e4'});
@@ -408,7 +413,6 @@ bitwallet_module
         //obscure around glue cheese inherit thing subject blade slow unknown solve assume
 
         Wallet.refreshBalance().finally(function() {
-          //console.log('HIDALA FUTIOOOO');
           $cordovaSplashscreen.hide();
         });
 
@@ -422,7 +426,7 @@ bitwallet_module
   });
 
   //*****************************
-  // CERATE or RECOVER WALLET?
+  // CREATE or RECOVER WALLET?
   //*****************************
   $rootScope.init                     = { mode : undefined,
                                           seed : ''};
@@ -518,17 +522,10 @@ bitwallet_module
       }
     );
             
-    //$rootScope.wallet = Wallet.txs;
-    //$rootScope.$watch(
-        //function(){ return Wallet.txs },
-      //function(newVal) {
-        //$rootScope.wallet = newVal;
-      //}
-    //);
-
     //*****************
     // INIT DEV/PROD ENVIRONMENT
     //*****************
+    console.log(' INIT ENVIRONMENT.test:'+ENVIRONMENT.test);
     BitShares.setTest(ENVIRONMENT.test);
     
     //*****************

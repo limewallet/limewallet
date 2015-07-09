@@ -960,9 +960,9 @@ fieldset {
   border: none!important;
 }
 
-.withdraw, .deposit , .welcome, .create_account, .register{
-    display: -webkit-flex; /* Safari */
-    -webkit-flex-flow: row wrap; /* Safari 6.1+ */
+.withdraw, .deposit , .welcome, .create_account, .register, .refund{
+    display: -webkit-flex;
+    -webkit-flex-flow: row wrap;
     display: flex;
     flex-flow: row wrap;}
 
@@ -1136,8 +1136,8 @@ input.pmd {font-size:16px!important;  color:#fff;border-top:none; border-left:no
 
 .button_taller.dock_bottom.button-icon.ion-ios-paperplane {font-size: 40px!important;/*color:#fff !important;*/}
 
-.send_form input.pmd.input_amount{font-size:32px!important; line-height:32px!important;height:44px!important;
-    padding-right: 70px; } /* HACK padding-right: 70px!important*/
+.send_form input.pmd.input_amount{font-size:35px!important; line-height:35px!important;height:44px!important;
+    padding-right: 70px; padding-top: 10px!important;} /* HACK padding-right: 70px!important*/
 .send_form .item-floating-label input.pmd.input_amount {padding-left: 25px;text-align: left;}
 .send_btc_form .item-floating-label input.pmd.input_amount {padding-left: 0px;}
 .send_form input.pmd:focus {border-bottom: 1px solid #8ec919 !important;}    
@@ -1192,7 +1192,8 @@ button.top_35 {top:35px!important;}
     border-right:none!important;
     border-bottom:none!important;}
 
-.send .scroll{
+.send .scroll
+  , .withdraw .scroll{
      display: -webkit-flex; /* Safari */
     -webkit-flex-flow: row wrap; /* Safari 6.1+ */
     -webkit-align-content: strecht; /* Safari 7.0+ */
@@ -1245,10 +1246,10 @@ button.top_35 {top:35px!important;}
     float:right;
     color: #d0d0d0; /*#d8d8d8;*/
     text-align: right;
-    /*min-width: 140px;*/
     font-size:12px;
 }
 
+.send_btc_form .hint.left {min-width:125px;}
 .hint.right {
     text-align: right;
     float: right;
@@ -1272,7 +1273,7 @@ button.top_35 {top:35px!important;}
 .deposit_rate .hint.left{
   width:auto;
   padding-right:10px;
-  /*min-width: 80px!important;*/
+  min-width: 125px!important;
 }
 .deposit_rate_loading {text-align:center;display: block;min-height: 28px;overflow: hidden;margin-top:0px;} /* margin-top:40px  */
 
@@ -1533,13 +1534,17 @@ p.paragraph {padding:25px; font-size:17px; font-weight: 300;margin:0;}
   display:none;
 }
 
+.send_btc_form label.pmd.btc_memo{
+  clear:both;
+}
+
 @media only screen 
   and (min-device-width: 320px) 
   and (max-device-width: 359px)
   and (-webkit-min-device-pixel-ratio: 2)
   and (orientation: portrait) {
     
-    .send_form .item-floating-label i.pmd{top: 40px;}
+    .send_form .item-floating-label i.pmd{top: 43px;}
 
     .home .no_tx {padding-top: 100px;}  
 
@@ -1549,10 +1554,6 @@ p.paragraph {padding:25px; font-size:17px; font-weight: 300;margin:0;}
       padding-right: 16px!important;
     }
     
-    .send_btc_form label.pmd.btc_memo{
-      clear:both;
-    }
-
     .send_btc_form label.pmd.btc_memo, .btc_amount_container label.pmd{
       padding:16px 16px 0px 16px!important;
     }
@@ -1589,9 +1590,13 @@ p.paragraph {padding:25px; font-size:17px; font-weight: 300;margin:0;}
     .balance_container .button-bar {
       padding-top:0px;
     }
+    .balance_ {
+      display:block; height: 73px; overflow:hidden;
+    }
     .balance{
       padding-top: 0px;
     }
+
     .balance.hidden{
       padding-top: 12px;
     }

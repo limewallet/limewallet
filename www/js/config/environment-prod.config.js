@@ -16,4 +16,3 @@ bitwallet_config
   wsurl     : 'wss://ws.limewallet.io/events',
   apiPubkey : 'BTS6wneV7EdW9zWC3wtey9ptMpNCEZzc1MSiYwMof9ug4CC1SCSqB'
 });
-

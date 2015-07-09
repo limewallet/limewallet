@@ -4,3 +4,8 @@
 node_modules/
 platforms/
 plugins/
+npm-debug.log
+resources/ios/
+www/.DS_Store
+www/css/.DS_Store
+www/lib/ion-autocomplete/dist/.DS_Store
