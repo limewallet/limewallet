@@ -6,7 +6,7 @@
           <label class="item item-input item-floating-label pmd">
             <span class="input-label pmd">{{'g.amount'|translate}}</span>
             <input numbers-only-key-press required name="transactionAmount" placeholder="{{'g.amount'|translate}}" ng-model="transaction.amount" type="number" class="input_amount big pmd"> 
-            <i class="pmd icon placeholder-icon">$</i>
+            <i class="pmd icon placeholder-icon">{{wallet.asset.symbol_ui_text}}</i>
             <br/>
           </label>
           <span class="error input" ng-show="receiveForm.transactionAmount.$error.number">{{'err.enter_valid_amount'|translate}}</span>

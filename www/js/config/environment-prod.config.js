@@ -13,7 +13,6 @@ bitwallet_config
     var url = 'https://api.limewallet.io/api/v2';
     return url + path;
   },
-  wsurl     : 'wss://ws.limewallet.com/events',
+  wsurl     : 'wss://ws.limewallet.io/events',
   apiPubkey : 'BTS6wneV7EdW9zWC3wtey9ptMpNCEZzc1MSiYwMof9ug4CC1SCSqB'
 });
-

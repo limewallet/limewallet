@@ -42,48 +42,50 @@ $scope.data = {   xtx           : undefined,
 
   $scope.doRefund = function(){
     
+    var deferred = $q.defer();
+
     if (!$scope.data.refund_address || $scope.data.refund_address.length==0)
     {
       //window.plugins.toast.show(T.i('rate_changed.operation_completed'), 'long', 'bottom');      
       $scope.showAlert('g.btc_addr_error','g.btc_addr_error_input');
-      return;
+      deferred.reject();
+      return deferred.promise;
     }
 
     var confirmPopup = $scope.showConfirm(
        'rate_changed.refund_headline',
        'rate_changed.refund_content'
-     ).then(function(res) {
+    ).then(function(res) {
       if(!res)
-        return;
-      $scope.refund();
-     });
-  }
-
-  $scope.refund = function(){
-    $scope.showLoading('g.accept_tx_process');
-    
-    var addy = Wallet.getMainAddress();
-    BitShares.getBackendToken(addy).then(function(token) {
-      BitShares.refundXTx(token, $scope.data.xtx_id, $scope.data.refund_address ).then(function(result){
-        $scope.hideLoading();
-        console.log(' -- Refund result:'+JSON.stringify(result));
-        
-        Wallet.onNewXTx(result.tx);
-        $scope.goHome();
-        window.plugins.toast.show(T.i('refund.successful'), 'long', 'bottom');
+      {
+        deferred.reject();
+        return deferred.promise;
+      }
+      
+      $scope.showLoading('g.accept_tx_process');
+      var addy = Wallet.getMainAddress();
+      BitShares.getBackendToken(addy).then(function(token) {
+        BitShares.refundXTx(token, $scope.data.xtx_id, $scope.data.refund_address ).then(function(result){
+          $scope.hideLoading();
+          Wallet.onNewXTx(result.tx);
+          deferred.resolve();
+          $scope.goHome();
+          window.plugins.toast.show(T.i('refund.successful'), 'long', 'bottom');
+        }, function(error){
+          deferred.reject(error);
+          $scope.hideLoading();
+          $scope.showAlert('err.cant_accept', 'err.cant_accept_retry');
+        });
       }, function(error){
-        if(error=='auth_failed')
-          Setting.remove(Setting.BSW_TOKEN);
         $scope.hideLoading();
-        $scope.showAlert('err.cant_accept', 'err.cant_accept_retry');
-        return;
+        console.log(error);
+        $scope.showAlert('err.no_token', 'err.no_token_retry');
+        deferred.reject(error);
       });
-    }, function(error){
-      $scope.hideLoading();
-      console.log(error);
-      $scope.showAlert('err.no_token', 'err.no_token_retry');
-      return;
+
     });
+
+    return deferred.promise;
   }
 
   $scope.nanobar = undefined;

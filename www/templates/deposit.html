@@ -50,15 +50,13 @@
       <!-- /ion-scroll -->
       
       <div class="buttons_container hide-on-keyboard-open">
-        <fieldset ng-disabled="data.from_in_progress">
-          <button ng-click="next()" ng-show="data.step==1" class="button button-block button-energized no-margin button_taller">
-            {{'g.next'|translate|uppercase}}
-          </button>
-          
-          <button ng-click="goHome()" ng-show="data.step==2" class="button button-block button-energized no-margin button_taller">
-            {{'g.done'|translate|uppercase}}
-          </button>
-        </fieldset>
+        <button one-click="next()" ng-show="data.step==1" class="button button-block button-energized no-margin button_taller">
+          {{'g.next'|translate|uppercase}}
+        </button>
+        
+        <button ng-click="goHome()" ng-show="data.step==2" class="button button-block button-energized no-margin button_taller">
+          {{'g.done'|translate|uppercase}}
+        </button>
       </div>
       
     </ion-content>

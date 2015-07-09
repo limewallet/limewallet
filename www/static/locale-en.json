@@ -57,6 +57,8 @@
     "save"                : "Save",
     "cancel"              : "Cancel",
     
+    "sending"             : "Sending",
+
     "self"                : "Received",
     "withdraw"            : "Withdraw",
     "sweep"               : "Balance Sweep",
@@ -433,9 +435,10 @@
   },
   
   "account":{
-    "type_name"     : "You can register your name in Bitshares network.<br/>This global unique name will be your identity in the network. You can later share it in order to receive payments.",
-    "edit_photo"    : "You can change your photo.<br/>Options are robohash (default) and gravatar.<br/>You will be charged for this transaction.",
-    "updating"      : "Update in progress"
+    "type_name"             : "You can register your name in Bitshares network.<br/>This global unique name will be your identity in the network. You can later share it in order to receive payments.",
+    "edit_photo"            : "You can change your photo.<br/>Options are robohash (default) and gravatar.<br/>You will be charged for this transaction.",
+    "updating"              : "Update in progress",
+    "already_registered"    : "Account already registered"
    },
 
   "rate_changed":{

@@ -37,8 +37,6 @@
                   {{'g.cur_rate'|translate}}:
                 </div>
 
-                <!-- div class="hint left">{{'g.you_pay'|translate}}:</div><div class="hint right base-color">{{data.quote.quote.cl_pay}}&nbsp;{{data.quote.quote.cl_pay_curr}}</div> <br>
-                <div class="hint left">{{'g.cur_rate'|translate}}:</div><div class="hint right base-color">{{data.quote.quote.rate}}&nbsp;{{data.quote.quote.book}}</div -->
               </div>
             
           </div>
@@ -57,7 +55,7 @@
       </form>
       
       <fieldset ng-disabled="!data.valid_quote" class="buttons_container hide-on-keyboard-open"> 
-        <button ng-click="doAcceptAndSend()" class="button button-block button-energized no-margin button_taller"> {{'g.send'|translate|uppercase}} 
+        <button one-click="doAcceptAndSend()" class="button button-block button-energized no-margin button_taller"> {{'g.send'|translate|uppercase}} 
         </button>
       </fieldset> 
     </ion-content>

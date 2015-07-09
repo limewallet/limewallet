@@ -97,22 +97,25 @@ bitwallet_controllers
   }
 
   $scope.save = function(){
-    console.log(' -------------- llamaron a Contact.$scope.saveOrUpdate() ');
+    var deferred = $q.defer();
     if(!$scope.data.contact.name)
     {
       $scope.showAlert('err.contact_name_empty', 'err.contact_name_empty_msg');
-      return;
+      deferred.reject();
+      return deferred.promise;
     }
 
     if(!BitShares.isValidBTSName($scope.data.contact.name).valid) {
       $scope.showAlert('err.invalid_name', 'register.valid_name_chars');
-      return;
+      deferred.reject();
+      return deferred.promise;
     }
 
     if(!$scope.data.contact.pubkey_or_address)
     {
       $scope.showAlert('err.contact_addr_pk_empty', 'err.contact_addr_pk_empty_msg');
-      return;
+      deferred.reject();
+      return deferred.promise;
     }
 
     //proms = { 
@@ -145,15 +148,20 @@ bitwallet_controllers
       } 
       db_prom.then(function(res){
         window.plugins.toast.show(T.i('contacts.saved_ok'), 'long', 'bottom');
+        deferred.resolve();
         $scope.goBack();
+
       }, function(err){
         console.log('xxx=>'+JSON.stringify(err));
         $scope.showAlert('err.contact_saving','err.contact_saving_msg');
+        deferred.reject();
       })     
     }, function(err){
       $scope.showAlert('err.contact_validating', 'err.invalid_pubkey_or_address');
-      return;
+      deferred.reject();
     })
+
+    return deferred.promise;
   }
 });
 
