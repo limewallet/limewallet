@@ -13,13 +13,13 @@
             <canvas id="menu_jdenticon_canvas" width="60" height="60" data-jdenticon-hash="{{data.contact.avatar_hash}}"></canvas>
             <label class="item item-input pmd item-floating-label">
               <span class="input-label pmd">{{'g.name'|translate}}</span>
-              <input required type="text" placeholder="{{'g.name'|translate}}" ng-model="data.contact.name" class="input_text big pmd">
+              <input required type="text" placeholder="{{'g.name'|translate}}" autocapitalize="off" ng-model="data.contact.name" class="input_text big pmd">
             </label>
           </div>
 
           <label class="item item-input pmd item-floating-label">
             <span class="input-label pmd">{{'contacts.pubkey_or_address'|translate}}</span>
-            <input required type="text" placeholder="{{'contacts.pubkey_or_address'|translate}}" ng-model="data.contact.pubkey_or_address" class="input_text big pmd">
+            <input required type="text" autocapitalize="off" placeholder="{{'contacts.pubkey_or_address'|translate}}" ng-model="data.contact.pubkey_or_address" class="input_text big pmd">
           </label>
 
         </div>

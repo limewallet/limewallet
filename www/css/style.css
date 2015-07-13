@@ -244,7 +244,8 @@ ion-nav-bar.light_navbar.darky .lime_icon.qr-code { background-image: url(../img
 
 .pending_text {background-color: transparent!important; color:#4fbaed!important;}
 .pending_text.XX, .pending_text.RR, .pending_text.RF {color:#BDC3C7!important;}
-.pending_text.RC{color: #E74C3C!important;} 
+.pending_text.RC {color: #E74C3C!important;} 
+.pending_text.OK {color:#66cc33!important;}
 
 .transactions p , .transactions span.tx_address {font-size:12px!important;}
 .transactions span.tx_amount{font-weight:700;font-size:16px!important;}
@@ -1192,8 +1193,9 @@ button.top_35 {top:35px!important;}
     border-right:none!important;
     border-bottom:none!important;}
 
-.send .scroll
-  , .withdraw .scroll{
+.deposit .scroll, 
+  .send .scroll, 
+  .withdraw .scroll{
      display: -webkit-flex; /* Safari */
     -webkit-flex-flow: row wrap; /* Safari 6.1+ */
     -webkit-align-content: strecht; /* Safari 7.0+ */
@@ -1548,8 +1550,8 @@ p.paragraph {padding:25px; font-size:17px; font-weight: 300;margin:0;}
 
     .home .no_tx {padding-top: 100px;}  
 
-    #qrcode img {width:284px; height:284px;}
-
+    #deposit_qrcode img, #qrcode img {width:284px; height:284px;}
+    
     .send_btc_form .deposit_rate {
       padding-right: 16px!important;
     }

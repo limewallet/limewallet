@@ -292,22 +292,15 @@ bitwallet_services
 
         var values = {};
         data.forEach(function(d) {
-          console.log('=====> ' + d.name + ':' + d.value);
+          //console.log('=====> ' + d.name + ':' + d.value);
           values[d.name] = d.value;
         });
-
-        console.log('XXXXXXXXXXXXXXXX ');
-        console.log(JSON.stringify(values));
-        console.log('XXXXXXXXXXXXXXXX ');
 
         Object.keys(keys).forEach(function(k) {
           if( k in values ) return;
           values[k] = keys[k];
         });
         
-        console.log('XXXXXXXXXXXXXXXX ');
-        console.log(JSON.stringify(values));
-        console.log('XXXXXXXXXXXXXXXX ');
         deferred.resolve(values);
 
       }, function(err) {

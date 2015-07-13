@@ -87,7 +87,7 @@ angular.module('ion-autocomplete', []).directive('ionAutocomplete', [
                     '<div class="bar bar-header item-input-inset">',
                     '<label class="item-input-wrapper">',
                     '<i class="icon ion-ios7-search placeholder-icon"></i>',
-                    '<input type="search" class="ion-autocomplete-search" ng-model="searchQuery" placeholder="{{placeholder_}}"/>',
+                    '<input type="search" class="ion-autocomplete-search" ng-model="searchQuery" autocapitalize="off" placeholder="{{placeholder_}}"/>',
                     '</label>',
                     '<button class="ion-autocomplete-cancel button button-clear">{{cancelLabel}}</button>',
                     '</div>',
