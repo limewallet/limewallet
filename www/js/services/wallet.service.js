@@ -381,8 +381,8 @@ bitwallet_services
         // ptr_data.account.access_key   = '7cMHdvnvhv8Q36c4Xf8HJQaibTi4kpANNaBQYhtzQ2M6';
         // ptr_data.account.secret_key   = '7teitGUUbtaRJY6mnv3mB9d1VB3UggiBQf4kyiL2PaKB';
 
-        console.log('DUMP DEFAULT ACCOUNT');
-        console.log(JSON.stringify(ptr_data.account));
+        // console.log('DUMP DEFAULT ACCOUNT');
+        // console.log(JSON.stringify(ptr_data.account));
 
         ptr_data.asset                 = ptr_data.assets[res.setting.default_asset];
         ptr_data.ui.balance.allow_hide = (res.setting.hide_balance == 'true');

@@ -371,7 +371,7 @@ bitwallet_module
         return;
       }
       
-      console.log(' -- -----------------  global_init response =>' + JSON.stringify(account));  
+      // console.log(' -- -----------------  global_init response =>' + JSON.stringify(account));  
 
       Wallet.init().then(function() {
         

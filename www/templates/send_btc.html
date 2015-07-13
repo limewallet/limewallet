@@ -11,7 +11,7 @@
           
           <label class="item item-input pmd item-floating-label bitcoin_address">
             <span class="input-label pmd">{{'g.bitcoin_address'|translate}}</span>
-            <input name="transactionAddress" placeholder="{{'g.bitcoin_address'|translate}}" ng-model="data.address" class="big full_width pmd" />
+            <input name="transactionAddress" autocapitalize="off" placeholder="{{'g.bitcoin_address'|translate}}" ng-model="data.address" class="big full_width pmd" />
             <span style="clear:both;float:right;width:100%;" class="quote_error assertive" ng-show="data.address_error!==undefined">{{data.address_error}}</span>
           </label>
 

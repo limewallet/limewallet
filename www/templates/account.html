@@ -10,7 +10,7 @@
           <div class="seed_container">
             <form novalidate name="encryptionForm" class="encryption_form">
               <label class="item item-input pmd">
-                <input type="text" placeholder="{{'g.name'|translate}}" ng-model="data.name" class="pmd big" ng-disabled="wallet.account.registered==1">
+                <input type="text" placeholder="{{'g.name'|translate}}" ng-model="data.name" autocapitalize="off" class="pmd big" ng-disabled="wallet.account.registered==1">
                 <br/>
               </label>
               <ion-checkbox class="pmd" ng-model="data.do_register" ng-checked="data.do_register" ng-disabled="wallet.account.registered==1">{{(wallet.account.registered==1?'register.already_registered':'register.register_account_globally')|translate }}</ion-checkbox>
