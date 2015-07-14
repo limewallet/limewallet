@@ -44,7 +44,8 @@
     
     <ion-scroll ng-show="txs.transactions.orderedKeys && txs.transactions.orderedKeys.length>0" zooming="false" direction="y" class="index_transactions transactions">
       <ion-refresher
-      pulling-text="{{'home.pull_to_refresh' | translate}}"
+        pulling-text="{{'home.pull_to_refresh' | translate}}"
+        spinner="android"
         on-refresh="doRefresh()">
       </ion-refresher>
       <ion-list class="main_transactions">
