@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <widget id="com.latincoin.limewallet" version="0.0.2" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
   <name>LimeWallet</name>
-  <description>Bitshares mobile wallet.</description>
-  <author email="info@latincoin.com" href="http://www.limewallet.io/">Latincoin Development Team</author>
+  <description>LimeWallet</description>
+  <author email="info@limewallet.io" href="http://www.limewallet.io/">LimeWallet Dev Team</author>
   <content src="index.html"/>
   <allow-navigation href="*"/>
   <allow-intent href="*"/>

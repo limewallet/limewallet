@@ -1,8 +1,4 @@
 {
   "name": "LimeWallet",
-  "app_id": "",
-  "proxies": [{
-    "path": "/api/v2",
-    "proxyUrl": "http://bsw-test.latincoin.com/api/v2"
-  }]
+  "app_id": ""
 }

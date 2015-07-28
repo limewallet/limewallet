@@ -13,4 +13,5 @@ cordova plugin add org.apache.cordova.splashscreen
 cordova plugin add https://github.com/EddyVerbruggen/Toast-PhoneGap-Plugin.git
 cordova plugin add org.apache.cordova.globalization
 cordova plugin add https://github.com/latincoin-com/cordova-plugin-bitwallet.git
-cordova plugin add https://github.com/EddyVerbruggen/LaunchMyApp-PhoneGap-Plugin.git --variable URL_SCHEME=bts
+cordova plugin add https://github.com/latincoin-com/Custom-URL-scheme.git --variable URL_SCHEME=bts
+

@@ -76,13 +76,14 @@ bitwallet_services
     }
 
     self.onConnectedToBackend = function () {
+      console.log('Vamos por aca');
       self.subscribeToNotifications();
       if( self.disconnect_count > 0 )
         self.refreshBalance();
     };
 
     self.canSend = function (amount) {
-      console.log('CANSEND: ' + self.data.asset.int_amount + ' - ' + amount );
+      //console.log('CANSEND: ' + self.data.asset.int_amount + ' - ' + amount );
       return self.data.asset.int_amount - amount;
     }
 
@@ -233,7 +234,7 @@ bitwallet_services
         deferred.resolve();
         return deferred.promise;
       }
-      console.log('Wallet.unlock: ['+password+']');
+      //console.log('Wallet.unlock: ['+password+']');
       // chequeamos que podas decrypt la primer merda
       var proms = {
         'pbkdf2'          : BitShares.derivePassword(password, self.data.salt),
@@ -283,7 +284,7 @@ bitwallet_services
       for(var i=0; i<keys.length; i++){
        if(self.data.assets[keys[i]].name == name)
         {
-          console.log('')
+          //console.log('')
           return self.data.assets[keys[i]];
         }
       }
@@ -426,7 +427,7 @@ bitwallet_services
       
         self.connectToBackend(ENVIRONMENT.wsurl);
         deferred.resolve();
-      
+
       }, function(err) {
         //TODO:
         deferred.reject(err);
@@ -488,7 +489,7 @@ bitwallet_services
         }  
       });
 
-      console.log('CTOSEARCH ' + JSON.stringify(to_search));
+      //console.log('CTOSEARCH ' + JSON.stringify(to_search));
 
       if( to_search.length == 0 ) {
         deferred.resolve(0);
@@ -514,7 +515,7 @@ bitwallet_services
         });
 
         $q.all(proms).then(function() {
-          console.log('VOY A METER ' + JSON.stringify(sql_cmd) + '-' + JSON.stringify(sql_params));
+          //console.log('VOY A METER ' + JSON.stringify(sql_cmd) + '-' + JSON.stringify(sql_params));
           DB.queryMany(sql_cmd, sql_params).then(function() {
             deferred.resolve(sql_cmd.length);
           }, function(err) {
@@ -559,7 +560,7 @@ bitwallet_services
           self.data.account.plain_memo_mpk,
           slate
         ).then(function(res) {
-          console.log('DERIVO PRIVADA INDICE '+ memo.slate + ' => ' + slate + ' => ' + res.privkey + ' => ' + self.data.account.plain_skip32_key + ' => ' + self.data.account.plain_memo_mpk);
+          //console.log('DERIVO PRIVADA INDICE '+ memo.slate + ' => ' + slate + ' => ' + res.privkey + ' => ' + self.data.account.plain_skip32_key + ' => ' + self.data.account.plain_memo_mpk);
           deferred.resolve(res.privkey);
         }, function(err) {
           console.log('ERRGPK1 ' + JSON.stringify(err));
@@ -604,8 +605,8 @@ bitwallet_services
               // return tmp.promise;
               return undefined;
             }
-            console.log(' -*-*- loadBalance -> SOMETHING PUSHED TO Memo Proms');
-            console.log(JSON.stringify(m));
+            //console.log(' -*-*- loadBalance -> SOMETHING PUSHED TO Memo Proms');
+            //console.log(JSON.stringify(m));
             //Entrada: uso mi PK y la otk
             if( m.in_out == 0 ) {
               return BitShares.decryptMemo(m.one_time_key, m.memo, pk);
@@ -640,12 +641,12 @@ bitwallet_services
           var sql_params = [];
 
           Object.keys(proms).forEach(function(mid) {
-            console.log(' -*-*- loadBalance -> ITERATING Memo Proms');
+            //console.log(' -*-*- loadBalance -> ITERATING Memo Proms');
             if(!res[mid]) {
               //console.log('Not trying to decrypt memo ...');
               return;
             } 
-            console.log(' -*-*- loadBalance -> TRYING TO DECRYPT Memo Proms');
+            //console.log(' -*-*- loadBalance -> TRYING TO DECRYPT Memo Proms');
             if(!res[mid].error) {
               var tmp = Memo._decrypt(mid, res[mid].message, res[mid].from);
               sql_cmd.push(tmp.sql);
@@ -659,15 +660,15 @@ bitwallet_services
           
           DB.queryMany(sql_cmd, sql_params).then(function() {
 
-            console.log(' -/-/- loadBalance -> calling [Operation.all()]');
+            //console.log(' -/-/- loadBalance -> calling [Operation.all()]');
             Operation.all().then(function(ops) {
-              console.log(' -/-/-/ loadBalance -> Operation.all() res OK');
+              //console.log(' -/-/-/ loadBalance -> Operation.all() res OK');
               self.txs.transactions = self.orderTransactions(ops);
               
-              console.log(' -/-/-/ loadBalance -> about to lookupContacts()');
+              //console.log(' -/-/-/ loadBalance -> about to lookupContacts()');
               self.lookupContacts(ops, to_search).then(function(n) {
                 if( n > 0 && !auto_call) {
-                  console.log(' -/-/-/ loadBalance -> about to call loadBalance(true)');
+                  //console.log(' -/-/-/ loadBalance -> about to call loadBalance(true)');
                   self.loadBalance(true);
                 }  
               }, function(err) {
@@ -717,14 +718,14 @@ bitwallet_services
 
       $q.all(proms).then(function(res) { 
 
-        console.log('refreshBalance: PARAMS: from_start: ' + from_start + ' - block_id: ' + res.block_id + ' - last_xtx: ' + res.last_xtx);
+        //console.log('refreshBalance: PARAMS: from_start: ' + from_start + ' - block_id: ' + res.block_id + ' - last_xtx: ' + res.last_xtx);
 
         var keys = {
           'akey' : self.data.account.access_key,
           'skey' : self.data.account.secret_key
         }
 
-        console.log('KEYS a USAR ' + JSON.stringify(keys));
+        //console.log('KEYS a USAR ' + JSON.stringify(keys));
 
         proms = { 
           'ops'  : BitShares.getBalance(self.data.account.address, res.block_id, self.data.asset.id),
@@ -765,7 +766,7 @@ bitwallet_services
           });
           
 
-          console.log('MIRA LAS XTXS ' + JSON.stringify(res.xtxs.txs));
+          //console.log('MIRA LAS XTXS ' + JSON.stringify(res.xtxs.txs));
           res.xtxs.txs.forEach(function(xtx){
             var tmp = ExchangeTransaction._add(xtx);
             sql_cmd.push(tmp.sql);
@@ -782,16 +783,16 @@ bitwallet_services
               var tmp = Memo._add(memos[mid]);
               sql_cmd.push(tmp.sql);
               sql_params.push(tmp.params);
-              console.log('Voy a meter memo ID ' + mid);
+              //console.log('Voy a meter memo ID ' + mid);
             });
 
             DB.queryMany(sql_cmd, sql_params).then(function(res) {
               
-              console.log('Todo metido en la DB!!!');
+              //console.log('Todo metido en la DB!!!');
               //Data is on the DB 
               self.loadBalance().then(function() {
                 deferred.resolve();
-                console.log('Luego del load balanccciio!!!');
+                //console.log('Luego del load balanccciio!!!');
                 self.emit(self.REFRESH_DONE);
               }, function(err) {
                 self.refreshError(deferred, 'refreshError #0', err);

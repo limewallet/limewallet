@@ -1,9 +1,16 @@
 // BitWallet
 
-function handleOpenURL(url) {
-  window.localStorage.setItem('external_load', url);
-}
+window.handleOpenURL = function(url) {
+  window.external_load =  url;
+  console.log('mira con lo que viene =>' + url);
 
+  if( window.init_done ) {
+    var event = new CustomEvent('OnPaymentRequest', {detail: {'url': url}});
+    setTimeout( function() {
+      window.dispatchEvent(event);
+    }, 0);
+  }
+}
 
 var bitwallet_module = angular.module('bit_wallet', ['ionic', 'ngCordova', 'pascalprecht.translate', 'reconnectingWebSocket', 'bit_wallet.controllers','bit_wallet.services', 'bit_wallet.filters', 'bit_wallet.config', 'ion-autocomplete']);
 
@@ -375,15 +382,18 @@ bitwallet_module
 
       Wallet.init().then(function() {
         
-        var external_load = window.localStorage.getItem('external_load');
-        if(external_load){
-          window.localStorage.removeItem('external_load');
-          var event = new CustomEvent('OnPaymentRequest', {detail: {'url': url}});
-          setTimeout( function() {
-              window.dispatchEvent(event);
-            }, 0);
-          return;
-        }
+        //var external_load = window.localStorage.getItem('external_load');
+        //console.log('EXTERNAL LOAD ==> ' + JSON.stringify(external_load));
+        //if(external_load){
+          //window.localStorage.removeItem('external_load');
+          //var event = new CustomEvent('OnPaymentRequest', {detail: {'url': external_load}});
+          //setTimeout( function() {
+              //window.dispatchEvent(event);
+            //}, 0);
+
+          //$cordovaSplashscreen.hide();
+          //return;
+        //}
         
         //$state.go('app.xtx_requote', {xtx_id:'13'});
         //$state.go('app.xtransaction_details', {x_id:'10'});
@@ -414,6 +424,17 @@ bitwallet_module
 
         Wallet.refreshBalance().finally(function() {
           $cordovaSplashscreen.hide();
+          window.init_done = true;
+
+          if(window.external_load) {
+            var url = window.external_load;
+            window.external_load = null;
+            var event = new CustomEvent('OnPaymentRequest', {detail: {'url': url}});
+            setTimeout( function() {
+              window.dispatchEvent(event);
+            }, 0);
+          }
+
         });
 
       }, function(err) {

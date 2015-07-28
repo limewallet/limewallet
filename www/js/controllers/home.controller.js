@@ -163,6 +163,11 @@ bitwallet_controllers
   $scope.moreDataCanBeLoaded = function() {
     return false;
   };
+
+  //Mmmm...
+  if( window.external_load ) {
+
+  }
   
 });
 

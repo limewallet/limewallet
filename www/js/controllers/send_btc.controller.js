@@ -246,10 +246,15 @@ bitwallet_controllers.controller('SendBTCCtrl', function($scope, $q, T, Exchange
           });
 
         }, function(err) {
-          $scope.hideLoading();
-          $scope.showAlert('send.title_btc', err);
-          deferred.reject(err);
-          console.log(JSON.stringify(err));
+
+          //If we couldnt send the bitAsset, lets cancel the quote
+          BitShares.cancelXTx(keys, xtx.id).finally(function(res) {
+            $scope.hideLoading();
+            $scope.showAlert('send.title_btc', err);
+            deferred.reject(err);
+            console.log(JSON.stringify(err));
+          });
+
         });
 
       }, function(err) {
@@ -287,6 +292,7 @@ bitwallet_controllers.controller('SendBTCCtrl', function($scope, $q, T, Exchange
   
   $scope.$on( '$ionicView.beforeLeave', function(){
     $scope.stopNanobar();
+    $timeout.cancel($scope.input_timeout);
   });
 
 });

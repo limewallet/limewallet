@@ -44,9 +44,7 @@ $scope.data = {   xtx           : undefined,
     
     var deferred = $q.defer();
 
-    if (!$scope.data.refund_address || $scope.data.refund_address.length==0)
-    {
-      //window.plugins.toast.show(T.i('rate_changed.operation_completed'), 'long', 'bottom');      
+    if (!$scope.data.refund_address) {
       $scope.showAlert('g.btc_addr_error','g.btc_addr_error_input');
       deferred.reject();
       return deferred.promise;
