@@ -865,15 +865,9 @@ bitwallet_services
       self.signing_up = true;
 
       self.getSignupInfo().then(function(res) {
+
         console.log('PETO -> ' + res.msg + ' => ' + res.signature);
-        self.recoverPubkey(res.msg, res.signature).then(function(service_pubkey) {
-          //console.log(pubkey);
-          if( service_pubkey != ENVIRONMENT.apiPubkey ) {
-            deferred.reject('invalid pub key');
-            console.log('BitShares signup err  [invalid pub key] server:' +ENVIRONMENT.apiPubkey + '  recovered:'+service_pubkey );
-            self.signing_up = false;
-            return;
-          }
+
           self.compactSignatureForMessage(res.msg, privkey).then(function(signature) {
 
             self.pushSignupInfo(res.msg, signature, pubkey).then(function(res) {
@@ -889,16 +883,6 @@ bitwallet_services
               deferred.resolve({akey:res.access_key,skey:res.secret_key});
 
               self.signing_up = false;
-              // account.access_key = res.access_key;
-              // account.secret_key = res.secret_key;
-              // Account.updateAccesKeys(account).then(function() {
-              //   console.log('BitShares.getBackendToken:'+res.access_key);
-              //   self.signing_up = false;
-              //   deferred.resolve({akey:res.access_key,skey:res.secret_key});
-              // }, function(err) {
-              //   self.signing_up = false;
-              //   deferred.reject(err);
-              // });
 
             }, function(err) {
               console.log('signup err#1 ' + JSON.stringify(err));
@@ -912,11 +896,6 @@ bitwallet_services
             deferred.reject(err);
           });
 
-        }, function(err) {
-          console.log('signup err#3 ' + JSON.stringify(err));
-          self.signing_up = false;
-          deferred.reject(err);
-        });
 
       }, function(err) {
         console.log('signup err#4 ' + JSON.stringify(err));
@@ -964,66 +943,6 @@ bitwallet_services
       });
 
       return self.apiCall(url, payload);
-    }
-
-    self.getBackendToken = function(address) {
-
-      var deferred = $q.defer();
-
-      Setting.get(Setting.BSW_TOKEN).then(function(res) {
-
-        if(res !== undefined) {
-          console.log('BitShares.getBackendToken:'+res.value);
-          var tmp = res.value.split(';');
-          deferred.resolve({akey:tmp[0],skey:tmp[1]});
-          return;
-        }
-
-        self.getSignupInfo().then(function(res) {
-          self.recoverPubkey(res.msg, res.signature).then(function(pubkey) {
-            //console.log(pubkey);
-            if( pubkey != ENVIRONMENT.apiPubkey ) {
-              console.log('BitShares signup err  [invalid pub key] server:' +ENVIRONMENT.apiPubkey + '  recovered:'+pubkey );
-              deferred.reject('invalid pub key');
-              return;
-            }
-            self.compactSignatureForMessage(res.msg, address.privkey).then(function(signature) {
-
-              self.pushSignupInfo(res.msg, signature, address.pubkey).then(function(res) {
-
-                if( angular.isUndefined(res.access_key) || angular.isUndefined(res.secret_key) ) {
-                  deferred.reject('invalid keys');
-                  return;
-                }
-
-                Setting.set(Setting.BSW_TOKEN, [res.access_key, res.secret_key].join(';')).then(function() {
-                  console.log('BitShares.getBackendToken:'+res.access_key);
-                  deferred.resolve({akey:res.access_key,skey:res.secret_key});
-                }, function(err) {
-                  deferred.reject(err);
-                });
-
-              }, function(err) {
-                deferred.reject(err);
-              });
-
-            }, function(err) {
-              deferred.reject(err);
-            });
-
-          }, function(err) {
-            deferred.reject(err);
-          });
-
-        }, function(err) {
-          deferred.reject(err);
-        });
-
-      }, function(err) {
-        deferred.reject(err); 
-      });
-
-      return deferred.promise;
     }
 
     return self;

@@ -18,9 +18,6 @@ bitwallet_controllers
   });
 
   $scope.openPopover = function($event) {
-    // document.body.classList.remove('platform-ios');
-    // document.body.classList.remove('platform-android');
-    // document.body.classList.add('platform-ionic');
     $scope.popover.show($event);
   };
   $scope.closePopover = function() {
@@ -83,70 +80,9 @@ bitwallet_controllers
     console.log(' --- going to refund. xtx_id:' + $scope.data.xtx.id);
     $state.go('app.refund', {xtx_id:$scope.data.xtx.id});
   }
-
-  $scope.nanobar = undefined;
-  var w_ttl = 24;
-  var w_counter_timeout = w_ttl;
-
-  $scope.startWaitingTx = function() {
-    if($scope.nanobar===undefined)
-    {
-      var options = {
-        target: document.getElementById('quote_ttl'),
-        id: 'mynano',
-        bg: '#5abb5c'
-      };
-      $scope.nanobar = new Nanobar( options );
-    }
-    $timeout($scope.onWaitingTx, 1000);
-  };
-  
-  $scope.stopWaitingTx = function() {
-    //w_counter_timeout = w_ttl;
-    w_counter_timeout = 0;
-    if($scope.nanobar)
-      $timeout(function(){
-          $scope.nanobar.go(0);
-        }, 1000);
-  }
-  
-  $scope.onWaitingTx = function() {
-    
-    w_counter_timeout = w_counter_timeout - 1;
-    if(w_counter_timeout<=0)
-    {
-      $scope.stopWaitingTx();
-      $scope.nanobar.go(100);
-      return;
-    }
-    $scope.nanobar.go((w_ttl-w_counter_timeout)*100/w_ttl);
-    $timeout($scope.onWaitingTx, 1000);
-    
-    var addy = Wallet.getMainAddress();
-    BitShares.getBackendToken(addy).then(function(token) {
-      BitShares.getExchangeTx(token, $scope.data.xtx_id).then(function(xtx){
-        //var my_xtx = Wallet.processXTx(xtx);
-        //console.log('DepositCtrl::WatingTx: ui_type='+xtx.ui_type);
-        if(BitShares.notRateChanged(xtx))
-        {
-          $scope.stopWaitingTx();
-          window.plugins.toast.show(T.i('rate_changed.operation_completed'), 'long', 'bottom');
-          $scope.goHome();
-        }
-      }, function(error){
-        console.log('requote waitingtx error 1:'+JSON.stringify(error));
-      })
-    }, function(error){
-        console.log('requote waitingtx error 2:'+JSON.stringify(error));
-    });
-    
-  }
   
   $scope.$on( '$ionicView.beforeLeave', function(){
-    // Destroy timers
-    console.log('RequoteCtrl.ionicView.beforeLeave killing timers.');
-    w_counter_timeout=0;
-    //$scope.stopTimer();
+
   });
 
 })
