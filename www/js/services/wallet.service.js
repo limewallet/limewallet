@@ -504,7 +504,7 @@ bitwallet_services
         Object.keys(res).forEach(function(k) {
           if( res[k].error !== undefined ) return;
 
-          var active_key = res[k].active_key_history[res[k].active_key_history-1][1];
+          var active_key = res[k].active_key_history.pop()[1];
           var p = BitShares.btsPubToAddress(active_key).then(function(addy) {
             var tmp = Contact._add(res[k].name, addy, active_key, JSON.stringify(res[k].public_data), 'transfer');
             sql_cmd.push(tmp.sql);

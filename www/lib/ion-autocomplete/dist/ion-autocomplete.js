@@ -222,9 +222,10 @@ angular.module('ion-autocomplete', []).directive('ionAutocomplete', [
 
                                 var global_contacts = [];
                                 tmp.forEach( function(contact) {
+                                  var active_key = contact.active_key_history.pop()[1];
                                   global_contacts.push({
                                     name              : contact.name,
-                                    address_or_pubkey : contact.active_key_history[contact.active_key_history.length-1][1],
+                                    address_or_pubkey : active_key,
                                     is_pubkey         : true
                                   });
                                 });
