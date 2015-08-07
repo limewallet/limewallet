@@ -25,7 +25,7 @@ bitwallet_services
 
         var expected = ['amount', 'label', 'message'];
         
-        console.log('FORMATO:' + JSON.stringify(parts));
+        //console.log('FORMATO:' + JSON.stringify(parts));
 
         for(var i=0; i<parts.length; i++) {
           var tmp = parts[i].split('=');
@@ -50,6 +50,8 @@ bitwallet_services
       //xts:name:XTSaccountkey
       //xts:name/transfer/[amount/amount/][memo/memo text/][from/sender name/][asset/asset name] 
       //xts:name:XTSaccountkey/transfer/[amount/amount/][memo/memo text/][from/sender name/][asset/asset name] (unregistered accounts) (Not Yet Implemented)
+
+      //console.log('parseBTSUrl => ' + url);
 
       var data  = url.substring(4);
       var parts = data.split('/');
@@ -80,33 +82,41 @@ bitwallet_services
 
       //Request Payment
       if(parts.length > 1 && parts[1] == 'transfer') {
+
+        //console.log('Es un payment request');
+
         res.type   = 'bts_request';
         res.name   = name_parts[0];
         res.pubkey = name_parts.length > 1 ? name_parts[1] : undefined;
 
         var expected = ['amount', 'memo', 'from', 'asset'];
+        var bitasset = ['USD', 'CNY', 'EUR', 'GOLD', 'SILVER', 'BTC']; 
         for(var i=2; i<parts.length; i+=2) {
-          if( expected.indexOf(parts[i]) != -1 )
+          if( expected.indexOf(parts[i]) != -1 ) {
+            
+            if(parts[i] == 'asset' && bitasset.indexOf(parts[i+1]) != -1)
+              parts[i+1] = 'bit' + parts[i+1];
+
             res[parts[i]] = parts[i+1];
+          }
         } 
 
         if ( BitShares.isValidBTSName(res.name).valid ) {
-
-          if ( !res.pubkey ) {
+            //console.log('Es un nombre valido');
             deferred.resolve(res);
-          } else {
-
-            BitShares.btsIsValidPubkey(res.pubkey).then(function() {
-              deferred.resolve(res);
-            }, function(err) {
-              deferred.reject(err);
-            });
-
-          } 
-
         } else {
-          deferred.reject(err);
-        }
+
+            //console.log('NOO Es un nombre valido');
+          BitShares.btsIsValidPubkey(res.pubkey).then(function() {
+            //console.log('Es un pubkey valido');
+            deferred.resolve(res);
+          }, function(err) {
+
+            //console.log('NO Es un pubkey valido');
+            deferred.reject(err);
+          });
+
+        } 
 
         return deferred.promise;
       }
