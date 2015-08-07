@@ -1,6 +1,6 @@
 bitwallet_config
 .constant('DB_CONFIG', {
-    name: '/sdcard/wallet.db',
+    name: 'wallet.db',
     version : 1.2,
     tables: [
         {
