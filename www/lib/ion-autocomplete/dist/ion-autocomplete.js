@@ -224,7 +224,7 @@ angular.module('ion-autocomplete', []).directive('ionAutocomplete', [
                                 tmp.forEach( function(contact) {
                                   global_contacts.push({
                                     name              : contact.name,
-                                    address_or_pubkey : contact.owner_key,
+                                    address_or_pubkey : contact.active_key_history[contact.active_key_history.length-1][1],
                                     is_pubkey         : true
                                   });
                                 });

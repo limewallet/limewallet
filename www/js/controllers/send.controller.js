@@ -76,7 +76,8 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
         }
 
         $scope.transaction.destination = {
-          address_or_pubkey : account[scan_data.name].owner_key,
+
+          address_or_pubkey : account[scan_data.name].active_key_history[account[scan_data.name].active_key_history.length-1][1],
           name              : scan_data.name,
           is_pubkey         : true
         }
