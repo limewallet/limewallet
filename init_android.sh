@@ -5,6 +5,7 @@ cordova plugin add cordova-plugin-console
 cordova plugin add cordova-plugin-device
 cordova plugin add cordova-plugin-splashscreen
 cordova plugin add cordova-plugin-globalization
+cordova plugin add cordova-plugin-crosswalk-webview
 cordova plugin add https://github.com/apache/cordova-plugin-whitelist.git
 cordova plugin add https://github.com/driftyco/ionic-plugins-keyboard.git
 cordova plugin add https://github.com/brodysoft/Cordova-SQLitePlugin.git
