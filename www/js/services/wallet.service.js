@@ -68,7 +68,7 @@ bitwallet_services
     }
 
     self.onError = function(err) {
-      console.log("WS ERR:" + JSON.stringify(err));
+      //console.log("WS ERR:" + JSON.stringify(err));
     }
 
     self.onReconnect = function() {
@@ -76,10 +76,15 @@ bitwallet_services
     }
 
     self.onConnectedToBackend = function () {
-      console.log('Vamos por aca');
+      //console.log('Vamos por aca');
       self.subscribeToNotifications();
       if( self.disconnect_count > 0 )
         self.refreshBalance();
+
+      clearTimeout(self.timeout.ping);
+      self.timeout.ping = setInterval( function() { 
+        self.ws.send(JSON.stringify({cmd:'ping'}));
+      }, 30000);
     };
 
     self.canSend = function (amount) {
@@ -88,7 +93,7 @@ bitwallet_services
     }
 
     self.onNotification = function (event) {
-      console.log(' ----------- onNotification Vino Evento ------ ')
+      //console.log(' ----------- onNotification Vino Evento ------ ')
       console.log(' -- Event: '+event.data);
 
       ev = JSON.parse(event.data);
@@ -97,7 +102,7 @@ bitwallet_services
         //Refresh balance in 100ms, if we get two notifications (Withdraw from two addresses) just refresh once.
         clearTimeout(self.timeout.refresh);
         self.timeout.refresh = setTimeout( function() { 
-          console.log(' bc: wallet changed -> loadBalance()');
+          //console.log(' bc: wallet changed -> loadBalance()');
           self.refreshBalance(); 
         }, 1000);
       }
@@ -105,6 +110,9 @@ bitwallet_services
         ExchangeTransaction.add(ev.data).finally(function() {
           self.loadBalance(); 
         });
+      }
+      else if( ev.name=='pong') {
+        console.log("pong ...")
       }
     }
 
