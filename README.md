@@ -7,7 +7,7 @@ BitShares bitAssets mobile wallet.
 - npm install -g cordova ionic
 - git clone https://github.com/limewallet/limewallet
 - cd limewallet
-- ./init_android.sh (or ./init_android.sh)
+- ./init_android.sh (or ./init_ios.sh)
 
 ### Post init setup (Android)
 #### Edit platforms/android/AndroidManifest.xml
