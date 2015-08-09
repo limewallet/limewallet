@@ -629,15 +629,16 @@ bitwallet_services
 
             //TODO: send to address, guardo mi memo
             //Si llego aca, es de salida, pero no tengo la pubkey destino .. 
-            //tengo que ir a buscar este contacto
+            //tengo que ir a buscar este contacto (o no ... :
+            return BitShares.decryptMemo(self.data.account.pubkey, m.memo, pk);
 
             //HACK: pensar bien...
             // HACK: COMMENTED BY DARGONAR
             //return BitShares.decryptMemo(m.one_time_key, m.memo, pk);
             
             //console.log('ESTOY EN LA TWILAAA ZONE ' + m.address);
-            to_search.push(m.address);
-            return undefined;
+            //to_search.push(m.address);
+            //return undefined;
 
           }, function(err) {
             console.log(' -*-*- loadBalance err#1: '+JSON.stringify(err));
