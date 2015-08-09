@@ -18,6 +18,10 @@ bitwallet_controllers
     quote            : undefined
   }
 
+  $scope.open_bitcoin_wallet = function() {
+    window.open($scope.data.deposit_short_uri, '_system', 'location=yes');
+  }
+
   $scope.buildQRCode = function (xtx) {
 
     $scope.data.tx                = xtx;
