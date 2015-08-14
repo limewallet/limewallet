@@ -2,82 +2,179 @@ bitwallet_services
 .service('DB', function($q, DB_CONFIG) {
     var self = this;
     self.db = null;
- 
-    self.init = function(remove, check_tables) {
-        if(remove) {
-          window.sqlitePlugin.deleteDatabase(DB_CONFIG.name, function() {
-            console.log('Database deleted');
-          }, function(e) {
-            console.log('Error removing database ' + e.message);
+
+    self.get_dbversion = function() {
+
+      var deferred = $q.defer();
+
+      var query = "SELECT value FROM setting WHERE name ='schema_version'";
+      self.query(query).then(function(res) {
+        var val = self.fetchOneColumn(res, 'value');
+        if(val.length==0)
+          deferred.resolve(12);
+        else
+          deferred.resolve(val[0]>>0)
+      }, function(err) {
+        deferred.resolve(0);
+      });
+
+      return deferred.promise;
+    }
+
+    self.create_tables = function() {
+
+      var deferred = $q.defer();
+
+      var query_sql    = [];
+      var query_params = [];
+
+      //Iterate tables
+      angular.forEach(DB_CONFIG.tables, function(table) {
+
+        var columns = [];
+        angular.forEach(table.columns, function(column) {
+            columns.push(column.name + ' ' + column.type);
+        });
+
+        var query  = 'CREATE TABLE IF NOT EXISTS ' + table.name + ' (' + columns.join(',') + ')';
+        var params = [];
+
+        //ADD CREATE TABLE QUERIES
+        query_sql.push(query);
+        query_params.push(params);
+
+        //CHECK IF THERE ARE DEFAULT ROWS
+        if(table.rows != undefined && table.rows.length) {
+
+          angular.forEach(table.rows, function(row) {
+            var col_names = Object.keys(row);
+            var emarks    = [];
+
+            query  = '';
+            params = []
+
+            for(var i=0; i<col_names.length; i++) {
+              emarks.push('?');
+              params.push( row[col_names[i]] );
+            }
+
+            params.push(row['id']);
+
+            query = '';
+            query = query + 'INSERT INTO ' + table.name + '\n';
+            query = query + ' (' + col_names.join(',') + ')\n';
+            query = query + 'SELECT ' + emarks.join(',') + '\n';
+            query = query + 'WHERE NOT EXISTS ( SELECT 1 FROM ' + table.name + '\n';
+            query = query + 'WHERE id = ?)';
+
+            //ADD INSERT SQL QUERY
+            query_sql.push(query);
+            query_params.push(params);
           });
+
         }
-        self.db = window.sqlitePlugin.openDatabase({name: DB_CONFIG.name});
-        //self.db = window.sqlitePlugin.openDatabase({name: 'lime.db'});
-        //console.log('Creating lime.db!!!!!');
-        if( !check_tables )
-          return;
+        
+        //CHECK IF THERE ARE DEFAULT INDEXES
+        if(table.indexes != undefined && table.indexes.length) {
 
-        proms = []
-        //console.log('voy a entrar al forEach');
-        // self.query('DROP TABLE IF EXISTS operation').then(function(){
-          // self.query('DROP TABLE IF EXISTS exchange_transaction').then(function(){
-          
-            angular.forEach(DB_CONFIG.tables, function(table) {
-                var columns = [];
+          angular.forEach(table.indexes, function(index_column) {
 
-                //console.log('SOY EL FOREACH');
-     
-                angular.forEach(table.columns, function(column) {
-                    columns.push(column.name + ' ' + column.type);
-                });
-     
-                var query = 'CREATE TABLE IF NOT EXISTS ' + table.name + ' (' + columns.join(',') + ')';
+            if( Array.isArray(index_column) ) {
+              query = 'CREATE INDEX inx_' + table.name + '_' + index_column.join('_') + ' ON ' + table.name + ' (' + index_column.join(',') + ')';
+            } else {
+              query = 'CREATE INDEX inx_' + table.name + '_' + index_column + ' ON ' + table.name + ' (' + index_column + ')';
+            }
+             
+            //ADD SQL QUERY
+            query_sql.push(query);
+            query_params.push([]);
+          });
 
-                var p = self.query(query)
-                .then(function() {
-                  console.log('Table ' + table.name + ' initialized');
-                  if(table.rows !== undefined && table.rows.length > 0 ) {
+        }
 
-                    var mproms = [];
+      });
 
-                    angular.forEach(table.rows, function(row) {
+      //ADD DB VERSION
+      query  = "INSERT INTO SETTING (name, value) VALUES (?,?)";
+      params = ['schema_version', DB_CONFIG.version];
 
-                        var col_names = Object.keys(row);
-                        var emarks    = [];
-                        var bindings  = [];
+      query_sql.push(query);
+      query_params.push(params);
 
-                        for(var i=0; i<col_names.length; i++) {
-                          emarks.push('?');
-                          bindings.push( row[col_names[i]] );
-                        }
+      //
+      //EXECUTE IN ONE TX
+      self.queryMany(query_sql, query_params).then(function() {
+        deferred.resolve();
+      }, function(err) {
+        deferred.reject(err);
+      });
 
-                        bindings.push(row['id']);
+      return deferred.promise;  
+    }
+ 
+    self.init = function() {
 
-                        var query = '';
-                        query = query + 'INSERT INTO ' + table.name + '\n';
-                        query = query + ' (' + col_names.join(',') + ')\n';
-                        query = query + 'SELECT ' + emarks.join(',') + '\n';
-                        query = query + 'WHERE NOT EXISTS ( SELECT 1 FROM ' + table.name + '\n';
-                        query = query + 'WHERE id = ?)';
+      var deferred = $q.defer();
+        
+      self.db = window.sqlitePlugin.openDatabase({
+        name  : DB_CONFIG.name
+      });
 
-                        //console.log(query);
-                        var mp = self.query(query, bindings);
-                        mproms.push(mp);
-                    });
+      self.get_dbversion().then(function(db_version) {
+        
+        //NO DB
+        if(db_version == 0) {
+          console.log('No DB => creating ...');
+          self.create_tables().then(function() {
+            deferred.resolve();
+          }, function(err) {
+            deferred.reject(err);
+          });
+          return deferred.promise;
+        }
+        
+        //SAME DB VERSION
+        if( DB_CONFIG.version == db_version ) {
+          console.log('Same db schema ' + db_version);
+          deferred.resolve();
+          return deferred.promise;
+        }
 
-                    return $q.all(mproms);
-                  }
-                }, function(err) {
-                  console.log('ERROR forEach ' + err);
-                });
+        //NEWER DB VERSION
+        if( DB_CONFIG.version < db_version ) {
+          console.log('Newer db schema found ' + DB_CONFIG.version + ' < ' + db_version);
+          deferred.reject('newer schema');
+          return deferred.promise;
+        }
+        
+        //OLDER DB VERSION
+        //if( DB_CONFIG.version > db_version ) {
+        console.log('Old db schema found ' + DB_CONFIG.version + ' > ' + db_version);
 
-                proms.push(p);
-            });
-          
-          // })
-        // })
+        var proms = [];
+        for(var i=db_version; i<DB_CONFIG.version; i++) {
+          var upgrade = db_version +'-'+(db_version+1);  
 
-        return $q.all(proms);
+          var bindings = [];
+          for (var j=0; j<DB_CONFIG.upgrades[upgrade].length;j++) {
+            bindings.push([]);
+          }
+
+          var p = self.queryMany(DB_CONFIG.upgrades[upgrade], bindings);
+          proms.push(p);
+        }
+
+        $q.all(proms).then(function() {
+          deferred.resolve();
+        }, function(err) {
+          deferred.reject();
+        });
+
+        return deferred.promise;
+
+      });
+
+      return deferred.promise;
     };
  
     self.query = function(query, bindings) {
@@ -98,42 +195,44 @@ bitwallet_services
         return deferred.promise;
     };
  
+    self.execInTx = function(transaction, query, bindings) {
+
+      var deferred = $q.defer();
+
+      transaction.executeSql(query, bindings, function(tx, res) {
+        deferred.resolve(res);
+      }, function(tx, err) {
+        deferred.reject(err);
+      });
+
+      return deferred.promise;
+    }
+
     self.queryMany = function(query, bindings) {
                 
         var deferred = $q.defer();
-        if ( query.length == 0 )
-        {
+        if ( query.length == 0 ){
           deferred.resolve();
           return deferred.promise;
         }
 
-        self.db.transaction(function(transaction) {
-          
-          var proms = [];
-          for(var i=0; i<query.length; i++) {
-            
-            var df = $q.defer();  
-            
-            transaction.executeSql(query[i], bindings[i], function(tx, res) {
-              df.resolve(res);
-            }, function(tx, err) {
-              console.log(' ---- Query Many ERROR inside tx: ' + JSON.stringify(tx) + ' err:' + JSON.stringify(err));
-              df.reject(err);
-            });
+        var proms = [];
 
-            proms.push(df);
+        self.db.transaction(function(transaction) {
+
+          for(var i=0; i<query.length; i++) {
+            proms.push( self.execInTx(transaction, query[i], bindings[i]) );
           }
 
           $q.all(proms).then(function(res) {
-            console.log(' ---- Query Many RESOLVED!!');
             deferred.resolve(res);
           }, function(err) {
             console.log(' ---- Query Many ERROR: '+JSON.stringify(err));
             deferred.reject(err);
           })
-          
 
         }, function(err) {
+          console.log(' ---- Query Many ERROR #2: '+JSON.stringify(err));
           deferred.reject(err);
         });
  
@@ -281,13 +380,11 @@ bitwallet_services
     self.getMany = function(keys) {
 
       var ppp = Object.keys(keys);
-      console.log('PEZZZ     RESRESRESRES> ' + JSON.stringify(ppp));
 
       var deferred = $q.defer();
       //DB.query('SELECT name, value FROM setting where name in (?)', [ppp])
       DB.query('SELECT name, value FROM setting', [])
       .then(function(result) {
-        console.log('RESRESRESRES> ' + JSON.stringify(result));
         var data = DB.fetchAll(result);
 
         var values = {};
@@ -314,7 +411,6 @@ bitwallet_services
         var deferred = $q.defer();
         DB.query('SELECT name, value FROM setting where name=?', [name])
         .then(function(result){
-          console.log( 'GET ' + JSON.stringify(result) );
 
           if( result.rows.length == 0 ) {
             if( _default !== undefined )
@@ -333,7 +429,6 @@ bitwallet_services
           //console.log('ROW !=0 RESOLVE');
           deferred.resolve(DB.fetch(result));
         }, function(err) {
-          console.log('rompo ' + err);
           deferred.reject(err);  
         });
 
