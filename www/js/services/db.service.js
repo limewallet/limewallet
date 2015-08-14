@@ -292,12 +292,62 @@ bitwallet_services
       return {'sql':sql, 'params':params};
     } 
 
-    self.to_decrypt = function(account) {
-      return DB.query('SELECT m.id, memo, one_time_key, slate, in_out, c.pubkey to_pubkey, m.address FROM memo m LEFT JOIN contact c on m.address=c.address WHERE account=? and encrypted != 0', [account])
+    self._error_decrypt = function(id) {
+      var sql    = 'UPDATE memo SET decrypt_error=1 WHERE id=?';
+      var params = [id];
+      return {'sql':sql, 'params':params};
+    } 
+
+    self.out_incomplete = function(account) {
+      return DB.query("\
+        SELECT m.id, m.address FROM memo m \
+        WHERE account=? and in_out=1 and to_pubkey is NULL", [account])
+      .then(function(result){
+          return DB.fetchAll(result);
+      });
+    }
+
+    self._complete_out = function(name, to_pubkey, address) {
+      var sql    = 'UPDATE memo SET name=?, to_pubkey=? WHERE address=? and in_out=1';
+      var params = [name, to_pubkey, address];
+      return {'sql':sql, 'params':params};
+    }
+
+    self.out_to_decrypt = function(account) {
+      return DB.query("\
+        SELECT m.id, m.memo, m.in_out, m.to_pubkey, m.slate, m.address \
+        FROM memo m \
+        WHERE account=? and encrypted != 0 and decrypt_error=0 and in_out=1 and to_pubkey is not NULL", [account])
       .then(function(result){
           return DB.fetchAll(result);
       });
     } 
+
+    self.in_to_decrypt = function(account) {
+      return DB.query("\
+        SELECT m.id, m.memo, m.name, m.pubkey, m.one_time_key, m.slate, m.in_out, m.address \
+        FROM memo m \
+        WHERE account=? and encrypted != 0 and decrypt_error=0 and in_out=0", [account])
+      .then(function(result){
+          return DB.fetchAll(result);
+      });
+    } 
+
+    self.in_incomplete = function(account) {
+      return DB.query("\
+        SELECT m.id, m.pubkey FROM memo m \
+        WHERE account=? and in_out=0 and name is NULL and encrypted=0 and decrypt_error=0", [account])
+      .then(function(result){
+           //console.log('IN INCOMPLETE =:> ' + JSON.stringify(result));
+          return DB.fetchAll(result);
+      });
+    }
+
+    self._complete_in = function(pubkey, name) {
+      var sql    = 'UPDATE memo SET name=? WHERE pubkey=? and in_out=0';
+      var params = [name, pubkey];
+      return {'sql':sql, 'params':params};
+    }
 
     return self;
 })
@@ -349,19 +399,51 @@ bitwallet_services
       return DB.query(sql.sql, sql.params);
     }
 
+    self.inAddress = function(addys) {
+      var pp = [];
+      for(var i=0;i<addys.length; i++) pp.push('?');
+      return DB.query('SELECT * FROM contact where id in ('+pp.join(',')+')' , addys)
+      .then(function(result){
+        return DB.fetchAll(result);
+      });
+    } 
+
+    self.inPubkey = function(pubs) {
+      var pp = [];
+      for(var i=0;i<pubs.length; i++) pp.push('?');
+      return DB.query('SELECT * FROM contact where pubkey in ('+pp.join(',')+')' , pubs)
+      .then(function(result){
+        return DB.fetchAll(result);
+      });
+    } 
+
+    self.byAddress = function(address) {
+      return DB.query('SELECT * FROM contact where address=?', [address])
+      .then(function(result){
+        return DB.fetch(result);
+      });
+    } 
+
+    self.byPubkey = function(pubkey) {
+      return DB.query('SELECT * FROM contact where pubkey=?', [pubkey])
+      .then(function(result){
+        return DB.fetch(result);
+      });
+    } 
+
     self.startsWith = function(prefix) {
-        return DB.query('SELECT * FROM contact where lower(name) like lower(?) and source != \'transfer\' order by name limit 5', [prefix+'%'])
-        .then(function(result){
-            return DB.fetchAll(result);
-        });
+      return DB.query('SELECT * FROM contact where lower(name) like lower(?) and source != \'transfer\' order by name limit 5', [prefix+'%'])
+      .then(function(result){
+          return DB.fetchAll(result);
+      });
     }
 
     self.remove = function(id) {
-        return DB.query('DELETE from contact where id=?',[id]);
+      return DB.query('DELETE from contact where id=?',[id]);
     };
 
     self.deleteAll = function() {
-        return DB.query('DELETE from contact');
+      return DB.query('DELETE from contact');
     };
 
     return self;
@@ -551,17 +633,15 @@ bitwallet_services
    
     self.all = function() {
       var query = "SELECT * FROM ( \
-        SELECT o.timestamp*1000 as TS, o.slate, IFNULL(m.encrypted,-1) encmsg, m.message, m.pubkey pubkey, c.name, m.address, \
+        SELECT o.timestamp*1000 as TS, o.slate, IFNULL(m.encrypted,-1) encmsg, m.message, m.pubkey pubkey, m.name, \
           IFNULL(et.extra_data, o.type) as ui_type, \
             o.*, et.* FROM operation o \
           LEFT JOIN exchange_transaction et \
             ON o.txid = et.cl_pay_tx OR o.txid = et.cl_recv_tx \
           LEFT JOIN memo m \
             ON o.memo_hash = m.id \
-          LEFT JOIN contact c \
-            ON (m.in_out = 0 and m.pubkey = c.pubkey) or (m.in_out = 1 and m.address = c.address) \
         UNION \
-          SELECT IFNULL(et.created_at*1000, et.quoted_at*1000) as TS, 0, -1, NULL, NULL, NULL, NULL,  \
+          SELECT IFNULL(et.created_at*1000, et.quoted_at*1000) as TS, 0, -1, NULL, NULL, NULL, \
             et.extra_data as ui_type, \
             o.*, et.* FROM exchange_transaction et  \
             LEFT JOIN operation o \
@@ -610,13 +690,11 @@ bitwallet_services
       var deferred = $q.defer();
       
       var query = " \
-        SELECT o.timestamp*1000 as TS, o.slate, IFNULL(m.encrypted,-1) encmsg, m.message, m.pubkey pubkey, IFNULL(c.name, m.address) name, m.address, \
+        SELECT o.timestamp*1000 as TS, o.slate, IFNULL(m.encrypted,-1) encmsg, m.message, m.pubkey pubkey, m.name, m.address, \
           o.type as ui_type, \
             o.* FROM operation o \
           LEFT JOIN memo m \
             ON o.memo_hash = m.id \
-          LEFT JOIN contact c \
-            ON (m.in_out = 0 and m.pubkey = c.pubkey) or (m.in_out = 1 and m.address = c.address) \
           WHERE o.txid = ? \
           ORDER BY TS DESC";
   
@@ -680,15 +758,13 @@ bitwallet_services
 
     self.byXIdEx = function(x_id){
       var deferred = $q.defer();
-      var query = "SELECT et.created_at*1000 as TS, o.slate, IFNULL(m.encrypted,-1) encmsg, m.message, m.pubkey pubkey, c.name, m.address, \
+      var query = "SELECT et.created_at*1000 as TS, o.slate, IFNULL(m.encrypted,-1) encmsg, m.message, m.pubkey pubkey, m.name, m.address, \
           IFNULL(et.extra_data, o.type) as ui_type, \
             et.*, o.* FROM exchange_transaction et \
           LEFT JOIN operation o \
             ON o.txid = et.cl_pay_tx OR o.txid = et.cl_recv_tx \
           LEFT JOIN memo m \
             ON o.memo_hash = m.id \
-          LEFT JOIN contact c \
-            ON (m.in_out = 0 and m.pubkey = c.pubkey) or (m.in_out = 1 and m.address = c.address) \
           WHERE et.id = ? ";
       DB.query( query, [x_id])
         .then(function(result){
