@@ -359,16 +359,6 @@ bitwallet_services
           account.plain_account_mpk = undefined;
           account.plain_skip32_key  = undefined;
 
-          //HACK:
-          //if(account.active==1) {
-            //account.pubkey       = 'DVS6G3wqTYYt8Hpz9pFQiJYpxvUja8cEMNwWuP5wNoxr9NqhF8CLS';
-            //account.address      = 'DVSM5HFFtCbhuv3xPfRPauAeQ5GgW7y4UueL';
-            //account.privkey      = '5HymcH7QHpzCZNZcKSbstrQc1Q5vcNjCLj9wBk5aqYZcHCR6SzN';
-            //account.skip32_priv  = '0102030405060708090A';
-            //account.access_key   = '7cMHdvnvhv8Q36c4Xf8HJQaibTi4kpANNaBQYhtzQ2M6';
-            //account.secret_key   = '7teitGUUbtaRJY6mnv3mB9d1VB3UggiBQf4kyiL2PaKB';
-          //}
-
           if(account.encrypted==0){
             account.plain_privkey     = account.privkey;
             account.plain_memo_mpk    = account.memo_mpk; 
@@ -381,17 +371,6 @@ bitwallet_services
           }
           ptr_data.accounts.push(account);
         });
-
-        //HACK:
-        // ptr_data.account.pubkey       = 'DVS6G3wqTYYt8Hpz9pFQiJYpxvUja8cEMNwWuP5wNoxr9NqhF8CLS';
-        // ptr_data.account.address      = 'DVSM5HFFtCbhuv3xPfRPauAeQ5GgW7y4UueL';
-        // ptr_data.account.privkey      = '5HymcH7QHpzCZNZcKSbstrQc1Q5vcNjCLj9wBk5aqYZcHCR6SzN';
-        // ptr_data.account.skip32_priv  = '0102030405060708090A';
-        // ptr_data.account.access_key   = '7cMHdvnvhv8Q36c4Xf8HJQaibTi4kpANNaBQYhtzQ2M6';
-        // ptr_data.account.secret_key   = '7teitGUUbtaRJY6mnv3mB9d1VB3UggiBQf4kyiL2PaKB';
-
-        // console.log('DUMP DEFAULT ACCOUNT');
-        // console.log(JSON.stringify(ptr_data.account));
 
         ptr_data.asset                 = ptr_data.assets[res.setting.default_asset];
         ptr_data.ui.balance.allow_hide = (res.setting.hide_balance == 'true');
@@ -786,23 +765,19 @@ bitwallet_services
 
           Memo.in( Object.keys(memos) ).then(function(memos_in) {
 
-            //console.log('XXXX => ' + JSON.stringify(memos_in));
-
             Object.keys(memos).forEach(function(mid){
               if ( memos_in.indexOf(mid) != -1 ) return;
 
               var tmp = Memo._add(memos[mid]);
               sql_cmd.push(tmp.sql);
               sql_params.push(tmp.params);
-              //console.log('Voy a meter memo ID ' + mid);
             });
 
             DB.queryMany(sql_cmd, sql_params).then(function(res) {
-              
-              //console.log('Todo metido en la DB!!!');
-              //Data is on the DB 
+              //Data is in DB 
               self.loadBalance().then(function() {
                 deferred.resolve();
+                //PENSAR: aca ... cuando retornar
                 //console.log('Luego del load balanccciio!!!');
                 self.emit(self.REFRESH_DONE);
               }, function(err) {
