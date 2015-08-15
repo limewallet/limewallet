@@ -465,60 +465,131 @@ bitwallet_services
       d.reject(err); 
     }
 
-    self.lookupContacts = function(ops, to_search) {
-
+    self.findPubKey = function(addy, active_key_history) {
       var deferred = $q.defer();
-      to_search = to_search || [];
 
-      ops.forEach(function(o) {
-        if(o.pubkey != null && o.name == null && to_search.indexOf(o.pubkey) == -1) {
-          to_search.push(o.pubkey);
-        }  
-      });
+      var retval = {addy:addy, pubkey:''};
+      var proms  = []; 
 
-      //console.log('CTOSEARCH ' + JSON.stringify(to_search));
+      for(var i=0; i<active_key_history.length; i++) {
+        var pubkey = active_key_history[i][1];
 
-      if( to_search.length == 0 ) {
-        deferred.resolve(0);
-        return deferred.promise;
-      }
-
-      var sql_cmd    = [];
-      var sql_params = [];
-
-      BitShares.getAccount(to_search.join(',')).then(function(res) {
-        proms = [];
-        Object.keys(res).forEach(function(k) {
-          if( res[k].error !== undefined ) return;
-
-          var active_key = res[k].active_key_history.pop()[1];
-          var p = BitShares.btsPubToAddress(active_key).then(function(addy) {
-            var tmp = Contact._add(res[k].name, addy, active_key, JSON.stringify(res[k].public_data), 'transfer');
-            sql_cmd.push(tmp.sql);
-            sql_params.push(tmp.params);
-          }, function(err) {
-            console.log( 'lookupContacts errX:' + JSON.stringify(err) );
-          });
-
-          proms.push(p);
+        var prom = BitShares.btsPubToAddress(pubkey).then(function(calc_addy) {
+          if(calc_addy == addy)
+            retval.pubkey = pubkey;
         });
 
-        $q.all(proms).then(function() {
-          //console.log('VOY A METER ' + JSON.stringify(sql_cmd) + '-' + JSON.stringify(sql_params));
-          DB.queryMany(sql_cmd, sql_params).then(function() {
-            deferred.resolve(sql_cmd.length);
-          }, function(err) {
-            console.log( 'lookupContacts err1:' + JSON.stringify(err) );
-            deferred.reject(err);
-          });
-        }, function(err) {
-          console.log( 'lookupContacts err10:' + JSON.stringify(err) );
-          deferred.reject(err);
+        proms.push(prom);
+      }
+
+      $q.all(proms).finally(function() {
+        deferred.resolve(retval);
+      });
+
+      return deferred.promise;
+    }
+
+    self.lookupContactsByAddress = function(addys) {
+
+      var deferred = $q.defer();
+
+      var result = {};
+
+      var search_global = addys.slice(0);
+
+      //search local first
+      Contact.inAddress(addys).then(function(res) {
+
+        res.forEach(function(row) {
+          result[res.address] = res;
+          search_global.slice(search_global.indexOf(res.address), 1);
         });
 
       }, function(err) {
-        console.log( 'lookupContacts err2:' + JSON.stringify(err) );
-        deferred.reject(err);
+        console.log('lookupContactsByAddress Err#1 ' + err); 
+      })
+      .finally(function() {
+
+        BitShares.getAccount(search_global.join(',')).then(function(res) {
+
+          var proms = [];
+          for(var i=0; i<search_global.length; i++) {
+            var addy = search_global[i];
+
+            if(res[addy].error !== undefined)
+              continue;
+
+            //There is no doubt about the "name" of the address
+            //But we need to find the exact pubkey at the time the memo-out was created
+            //To generate the shared secret with the one-time-key (priv)
+
+            var p = self.findPubKey(addy, res[addy].active_key_history).then(function(pair) {
+              result[pair.addy] = {
+                name   : res[pair.addy].name,
+                pubkey : pair.pubkey
+              }
+            });
+
+            proms.push(p);
+          }
+
+          $q.all(proms).then(function() {
+            deferred.resolve(result);
+          });
+
+        }, function(err) {
+          console.log('lookupContactsByAddress Err#2 ' + err); 
+          deferred.resolve(result);
+        });
+
+      });
+
+      return deferred.promise;
+    }
+
+    self.lookupContactsByPubkey = function(pubs) {
+
+      var deferred = $q.defer();
+
+      var result = {};
+
+      var search_global = pubs.slice(0);
+
+      //search local first
+      Contact.inPubkey(pubs).then(function(res) {
+
+        res.forEach(function(row) {
+          result[res.pubkey] = res;
+          search_global.slice(search_global.indexOf(res.pubkey), 1);
+        });
+
+      }, function(err) {
+        console.log('lookupContactsByPubkey Err#1 ' + err); 
+      })
+      .finally(function() {
+
+        BitShares.getAccount(search_global.join(',')).then(function(res) {
+
+          var proms = [];
+          for(var i=0; i<search_global.length; i++) {
+            var pubkey = search_global[i];
+
+            if(res[pubkey].error !== undefined)
+              continue;
+
+            result[pubkey] = {
+              name   : res[pubkey].name,
+              pubkey : pubkey
+            }
+          }
+
+          deferred.resolve(result);
+
+        }, function(err) {
+          console.log('lookupContactsByPubkey Err#2 ' + err); 
+          deferred.resolve(result);
+        });
+
       });
 
       return deferred.promise;
@@ -564,127 +635,225 @@ bitwallet_services
       return deferred.promise;
     }
 
-    self.loadBalance = function(auto_call) {
+    self.decrypt_memos = function(memos) {
+
       var deferred = $q.defer();
 
-      var to_search = [];
-
-      var proms = {
-        'balance' : Balance.forAsset(self.data.asset.id),
-        'memo'    : self.data.account.encrypted ? [] : Memo.to_decrypt(self.data.account.id)
+      //If the wallet is locked or no memos to decrypt just return
+      if (self.data.account.encrypted || memos.length == 0) {
+        deferred.resolve();
+        return deferred.promise;
       }
 
+      var proms = {};
+      memos.forEach(function(m) {
+        //Find the necesary privkey
+        proms[m.id] = self.getPrivateKeyForMemo(m).then(function(pk) {
+          
+          if(!pk) {
+            console.log('NO Privkey for memo decryption ...');
+          }
+
+          if( m.in_out == 0 ) {
+            return BitShares.decryptMemo(m.one_time_key, m.memo, pk);
+          } else {
+            return BitShares.decryptMemo(m.to_pubkey, m.memo, pk);
+          }   
+        });
+      });
+
+      //Iterate all the decrypted memos
       $q.all(proms).then(function(res) {
 
-        self.data.asset.int_amount = res.balance.amount;
-        self.data.asset.amount     = res.balance.amount/self.data.asset.precision;
-        
-        proms = {};
+        var sql_cmd    = [];
+        var sql_params = [];
 
-        //if(1==2)
-        res.memo.forEach(function(m) {
-          //if(m.id != 'dce718a423ee9898526b416215b108633b067ed111de6e58279138fb81fb26bb') return;
+        Object.keys(proms).forEach(function(mid) {
+          if(!res[mid].error) {
+            var tmp = Memo._decrypt(mid, res[mid].message, res[mid].from); 
+          } else {
+            var tmp = Memo._error_decrypt(mid);
+            console.log('Error decrypting memo ... ' + mid);
+          }
+          sql_cmd.push(tmp.sql);
+          sql_params.push(tmp.params);
+        });            
 
-          proms[m.id] = self.getPrivateKeyForMemo(m).then(function(pk) {
-            //console.log('KEY FOR MEMO ' + m.id + ' => ' + pk);
-            if(!pk) 
-            {
-              // var tmp = $q.defer()
-              // tmp.resolve();
-              // return tmp.promise;
-              return undefined;
-            }
-            //console.log(' -*-*- loadBalance -> SOMETHING PUSHED TO Memo Proms');
-            //console.log(JSON.stringify(m));
-            //Entrada: uso mi PK y la otk
-            if( m.in_out == 0 ) {
-              return BitShares.decryptMemo(m.one_time_key, m.memo, pk);
-            }
-          
-            //Salida: uso la PK derivada y la publica del destino
-            if( m.to_pubkey ) {
-              return BitShares.decryptMemo(m.to_pubkey, m.memo, pk);
-            }
-
-            //TODO: send to address, guardo mi memo
-            //Si llego aca, es de salida, pero no tengo la pubkey destino .. 
-            //tengo que ir a buscar este contacto (o no ... :
-            return BitShares.decryptMemo(self.data.account.pubkey, m.memo, pk);
-
-            //HACK: pensar bien...
-            // HACK: COMMENTED BY DARGONAR
-            //return BitShares.decryptMemo(m.one_time_key, m.memo, pk);
-            
-            //console.log('ESTOY EN LA TWILAAA ZONE ' + m.address);
-            //to_search.push(m.address);
-            //return undefined;
-
-          }, function(err) {
-            console.log(' -*-*- loadBalance err#1: '+JSON.stringify(err));
-            deferred.reject(err);
-          });
-        });
- 
-        $q.all(proms).then(function(res) {
-
-          var sql_cmd    = [];
-          var sql_params = [];
-
-          Object.keys(proms).forEach(function(mid) {
-            //console.log(' -*-*- loadBalance -> ITERATING Memo Proms');
-            if(!res[mid]) {
-              //console.log('Not trying to decrypt memo ...');
-              return;
-            } 
-            //console.log(' -*-*- loadBalance -> TRYING TO DECRYPT Memo Proms');
-            if(!res[mid].error) {
-              var tmp = Memo._decrypt(mid, res[mid].message, res[mid].from);
-              sql_cmd.push(tmp.sql);
-              sql_params.push(tmp.params);
-            } else {
-              console.log('Error decrypting memo ...');
-            }
-          });            
-
-          //Insert decrypted memos 
-          
-          DB.queryMany(sql_cmd, sql_params).then(function() {
-
-            //console.log(' -/-/- loadBalance -> calling [Operation.all()]');
-            Operation.all().then(function(ops) {
-              //console.log(' -/-/-/ loadBalance -> Operation.all() res OK');
-              self.txs.transactions = self.orderTransactions(ops);
-              
-              //console.log(' -/-/-/ loadBalance -> about to lookupContacts()');
-              self.lookupContacts(ops, to_search).then(function(n) {
-                if( n > 0 && !auto_call) {
-                  //console.log(' -/-/-/ loadBalance -> about to call loadBalance(true)');
-                  self.loadBalance(true);
-                }  
-              }, function(err) {
-                console.log(' -*-*- loadBalance err#2: '+JSON.stringify(err));
-              });
-
-              deferred.resolve();
-
-            }, function(err) {
-              console.log( 'loadBalance err0:' + JSON.stringify(err) );
-              deferred.reject(err);
-            });
-
-          }, function(err) {
-            console.log( 'loadBalance err1:' + JSON.stringify(err) );
-            deferred.reject(err);
-            });
-
+        DB.queryMany(sql_cmd, sql_params).then(function() {
+          deferred.resolve();
         }, function(err) {
-          console.log( 'loadBalance err2:' + JSON.stringify(err) );
+          console.error('DecryptMemo: Error => ' + err);
           deferred.reject(err);
         });
 
       }, function(err) {
-        console.log( 'loadBalance err3:' + JSON.stringify(err) );
+        console.error('DecryptMemo: This should never happen!!!');
         deferred.reject(err);
+      });
+
+      return deferred.promise;
+    }
+
+    self.complete_in = function() {
+
+
+      var deferred = $q.defer();
+      Memo.in_incomplete(self.data.account.id).then(function(res) {
+
+
+        var pubs = [];
+        res.forEach(function(m) {
+          if( pubs.indexOf(m.pubkey) == -1 )
+            pubs.push(m.pubkey);
+        });
+
+        self.lookupContactsByPubkey(pubs).then(function(res) {
+          
+          var sql_cmd    = [];
+          var sql_params = [];
+
+          pubs.forEach(function(pub) {
+
+            //Contact not found [local/global] => missing local contact (99%) | api not working
+            var name = 'unknown';
+            if(!res[pub] || !res[pub].name) {
+              name = 'unknown';
+            } else {
+              name = res[pub].name;
+            }
+
+            var tmp = Memo._complete_in(pub, name);
+            sql_cmd.push(tmp.sql);
+            sql_params.push(tmp.params);
+          });
+
+          DB.queryMany(sql_cmd, sql_params).then(function(res) {
+            deferred.resolve();
+          }, function(err) {
+            console.log('complete_in err#3 ' + err);
+            deferred.reject(err);
+          })
+
+        }, function(err) {
+          console.log('complete_in err#2 ' + err);
+          deferred.reject(err);
+        });
+
+      }, function(err) {
+        console.log('complete_in err#1 ' + err);
+        deferred.reject(err);
+      });
+
+      return deferred.promise;
+    }
+
+    self.complete_out = function() {
+      var deferred = $q.defer();
+
+      Memo.out_incomplete(self.data.account.id).then(function(res) {
+
+        var addys = [];
+        res.forEach(function(m) {
+          if( addys.indexOf(m.address) == -1 )
+            addys.push(m.address);
+        });
+
+        self.lookupContactsByAddress(addys).then(function(res) {
+          
+          var sql_cmd    = [];
+          var sql_params = [];
+
+          addys.forEach(function(addy) {
+
+            //Contact not found [local/global] => send to and address (not registered even locally)
+            if(!res[addy]) {
+              name      = 'unknown';
+              to_pubkey = self.data.account.pubkey; //(we use our own pubkey to store the memo)
+            } else
+            //Contact found but without pubkey => send to and address (registered locally)
+            if(!res[addy].pubkey) {
+              name      = res[addy].name;
+              to_pubkey = self.data.account.pubkey; //(we use our own pubkey to store the memo)
+            } else {
+            //Contact found complete => send to a name/pubkey, (registered locally or globally)
+              name      = res[addy].name;
+              to_pubkey = res[addy].pubkey;
+            }
+
+            var tmp = Memo._complete_out(name, to_pubkey, addy);
+            sql_cmd.push(tmp.sql);
+            sql_params.push(tmp.params);
+
+          });
+
+          DB.queryMany(sql_cmd, sql_params).then(function(res) {
+            deferred.resolve();
+          }, function(err) {
+            console.log('complete_out err#3 ' + err);
+            deferred.reject(err);
+          })
+
+        }, function(err) {
+          console.log('complete_out err#2 ' + err);
+          deferred.reject(err);
+        });
+
+      }, function(err) {
+        console.log('complete_out err#1 ' + err);
+        deferred.reject(err);
+      });
+
+      return deferred.promise;
+    }
+
+    self.decrypt_inout = function(in_out) {
+      var deferred = $q.defer();
+
+      var query_fnc = in_out == 0 ? Memo.in_to_decrypt : Memo.out_to_decrypt;
+
+      query_fnc(self.data.account.id).then(function(memos) {
+        self.decrypt_memos(memos).then(function() {
+          deferred.resolve();
+        }, function(err) {
+          console.log('decrypt_inout Error#2 ' + err);
+          deferred.reject();
+        });
+      }, function(err) {
+        console.log('decrypt_inout Error#1 ' + err);
+        deferred.reject(err);
+      });
+
+      return deferred.promise;
+    }
+
+    self.loadBalance = function() {
+
+      var deferred = $q.defer();
+
+      Balance.forAsset(self.data.asset.id).then(function(balance) {
+
+        self.data.asset.int_amount = balance.amount;
+        self.data.asset.amount     = balance.amount/self.data.asset.precision;
+
+        var p1 = self.complete_out().then(function() {
+          return self.decrypt_inout(1);
+        });
+
+        var p2 = self.decrypt_inout(0).then(function() {
+          return self.complete_in();
+        });
+
+        $q.all([p1,p2]).finally(function(res) {
+          Operation.all().then(function(ops) {
+            self.txs.transactions = self.orderTransactions(ops);
+            deferred.resolve();
+          }, function(err) {
+            console.log('loadBalance err#2 ' + err);
+          });
+        });
+
+      }, function(err) {
+        console.log('loadBalance err#1 ' + err);
       });
 
       return deferred.promise;
@@ -750,13 +919,11 @@ bitwallet_services
                 one_time_key : op.one_time_key,
                 in_out       : op.type == 'received' || op.type == 'deposit' ? 0 : 1,
                 slate        : op.slate,
-                address      : op.address      
+                address      : op.address
               }
             }
           });
           
-
-          //console.log('MIRA LAS XTXS ' + JSON.stringify(res.xtxs.txs));
           res.xtxs.txs.forEach(function(xtx){
             var tmp = ExchangeTransaction._add(xtx);
             sql_cmd.push(tmp.sql);
