@@ -18,9 +18,21 @@
     "org.apache.cordova.console",
     "org.apache.cordova.device",
     "org.apache.cordova.splashscreen",
-    "org.apache.cordova.globalization"
+    "org.apache.cordova.globalization",
+    {
+      "locator": "engine/cordova-crosswalk-engine-c0.7.1",
+      "id": "cordova-plugin-crosswalk-webview"
+    },
+    {
+      "locator": "https://github.com/apache/cordova-plugin-whitelist.git#r1.0.0",
+      "id": "cordova-plugin-whitelist"
+    }
   ],
   "cordovaPlatforms": [
-    "ios"
+    "ios",
+    {
+      "platform": "android",
+      "locator": "./engine/cordova-android-c0.6.1/"
+    }
   ]
 }

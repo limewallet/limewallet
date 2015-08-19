@@ -4,14 +4,6 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
     $scope.viewRendered();
   }); 
 
-  $scope.getTestItems = function (query) {
-                        return {
-                            items: [
-                                {id: "1", name: query + "1", view: "view: " + query + "1"},
-                                {id: "2", name: query + "2", view: "view: " + query + "2"},
-                                {id: "3", name: query + "3", view: "view: " + query + "3"}]
-                        };
-                    };
   $scope.itemsClicked = function (callback) {
       $scope.callbackValueModel = callback;
   }
@@ -69,6 +61,8 @@ bitwallet_controllers.controller('SendCtrl', function($scope, $q, ENVIRONMENT, T
       $scope.showLoading('send.looking_up_contact');
       BitShares.getAccount(scan_data.name).then(function(account) {
         $scope.hideLoading();
+
+        //TODO: lookup in local database
         if(!account || !account[scan_data.name]) {
           $scope.showAlert('send.looking_up_contact', 'send.cant_get_contact_info');
           //window.plugins.toast.show(T.i('send.cant_get_contact_info'), 'long', 'bottom');

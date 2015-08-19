@@ -13,8 +13,6 @@ bitwallet_controllers
       return deferred.promise;
     }
 
-    console.log('MIRA PASS: [' + password + ']');
-
     BitShares.encryptString(plainData, password).then(function(encryptedData){
       deferred.resolve(encryptedData);
     }, function(err) {
@@ -70,7 +68,7 @@ bitwallet_controllers
             accountMpk.extendedPrivateKey    = encryptedKeys.account_mpk;
             mpk                              = encryptedKeys.mpk;
             
-            console.log('AddAccount :: encrypted? ->' + ((password != '') ? '1' : '0'));
+            //console.log('AddAccount :: encrypted? ->' + ((password != '') ? '1' : '0'));
             deferred.resolve({ 
               'mpk'                 : mpk,
               'account_mpk'         : accountMpk.extendedPrivateKey,
@@ -132,7 +130,7 @@ bitwallet_controllers
         
       }, function(err){
         //deferred.reject(err);
-        console.log(' #-# getInfoIfRecovering error #2 '+JSON.stringify(res.err));
+        console.log(' #-# getInfoIfRecovering error #2 '+JSON.stringify(err));
         deferred.resolve(undefined);
         return;
       });
@@ -181,10 +179,6 @@ bitwallet_controllers
               
               
               var account_cmd = Account._create(accountInfo);
-
-              console.log(' ++++ ACCOUNT create command');
-              console.log('CMD: '+JSON.stringify(account_cmd));
-              console.log(' -- ');
 
               $scope.encrypt($scope.init.seed, password).then(function(encryptedSeed) {
 

@@ -54,11 +54,12 @@ angular.module('ion-autocomplete', []).directive('ionAutocomplete', [
                 //scope.selectedItems = [];
                 scope.searchQuery = '';
 
-                scope.enable_select   = false;
-                scope.local_contacts  = [];
-                scope.global_contacts = [];
-                scope.show_loading    = false;
-                scope.selected_result = {};
+                scope.enable_select         = false;
+                scope.local_contacts        = [];
+                scope.global_contacts       = [];
+                scope.show_loading          = false;
+                scope.global_search_timeout = 0;
+                scope.selected_result       = {};
 
                 // returns the value of an item
                 scope.getItemValue = function (item, key) {
@@ -213,32 +214,37 @@ angular.module('ion-autocomplete', []).directive('ionAutocomplete', [
                         // Callback that searchs in global directory
                         if (query && angular.isFunction(compiledTemplate.scope.globalSearch)) {
                             scope.show_loading = true;
-                            // convert the given function to a $q promise to support promises too
-                            var promise = $q.when(compiledTemplate.scope.globalSearch({query: query}));
-                            
-                            promise.then(function (promiseData) {
-                                // set the items which are returned by the items method
-                                var tmp = compiledTemplate.scope.getItemValue(promiseData, compiledTemplate.scope.globalValueKey);
 
-                                var global_contacts = [];
-                                tmp.forEach( function(contact) {
-                                  var active_key = contact.active_key_history.pop()[1];
-                                  global_contacts.push({
-                                    name              : contact.name,
-                                    address_or_pubkey : active_key,
-                                    is_pubkey         : true
+                            clearTimeout(scope.global_search_timeout);
+                            scope.global_search_timeout = setTimeout(function() {
+                              
+                              // convert the given function to a $q promise to support promises too
+                              var promise = $q.when(compiledTemplate.scope.globalSearch({query: query}));
+                              
+                              promise.then(function (promiseData) {
+                                  // set the items which are returned by the items method
+                                  var tmp = compiledTemplate.scope.getItemValue(promiseData, compiledTemplate.scope.globalValueKey);
+
+                                  var global_contacts = [];
+                                  tmp.forEach( function(contact) {
+                                    var active_key = contact.active_key_history.pop()[1];
+                                    global_contacts.push({
+                                      name              : contact.name,
+                                      address_or_pubkey : active_key,
+                                      is_pubkey         : true
+                                    });
                                   });
-                                });
 
-                                compiledTemplate.scope.global_contacts = global_contacts;
-                                scope.show_loading                     = false;
-                                $ionicScrollDelegate.resize();
-                            }, function (error) {
-                                console.log(' onSearchQuery globalSearch ERROR '+JSON.stringify(error));
-                                // reject the error because we do not handle the error here
-                                scope.show_loading = false;
-                                return $q.reject(error);
-                            });
+                                  compiledTemplate.scope.global_contacts = global_contacts;
+                                  scope.show_loading                     = false;
+                                  $ionicScrollDelegate.resize();
+                              }, function (error) {
+                                  console.log(' onSearchQuery globalSearch ERROR '+JSON.stringify(error));
+                                  // reject the error because we do not handle the error here
+                                  scope.show_loading = false;
+                                  return $q.reject(error);
+                              });
+                           }, 1500);
                         }
                        
                         // Callback that searchs in local directory

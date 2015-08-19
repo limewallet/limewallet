@@ -381,46 +381,7 @@ bitwallet_module
       // console.log(' -- -----------------  global_init response =>' + JSON.stringify(account));  
 
       Wallet.init().then(function() {
-        
-        //var external_load = window.localStorage.getItem('external_load');
-        //console.log('EXTERNAL LOAD ==> ' + JSON.stringify(external_load));
-        //if(external_load){
-          //window.localStorage.removeItem('external_load');
-          //var event = new CustomEvent('OnPaymentRequest', {detail: {'url': external_load}});
-          //setTimeout( function() {
-              //window.dispatchEvent(event);
-            //}, 0);
-
-          //$cordovaSplashscreen.hide();
-          //return;
-        //}
-        
-        //$state.go('app.xtx_requote', {xtx_id:'13'});
-        //$state.go('app.xtransaction_details', {x_id:'10'});
-        //$state.go('app.transaction_details', {tx_id:'5394df9b7a4e1a9db60f576ad7e1a079b439a7e4'});
-        //$state.go('app.receive_qrcode', {amount:150});
-        // $rootScope.goToSuccess({  txid        : undefined
-        //                     , xtxid      : undefined
-        //                     , address   : 'DVSNKLe7F5E7msNG5RnbdWZ7HDeHoxVrUMZo'
-        //                     , name      : undefined
-        //                     , message   : 'tomala, por el pete de ayer'
-        //                     , amount    : '69.3'
-        //                     , type      : 'send' });
-        //$state.go('app.import_priv', {private_key:'ESSSSSSSSSTA'});
-        //$state.go('app.xtx_requote', {xtx_id:18});
-        //$state.go('app.refund', {xtx_id:18});
-        //$state.go('app.settings');
-        //$state.go('app.contact', {contact:{name: 'peteelpopo', pubkey:'DVS5YYZsZ7g1fSpPxmZcJifWJ2rmiXbUyJpEYSdNsVw738C88yvoy'}}, {inherit:true});
-        //$state.go('app.account');
-        //$state.go('app.send_btc', {scan_data:{address:'CF2b4MsrfNMG9ZjatUFg7ZVYwE2qNupBMt', amount:0.05123, message:'Starbucks'}}, {inherit:true});
-        //$state.go('app.withdraw');
-        //$state.go('app.deposit');
-        //$state.go('app.xtransaction_details', {x_id:'70'});
-        //$state.go('app.transaction_details', {tx_id:'bdb2cd28f54ae1a16a7218bf124c41058793215e'});
-        
         $rootScope.goHome();
-
-        //obscure around glue cheese inherit thing subject blade slow unknown solve assume
 
         Wallet.refreshBalance().finally(function() {
           $cordovaSplashscreen.hide();
@@ -571,23 +532,15 @@ bitwallet_module
     //INIT DB
     //*****************
     .then(function() {
-      var db_initialized = window.localStorage['db_initialized'] || 'false';
-      DB.init(false, db_initialized=='false');
-      if ( db_initialized == 'true') {
-        console.log('DB already initialized');
-        //return;
-      }
-      //DB.init();
+      console.log('DB already initialized');
+      return DB.init(false);
     })
     .then(function() {
         console.log('DB initialized OK');
-        window.localStorage['db_initialized'] = 'true';
       },
       function(error) {
         console.log('Unable to initialize DB:' + error);
     })
-
-    
     // *****************
     // First wallet run?
     // *****************
@@ -618,11 +571,11 @@ bitwallet_module
 
       rand_int = (rand_int>>>0) & 0x7FFFFFFF;
 
-      console.log(' -------- Wallet.data.account.pubkey:' + Wallet.data.account.pubkey
-        + ' // pubkey_to_use:' + pubkey_to_use
-        + ' // Wallet.data.mpk.plain_value:' + Wallet.data.mpk.plain_value
-        + ' // Wallet.data.account.plain_account_mpk:' + Wallet.data.account.plain_account_mpk
-        + ' // Wallet.data.account.plain_memo_mpk:' + Wallet.data.account.plain_memo_mpk);
+      //console.log(' -------- Wallet.data.account.pubkey:' + Wallet.data.account.pubkey
+        //+ ' // pubkey_to_use:' + pubkey_to_use
+        //+ ' // Wallet.data.mpk.plain_value:' + Wallet.data.mpk.plain_value
+        //+ ' // Wallet.data.account.plain_account_mpk:' + Wallet.data.account.plain_account_mpk
+        //+ ' // Wallet.data.account.plain_memo_mpk:' + Wallet.data.account.plain_memo_mpk);
 
       BitShares.computeMemo(
         Wallet.data.account.pubkey,
@@ -639,9 +592,9 @@ bitwallet_module
 
           skip32_index = skip32_index>>>0;
 
-          console.log('%%%%%%%%%%%%%%%%%%%% => RANDINT ' + rand_int);
-          console.log('%%%%%%%%%%%%%%%%%%%% => SKIP32 ' + skip32_index);
-          console.log('%%%%%%%%%%%%%%%%%%%% => KEY ' + Wallet.data.account.plain_skip32_key);
+          //console.log('%%%%%%%%%%%%%%%%%%%% => RANDINT ' + rand_int);
+          //console.log('%%%%%%%%%%%%%%%%%%%% => SKIP32 ' + skip32_index);
+          //console.log('%%%%%%%%%%%%%%%%%%%% => KEY ' + Wallet.data.account.plain_skip32_key);
 
           res.skip32_index = skip32_index;
           deferred.resolve(res);

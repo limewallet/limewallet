@@ -159,7 +159,7 @@ bitwallet_services
       var path  = self.urlPath(url);
       var nonce = Math.floor(Date.now()/1000);
 
-      console.log('MENSAJE A LABURAR [' + body + '][' + path + '][' + nonce + ']');
+      //console.log('MENSAJE A LABURAR [' + body + '][' + path + '][' + nonce + ']');
 
       window.plugins.BitsharesPlugin.requestSignature(
         function(data){
@@ -187,7 +187,7 @@ bitwallet_services
 
       window.plugins.BitsharesPlugin.mnemonicToMasterKey(
         function(data){
-          console.log(' **** BitsharesPlugin.mnemonicToMasterKey salio ok!');
+          //console.log(' **** BitsharesPlugin.mnemonicToMasterKey salio ok!');
           deferred.resolve(data.masterPrivateKey);
         },
         function(error){
@@ -318,41 +318,6 @@ bitwallet_services
         },
         msg, 
         signature
-      );
-    
-      return deferred.promise;
-    };
-
-
-    self.createMasterKey = function() {
-      var deferred = $q.defer();
-
-      window.plugins.BitsharesPlugin.createMasterKey(
-        function(data){
-          // deferred.resolve('xprv9s21ZrQH143K3ijyttwKLLMY5TXj9QxrGoEg8EbLpsSyNabQ4QrbMzFj5j5FPkc8m58AZrVo8TMH5XEYuL2bdWaD2yhgiF68f9vsMkSTkkS'); // nisman
-          // NISMAN: 
-          //    privkey:  "xprv9s21ZrQH143K3ijyttwKLLMY5TXj9QxrGoEg8EbLpsSyNabQ4QrbMzFj5j5FPkc8m58AZrVo8TMH5XEYuL2bdWaD2yhgiF68f9vsMkSTkkS"
-          //    addy:     "DVSNKLe7F5E7msNG5RnbdWZ7HDeHoxVrUMZo", 
-          //    pubkey:   "DVS5YYZsZ7g1fSpPxmZcJifWJ2rmiXbUyJpEYSdNsVw738C88yvoy", 
-          //    wif:      "5623d6fac2e224fa188c22b6afee69e643c65465b78e7bdeead2b223f9ea3c08"
-
-          // "xprv9s21ZrQH143K3PgEC8y59PEEkFN4mHz4tTo9uYCJQbAuLLfxLHLt9HegarddLEP9iGXKpcc2a6c9j8jPtHNZsKXKQpjdg1nuXqAsoQqv7E6');// matu
-          
-          //deferred.resolve('xprv9s21ZrQH143K28Eo8MEiEbchHxrSFDFMtb73UEh5htu9vzrqpReaeS5vmJHi7aipUb9ck3FTfoj3AQJhdWJ7HL6ywwsuYdMupmPv13osE5c'); // daniel-hadad
-          
-          deferred.resolve('xprv9s21ZrQH143K4TFHxN8wCgnPUTyaJb7QwVFtvXz8zeyaXZYtmLGamLekc9hQAKZCCh3MW5HrxsjN5rHuLcpqrohVS1YDz1ZZN1nocEm8383'); 
-          // btc Bso7DduduMapkTDW7HNWXf5dMCcYcNdpXi
-          
-          // xprv9s21ZrQH143K4TFHxN8wCgnPUTyaJb7QwVFtvXz8zeyaXZYtmLGamLekc9hQAKZCCh3MW5HrxsjN5rHuLcpqrohVS1YDz1ZZN1nocEm8383 
-          // -> DVSM5HFFtCbhuv3xPfRPauAeQ5GgW7y4UueL
-          
-          // DVS3NGm7x7NNXLSTLpqGioTZx3e2gfjJG2Rq ??
-          
-          //deferred.resolve(data.masterPrivateKey);
-        },
-        function(error){
-          deferred.reject(error);
-        }
       );
     
       return deferred.promise;
@@ -866,8 +831,21 @@ bitwallet_services
     }
 
     self.getAccount = function(name) {
+      var deferred = $q.defer();
+      
+      if(!name) {
+        deferred.resolve({});
+        return deferred.promise;
+      }
+
       var url = ENVIRONMENT.apiurl('/account/'+name);
-      return self.apiCall(undefined, url);
+      self.apiCall(undefined, url).then(function(res) {
+        deferred.resolve(res);
+      }, function(err) {
+        deferred.reject(err);
+      });
+
+      return deferred.promise;
     }
 
     self.getSignupInfo = function() {
