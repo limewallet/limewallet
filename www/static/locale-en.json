@@ -113,13 +113,13 @@
     "unknown"                   : "Unknown Error - Check internet connection and try again later.",
     "wallet_un_locked_title"    : "Wallet unlock error" ,
     "no_active_account"         : "No active account",
-    "no_active_account_create"  : "There is no active account in your wallet. PLease create one.",
+    "no_active_account_create"  : "There is no active account in your wallet. Please create one.",
     
     "seed_copied"               : "Oops... Seed could not be copied!",
     "seed_equal_error"          : "Please retype seed.",
     "invalid_xtx_id"            : "Invalid transaction id",
     "invalid_quote"             : "Invalid quote",
-    "invalid_quote_msg"         : "Oops... There was an error. Please retype amount until get quote.",
+    "invalid_quote_msg"         : "Oops... There was a problem getting a quote.",
     "cant_cancel"               : "Cancel failed",
     
     "btc_addr_error"        : "Bitcoin address missing or invalid",
