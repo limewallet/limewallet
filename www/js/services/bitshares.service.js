@@ -915,7 +915,7 @@ bitwallet_services
       }, function(err) {
         console.log('signup err#4 ' + JSON.stringify(err));
         self.signing_up = false;
-        //deferred.resolve({akey:'access_key',skey:'secret_key'}); /*HACK*/
+        //deferred.resolve({akey:'access_key',skey:'secret_key'}); /*HACK Tablet*/
         deferred.reject(err);
       });
       
