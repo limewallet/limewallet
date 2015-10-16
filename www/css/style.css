@@ -53,7 +53,8 @@ ion-nav-view {
 */
 
 .balance_container{
-  background-size: 360px auto !important; 
+  /*background-size: 360px auto !important; */
+  background-size: 100% auto !important; /* HACK Tablet*/
   background-position:center -44px!important;
   background-repeat: no-repeat!important;
   background-image: url(../img/bg/bg-dashboard@0x.png);
@@ -1014,6 +1015,7 @@ button.centered_autow {width:auto!important;margin:0 auto;}
 .successful p.white {color:#ECF0F1;}
 .successful p.bigger {color:#2C3E50;font-size: 16px;}
 
+.create_account_passsword {width:100%;}
 .create_account_passsword .buttons_container {text-align:center;}
 .create_account_passsword .list_password .item.pmd.margin15 {margin-top:15px!important;}
 
@@ -1071,9 +1073,8 @@ ion-nav-bar.light_navbar.darky ion-header-bar{
   
   color: #fff;
   box-shadow: none!important;
-  /*background-image:none!important;
-  background-color:#1b4356!important;*/
-  background-size: 360px auto !important; 
+  /*background-size: 360px auto !important; */
+  background-size: 100% auto !important; /* HACK Tablet*/
   background-position:center 0px!important;
   background-repeat: no-repeat!important;
   background-image: url(../img/bg/bg-dashboard@0x.png)!important;
@@ -1647,3 +1648,5 @@ p.paragraph {padding:25px; font-size:17px; font-weight: 300;margin:0;}
       padding-bottom:33px;
     }
 }
+
+.bar-header {border-bottom-width: 0px!important;}
