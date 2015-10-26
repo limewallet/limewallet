@@ -1,0 +1,158 @@
+{
+  "g" : {
+    "save"                : "Speichern",
+    "cancel"              : "Abbrechen",
+    "send"                : "senden",
+    "sent"                : "gesendet",
+    "receive"             : "erhalten",
+    "received"            : "erhalten",
+    "from"                : "von",
+    "to"                  : "zu",
+    "remove"              : "entfernen",
+    "amount"              : "Summe",
+    "address"             : "Adresse",
+    "public_key"          : "Public Key",
+    "label"               : "Label",
+    "password"            : "Passwort",
+    "id"                  : "Id",
+    "block"               : "Block",
+    "timestamp"           : "Zeitstempel",
+    "fee"                 : "Gebühr",
+    "confirm_password"    : "Passwort bestätigen",
+    "input_password"      : "Passwort eingeben",
+    "in_progress"         : "In Bearbeitung ...",
+    "copied_to_clipboard" : "kopiert in Zwischenablage",
+    "updated"             : "Updated",
+    "unable_to_refresh"   : "Es konnte nicht neu geladen werden",
+    "loading"             : "laden",
+    "default"             : "Vorgabe",
+    "asset"               : "Asset"
+  },
+
+  "err" : {
+    "invalid_amount"      : "unzulässiger Betrag",
+    "enter_valid_amount"  : "Bitte geben Sie einen gültigen Betrag ein",
+    "invalid_address"     : "ungültige Adresse",
+    "enter_valid_address" : "Bitte geben Sie eine gültige Adresse ein",
+    "invalid_address_account" : "Ungültige Adresse oder Empfängername", 
+    "invalid_password"    : "Ungültiges Passwort",
+    "enter_valid_password": "Bitte geben Sie ein gültiges Passwort ein",
+    "invalid_backup"      : "Ungültige Sicherung",
+    "enter_valid_backup"  : "Bitte verwenden Sie eine gültige Sicherung",
+    "empty_password"      : "Passwort darf nicht leer sein",
+    "password_mismatch"   : "Die Passwörter stimmen nicht überein",
+    "retype_passwords"    : "Das Bestätigungspasswort stimmt nicht mit dem Ersten Passwort überein - bitte überprüfen Sie diese nochmal.",
+    "unable_to_share_req" : "Der Zahlungsauftrag kann nicht geteilt werden",
+    "unable_to_copy_req"  : "Der Zahlungsauftrag kann nicht kopiert werdent",
+    "unable_to_share_ew"  : "Das verschlüsselte Wallet(Geldbörse) kann nicht geteilt werden",
+    "unable_to_copy_ew"   : "Das verschlüsselte Wallet(Geldbörse) kann nicht kopiert werden",
+    "unable_to_create_tx" : "Die Transaktion kann nicht erstellt werden",
+    "unable_to_send_tx"   : "Die Transaktion kann nicht versendet werden",
+    "unable_to_paste_ew"  : "Das verschlüsselte Wallet(Geldbörse) kann nicht überschrieben werden",
+    "server_error"        : "Server Fehler",
+    "backup_error"        : "Beim Sicherungsversuch traten Fehler auf",
+    "unable_pw_balance"   : "Das Guthaben des Papier Wallets(Geldbörse) konnte nicht gelesen werden",
+    "empty_paper_wallet"  : "Leeres Papierwallet(Geldbörse)",
+    "paper_no_balance"    : "Das Papierwallet(Geldbörse) hat kein Guthaben",
+    "invalid_asset"       : "Ungültiges Asset",
+    "invalid_asset_desc"  : "Das ausgewählte Asset wird derzeit nicht unterstützt",
+    "scan_valid_asset"    : "Bitte verwenden und scannen Sie ein unterstützes Asset"
+  },
+
+  "home" : {
+    "balance"         : "{{asset}} Guthaben",
+    "no_txs"          : "noch keine Transaktionen",
+    "pull_to_refresh" : "auffrischen...",
+    "pending"         : "UNERLEDIGT",
+    "on"              : "An",
+    "just_now"        : "Gerade jetzt",
+    "Me"              : "Ich",
+    "qr_cancel"       : "QR Code Scan gestrichen",
+    "add_to_book"     : "Zum Adressbuch hinzufügen",
+    "view_details"    : "Details anzeigen",
+    "address_name"     : "Name der Adresse",
+    "save_successfull" : "Adresse wurde gesichert"
+  },
+
+  "menu" : {
+    "settings"       : "Einstellungen",
+    "home"           : "Home",
+    "address_book"   : "Adressbuch",
+    "backup_wallet"  : "Sicherung",
+    "restore_wallet" : "Wiederherstellen",
+    "account"        : "Konto",
+    "my_assets"      : "Währungen"
+  },
+
+  "receive" : {
+    "payment_request"     : "Passwort anfordern",
+    "copied_to_clipboard" : "Zahlungsauftrag in die Zwischenablage kopiert"
+  },
+
+  "send" : { 
+    "payment_confirm"        : "Zahlungsbestätigung",
+    "are_you_sure"           : "Sind Sie sich sicher, dass sie {{symbol}} {{amount}} zu {{address}}?{{extra_data}} übertragen wollen?",
+    "send_payment"           : "Zahlungs veranlassen",
+    "sending_payment"        : "Zahlung wird gesendet",
+    "generating_transaction" : "Transaktion wird erstellt",
+    "signing_transaction"    : "Transaktion wird bestätigt",
+    "sending_transaction"    : "Transaktion wird gesendet",
+    "transaction_sent"       : "Transaktion wurde gesendet",
+    "address_book"           : "Adressbuch",
+    "searching_account"      : "Suche nach Konto..."
+  },
+
+  "backup" : {
+    "backing_up_wallet"   : "Sicherung des Wallets(Geldbörse)",
+    "copied_to_clipboard" : "Das verschlüsselte Wallet`(Geldbörse) wurde in die Zwischenablage kopiert",
+    "encrypted_wallet"    : "Verschlüsseltes Wallet(Geldbörse)"
+  },
+
+  "restore" : {
+    "paste_here"       : "Hier einfügen",
+    "successful"       : "Das Wallet(Geldbörse) wurde erfolgreich wieder hergestellt",
+    "restoring_wallet" : "Wallet wird wieder hergestellt"
+  },
+
+  "detail" : {
+    "transaction_details" : "Transaktionsdetails",
+    "info"                : "Info",
+    "withdraws"           : "Auszahlungen",
+    "deposits"            : "Einzahlungen"
+  },
+
+  "addys" : {
+    "new_address"     : "Neue Adresse",
+    "are_you_sure"    : "Sind Sie sich sicher, dass Sie eine neue Adresse zu Ihrem Konto hinzufügen wollen?",
+    "set_as_default"  : "Standardeinstellungen",
+    "set_label"       : "Set Label",
+    "copy_address"    : "Adresse kopieren",
+    "copy_public_key" : "Öffenltichen Schlüssel kopieren",
+    "no_addys"        : "Noch keine Adresse hinzugefügt"
+  },
+
+  "book" : {
+    "add_to_fav"        : "Zu Favoriten hinzufügen",
+    "remove_from_fav"   : "Aus den Favoriten entfernen",
+    "remove_from_ab"    : "Aus dem Adressbuch entfernen",
+    "remove_sure"       : "Sind Sie sich sicher, dass Sie <b>{{name}}</b> aus Ihrem Adressbuch entfernen möchten?"
+  },
+  
+  "import_priv" : {
+    "paper_wallet"            : "Papierwallet(Geldbörse) importieren",
+    "sweep_balance"           : "Kontoguthaben übertragen",
+    "invalid"                 : "Ein ungültiger/leerer privater Schlüssel kann nicht importiert werden",
+    "pk_scanned_ok"           : "Papierwallet(Geldbörse)",
+    "explain_text"            : "Sie können nun dieses Guthaben auf Ihr Wallet(Geldbörse) übertragen.<br/>Ihr Papierwallet(Geldbörse) Guthaben wird durch eine Transaktion zu Ihrem Standard-Konto hinzugefügt.",
+    "transaction_sent"        : "Guthaben Übertragung war erfolgreich!",
+    "loading_balance"         : "Papierwallet(Geldbörse)guthaben wird geladen",
+    "switch_currency"         : "Das gescannte Papierwallet(Geldbörse) enthält Guthaben mit {{symbols}}.<br/> Sie müssen die Standardwährung ihres Kontos ändern, damit diese Beträge importiert werden können."
+  },
+  
+  "assets" : {
+    "hide_asset"              : "Asset ausblenden",
+    "show_asset"              : "Asset einblenden",
+    "my_assets"               : "Währungen"
+  
+  }
+}
